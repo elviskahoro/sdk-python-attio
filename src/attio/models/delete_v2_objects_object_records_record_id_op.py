@@ -22,10 +22,16 @@ class DeleteV2ObjectsObjectRecordsRecordIDRequest(BaseModel):
     ]
 
 
-DeleteV2ObjectsObjectRecordsRecordIDType = Literal["invalid_request_error",]
+DeleteV2ObjectsObjectRecordsRecordIDNotFoundType = Literal["invalid_request_error",]
 
 
-DeleteV2ObjectsObjectRecordsRecordIDCode = Literal["not_found",]
+DeleteV2ObjectsObjectRecordsRecordIDNotFoundCode = Literal["not_found",]
+
+
+DeleteV2ObjectsObjectRecordsRecordIDForbiddenType = Literal["auth_error",]
+
+
+DeleteV2ObjectsObjectRecordsRecordIDCodeUnauthorized = Literal["unauthorized",]
 
 
 class DeleteV2ObjectsObjectRecordsRecordIDResponseTypedDict(TypedDict):

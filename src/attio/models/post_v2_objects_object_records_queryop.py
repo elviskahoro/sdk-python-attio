@@ -2363,6 +2363,7 @@ PostV2ObjectsObjectRecordsQueryCurrencyCode = Literal[
     "COP",
     "CZK",
     "DKK",
+    "EGP",
     "EUR",
     "FJD",
     "GHS",

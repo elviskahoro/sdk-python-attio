@@ -61,6 +61,12 @@ PatchV2ObjectsObjectRecordsRecordIDNotFoundType = Literal["invalid_request_error
 PatchV2ObjectsObjectRecordsRecordIDNotFoundCode = Literal["not_found",]
 
 
+PatchV2ObjectsObjectRecordsRecordIDForbiddenType = Literal["auth_error",]
+
+
+PatchV2ObjectsObjectRecordsRecordIDCodeUnauthorized = Literal["unauthorized",]
+
+
 PatchV2ObjectsObjectRecordsRecordIDBadRequestType = Literal["invalid_request_error",]
 
 
@@ -2281,6 +2287,7 @@ PatchV2ObjectsObjectRecordsRecordIDCurrencyCode = Literal[
     "COP",
     "CZK",
     "DKK",
+    "EGP",
     "EUR",
     "FJD",
     "GHS",

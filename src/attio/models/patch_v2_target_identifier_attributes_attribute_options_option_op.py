@@ -100,7 +100,7 @@ PatchV2TargetIdentifierAttributesAttributeOptionsOptionConflictType = Literal[
 ]
 
 
-PatchV2TargetIdentifierAttributesAttributeOptionsOptionConflictCode = Literal[
+PatchV2TargetIdentifierAttributesAttributeOptionsOptionCodeSlugConflict = Literal[
     "slug_conflict",
 ]
 
@@ -112,6 +112,16 @@ PatchV2TargetIdentifierAttributesAttributeOptionsOptionNotFoundType = Literal[
 
 PatchV2TargetIdentifierAttributesAttributeOptionsOptionNotFoundCode = Literal[
     "not_found",
+]
+
+
+PatchV2TargetIdentifierAttributesAttributeOptionsOptionForbiddenType = Literal[
+    "auth_error",
+]
+
+
+PatchV2TargetIdentifierAttributesAttributeOptionsOptionCodeUnauthorized = Literal[
+    "unauthorized",
 ]
 
 

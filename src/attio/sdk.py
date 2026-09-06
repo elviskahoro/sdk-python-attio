@@ -15,6 +15,8 @@ from typing import Any, Callable, Dict, Optional, TYPE_CHECKING, Union, cast
 import weakref
 
 if TYPE_CHECKING:
+    from attio.activities import Activities
+    from attio.activity_records import ActivityRecords
     from attio.attributes import Attributes
     from attio.call_recordings import CallRecordings
     from attio.comments import Comments
@@ -27,6 +29,7 @@ if TYPE_CHECKING:
     from attio.notes import Notes
     from attio.objects import Objects
     from attio.records import Records
+    from attio.sequences import Sequences
     from attio.sql import SQL
     from attio.tasks import Tasks
     from attio.threads import Threads
@@ -38,6 +41,8 @@ if TYPE_CHECKING:
 class SDK(BaseSDK):
     objects: "Objects"
     r"""Objects are the core data models inside of Attio. They contain standard objects, such as [people](/rest-api/endpoint-reference/standard-objects/people/list-person-records), [companies](/rest-api/endpoint-reference/standard-objects/companies/list-company-records) or [deals](/docs/standard-objects-deals), and custom objects that are specific to your use-case. See our [objects and lists guide](/docs/objects-and-lists) for more information."""
+    activities: "Activities"
+    activity_records: "ActivityRecords"
     attributes: "Attributes"
     r"""Attributes model properties of objects and lists. Some attributes, such as the `name` attribute on a person, are system-defined, while others are user-defined. Attributes are one of [many types](/docs/attribute-types) such as text, location or select. See our [objects and lists guide](/docs/objects-and-lists) for more information."""
     records: "Records"
@@ -59,7 +64,9 @@ class SDK(BaseSDK):
     comments: "Comments"
     r"""Comments are messages on a [thread](/rest-api/endpoint-reference/threads/list-threads)."""
     emails: "Emails"
-    r"""Emails are messages synced from connected mailboxes. This API exposes their metadata — participants, subject line and timestamps — and never their content."""
+    r"""Emails are messages synced from connected mailboxes."""
+    sequences: "Sequences"
+    r"""Sequences are automated email campaigns sent from Attio."""
     meetings: "Meetings"
     r"""Meetings are events synced from your calendar, added manually or added from third-party integrations."""
     call_recordings: "CallRecordings"
@@ -74,6 +81,8 @@ class SDK(BaseSDK):
     r"""Meta endpoints are used to get information about the API token."""
     _sub_sdk_map = {
         "objects": ("attio.objects", "Objects"),
+        "activities": ("attio.activities", "Activities"),
+        "activity_records": ("attio.activity_records", "ActivityRecords"),
         "attributes": ("attio.attributes", "Attributes"),
         "records": ("attio.records", "Records"),
         "sql": ("attio.sql", "SQL"),
@@ -85,6 +94,7 @@ class SDK(BaseSDK):
         "threads": ("attio.threads", "Threads"),
         "comments": ("attio.comments", "Comments"),
         "emails": ("attio.emails", "Emails"),
+        "sequences": ("attio.sequences", "Sequences"),
         "meetings": ("attio.meetings", "Meetings"),
         "call_recordings": ("attio.call_recordings", "CallRecordings"),
         "transcripts": ("attio.transcripts", "Transcripts"),

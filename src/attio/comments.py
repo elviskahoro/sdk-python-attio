@@ -422,6 +422,8 @@ class Comments(BaseSDK):
 
         Deletes a comment by ID. If deleting a comment at the head of a thread, all messages in the thread are also deleted.
 
+        A workspace-level access token may delete any comment. A user-level access token may only delete comments authored by the member it acts for.
+
         Required scopes: `comment:read-write`.
 
         :param comment_id:
@@ -489,6 +491,13 @@ class Comments(BaseSDK):
             return unmarshal_json_response(
                 models.DeleteV2CommentsCommentIDResponse, http_res
             )
+        if utils.match_response(http_res, "403", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.DeleteV2CommentsCommentIDUnauthorizedErrorData, http_res
+            )
+            raise errors.DeleteV2CommentsCommentIDUnauthorizedError(
+                response_data, http_res
+            )
         if utils.match_response(http_res, "404", "application/json"):
             response_data = unmarshal_json_response(
                 errors.DeleteV2CommentsCommentIDNotFoundErrorData, http_res
@@ -515,6 +524,8 @@ class Comments(BaseSDK):
         r"""Delete a comment
 
         Deletes a comment by ID. If deleting a comment at the head of a thread, all messages in the thread are also deleted.
+
+        A workspace-level access token may delete any comment. A user-level access token may only delete comments authored by the member it acts for.
 
         Required scopes: `comment:read-write`.
 
@@ -582,6 +593,13 @@ class Comments(BaseSDK):
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(
                 models.DeleteV2CommentsCommentIDResponse, http_res
+            )
+        if utils.match_response(http_res, "403", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.DeleteV2CommentsCommentIDUnauthorizedErrorData, http_res
+            )
+            raise errors.DeleteV2CommentsCommentIDUnauthorizedError(
+                response_data, http_res
             )
         if utils.match_response(http_res, "404", "application/json"):
             response_data = unmarshal_json_response(

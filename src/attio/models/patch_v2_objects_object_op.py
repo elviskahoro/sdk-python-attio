@@ -72,13 +72,19 @@ class PatchV2ObjectsObjectRequest(BaseModel):
 PatchV2ObjectsObjectConflictType = Literal["invalid_request_error",]
 
 
-PatchV2ObjectsObjectConflictCode = Literal["slug_conflict",]
+PatchV2ObjectsObjectCodeSlugConflict = Literal["slug_conflict",]
 
 
 PatchV2ObjectsObjectNotFoundType = Literal["invalid_request_error",]
 
 
 PatchV2ObjectsObjectNotFoundCode = Literal["not_found",]
+
+
+PatchV2ObjectsObjectForbiddenType = Literal["auth_error",]
+
+
+PatchV2ObjectsObjectCodeUnauthorized = Literal["unauthorized",]
 
 
 PatchV2ObjectsObjectBadRequestType = Literal["invalid_request_error",]

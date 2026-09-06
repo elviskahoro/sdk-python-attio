@@ -2232,6 +2232,7 @@ GetV2ObjectsObjectRecordsRecordIDCurrencyCode = Literal[
     "COP",
     "CZK",
     "DKK",
+    "EGP",
     "EUR",
     "FJD",
     "GHS",

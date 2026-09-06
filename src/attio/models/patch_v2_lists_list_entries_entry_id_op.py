@@ -64,6 +64,12 @@ PatchV2ListsListEntriesEntryIDNotFoundType = Literal["invalid_request_error",]
 PatchV2ListsListEntriesEntryIDNotFoundCode = Literal["not_found",]
 
 
+PatchV2ListsListEntriesEntryIDForbiddenType = Literal["auth_error",]
+
+
+PatchV2ListsListEntriesEntryIDCodeUnauthorized = Literal["unauthorized",]
+
+
 PatchV2ListsListEntriesEntryIDBadRequestType = Literal["invalid_request_error",]
 
 
@@ -2254,6 +2260,7 @@ PatchV2ListsListEntriesEntryIDCurrencyCode = Literal[
     "COP",
     "CZK",
     "DKK",
+    "EGP",
     "EUR",
     "FJD",
     "GHS",

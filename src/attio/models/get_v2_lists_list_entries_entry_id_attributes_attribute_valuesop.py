@@ -2520,6 +2520,7 @@ GetV2ListsListEntriesEntryIDAttributesAttributeValuesCurrencyCode = Literal[
     "COP",
     "CZK",
     "DKK",
+    "EGP",
     "EUR",
     "FJD",
     "GHS",

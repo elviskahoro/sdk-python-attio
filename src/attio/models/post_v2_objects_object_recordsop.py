@@ -56,6 +56,12 @@ PostV2ObjectsObjectRecordsNotFoundType = Literal["invalid_request_error",]
 PostV2ObjectsObjectRecordsNotFoundCode = Literal["not_found",]
 
 
+PostV2ObjectsObjectRecordsForbiddenType = Literal["auth_error",]
+
+
+PostV2ObjectsObjectRecordsCodeUnauthorized = Literal["unauthorized",]
+
+
 PostV2ObjectsObjectRecordsBadRequestType = Literal["invalid_request_error",]
 
 
@@ -2226,6 +2232,7 @@ PostV2ObjectsObjectRecordsCurrencyCode = Literal[
     "COP",
     "CZK",
     "DKK",
+    "EGP",
     "EUR",
     "FJD",
     "GHS",

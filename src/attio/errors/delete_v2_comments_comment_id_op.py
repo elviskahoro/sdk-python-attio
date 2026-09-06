@@ -13,8 +13,8 @@ from typing import Optional
 
 class DeleteV2CommentsCommentIDNotFoundErrorData(BaseModel):
     status_code: float
-    type: models_delete_v2_comments_comment_id_op.DeleteV2CommentsCommentIDType
-    code: models_delete_v2_comments_comment_id_op.DeleteV2CommentsCommentIDCode
+    type: models_delete_v2_comments_comment_id_op.DeleteV2CommentsCommentIDNotFoundType
+    code: models_delete_v2_comments_comment_id_op.DeleteV2CommentsCommentIDNotFoundCode
     message: str
 
 
@@ -27,6 +27,31 @@ class DeleteV2CommentsCommentIDNotFoundError(SDKError):
     def __init__(
         self,
         data: DeleteV2CommentsCommentIDNotFoundErrorData,
+        raw_response: httpx.Response,
+        body: Optional[str] = None,
+    ):
+        fallback = body or raw_response.text
+        message = str(data.message) or fallback
+        super().__init__(message, raw_response, body)
+        object.__setattr__(self, "data", data)
+
+
+class DeleteV2CommentsCommentIDUnauthorizedErrorData(BaseModel):
+    status_code: float
+    type: models_delete_v2_comments_comment_id_op.DeleteV2CommentsCommentIDForbiddenType
+    code: models_delete_v2_comments_comment_id_op.DeleteV2CommentsCommentIDCodeUnauthorized
+    message: str
+
+
+@dataclass(unsafe_hash=True)
+class DeleteV2CommentsCommentIDUnauthorizedError(SDKError):
+    r"""Forbidden"""
+
+    data: DeleteV2CommentsCommentIDUnauthorizedErrorData = field(hash=False)
+
+    def __init__(
+        self,
+        data: DeleteV2CommentsCommentIDUnauthorizedErrorData,
         raw_response: httpx.Response,
         body: Optional[str] = None,
     ):

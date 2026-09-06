@@ -111,24 +111,13 @@ class PermanentError(Exception):
 
 _TRANSPORT_ERROR_NAMES = frozenset({"NetworkError", "TimeoutException"})
 _TRANSPORT_ERROR_BASES = frozenset({"TransportError", "RequestError", "HTTPError"})
-_HTTPX_MODULE_PREFIXES = ("httpx.", "httpx2.")
 
 
 def _is_transport_error(exception: BaseException) -> bool:
-    """Report whether an exception is a connection or timeout failure.
-
-    Matches by class name rather than a plain isinstance check so that
-    httpx2 (Pydantic's httpx fork, see alias_httpx() in the README) raises
-    the same retry behavior as httpx. The module-prefix check keeps this
-    from matching unrelated third-party exceptions that happen to share
-    these class names.
-    """
+    """Report whether an exception is a connection or timeout failure."""
     if isinstance(exception, (httpx.NetworkError, httpx.TimeoutException)):
         return True
-    mro = type(exception).__mro__
-    names = {
-        base.__name__ for base in mro if base.__module__.startswith(_HTTPX_MODULE_PREFIXES)
-    }
+    names = {base.__name__ for base in type(exception).__mro__}
     return bool(names & _TRANSPORT_ERROR_NAMES) and _TRANSPORT_ERROR_BASES <= names
 
 
@@ -329,6 +318,7 @@ def retry_with_backoff(
                 retry_after_ms = _parse_retry_after_ms_header(exception.response)
                 if retry_after_ms is not None:
                     exception.retry_after = retry_after_ms
+                exception.response.close()
             sleep = _get_sleep_interval(
                 exception,
                 initial_interval,
@@ -369,6 +359,7 @@ async def retry_with_backoff_async(
                 retry_after_ms = _parse_retry_after_ms_header(exception.response)
                 if retry_after_ms is not None:
                     exception.retry_after = retry_after_ms
+                await exception.response.aclose()
             sleep = _get_sleep_interval(
                 exception,
                 initial_interval,
