@@ -38,22 +38,53 @@ class PatchV2TargetIdentifierAttributesAttributeNotFoundError(SDKError):
         object.__setattr__(self, "data", data)
 
 
-class SystemEditUnauthorizedErrorData(BaseModel):
+class PatchV2TargetIdentifierAttributesAttributeUnauthorizedErrorData(BaseModel):
     status_code: float
-    type: models_patch_v2_target_identifier_attributes_attribute_op.PatchV2TargetIdentifierAttributesAttributeBadRequestType
-    code: models_patch_v2_target_identifier_attributes_attribute_op.CodeSystemEditUnauthorized
+    type: models_patch_v2_target_identifier_attributes_attribute_op.PatchV2TargetIdentifierAttributesAttributeForbiddenType
+    code: models_patch_v2_target_identifier_attributes_attribute_op.PatchV2TargetIdentifierAttributesAttributeCodeUnauthorized
     message: str
 
 
 @dataclass(unsafe_hash=True)
-class SystemEditUnauthorizedError(SDKError):
-    r"""Bad Request"""
+class PatchV2TargetIdentifierAttributesAttributeUnauthorizedError(SDKError):
+    r"""Forbidden"""
 
-    data: SystemEditUnauthorizedErrorData = field(hash=False)
+    data: PatchV2TargetIdentifierAttributesAttributeUnauthorizedErrorData = field(
+        hash=False
+    )
 
     def __init__(
         self,
-        data: SystemEditUnauthorizedErrorData,
+        data: PatchV2TargetIdentifierAttributesAttributeUnauthorizedErrorData,
+        raw_response: httpx.Response,
+        body: Optional[str] = None,
+    ):
+        fallback = body or raw_response.text
+        message = str(data.message) or fallback
+        super().__init__(message, raw_response, body)
+        object.__setattr__(self, "data", data)
+
+
+class PatchV2TargetIdentifierAttributesAttributeSystemEditUnauthorizedErrorData(
+    BaseModel
+):
+    status_code: float
+    type: models_patch_v2_target_identifier_attributes_attribute_op.PatchV2TargetIdentifierAttributesAttributeBadRequestType
+    code: models_patch_v2_target_identifier_attributes_attribute_op.PatchV2TargetIdentifierAttributesAttributeCodeSystemEditUnauthorized
+    message: str
+
+
+@dataclass(unsafe_hash=True)
+class PatchV2TargetIdentifierAttributesAttributeSystemEditUnauthorizedError(SDKError):
+    r"""Bad Request"""
+
+    data: PatchV2TargetIdentifierAttributesAttributeSystemEditUnauthorizedErrorData = (
+        field(hash=False)
+    )
+
+    def __init__(
+        self,
+        data: PatchV2TargetIdentifierAttributesAttributeSystemEditUnauthorizedErrorData,
         raw_response: httpx.Response,
         body: Optional[str] = None,
     ):

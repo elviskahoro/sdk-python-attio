@@ -36,6 +36,31 @@ class PutV2ListsListEntriesEntryIDNotFoundError(SDKError):
         object.__setattr__(self, "data", data)
 
 
+class PutV2ListsListEntriesEntryIDUnauthorizedErrorData(BaseModel):
+    status_code: float
+    type: models_put_v2_lists_list_entries_entry_id_op.PutV2ListsListEntriesEntryIDForbiddenType
+    code: models_put_v2_lists_list_entries_entry_id_op.PutV2ListsListEntriesEntryIDCodeUnauthorized
+    message: str
+
+
+@dataclass(unsafe_hash=True)
+class PutV2ListsListEntriesEntryIDUnauthorizedError(SDKError):
+    r"""Forbidden"""
+
+    data: PutV2ListsListEntriesEntryIDUnauthorizedErrorData = field(hash=False)
+
+    def __init__(
+        self,
+        data: PutV2ListsListEntriesEntryIDUnauthorizedErrorData,
+        raw_response: httpx.Response,
+        body: Optional[str] = None,
+    ):
+        fallback = body or raw_response.text
+        message = str(data.message) or fallback
+        super().__init__(message, raw_response, body)
+        object.__setattr__(self, "data", data)
+
+
 class PutV2ListsListEntriesEntryIDInvalidRequestErrorData(BaseModel):
     status_code: float
     type: models_put_v2_lists_list_entries_entry_id_op.PutV2ListsListEntriesEntryIDBadRequestType

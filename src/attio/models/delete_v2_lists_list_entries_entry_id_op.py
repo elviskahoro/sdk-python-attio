@@ -25,10 +25,16 @@ class DeleteV2ListsListEntriesEntryIDRequest(BaseModel):
     ]
 
 
-DeleteV2ListsListEntriesEntryIDType = Literal["invalid_request_error",]
+DeleteV2ListsListEntriesEntryIDNotFoundType = Literal["invalid_request_error",]
 
 
-DeleteV2ListsListEntriesEntryIDCode = Literal["not_found",]
+DeleteV2ListsListEntriesEntryIDNotFoundCode = Literal["not_found",]
+
+
+DeleteV2ListsListEntriesEntryIDForbiddenType = Literal["auth_error",]
+
+
+DeleteV2ListsListEntriesEntryIDCodeUnauthorized = Literal["unauthorized",]
 
 
 class DeleteV2ListsListEntriesEntryIDResponseTypedDict(TypedDict):

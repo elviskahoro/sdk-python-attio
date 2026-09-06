@@ -94,7 +94,7 @@ class PostV2ListsRequest(BaseModel):
 PostV2ListsConflictType = Literal["invalid_request_error",]
 
 
-PostV2ListsConflictCode = Literal["slug_conflict",]
+PostV2ListsCodeSlugConflict = Literal["slug_conflict",]
 
 
 PostV2ListsNotFoundType = Literal["invalid_request_error",]

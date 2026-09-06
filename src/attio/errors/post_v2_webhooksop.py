@@ -9,10 +9,35 @@ import httpx
 from typing import Optional
 
 
+class PostV2WebhooksUniquenessConflictErrorData(BaseModel):
+    status_code: float
+    type: models_post_v2_webhooksop.PostV2WebhooksConflictType
+    code: models_post_v2_webhooksop.PostV2WebhooksCodeUniquenessConflict
+    message: str
+
+
+@dataclass(unsafe_hash=True)
+class PostV2WebhooksUniquenessConflictError(SDKError):
+    r"""Conflict"""
+
+    data: PostV2WebhooksUniquenessConflictErrorData = field(hash=False)
+
+    def __init__(
+        self,
+        data: PostV2WebhooksUniquenessConflictErrorData,
+        raw_response: httpx.Response,
+        body: Optional[str] = None,
+    ):
+        fallback = body or raw_response.text
+        message = str(data.message) or fallback
+        super().__init__(message, raw_response, body)
+        object.__setattr__(self, "data", data)
+
+
 class PostV2WebhooksValidationTypeErrorData(BaseModel):
     status_code: float
-    type: models_post_v2_webhooksop.PostV2WebhooksType
-    code: models_post_v2_webhooksop.PostV2WebhooksCode
+    type: models_post_v2_webhooksop.PostV2WebhooksBadRequestType
+    code: models_post_v2_webhooksop.PostV2WebhooksCodeValidationType
     message: str
 
 

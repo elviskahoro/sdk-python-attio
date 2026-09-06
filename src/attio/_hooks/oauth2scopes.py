@@ -98,3 +98,21 @@ class OAuth2Scope(str, Enum):
 
     EMAIL_READ_WRITE = "email:read-write"
     r"""View email metadata. Email content is never exposed."""
+
+    ACTIVITY_CONFIGURATION_READ = "activity_configuration:read"
+    r"""View, and optionally write, the configuration and attributes of activities."""
+
+    ACTIVITY_CONFIGURATION_READ_WRITE = "activity_configuration:read-write"
+    r"""View, and optionally write, the configuration and attributes of activities."""
+
+    ACTIVITY_RECORD_READ = "activity_record:read"
+    r"""View, and optionally write, activity records."""
+
+    ACTIVITY_RECORD_READ_WRITE = "activity_record:read-write"
+    r"""View, and optionally write, activity records."""
+
+    SEQUENCE_UNSUBSCRIBE_READ = "sequence_unsubscribe:read"
+    r"""View, and optionally add to, the sequence unsubscribe list."""
+
+    SEQUENCE_UNSUBSCRIBE_READ_WRITE = "sequence_unsubscribe:read-write"
+    r"""View, and optionally add to, the sequence unsubscribe list."""

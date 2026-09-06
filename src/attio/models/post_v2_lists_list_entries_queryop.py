@@ -2357,6 +2357,7 @@ PostV2ListsListEntriesQueryCurrencyCode = Literal[
     "COP",
     "CZK",
     "DKK",
+    "EGP",
     "EUR",
     "FJD",
     "GHS",

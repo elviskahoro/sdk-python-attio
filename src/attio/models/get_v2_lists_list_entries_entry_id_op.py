@@ -2196,6 +2196,7 @@ GetV2ListsListEntriesEntryIDCurrencyCode = Literal[
     "COP",
     "CZK",
     "DKK",
+    "EGP",
     "EUR",
     "FJD",
     "GHS",

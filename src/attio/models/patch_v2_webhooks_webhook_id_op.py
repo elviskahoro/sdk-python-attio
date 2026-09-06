@@ -178,7 +178,10 @@ PatchV2WebhooksWebhookIDFilterRequestUnionTypedDict = TypeAliasType(
         PatchV2WebhooksWebhookIDFilterRequest2TypedDict,
     ],
 )
-r"""Filters to determine whether the webhook event should be sent. If null, the filter always passes."""
+r"""Filters to determine whether the webhook event should be sent. If null, the filter always passes.
+
+When filters are compared for uniqueness, key order and the order of operations are ignored.
+"""
 
 
 PatchV2WebhooksWebhookIDFilterRequestUnion = TypeAliasType(
@@ -187,14 +190,20 @@ PatchV2WebhooksWebhookIDFilterRequestUnion = TypeAliasType(
         PatchV2WebhooksWebhookIDFilterRequest1, PatchV2WebhooksWebhookIDFilterRequest2
     ],
 )
-r"""Filters to determine whether the webhook event should be sent. If null, the filter always passes."""
+r"""Filters to determine whether the webhook event should be sent. If null, the filter always passes.
+
+When filters are compared for uniqueness, key order and the order of operations are ignored.
+"""
 
 
 class PatchV2WebhooksWebhookIDSubscriptionRequestTypedDict(TypedDict):
     event_type: PatchV2WebhooksWebhookIDEventTypeRequest
     r"""Type of event the webhook is subscribed to."""
     filter_: Nullable[PatchV2WebhooksWebhookIDFilterRequestUnionTypedDict]
-    r"""Filters to determine whether the webhook event should be sent. If null, the filter always passes."""
+    r"""Filters to determine whether the webhook event should be sent. If null, the filter always passes.
+
+    When filters are compared for uniqueness, key order and the order of operations are ignored.
+    """
 
 
 class PatchV2WebhooksWebhookIDSubscriptionRequest(BaseModel):
@@ -205,7 +214,10 @@ class PatchV2WebhooksWebhookIDSubscriptionRequest(BaseModel):
         Nullable[PatchV2WebhooksWebhookIDFilterRequestUnion],
         pydantic.Field(alias="filter"),
     ]
-    r"""Filters to determine whether the webhook event should be sent. If null, the filter always passes."""
+    r"""Filters to determine whether the webhook event should be sent. If null, the filter always passes.
+
+    When filters are compared for uniqueness, key order and the order of operations are ignored.
+    """
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
@@ -228,7 +240,10 @@ class PatchV2WebhooksWebhookIDDataRequestTypedDict(TypedDict):
     subscriptions: NotRequired[
         List[PatchV2WebhooksWebhookIDSubscriptionRequestTypedDict]
     ]
-    r"""One or more events the webhook is subscribed to."""
+    r"""One or more events the webhook is subscribed to.
+
+    Within a workspace, the combination of target URL, event type and filter must be unique across all of your webhooks. A duplicate — whether against another webhook or repeated within a single request — is rejected with a `409 uniqueness_conflict`.
+    """
 
 
 class PatchV2WebhooksWebhookIDDataRequest(BaseModel):
@@ -236,7 +251,10 @@ class PatchV2WebhooksWebhookIDDataRequest(BaseModel):
     r"""URL where the webhook events will be delivered to."""
 
     subscriptions: Optional[List[PatchV2WebhooksWebhookIDSubscriptionRequest]] = None
-    r"""One or more events the webhook is subscribed to."""
+    r"""One or more events the webhook is subscribed to.
+
+    Within a workspace, the combination of target URL, event type and filter must be unique across all of your webhooks. A duplicate — whether against another webhook or repeated within a single request — is rejected with a `409 uniqueness_conflict`.
+    """
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
@@ -279,10 +297,16 @@ class PatchV2WebhooksWebhookIDRequest(BaseModel):
     ]
 
 
-PatchV2WebhooksWebhookIDType = Literal["invalid_request_error",]
+PatchV2WebhooksWebhookIDConflictType = Literal["invalid_request_error",]
 
 
-PatchV2WebhooksWebhookIDCode = Literal["not_found",]
+PatchV2WebhooksWebhookIDCodeUniquenessConflict = Literal["uniqueness_conflict",]
+
+
+PatchV2WebhooksWebhookIDNotFoundType = Literal["invalid_request_error",]
+
+
+PatchV2WebhooksWebhookIDNotFoundCode = Literal["not_found",]
 
 
 PatchV2WebhooksWebhookIDEventTypeResponse = Literal[
@@ -451,7 +475,10 @@ PatchV2WebhooksWebhookIDFilterResponseUnionTypedDict = TypeAliasType(
         PatchV2WebhooksWebhookIDFilterResponse2TypedDict,
     ],
 )
-r"""Filters to determine whether the webhook event should be sent. If null, the filter always passes."""
+r"""Filters to determine whether the webhook event should be sent. If null, the filter always passes.
+
+When filters are compared for uniqueness, key order and the order of operations are ignored.
+"""
 
 
 PatchV2WebhooksWebhookIDFilterResponseUnion = TypeAliasType(
@@ -460,14 +487,20 @@ PatchV2WebhooksWebhookIDFilterResponseUnion = TypeAliasType(
         PatchV2WebhooksWebhookIDFilterResponse1, PatchV2WebhooksWebhookIDFilterResponse2
     ],
 )
-r"""Filters to determine whether the webhook event should be sent. If null, the filter always passes."""
+r"""Filters to determine whether the webhook event should be sent. If null, the filter always passes.
+
+When filters are compared for uniqueness, key order and the order of operations are ignored.
+"""
 
 
 class PatchV2WebhooksWebhookIDSubscriptionResponseTypedDict(TypedDict):
     event_type: PatchV2WebhooksWebhookIDEventTypeResponse
     r"""Type of event the webhook is subscribed to."""
     filter_: Nullable[PatchV2WebhooksWebhookIDFilterResponseUnionTypedDict]
-    r"""Filters to determine whether the webhook event should be sent. If null, the filter always passes."""
+    r"""Filters to determine whether the webhook event should be sent. If null, the filter always passes.
+
+    When filters are compared for uniqueness, key order and the order of operations are ignored.
+    """
 
 
 class PatchV2WebhooksWebhookIDSubscriptionResponse(BaseModel):
@@ -478,7 +511,10 @@ class PatchV2WebhooksWebhookIDSubscriptionResponse(BaseModel):
         Nullable[PatchV2WebhooksWebhookIDFilterResponseUnion],
         pydantic.Field(alias="filter"),
     ]
-    r"""Filters to determine whether the webhook event should be sent. If null, the filter always passes."""
+    r"""Filters to determine whether the webhook event should be sent. If null, the filter always passes.
+
+    When filters are compared for uniqueness, key order and the order of operations are ignored.
+    """
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
@@ -522,7 +558,10 @@ class PatchV2WebhooksWebhookIDDataResponseTypedDict(TypedDict):
     target_url: str
     r"""URL where the webhook events will be delivered to."""
     subscriptions: List[PatchV2WebhooksWebhookIDSubscriptionResponseTypedDict]
-    r"""One or more events the webhook is subscribed to."""
+    r"""One or more events the webhook is subscribed to.
+
+    Within a workspace, the combination of target URL, event type and filter must be unique across all of your webhooks. A duplicate — whether against another webhook or repeated within a single request — is rejected with a `409 uniqueness_conflict`.
+    """
     id: PatchV2WebhooksWebhookIDIDTypedDict
     status: PatchV2WebhooksWebhookIDStatus
     r"""The state of the webhook. Webhooks marked as active and degraded will receive events, inactive ones will not. If a webhook remains in the degraded state for 7 days, it will be marked inactive."""
@@ -535,7 +574,10 @@ class PatchV2WebhooksWebhookIDDataResponse(BaseModel):
     r"""URL where the webhook events will be delivered to."""
 
     subscriptions: List[PatchV2WebhooksWebhookIDSubscriptionResponse]
-    r"""One or more events the webhook is subscribed to."""
+    r"""One or more events the webhook is subscribed to.
+
+    Within a workspace, the combination of target URL, event type and filter must be unique across all of your webhooks. A duplicate — whether against another webhook or repeated within a single request — is rejected with a `409 uniqueness_conflict`.
+    """
 
     id: PatchV2WebhooksWebhookIDID
 

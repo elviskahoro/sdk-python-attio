@@ -116,10 +116,10 @@ class PostV2NotesRequest(BaseModel):
     data: PostV2NotesData
 
 
-RequestEntityTooLargeType = Literal["invalid_request_error",]
+PostV2NotesRequestEntityTooLargeType = Literal["invalid_request_error",]
 
 
-RequestEntityTooLargeCode = Literal["validation_type",]
+PostV2NotesRequestEntityTooLargeCode = Literal["validation_type",]
 
 
 PostV2NotesNotFoundType = Literal["invalid_request_error",]

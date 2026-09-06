@@ -36,22 +36,22 @@ class PostV2ObjectsObjectRecordsMergeInvalidRequestError(SDKError):
         object.__setattr__(self, "data", data)
 
 
-class UnauthorizedErrorData(BaseModel):
+class PostV2ObjectsObjectRecordsMergeUnauthorizedErrorData(BaseModel):
     status_code: float
     type: models_post_v2_objects_object_records_mergeop.PostV2ObjectsObjectRecordsMergeForbiddenType
-    code: models_post_v2_objects_object_records_mergeop.CodeUnauthorized
+    code: models_post_v2_objects_object_records_mergeop.PostV2ObjectsObjectRecordsMergeCodeUnauthorized
     message: str
 
 
 @dataclass(unsafe_hash=True)
-class UnauthorizedError(SDKError):
+class PostV2ObjectsObjectRecordsMergeUnauthorizedError(SDKError):
     r"""Forbidden"""
 
-    data: UnauthorizedErrorData = field(hash=False)
+    data: PostV2ObjectsObjectRecordsMergeUnauthorizedErrorData = field(hash=False)
 
     def __init__(
         self,
-        data: UnauthorizedErrorData,
+        data: PostV2ObjectsObjectRecordsMergeUnauthorizedErrorData,
         raw_response: httpx.Response,
         body: Optional[str] = None,
     ):

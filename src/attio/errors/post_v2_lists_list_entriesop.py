@@ -36,6 +36,31 @@ class PostV2ListsListEntriesNotFoundError(SDKError):
         object.__setattr__(self, "data", data)
 
 
+class PostV2ListsListEntriesUnauthorizedErrorData(BaseModel):
+    status_code: float
+    type: models_post_v2_lists_list_entriesop.PostV2ListsListEntriesForbiddenType
+    code: models_post_v2_lists_list_entriesop.PostV2ListsListEntriesCodeUnauthorized
+    message: str
+
+
+@dataclass(unsafe_hash=True)
+class PostV2ListsListEntriesUnauthorizedError(SDKError):
+    r"""Forbidden"""
+
+    data: PostV2ListsListEntriesUnauthorizedErrorData = field(hash=False)
+
+    def __init__(
+        self,
+        data: PostV2ListsListEntriesUnauthorizedErrorData,
+        raw_response: httpx.Response,
+        body: Optional[str] = None,
+    ):
+        fallback = body or raw_response.text
+        message = str(data.message) or fallback
+        super().__init__(message, raw_response, body)
+        object.__setattr__(self, "data", data)
+
+
 class PostV2ListsListEntriesInvalidRequestErrorData(BaseModel):
     status_code: float
     type: models_post_v2_lists_list_entriesop.PostV2ListsListEntriesBadRequestType

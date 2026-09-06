@@ -29,6 +29,8 @@ class Threads(BaseSDK):
 
         List threads of comments on a record or list entry.
 
+        Each thread in the response includes at most `80` replies, starting with the oldest. When a thread holds more, its `has_more_comments` is `true`; use [Get a thread and its comments](/rest-api/endpoint-reference/threads/get-a-thread-and-its-comments) to page through every comment in that thread.
+
         To view threads on records, you will need the `object_configuration:read` and `record_permission:read` scopes.
 
         To view threads on list entries, you will need the `list_configuration:read` and `list_entry:read` scopes.
@@ -134,6 +136,8 @@ class Threads(BaseSDK):
 
         List threads of comments on a record or list entry.
 
+        Each thread in the response includes at most `80` replies, starting with the oldest. When a thread holds more, its `has_more_comments` is `true`; use [Get a thread and its comments](/rest-api/endpoint-reference/threads/get-a-thread-and-its-comments) to page through every comment in that thread.
+
         To view threads on records, you will need the `object_configuration:read` and `record_permission:read` scopes.
 
         To view threads on list entries, you will need the `list_configuration:read` and `list_entry:read` scopes.
@@ -225,14 +229,21 @@ class Threads(BaseSDK):
         self,
         *,
         thread_id: str,
+        limit: Optional[int] = None,
+        cursor: Optional[str] = None,
+        created_after: OptionalNullable[str] = UNSET,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
     ) -> models.GetV2ThreadsThreadIDResponse:
-        r"""Get a thread
+        r"""Get a thread and its comments
 
-        Get all comments in a thread.
+        Get a thread and page through its comments, oldest first, starting with the comment that opened it.
+
+        Comments are paginated: at most `250` are returned per request. Keep paginating for as long as a `next_cursor` is returned.
+
+        Supply `created_after` to return only the comments created after a timestamp, which is useful when polling a thread for new replies. The comment that opened the thread is returned only when it also satisfies the filter.
 
         To view threads on records, you will need the `object_configuration:read` and `record_permission:read` scopes.
 
@@ -241,6 +252,9 @@ class Threads(BaseSDK):
         Required scopes: `comment:read`.
 
         :param thread_id:
+        :param limit:
+        :param cursor:
+        :param created_after:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -258,6 +272,9 @@ class Threads(BaseSDK):
 
         request = models.GetV2ThreadsThreadIDRequest(
             thread_id=thread_id,
+            limit=limit,
+            cursor=cursor,
+            created_after=created_after,
         )
 
         req = self._build_request(
@@ -323,14 +340,21 @@ class Threads(BaseSDK):
         self,
         *,
         thread_id: str,
+        limit: Optional[int] = None,
+        cursor: Optional[str] = None,
+        created_after: OptionalNullable[str] = UNSET,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
     ) -> models.GetV2ThreadsThreadIDResponse:
-        r"""Get a thread
+        r"""Get a thread and its comments
 
-        Get all comments in a thread.
+        Get a thread and page through its comments, oldest first, starting with the comment that opened it.
+
+        Comments are paginated: at most `250` are returned per request. Keep paginating for as long as a `next_cursor` is returned.
+
+        Supply `created_after` to return only the comments created after a timestamp, which is useful when polling a thread for new replies. The comment that opened the thread is returned only when it also satisfies the filter.
 
         To view threads on records, you will need the `object_configuration:read` and `record_permission:read` scopes.
 
@@ -339,6 +363,9 @@ class Threads(BaseSDK):
         Required scopes: `comment:read`.
 
         :param thread_id:
+        :param limit:
+        :param cursor:
+        :param created_after:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -356,6 +383,9 @@ class Threads(BaseSDK):
 
         request = models.GetV2ThreadsThreadIDRequest(
             thread_id=thread_id,
+            limit=limit,
+            cursor=cursor,
+            created_after=created_after,
         )
 
         req = self._build_request_async(

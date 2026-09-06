@@ -36,6 +36,31 @@ class PatchV2ObjectsObjectRecordsRecordIDNotFoundError(SDKError):
         object.__setattr__(self, "data", data)
 
 
+class PatchV2ObjectsObjectRecordsRecordIDUnauthorizedErrorData(BaseModel):
+    status_code: float
+    type: models_patch_v2_objects_object_records_record_id_op.PatchV2ObjectsObjectRecordsRecordIDForbiddenType
+    code: models_patch_v2_objects_object_records_record_id_op.PatchV2ObjectsObjectRecordsRecordIDCodeUnauthorized
+    message: str
+
+
+@dataclass(unsafe_hash=True)
+class PatchV2ObjectsObjectRecordsRecordIDUnauthorizedError(SDKError):
+    r"""Forbidden"""
+
+    data: PatchV2ObjectsObjectRecordsRecordIDUnauthorizedErrorData = field(hash=False)
+
+    def __init__(
+        self,
+        data: PatchV2ObjectsObjectRecordsRecordIDUnauthorizedErrorData,
+        raw_response: httpx.Response,
+        body: Optional[str] = None,
+    ):
+        fallback = body or raw_response.text
+        message = str(data.message) or fallback
+        super().__init__(message, raw_response, body)
+        object.__setattr__(self, "data", data)
+
+
 class PatchV2ObjectsObjectRecordsRecordIDInvalidRequestErrorData(BaseModel):
     status_code: float
     type: models_patch_v2_objects_object_records_record_id_op.PatchV2ObjectsObjectRecordsRecordIDBadRequestType

@@ -36,6 +36,33 @@ class PutV2ObjectsObjectRecordsNotFoundError(SDKError):
         object.__setattr__(self, "data", data)
 
 
+class PutV2ObjectsObjectRecordsUnauthorizedErrorData(BaseModel):
+    status_code: float
+    type: models_put_v2_objects_object_recordsop.PutV2ObjectsObjectRecordsForbiddenType
+    code: (
+        models_put_v2_objects_object_recordsop.PutV2ObjectsObjectRecordsCodeUnauthorized
+    )
+    message: str
+
+
+@dataclass(unsafe_hash=True)
+class PutV2ObjectsObjectRecordsUnauthorizedError(SDKError):
+    r"""Forbidden"""
+
+    data: PutV2ObjectsObjectRecordsUnauthorizedErrorData = field(hash=False)
+
+    def __init__(
+        self,
+        data: PutV2ObjectsObjectRecordsUnauthorizedErrorData,
+        raw_response: httpx.Response,
+        body: Optional[str] = None,
+    ):
+        fallback = body or raw_response.text
+        message = str(data.message) or fallback
+        super().__init__(message, raw_response, body)
+        object.__setattr__(self, "data", data)
+
+
 class PutV2ObjectsObjectRecordsInvalidRequestErrorData(BaseModel):
     status_code: float
     type: models_put_v2_objects_object_recordsop.PutV2ObjectsObjectRecordsBadRequestType

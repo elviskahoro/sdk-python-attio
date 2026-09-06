@@ -11,8 +11,8 @@ from typing import Optional
 
 class PostV2NotesValidationTypeErrorData(BaseModel):
     status_code: float
-    type: models_post_v2_notesop.RequestEntityTooLargeType
-    code: models_post_v2_notesop.RequestEntityTooLargeCode
+    type: models_post_v2_notesop.PostV2NotesRequestEntityTooLargeType
+    code: models_post_v2_notesop.PostV2NotesRequestEntityTooLargeCode
     message: str
 
 

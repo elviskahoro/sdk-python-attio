@@ -12,7 +12,7 @@ from typing import Optional
 class PostV2ListsSlugConflictErrorData(BaseModel):
     status_code: float
     type: models_post_v2_listsop.PostV2ListsConflictType
-    code: models_post_v2_listsop.PostV2ListsConflictCode
+    code: models_post_v2_listsop.PostV2ListsCodeSlugConflict
     message: str
 
 

@@ -385,6 +385,13 @@ class Records(BaseSDK):
             raise errors.PostV2ObjectsObjectRecordsInvalidRequestError(
                 response_data, http_res
             )
+        if utils.match_response(http_res, "403", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PostV2ObjectsObjectRecordsUnauthorizedErrorData, http_res
+            )
+            raise errors.PostV2ObjectsObjectRecordsUnauthorizedError(
+                response_data, http_res
+            )
         if utils.match_response(http_res, "404", "application/json"):
             response_data = unmarshal_json_response(
                 errors.PostV2ObjectsObjectRecordsNotFoundErrorData, http_res
@@ -503,6 +510,13 @@ class Records(BaseSDK):
                 errors.PostV2ObjectsObjectRecordsInvalidRequestErrorData, http_res
             )
             raise errors.PostV2ObjectsObjectRecordsInvalidRequestError(
+                response_data, http_res
+            )
+        if utils.match_response(http_res, "403", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PostV2ObjectsObjectRecordsUnauthorizedErrorData, http_res
+            )
+            raise errors.PostV2ObjectsObjectRecordsUnauthorizedError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "404", "application/json"):
@@ -630,6 +644,13 @@ class Records(BaseSDK):
             raise errors.PutV2ObjectsObjectRecordsInvalidRequestError(
                 response_data, http_res
             )
+        if utils.match_response(http_res, "403", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PutV2ObjectsObjectRecordsUnauthorizedErrorData, http_res
+            )
+            raise errors.PutV2ObjectsObjectRecordsUnauthorizedError(
+                response_data, http_res
+            )
         if utils.match_response(http_res, "404", "application/json"):
             response_data = unmarshal_json_response(
                 errors.PutV2ObjectsObjectRecordsNotFoundErrorData, http_res
@@ -751,6 +772,13 @@ class Records(BaseSDK):
                 errors.PutV2ObjectsObjectRecordsInvalidRequestErrorData, http_res
             )
             raise errors.PutV2ObjectsObjectRecordsInvalidRequestError(
+                response_data, http_res
+            )
+        if utils.match_response(http_res, "403", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PutV2ObjectsObjectRecordsUnauthorizedErrorData, http_res
+            )
+            raise errors.PutV2ObjectsObjectRecordsUnauthorizedError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "404", "application/json"):
@@ -1075,6 +1103,14 @@ class Records(BaseSDK):
             raise errors.PatchV2ObjectsObjectRecordsRecordIDInvalidRequestError(
                 response_data, http_res
             )
+        if utils.match_response(http_res, "403", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PatchV2ObjectsObjectRecordsRecordIDUnauthorizedErrorData,
+                http_res,
+            )
+            raise errors.PatchV2ObjectsObjectRecordsRecordIDUnauthorizedError(
+                response_data, http_res
+            )
         if utils.match_response(http_res, "404", "application/json"):
             response_data = unmarshal_json_response(
                 errors.PatchV2ObjectsObjectRecordsRecordIDNotFoundErrorData, http_res
@@ -1197,6 +1233,14 @@ class Records(BaseSDK):
                 http_res,
             )
             raise errors.PatchV2ObjectsObjectRecordsRecordIDInvalidRequestError(
+                response_data, http_res
+            )
+        if utils.match_response(http_res, "403", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PatchV2ObjectsObjectRecordsRecordIDUnauthorizedErrorData,
+                http_res,
+            )
+            raise errors.PatchV2ObjectsObjectRecordsRecordIDUnauthorizedError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "404", "application/json"):
@@ -1323,6 +1367,13 @@ class Records(BaseSDK):
             raise errors.PutV2ObjectsObjectRecordsRecordIDInvalidRequestError(
                 response_data, http_res
             )
+        if utils.match_response(http_res, "403", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PutV2ObjectsObjectRecordsRecordIDUnauthorizedErrorData, http_res
+            )
+            raise errors.PutV2ObjectsObjectRecordsRecordIDUnauthorizedError(
+                response_data, http_res
+            )
         if utils.match_response(http_res, "404", "application/json"):
             response_data = unmarshal_json_response(
                 errors.PutV2ObjectsObjectRecordsRecordIDNotFoundErrorData, http_res
@@ -1447,6 +1498,13 @@ class Records(BaseSDK):
             raise errors.PutV2ObjectsObjectRecordsRecordIDInvalidRequestError(
                 response_data, http_res
             )
+        if utils.match_response(http_res, "403", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PutV2ObjectsObjectRecordsRecordIDUnauthorizedErrorData, http_res
+            )
+            raise errors.PutV2ObjectsObjectRecordsRecordIDUnauthorizedError(
+                response_data, http_res
+            )
         if utils.match_response(http_res, "404", "application/json"):
             response_data = unmarshal_json_response(
                 errors.PutV2ObjectsObjectRecordsRecordIDNotFoundErrorData, http_res
@@ -1546,6 +1604,14 @@ class Records(BaseSDK):
             return unmarshal_json_response(
                 models.DeleteV2ObjectsObjectRecordsRecordIDResponse, http_res
             )
+        if utils.match_response(http_res, "403", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.DeleteV2ObjectsObjectRecordsRecordIDUnauthorizedErrorData,
+                http_res,
+            )
+            raise errors.DeleteV2ObjectsObjectRecordsRecordIDUnauthorizedError(
+                response_data, http_res
+            )
         if utils.match_response(http_res, "404", "application/json"):
             response_data = unmarshal_json_response(
                 errors.DeleteV2ObjectsObjectRecordsRecordIDNotFoundErrorData, http_res
@@ -1644,6 +1710,14 @@ class Records(BaseSDK):
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(
                 models.DeleteV2ObjectsObjectRecordsRecordIDResponse, http_res
+            )
+        if utils.match_response(http_res, "403", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.DeleteV2ObjectsObjectRecordsRecordIDUnauthorizedErrorData,
+                http_res,
+            )
+            raise errors.DeleteV2ObjectsObjectRecordsRecordIDUnauthorizedError(
+                response_data, http_res
             )
         if utils.match_response(http_res, "404", "application/json"):
             response_data = unmarshal_json_response(
@@ -1777,9 +1851,11 @@ class Records(BaseSDK):
             raise errors.SelfMergeError(response_data, http_res)
         if utils.match_response(http_res, "403", "application/json"):
             response_data = unmarshal_json_response(
-                errors.UnauthorizedErrorData, http_res
+                errors.PostV2ObjectsObjectRecordsMergeUnauthorizedErrorData, http_res
             )
-            raise errors.UnauthorizedError(response_data, http_res)
+            raise errors.PostV2ObjectsObjectRecordsMergeUnauthorizedError(
+                response_data, http_res
+            )
         if utils.match_response(http_res, "404", "application/json"):
             response_data = unmarshal_json_response(
                 errors.PostV2ObjectsObjectRecordsMergeInvalidRequestErrorData, http_res
@@ -1912,9 +1988,11 @@ class Records(BaseSDK):
             raise errors.SelfMergeError(response_data, http_res)
         if utils.match_response(http_res, "403", "application/json"):
             response_data = unmarshal_json_response(
-                errors.UnauthorizedErrorData, http_res
+                errors.PostV2ObjectsObjectRecordsMergeUnauthorizedErrorData, http_res
             )
-            raise errors.UnauthorizedError(response_data, http_res)
+            raise errors.PostV2ObjectsObjectRecordsMergeUnauthorizedError(
+                response_data, http_res
+            )
         if utils.match_response(http_res, "404", "application/json"):
             response_data = unmarshal_json_response(
                 errors.PostV2ObjectsObjectRecordsMergeInvalidRequestErrorData, http_res
@@ -2166,6 +2244,298 @@ class Records(BaseSDK):
                 http_res,
             )
             raise errors.GetV2ObjectsObjectRecordsRecordIDAttributesAttributeValuesNotFoundError(
+                response_data, http_res
+            )
+        if utils.match_response(http_res, "4XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.SDKDefaultError("API error occurred", http_res, http_res_text)
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.SDKDefaultError("API error occurred", http_res, http_res_text)
+
+        raise errors.SDKDefaultError("Unexpected response received", http_res)
+
+    def put_v2_objects_object_records_record_id_attributes_attribute_values(
+        self,
+        *,
+        object: str,
+        record_id: str,
+        attribute: str,
+        data: Union[
+            models.PutV2ObjectsObjectRecordsRecordIDAttributesAttributeValuesDataRequest,
+            models.PutV2ObjectsObjectRecordsRecordIDAttributesAttributeValuesDataRequestTypedDict,
+        ],
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.PutV2ObjectsObjectRecordsRecordIDAttributesAttributeValuesResponse:
+        r"""Write record attribute values
+
+        Replaces the entire value history of a single attribute on a record, primarily to migrate historic data from an external source. Every value the attribute currently has is destroyed, including values not present in the request, and the supplied values are written with the `active_from` and `active_until` timestamps given.
+
+        Values may be supplied in any order and gaps between intervals are allowed. For attributes that accept a single value, at most one value may be active at a time, so intervals may not overlap and at most one may have a `null` `active_until`. At least one value is required.
+
+        Webhooks and workflow triggers do not fire for these writes, so migrating history does not replay automations. Search indexes and caches are still updated, and formula attributes that depend on this attribute are still recalculated.
+
+        Value history cannot be written for relationship attributes, formula attributes, enriched attributes, or immutable system attributes such as the entry's parent record.
+
+        This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
+
+        Required scopes: `record_permission:read-write`, `object_configuration:read`.
+
+        :param object:
+        :param record_id:
+        :param attribute:
+        :param data:
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.PutV2ObjectsObjectRecordsRecordIDAttributesAttributeValuesRequest(
+            object=object,
+            record_id=record_id,
+            attribute=attribute,
+            request_body=models.PutV2ObjectsObjectRecordsRecordIDAttributesAttributeValuesRequestBody(
+                data=utils.get_pydantic_model(
+                    data,
+                    models.PutV2ObjectsObjectRecordsRecordIDAttributesAttributeValuesDataRequest,
+                ),
+            ),
+        )
+
+        req = self._build_request(
+            method="PUT",
+            path="/v2/objects/{object}/records/{record_id}/attributes/{attribute}/values",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request.request_body,
+                False,
+                False,
+                "json",
+                models.PutV2ObjectsObjectRecordsRecordIDAttributesAttributeValuesRequestBody,
+            ),
+            allow_empty_value=None,
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="put_/v2/objects/{object}/records/{record_id}/attributes/{attribute}/values",
+                oauth2_scopes=None,
+                security_source=self.sdk_configuration.security,
+                tags=["Records"],
+                extensions={"x-mint": {"metadata": {"tag": "BETA"}}},
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        response_data: Any = None
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models.PutV2ObjectsObjectRecordsRecordIDAttributesAttributeValuesResponse,
+                http_res,
+            )
+        if utils.match_response(http_res, "400", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PutV2ObjectsObjectRecordsRecordIDAttributesAttributeValuesBadRequestInvalidRequestErrorData,
+                http_res,
+            )
+            raise errors.PutV2ObjectsObjectRecordsRecordIDAttributesAttributeValuesBadRequestInvalidRequestError(
+                response_data, http_res
+            )
+        if utils.match_response(http_res, "403", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PutV2ObjectsObjectRecordsRecordIDAttributesAttributeValuesUnauthorizedErrorData,
+                http_res,
+            )
+            raise errors.PutV2ObjectsObjectRecordsRecordIDAttributesAttributeValuesUnauthorizedError(
+                response_data, http_res
+            )
+        if utils.match_response(http_res, "404", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PutV2ObjectsObjectRecordsRecordIDAttributesAttributeValuesNotFoundInvalidRequestErrorData,
+                http_res,
+            )
+            raise errors.PutV2ObjectsObjectRecordsRecordIDAttributesAttributeValuesNotFoundInvalidRequestError(
+                response_data, http_res
+            )
+        if utils.match_response(http_res, "4XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.SDKDefaultError("API error occurred", http_res, http_res_text)
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.SDKDefaultError("API error occurred", http_res, http_res_text)
+
+        raise errors.SDKDefaultError("Unexpected response received", http_res)
+
+    async def put_v2_objects_object_records_record_id_attributes_attribute_values_async(
+        self,
+        *,
+        object: str,
+        record_id: str,
+        attribute: str,
+        data: Union[
+            models.PutV2ObjectsObjectRecordsRecordIDAttributesAttributeValuesDataRequest,
+            models.PutV2ObjectsObjectRecordsRecordIDAttributesAttributeValuesDataRequestTypedDict,
+        ],
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.PutV2ObjectsObjectRecordsRecordIDAttributesAttributeValuesResponse:
+        r"""Write record attribute values
+
+        Replaces the entire value history of a single attribute on a record, primarily to migrate historic data from an external source. Every value the attribute currently has is destroyed, including values not present in the request, and the supplied values are written with the `active_from` and `active_until` timestamps given.
+
+        Values may be supplied in any order and gaps between intervals are allowed. For attributes that accept a single value, at most one value may be active at a time, so intervals may not overlap and at most one may have a `null` `active_until`. At least one value is required.
+
+        Webhooks and workflow triggers do not fire for these writes, so migrating history does not replay automations. Search indexes and caches are still updated, and formula attributes that depend on this attribute are still recalculated.
+
+        Value history cannot be written for relationship attributes, formula attributes, enriched attributes, or immutable system attributes such as the entry's parent record.
+
+        This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
+
+        Required scopes: `record_permission:read-write`, `object_configuration:read`.
+
+        :param object:
+        :param record_id:
+        :param attribute:
+        :param data:
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.PutV2ObjectsObjectRecordsRecordIDAttributesAttributeValuesRequest(
+            object=object,
+            record_id=record_id,
+            attribute=attribute,
+            request_body=models.PutV2ObjectsObjectRecordsRecordIDAttributesAttributeValuesRequestBody(
+                data=utils.get_pydantic_model(
+                    data,
+                    models.PutV2ObjectsObjectRecordsRecordIDAttributesAttributeValuesDataRequest,
+                ),
+            ),
+        )
+
+        req = self._build_request_async(
+            method="PUT",
+            path="/v2/objects/{object}/records/{record_id}/attributes/{attribute}/values",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request.request_body,
+                False,
+                False,
+                "json",
+                models.PutV2ObjectsObjectRecordsRecordIDAttributesAttributeValuesRequestBody,
+            ),
+            allow_empty_value=None,
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="put_/v2/objects/{object}/records/{record_id}/attributes/{attribute}/values",
+                oauth2_scopes=None,
+                security_source=self.sdk_configuration.security,
+                tags=["Records"],
+                extensions={"x-mint": {"metadata": {"tag": "BETA"}}},
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        response_data: Any = None
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models.PutV2ObjectsObjectRecordsRecordIDAttributesAttributeValuesResponse,
+                http_res,
+            )
+        if utils.match_response(http_res, "400", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PutV2ObjectsObjectRecordsRecordIDAttributesAttributeValuesBadRequestInvalidRequestErrorData,
+                http_res,
+            )
+            raise errors.PutV2ObjectsObjectRecordsRecordIDAttributesAttributeValuesBadRequestInvalidRequestError(
+                response_data, http_res
+            )
+        if utils.match_response(http_res, "403", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PutV2ObjectsObjectRecordsRecordIDAttributesAttributeValuesUnauthorizedErrorData,
+                http_res,
+            )
+            raise errors.PutV2ObjectsObjectRecordsRecordIDAttributesAttributeValuesUnauthorizedError(
+                response_data, http_res
+            )
+        if utils.match_response(http_res, "404", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PutV2ObjectsObjectRecordsRecordIDAttributesAttributeValuesNotFoundInvalidRequestErrorData,
+                http_res,
+            )
+            raise errors.PutV2ObjectsObjectRecordsRecordIDAttributesAttributeValuesNotFoundInvalidRequestError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "4XX", "*"):

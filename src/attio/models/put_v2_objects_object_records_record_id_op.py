@@ -61,6 +61,12 @@ PutV2ObjectsObjectRecordsRecordIDNotFoundType = Literal["invalid_request_error",
 PutV2ObjectsObjectRecordsRecordIDNotFoundCode = Literal["not_found",]
 
 
+PutV2ObjectsObjectRecordsRecordIDForbiddenType = Literal["auth_error",]
+
+
+PutV2ObjectsObjectRecordsRecordIDCodeUnauthorized = Literal["unauthorized",]
+
+
 PutV2ObjectsObjectRecordsRecordIDBadRequestType = Literal["invalid_request_error",]
 
 
@@ -2267,6 +2273,7 @@ PutV2ObjectsObjectRecordsRecordIDCurrencyCode = Literal[
     "COP",
     "CZK",
     "DKK",
+    "EGP",
     "EUR",
     "FJD",
     "GHS",

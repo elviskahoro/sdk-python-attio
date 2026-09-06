@@ -204,6 +204,8 @@ class Webhooks(BaseSDK):
 
         Create a webhook and associated subscriptions.
 
+        Each combination of target URL, event type and filter must be unique within your workspace; duplicates are rejected with a 409.
+
         Required scopes: `webhook:read-write`.
 
         :param data:
@@ -277,6 +279,11 @@ class Webhooks(BaseSDK):
                 errors.PostV2WebhooksValidationTypeErrorData, http_res
             )
             raise errors.PostV2WebhooksValidationTypeError(response_data, http_res)
+        if utils.match_response(http_res, "409", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PostV2WebhooksUniquenessConflictErrorData, http_res
+            )
+            raise errors.PostV2WebhooksUniquenessConflictError(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.SDKDefaultError("API error occurred", http_res, http_res_text)
@@ -300,6 +307,8 @@ class Webhooks(BaseSDK):
         r"""Create a webhook
 
         Create a webhook and associated subscriptions.
+
+        Each combination of target URL, event type and filter must be unique within your workspace; duplicates are rejected with a 409.
 
         Required scopes: `webhook:read-write`.
 
@@ -374,6 +383,11 @@ class Webhooks(BaseSDK):
                 errors.PostV2WebhooksValidationTypeErrorData, http_res
             )
             raise errors.PostV2WebhooksValidationTypeError(response_data, http_res)
+        if utils.match_response(http_res, "409", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PostV2WebhooksUniquenessConflictErrorData, http_res
+            )
+            raise errors.PostV2WebhooksUniquenessConflictError(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.SDKDefaultError("API error occurred", http_res, http_res_text)
@@ -588,6 +602,8 @@ class Webhooks(BaseSDK):
 
         Update a webhook and associated subscriptions.
 
+        Each combination of target URL, event type and filter must be unique within your workspace; duplicates are rejected with a 409. Changing the target URL re-checks the webhook's existing subscriptions against the new URL.
+
         Required scopes: `webhook:read-write`.
 
         :param webhook_id:
@@ -673,6 +689,13 @@ class Webhooks(BaseSDK):
                 errors.PatchV2WebhooksWebhookIDNotFoundErrorData, http_res
             )
             raise errors.PatchV2WebhooksWebhookIDNotFoundError(response_data, http_res)
+        if utils.match_response(http_res, "409", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PatchV2WebhooksWebhookIDUniquenessConflictErrorData, http_res
+            )
+            raise errors.PatchV2WebhooksWebhookIDUniquenessConflictError(
+                response_data, http_res
+            )
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.SDKDefaultError("API error occurred", http_res, http_res_text)
@@ -698,6 +721,8 @@ class Webhooks(BaseSDK):
         r"""Update a webhook
 
         Update a webhook and associated subscriptions.
+
+        Each combination of target URL, event type and filter must be unique within your workspace; duplicates are rejected with a 409. Changing the target URL re-checks the webhook's existing subscriptions against the new URL.
 
         Required scopes: `webhook:read-write`.
 
@@ -784,6 +809,13 @@ class Webhooks(BaseSDK):
                 errors.PatchV2WebhooksWebhookIDNotFoundErrorData, http_res
             )
             raise errors.PatchV2WebhooksWebhookIDNotFoundError(response_data, http_res)
+        if utils.match_response(http_res, "409", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PatchV2WebhooksWebhookIDUniquenessConflictErrorData, http_res
+            )
+            raise errors.PatchV2WebhooksWebhookIDUniquenessConflictError(
+                response_data, http_res
+            )
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.SDKDefaultError("API error occurred", http_res, http_res_text)

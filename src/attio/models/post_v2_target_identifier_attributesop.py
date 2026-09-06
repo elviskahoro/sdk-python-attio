@@ -134,6 +134,7 @@ PostV2TargetIdentifierAttributesDefaultCurrencyCode = Literal[
     "COP",
     "CZK",
     "DKK",
+    "EGP",
     "EUR",
     "FJD",
     "GHS",
@@ -368,13 +369,19 @@ class PostV2TargetIdentifierAttributesRequest(BaseModel):
 PostV2TargetIdentifierAttributesConflictType = Literal["invalid_request_error",]
 
 
-PostV2TargetIdentifierAttributesConflictCode = Literal["slug_conflict",]
+PostV2TargetIdentifierAttributesCodeSlugConflict = Literal["slug_conflict",]
 
 
 PostV2TargetIdentifierAttributesNotFoundType = Literal["invalid_request_error",]
 
 
 PostV2TargetIdentifierAttributesNotFoundCode = Literal["not_found",]
+
+
+PostV2TargetIdentifierAttributesForbiddenType = Literal["auth_error",]
+
+
+PostV2TargetIdentifierAttributesCodeUnauthorized = Literal["unauthorized",]
 
 
 PostV2TargetIdentifierAttributesBadRequestType = Literal["invalid_request_error",]

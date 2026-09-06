@@ -2549,6 +2549,7 @@ GetV2ObjectsObjectRecordsRecordIDAttributesAttributeValuesCurrencyCode = Literal
     "COP",
     "CZK",
     "DKK",
+    "EGP",
     "EUR",
     "FJD",
     "GHS",

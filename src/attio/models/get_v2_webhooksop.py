@@ -198,20 +198,29 @@ GetV2WebhooksFilterUnionTypedDict = TypeAliasType(
     "GetV2WebhooksFilterUnionTypedDict",
     Union[GetV2WebhooksFilter1TypedDict, GetV2WebhooksFilter2TypedDict],
 )
-r"""Filters to determine whether the webhook event should be sent. If null, the filter always passes."""
+r"""Filters to determine whether the webhook event should be sent. If null, the filter always passes.
+
+When filters are compared for uniqueness, key order and the order of operations are ignored.
+"""
 
 
 GetV2WebhooksFilterUnion = TypeAliasType(
     "GetV2WebhooksFilterUnion", Union[GetV2WebhooksFilter1, GetV2WebhooksFilter2]
 )
-r"""Filters to determine whether the webhook event should be sent. If null, the filter always passes."""
+r"""Filters to determine whether the webhook event should be sent. If null, the filter always passes.
+
+When filters are compared for uniqueness, key order and the order of operations are ignored.
+"""
 
 
 class GetV2WebhooksSubscriptionTypedDict(TypedDict):
     event_type: GetV2WebhooksEventType
     r"""Type of event the webhook is subscribed to."""
     filter_: Nullable[GetV2WebhooksFilterUnionTypedDict]
-    r"""Filters to determine whether the webhook event should be sent. If null, the filter always passes."""
+    r"""Filters to determine whether the webhook event should be sent. If null, the filter always passes.
+
+    When filters are compared for uniqueness, key order and the order of operations are ignored.
+    """
 
 
 class GetV2WebhooksSubscription(BaseModel):
@@ -221,7 +230,10 @@ class GetV2WebhooksSubscription(BaseModel):
     filter_: Annotated[
         Nullable[GetV2WebhooksFilterUnion], pydantic.Field(alias="filter")
     ]
-    r"""Filters to determine whether the webhook event should be sent. If null, the filter always passes."""
+    r"""Filters to determine whether the webhook event should be sent. If null, the filter always passes.
+
+    When filters are compared for uniqueness, key order and the order of operations are ignored.
+    """
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
@@ -265,7 +277,10 @@ class GetV2WebhooksDataTypedDict(TypedDict):
     target_url: str
     r"""URL where the webhook events will be delivered to."""
     subscriptions: List[GetV2WebhooksSubscriptionTypedDict]
-    r"""One or more events the webhook is subscribed to."""
+    r"""One or more events the webhook is subscribed to.
+
+    Within a workspace, the combination of target URL, event type and filter must be unique across all of your webhooks. A duplicate — whether against another webhook or repeated within a single request — is rejected with a `409 uniqueness_conflict`.
+    """
     id: GetV2WebhooksIDTypedDict
     status: GetV2WebhooksStatus
     r"""The state of the webhook. Webhooks marked as active and degraded will receive events, inactive ones will not. If a webhook remains in the degraded state for 7 days, it will be marked inactive."""
@@ -278,7 +293,10 @@ class GetV2WebhooksData(BaseModel):
     r"""URL where the webhook events will be delivered to."""
 
     subscriptions: List[GetV2WebhooksSubscription]
-    r"""One or more events the webhook is subscribed to."""
+    r"""One or more events the webhook is subscribed to.
+
+    Within a workspace, the combination of target URL, event type and filter must be unique across all of your webhooks. A duplicate — whether against another webhook or repeated within a single request — is rejected with a `409 uniqueness_conflict`.
+    """
 
     id: GetV2WebhooksID
 

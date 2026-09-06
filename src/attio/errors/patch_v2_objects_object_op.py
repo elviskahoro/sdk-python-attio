@@ -12,7 +12,7 @@ from typing import Optional
 class PatchV2ObjectsObjectSlugConflictErrorData(BaseModel):
     status_code: float
     type: models_patch_v2_objects_object_op.PatchV2ObjectsObjectConflictType
-    code: models_patch_v2_objects_object_op.PatchV2ObjectsObjectConflictCode
+    code: models_patch_v2_objects_object_op.PatchV2ObjectsObjectCodeSlugConflict
     message: str
 
 
@@ -50,6 +50,31 @@ class PatchV2ObjectsObjectNotFoundError(SDKError):
     def __init__(
         self,
         data: PatchV2ObjectsObjectNotFoundErrorData,
+        raw_response: httpx.Response,
+        body: Optional[str] = None,
+    ):
+        fallback = body or raw_response.text
+        message = str(data.message) or fallback
+        super().__init__(message, raw_response, body)
+        object.__setattr__(self, "data", data)
+
+
+class PatchV2ObjectsObjectUnauthorizedErrorData(BaseModel):
+    status_code: float
+    type: models_patch_v2_objects_object_op.PatchV2ObjectsObjectForbiddenType
+    code: models_patch_v2_objects_object_op.PatchV2ObjectsObjectCodeUnauthorized
+    message: str
+
+
+@dataclass(unsafe_hash=True)
+class PatchV2ObjectsObjectUnauthorizedError(SDKError):
+    r"""Forbidden"""
+
+    data: PatchV2ObjectsObjectUnauthorizedErrorData = field(hash=False)
+
+    def __init__(
+        self,
+        data: PatchV2ObjectsObjectUnauthorizedErrorData,
         raw_response: httpx.Response,
         body: Optional[str] = None,
     ):
