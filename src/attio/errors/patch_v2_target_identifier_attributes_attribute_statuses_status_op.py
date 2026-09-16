@@ -16,7 +16,7 @@ class PatchV2TargetIdentifierAttributesAttributeStatusesStatusSlugConflictErrorD
 ):
     status_code: float
     type: models_patch_v2_target_identifier_attributes_attribute_statuses_status_op.PatchV2TargetIdentifierAttributesAttributeStatusesStatusConflictType
-    code: models_patch_v2_target_identifier_attributes_attribute_statuses_status_op.PatchV2TargetIdentifierAttributesAttributeStatusesStatusConflictCode
+    code: models_patch_v2_target_identifier_attributes_attribute_statuses_status_op.PatchV2TargetIdentifierAttributesAttributeStatusesStatusCodeSlugConflict
     message: str
 
 
@@ -62,6 +62,37 @@ class PatchV2TargetIdentifierAttributesAttributeStatusesStatusNotFoundError(SDKE
     def __init__(
         self,
         data: PatchV2TargetIdentifierAttributesAttributeStatusesStatusNotFoundErrorData,
+        raw_response: httpx.Response,
+        body: Optional[str] = None,
+    ):
+        fallback = body or raw_response.text
+        message = str(data.message) or fallback
+        super().__init__(message, raw_response, body)
+        object.__setattr__(self, "data", data)
+
+
+class PatchV2TargetIdentifierAttributesAttributeStatusesStatusUnauthorizedErrorData(
+    BaseModel
+):
+    status_code: float
+    type: models_patch_v2_target_identifier_attributes_attribute_statuses_status_op.PatchV2TargetIdentifierAttributesAttributeStatusesStatusForbiddenType
+    code: models_patch_v2_target_identifier_attributes_attribute_statuses_status_op.PatchV2TargetIdentifierAttributesAttributeStatusesStatusCodeUnauthorized
+    message: str
+
+
+@dataclass(unsafe_hash=True)
+class PatchV2TargetIdentifierAttributesAttributeStatusesStatusUnauthorizedError(
+    SDKError
+):
+    r"""Forbidden"""
+
+    data: PatchV2TargetIdentifierAttributesAttributeStatusesStatusUnauthorizedErrorData = field(
+        hash=False
+    )
+
+    def __init__(
+        self,
+        data: PatchV2TargetIdentifierAttributesAttributeStatusesStatusUnauthorizedErrorData,
         raw_response: httpx.Response,
         body: Optional[str] = None,
     ):

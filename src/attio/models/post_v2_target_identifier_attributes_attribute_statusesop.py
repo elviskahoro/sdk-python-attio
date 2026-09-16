@@ -103,7 +103,7 @@ PostV2TargetIdentifierAttributesAttributeStatusesConflictType = Literal[
 ]
 
 
-PostV2TargetIdentifierAttributesAttributeStatusesConflictCode = Literal[
+PostV2TargetIdentifierAttributesAttributeStatusesCodeSlugConflict = Literal[
     "slug_conflict",
 ]
 
@@ -114,6 +114,14 @@ PostV2TargetIdentifierAttributesAttributeStatusesNotFoundType = Literal[
 
 
 PostV2TargetIdentifierAttributesAttributeStatusesNotFoundCode = Literal["not_found",]
+
+
+PostV2TargetIdentifierAttributesAttributeStatusesForbiddenType = Literal["auth_error",]
+
+
+PostV2TargetIdentifierAttributesAttributeStatusesCodeUnauthorized = Literal[
+    "unauthorized",
+]
 
 
 PostV2TargetIdentifierAttributesAttributeStatusesBadRequestType = Literal[

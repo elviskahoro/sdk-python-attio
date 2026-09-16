@@ -9,7 +9,7 @@ from typing import Mapping, Optional
 
 
 class Emails(BaseSDK):
-    r"""Emails are messages synced from connected mailboxes. This API exposes their metadata — participants, subject line and timestamps — and never their content."""
+    r"""Emails are messages synced from connected mailboxes."""
 
     def get_v2_emails(
         self,
@@ -22,6 +22,7 @@ class Emails(BaseSDK):
         domain: Optional[str] = None,
         sent_after: OptionalNullable[str] = UNSET,
         sent_before: OptionalNullable[str] = UNSET,
+        exclude_automated_participants: Optional[bool] = False,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -38,7 +39,7 @@ class Emails(BaseSDK):
         **Things to know**
 
         - Filters that identify your own workspace are ignored. This covers a member's or invited member's address, one of your mailboxes, and any of their domains. If every filter you supply is ignored, an empty page is returned.
-        - A filter that names a protected recipient in your workspace is rejected rather than ignored. This covers an address, a domain, and a record that resolves to either.
+        - A filter that names a protected recipient in your workspace is rejected rather than ignored. This covers an address or a domain you supply directly. A record whose address or domain is a protected recipient is ignored instead, in the same way as the filters above.
         - Emails from a mailbox shared with your workspace as metadata only are returned without a subject line. An email is left out entirely when it has no participant you may see — that is, when every participant outside your workspace is a protected recipient.
         - An email that reached more than one of your mailboxes is returned once, and `id.mailbox_id` identifies whichever copy was readable.
         - `linked_records` is derived when you make the request rather than stored, so it reflects your records as they are now.
@@ -56,6 +57,7 @@ class Emails(BaseSDK):
         :param domain:
         :param sent_after:
         :param sent_before:
+        :param exclude_automated_participants:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -80,6 +82,7 @@ class Emails(BaseSDK):
             domain=domain,
             sent_after=sent_after,
             sent_before=sent_before,
+            exclude_automated_participants=exclude_automated_participants,
         )
 
         req = self._build_request(
@@ -144,6 +147,7 @@ class Emails(BaseSDK):
         domain: Optional[str] = None,
         sent_after: OptionalNullable[str] = UNSET,
         sent_before: OptionalNullable[str] = UNSET,
+        exclude_automated_participants: Optional[bool] = False,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -160,7 +164,7 @@ class Emails(BaseSDK):
         **Things to know**
 
         - Filters that identify your own workspace are ignored. This covers a member's or invited member's address, one of your mailboxes, and any of their domains. If every filter you supply is ignored, an empty page is returned.
-        - A filter that names a protected recipient in your workspace is rejected rather than ignored. This covers an address, a domain, and a record that resolves to either.
+        - A filter that names a protected recipient in your workspace is rejected rather than ignored. This covers an address or a domain you supply directly. A record whose address or domain is a protected recipient is ignored instead, in the same way as the filters above.
         - Emails from a mailbox shared with your workspace as metadata only are returned without a subject line. An email is left out entirely when it has no participant you may see — that is, when every participant outside your workspace is a protected recipient.
         - An email that reached more than one of your mailboxes is returned once, and `id.mailbox_id` identifies whichever copy was readable.
         - `linked_records` is derived when you make the request rather than stored, so it reflects your records as they are now.
@@ -178,6 +182,7 @@ class Emails(BaseSDK):
         :param domain:
         :param sent_after:
         :param sent_before:
+        :param exclude_automated_participants:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -202,6 +207,7 @@ class Emails(BaseSDK):
             domain=domain,
             sent_after=sent_after,
             sent_before=sent_before,
+            exclude_automated_participants=exclude_automated_participants,
         )
 
         req = self._build_request_async(

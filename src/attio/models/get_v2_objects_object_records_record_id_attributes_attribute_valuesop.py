@@ -1836,12 +1836,10 @@ class GetV2ObjectsObjectRecordsRecordIDAttributesAttributeValuesCreatedByActor8(
 
 
 GetV2ObjectsObjectRecordsRecordIDAttributesAttributeValuesInteractionType = Literal[
-    "calendar-event",
-    "call",
-    "chat-thread",
+    "activity",
     "email",
-    "in-person-meeting",
     "meeting",
+    "calendar-event",
 ]
 r"""The type of interaction e.g. calendar or email."""
 
@@ -2549,6 +2547,7 @@ GetV2ObjectsObjectRecordsRecordIDAttributesAttributeValuesCurrencyCode = Literal
     "COP",
     "CZK",
     "DKK",
+    "EGP",
     "EUR",
     "FJD",
     "GHS",

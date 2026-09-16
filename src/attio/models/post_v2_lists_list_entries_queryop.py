@@ -1752,12 +1752,10 @@ class PostV2ListsListEntriesQueryCreatedByActor8(BaseModel):
 
 
 PostV2ListsListEntriesQueryInteractionType = Literal[
-    "calendar-event",
-    "call",
-    "chat-thread",
+    "activity",
     "email",
-    "in-person-meeting",
     "meeting",
+    "calendar-event",
 ]
 r"""The type of interaction e.g. calendar or email."""
 
@@ -2357,6 +2355,7 @@ PostV2ListsListEntriesQueryCurrencyCode = Literal[
     "COP",
     "CZK",
     "DKK",
+    "EGP",
     "EUR",
     "FJD",
     "GHS",

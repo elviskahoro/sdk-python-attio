@@ -322,6 +322,13 @@ class Attributes(BaseSDK):
             raise errors.PostV2TargetIdentifierAttributesValidationTypeError(
                 response_data, http_res
             )
+        if utils.match_response(http_res, "403", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PostV2TargetIdentifierAttributesUnauthorizedErrorData, http_res
+            )
+            raise errors.PostV2TargetIdentifierAttributesUnauthorizedError(
+                response_data, http_res
+            )
         if utils.match_response(http_res, "404", "application/json"):
             response_data = unmarshal_json_response(
                 errors.PostV2TargetIdentifierAttributesNotFoundErrorData, http_res
@@ -454,6 +461,13 @@ class Attributes(BaseSDK):
                 errors.PostV2TargetIdentifierAttributesValidationTypeErrorData, http_res
             )
             raise errors.PostV2TargetIdentifierAttributesValidationTypeError(
+                response_data, http_res
+            )
+        if utils.match_response(http_res, "403", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PostV2TargetIdentifierAttributesUnauthorizedErrorData, http_res
+            )
+            raise errors.PostV2TargetIdentifierAttributesUnauthorizedError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "404", "application/json"):
@@ -790,9 +804,20 @@ class Attributes(BaseSDK):
             )
         if utils.match_response(http_res, "400", "application/json"):
             response_data = unmarshal_json_response(
-                errors.SystemEditUnauthorizedErrorData, http_res
+                errors.PatchV2TargetIdentifierAttributesAttributeSystemEditUnauthorizedErrorData,
+                http_res,
             )
-            raise errors.SystemEditUnauthorizedError(response_data, http_res)
+            raise errors.PatchV2TargetIdentifierAttributesAttributeSystemEditUnauthorizedError(
+                response_data, http_res
+            )
+        if utils.match_response(http_res, "403", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PatchV2TargetIdentifierAttributesAttributeUnauthorizedErrorData,
+                http_res,
+            )
+            raise errors.PatchV2TargetIdentifierAttributesAttributeUnauthorizedError(
+                response_data, http_res
+            )
         if utils.match_response(http_res, "404", "application/json"):
             response_data = unmarshal_json_response(
                 errors.PatchV2TargetIdentifierAttributesAttributeNotFoundErrorData,
@@ -915,9 +940,20 @@ class Attributes(BaseSDK):
             )
         if utils.match_response(http_res, "400", "application/json"):
             response_data = unmarshal_json_response(
-                errors.SystemEditUnauthorizedErrorData, http_res
+                errors.PatchV2TargetIdentifierAttributesAttributeSystemEditUnauthorizedErrorData,
+                http_res,
             )
-            raise errors.SystemEditUnauthorizedError(response_data, http_res)
+            raise errors.PatchV2TargetIdentifierAttributesAttributeSystemEditUnauthorizedError(
+                response_data, http_res
+            )
+        if utils.match_response(http_res, "403", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PatchV2TargetIdentifierAttributesAttributeUnauthorizedErrorData,
+                http_res,
+            )
+            raise errors.PatchV2TargetIdentifierAttributesAttributeUnauthorizedError(
+                response_data, http_res
+            )
         if utils.match_response(http_res, "404", "application/json"):
             response_data = unmarshal_json_response(
                 errors.PatchV2TargetIdentifierAttributesAttributeNotFoundErrorData,
@@ -1259,6 +1295,14 @@ class Attributes(BaseSDK):
             raise errors.PostV2TargetIdentifierAttributesAttributeOptionsValidationTypeError(
                 response_data, http_res
             )
+        if utils.match_response(http_res, "403", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PostV2TargetIdentifierAttributesAttributeOptionsUnauthorizedErrorData,
+                http_res,
+            )
+            raise errors.PostV2TargetIdentifierAttributesAttributeOptionsUnauthorizedError(
+                response_data, http_res
+            )
         if utils.match_response(http_res, "404", "application/json"):
             response_data = unmarshal_json_response(
                 errors.PostV2TargetIdentifierAttributesAttributeOptionsNotFoundErrorData,
@@ -1394,6 +1438,14 @@ class Attributes(BaseSDK):
                 http_res,
             )
             raise errors.PostV2TargetIdentifierAttributesAttributeOptionsValidationTypeError(
+                response_data, http_res
+            )
+        if utils.match_response(http_res, "403", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PostV2TargetIdentifierAttributesAttributeOptionsUnauthorizedErrorData,
+                http_res,
+            )
+            raise errors.PostV2TargetIdentifierAttributesAttributeOptionsUnauthorizedError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "404", "application/json"):
@@ -1537,6 +1589,14 @@ class Attributes(BaseSDK):
             raise errors.PatchV2TargetIdentifierAttributesAttributeOptionsOptionInvalidRequestError(
                 response_data, http_res
             )
+        if utils.match_response(http_res, "403", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PatchV2TargetIdentifierAttributesAttributeOptionsOptionUnauthorizedErrorData,
+                http_res,
+            )
+            raise errors.PatchV2TargetIdentifierAttributesAttributeOptionsOptionUnauthorizedError(
+                response_data, http_res
+            )
         if utils.match_response(http_res, "404", "application/json"):
             response_data = unmarshal_json_response(
                 errors.PatchV2TargetIdentifierAttributesAttributeOptionsOptionNotFoundErrorData,
@@ -1676,6 +1736,14 @@ class Attributes(BaseSDK):
                 http_res,
             )
             raise errors.PatchV2TargetIdentifierAttributesAttributeOptionsOptionInvalidRequestError(
+                response_data, http_res
+            )
+        if utils.match_response(http_res, "403", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PatchV2TargetIdentifierAttributesAttributeOptionsOptionUnauthorizedErrorData,
+                http_res,
+            )
+            raise errors.PatchV2TargetIdentifierAttributesAttributeOptionsOptionUnauthorizedError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "404", "application/json"):
@@ -2029,6 +2097,14 @@ class Attributes(BaseSDK):
             raise errors.PostV2TargetIdentifierAttributesAttributeStatusesValidationTypeError(
                 response_data, http_res
             )
+        if utils.match_response(http_res, "403", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PostV2TargetIdentifierAttributesAttributeStatusesUnauthorizedErrorData,
+                http_res,
+            )
+            raise errors.PostV2TargetIdentifierAttributesAttributeStatusesUnauthorizedError(
+                response_data, http_res
+            )
         if utils.match_response(http_res, "404", "application/json"):
             response_data = unmarshal_json_response(
                 errors.PostV2TargetIdentifierAttributesAttributeStatusesNotFoundErrorData,
@@ -2164,6 +2240,14 @@ class Attributes(BaseSDK):
                 http_res,
             )
             raise errors.PostV2TargetIdentifierAttributesAttributeStatusesValidationTypeError(
+                response_data, http_res
+            )
+        if utils.match_response(http_res, "403", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PostV2TargetIdentifierAttributesAttributeStatusesUnauthorizedErrorData,
+                http_res,
+            )
+            raise errors.PostV2TargetIdentifierAttributesAttributeStatusesUnauthorizedError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "404", "application/json"):
@@ -2307,6 +2391,14 @@ class Attributes(BaseSDK):
             raise errors.PatchV2TargetIdentifierAttributesAttributeStatusesStatusInvalidRequestError(
                 response_data, http_res
             )
+        if utils.match_response(http_res, "403", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PatchV2TargetIdentifierAttributesAttributeStatusesStatusUnauthorizedErrorData,
+                http_res,
+            )
+            raise errors.PatchV2TargetIdentifierAttributesAttributeStatusesStatusUnauthorizedError(
+                response_data, http_res
+            )
         if utils.match_response(http_res, "404", "application/json"):
             response_data = unmarshal_json_response(
                 errors.PatchV2TargetIdentifierAttributesAttributeStatusesStatusNotFoundErrorData,
@@ -2446,6 +2538,14 @@ class Attributes(BaseSDK):
                 http_res,
             )
             raise errors.PatchV2TargetIdentifierAttributesAttributeStatusesStatusInvalidRequestError(
+                response_data, http_res
+            )
+        if utils.match_response(http_res, "403", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PatchV2TargetIdentifierAttributesAttributeStatusesStatusUnauthorizedErrorData,
+                http_res,
+            )
+            raise errors.PatchV2TargetIdentifierAttributesAttributeStatusesStatusUnauthorizedError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "404", "application/json"):

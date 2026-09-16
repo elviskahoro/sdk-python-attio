@@ -69,6 +69,12 @@ PostV2ListsListEntriesNotFoundType = Literal["invalid_request_error",]
 PostV2ListsListEntriesNotFoundCode = Literal["not_found",]
 
 
+PostV2ListsListEntriesForbiddenType = Literal["auth_error",]
+
+
+PostV2ListsListEntriesCodeUnauthorized = Literal["unauthorized",]
+
+
 PostV2ListsListEntriesBadRequestType = Literal["invalid_request_error",]
 
 
@@ -1634,12 +1640,10 @@ class PostV2ListsListEntriesCreatedByActor8(BaseModel):
 
 
 PostV2ListsListEntriesInteractionType = Literal[
-    "calendar-event",
-    "call",
-    "chat-thread",
+    "activity",
     "email",
-    "in-person-meeting",
     "meeting",
+    "calendar-event",
 ]
 r"""The type of interaction e.g. calendar or email."""
 
@@ -2239,6 +2243,7 @@ PostV2ListsListEntriesCurrencyCode = Literal[
     "COP",
     "CZK",
     "DKK",
+    "EGP",
     "EUR",
     "FJD",
     "GHS",

@@ -90,6 +90,7 @@ PatchV2TargetIdentifierAttributesAttributeDefaultCurrencyCode = Literal[
     "COP",
     "CZK",
     "DKK",
+    "EGP",
     "EUR",
     "FJD",
     "GHS",
@@ -341,12 +342,20 @@ PatchV2TargetIdentifierAttributesAttributeNotFoundType = Literal[
 PatchV2TargetIdentifierAttributesAttributeNotFoundCode = Literal["not_found",]
 
 
+PatchV2TargetIdentifierAttributesAttributeForbiddenType = Literal["auth_error",]
+
+
+PatchV2TargetIdentifierAttributesAttributeCodeUnauthorized = Literal["unauthorized",]
+
+
 PatchV2TargetIdentifierAttributesAttributeBadRequestType = Literal[
     "invalid_request_error",
 ]
 
 
-CodeSystemEditUnauthorized = Literal["system_edit_unauthorized",]
+PatchV2TargetIdentifierAttributesAttributeCodeSystemEditUnauthorized = Literal[
+    "system_edit_unauthorized",
+]
 
 
 class PatchV2TargetIdentifierAttributesAttributeResponseTypedDict(TypedDict):

@@ -1807,12 +1807,10 @@ class GetV2ListsListEntriesEntryIDAttributesAttributeValuesCreatedByActor8(BaseM
 
 
 GetV2ListsListEntriesEntryIDAttributesAttributeValuesInteractionType = Literal[
-    "calendar-event",
-    "call",
-    "chat-thread",
+    "activity",
     "email",
-    "in-person-meeting",
     "meeting",
+    "calendar-event",
 ]
 r"""The type of interaction e.g. calendar or email."""
 
@@ -2520,6 +2518,7 @@ GetV2ListsListEntriesEntryIDAttributesAttributeValuesCurrencyCode = Literal[
     "COP",
     "CZK",
     "DKK",
+    "EGP",
     "EUR",
     "FJD",
     "GHS",

@@ -36,6 +36,31 @@ class PatchV2ListsListEntriesEntryIDNotFoundError(SDKError):
         object.__setattr__(self, "data", data)
 
 
+class PatchV2ListsListEntriesEntryIDUnauthorizedErrorData(BaseModel):
+    status_code: float
+    type: models_patch_v2_lists_list_entries_entry_id_op.PatchV2ListsListEntriesEntryIDForbiddenType
+    code: models_patch_v2_lists_list_entries_entry_id_op.PatchV2ListsListEntriesEntryIDCodeUnauthorized
+    message: str
+
+
+@dataclass(unsafe_hash=True)
+class PatchV2ListsListEntriesEntryIDUnauthorizedError(SDKError):
+    r"""Forbidden"""
+
+    data: PatchV2ListsListEntriesEntryIDUnauthorizedErrorData = field(hash=False)
+
+    def __init__(
+        self,
+        data: PatchV2ListsListEntriesEntryIDUnauthorizedErrorData,
+        raw_response: httpx.Response,
+        body: Optional[str] = None,
+    ):
+        fallback = body or raw_response.text
+        message = str(data.message) or fallback
+        super().__init__(message, raw_response, body)
+        object.__setattr__(self, "data", data)
+
+
 class PatchV2ListsListEntriesEntryIDInvalidRequestErrorData(BaseModel):
     status_code: float
     type: models_patch_v2_lists_list_entries_entry_id_op.PatchV2ListsListEntriesEntryIDBadRequestType

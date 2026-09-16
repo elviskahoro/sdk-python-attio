@@ -369,6 +369,13 @@ class Entries(BaseSDK):
             raise errors.PostV2ListsListEntriesInvalidRequestError(
                 response_data, http_res
             )
+        if utils.match_response(http_res, "403", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PostV2ListsListEntriesUnauthorizedErrorData, http_res
+            )
+            raise errors.PostV2ListsListEntriesUnauthorizedError(
+                response_data, http_res
+            )
         if utils.match_response(http_res, "404", "application/json"):
             response_data = unmarshal_json_response(
                 errors.PostV2ListsListEntriesNotFoundErrorData, http_res
@@ -485,6 +492,13 @@ class Entries(BaseSDK):
                 errors.PostV2ListsListEntriesInvalidRequestErrorData, http_res
             )
             raise errors.PostV2ListsListEntriesInvalidRequestError(
+                response_data, http_res
+            )
+        if utils.match_response(http_res, "403", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PostV2ListsListEntriesUnauthorizedErrorData, http_res
+            )
+            raise errors.PostV2ListsListEntriesUnauthorizedError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "404", "application/json"):
@@ -605,6 +619,11 @@ class Entries(BaseSDK):
             raise errors.PutV2ListsListEntriesInvalidRequestError(
                 response_data, http_res
             )
+        if utils.match_response(http_res, "403", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PutV2ListsListEntriesUnauthorizedErrorData, http_res
+            )
+            raise errors.PutV2ListsListEntriesUnauthorizedError(response_data, http_res)
         if utils.match_response(http_res, "404", "application/json"):
             response_data = unmarshal_json_response(
                 errors.PutV2ListsListEntriesNotFoundErrorData, http_res
@@ -723,6 +742,11 @@ class Entries(BaseSDK):
             raise errors.PutV2ListsListEntriesInvalidRequestError(
                 response_data, http_res
             )
+        if utils.match_response(http_res, "403", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PutV2ListsListEntriesUnauthorizedErrorData, http_res
+            )
+            raise errors.PutV2ListsListEntriesUnauthorizedError(response_data, http_res)
         if utils.match_response(http_res, "404", "application/json"):
             response_data = unmarshal_json_response(
                 errors.PutV2ListsListEntriesNotFoundErrorData, http_res
@@ -1042,6 +1066,13 @@ class Entries(BaseSDK):
             raise errors.PatchV2ListsListEntriesEntryIDInvalidRequestError(
                 response_data, http_res
             )
+        if utils.match_response(http_res, "403", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PatchV2ListsListEntriesEntryIDUnauthorizedErrorData, http_res
+            )
+            raise errors.PatchV2ListsListEntriesEntryIDUnauthorizedError(
+                response_data, http_res
+            )
         if utils.match_response(http_res, "404", "application/json"):
             response_data = unmarshal_json_response(
                 errors.PatchV2ListsListEntriesEntryIDNotFoundErrorData, http_res
@@ -1163,6 +1194,13 @@ class Entries(BaseSDK):
                 errors.PatchV2ListsListEntriesEntryIDInvalidRequestErrorData, http_res
             )
             raise errors.PatchV2ListsListEntriesEntryIDInvalidRequestError(
+                response_data, http_res
+            )
+        if utils.match_response(http_res, "403", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PatchV2ListsListEntriesEntryIDUnauthorizedErrorData, http_res
+            )
+            raise errors.PatchV2ListsListEntriesEntryIDUnauthorizedError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "404", "application/json"):
@@ -1288,6 +1326,13 @@ class Entries(BaseSDK):
             raise errors.PutV2ListsListEntriesEntryIDInvalidRequestError(
                 response_data, http_res
             )
+        if utils.match_response(http_res, "403", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PutV2ListsListEntriesEntryIDUnauthorizedErrorData, http_res
+            )
+            raise errors.PutV2ListsListEntriesEntryIDUnauthorizedError(
+                response_data, http_res
+            )
         if utils.match_response(http_res, "404", "application/json"):
             response_data = unmarshal_json_response(
                 errors.PutV2ListsListEntriesEntryIDNotFoundErrorData, http_res
@@ -1411,6 +1456,13 @@ class Entries(BaseSDK):
             raise errors.PutV2ListsListEntriesEntryIDInvalidRequestError(
                 response_data, http_res
             )
+        if utils.match_response(http_res, "403", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PutV2ListsListEntriesEntryIDUnauthorizedErrorData, http_res
+            )
+            raise errors.PutV2ListsListEntriesEntryIDUnauthorizedError(
+                response_data, http_res
+            )
         if utils.match_response(http_res, "404", "application/json"):
             response_data = unmarshal_json_response(
                 errors.PutV2ListsListEntriesEntryIDNotFoundErrorData, http_res
@@ -1510,6 +1562,13 @@ class Entries(BaseSDK):
             return unmarshal_json_response(
                 models.DeleteV2ListsListEntriesEntryIDResponse, http_res
             )
+        if utils.match_response(http_res, "403", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.DeleteV2ListsListEntriesEntryIDUnauthorizedErrorData, http_res
+            )
+            raise errors.DeleteV2ListsListEntriesEntryIDUnauthorizedError(
+                response_data, http_res
+            )
         if utils.match_response(http_res, "404", "application/json"):
             response_data = unmarshal_json_response(
                 errors.DeleteV2ListsListEntriesEntryIDNotFoundErrorData, http_res
@@ -1608,6 +1667,13 @@ class Entries(BaseSDK):
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(
                 models.DeleteV2ListsListEntriesEntryIDResponse, http_res
+            )
+        if utils.match_response(http_res, "403", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.DeleteV2ListsListEntriesEntryIDUnauthorizedErrorData, http_res
+            )
+            raise errors.DeleteV2ListsListEntriesEntryIDUnauthorizedError(
+                response_data, http_res
             )
         if utils.match_response(http_res, "404", "application/json"):
             response_data = unmarshal_json_response(
@@ -1840,6 +1906,298 @@ class Entries(BaseSDK):
                 http_res,
             )
             raise errors.GetV2ListsListEntriesEntryIDAttributesAttributeValuesNotFoundError(
+                response_data, http_res
+            )
+        if utils.match_response(http_res, "4XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.SDKDefaultError("API error occurred", http_res, http_res_text)
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.SDKDefaultError("API error occurred", http_res, http_res_text)
+
+        raise errors.SDKDefaultError("Unexpected response received", http_res)
+
+    def put_v2_lists_list_entries_entry_id_attributes_attribute_values(
+        self,
+        *,
+        list: str,
+        entry_id: str,
+        attribute: str,
+        data: Union[
+            models.PutV2ListsListEntriesEntryIDAttributesAttributeValuesDataRequest,
+            models.PutV2ListsListEntriesEntryIDAttributesAttributeValuesDataRequestTypedDict,
+        ],
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.PutV2ListsListEntriesEntryIDAttributesAttributeValuesResponse:
+        r"""Write list entry attribute values
+
+        Replaces the entire value history of a single attribute on a list entry, primarily to migrate historic data from an external source. Every value the attribute currently has is destroyed, including values not present in the request, and the supplied values are written with the `active_from` and `active_until` timestamps given.
+
+        Values may be supplied in any order and gaps between intervals are allowed. For attributes that accept a single value, at most one value may be active at a time, so intervals may not overlap and at most one may have a `null` `active_until`. At least one value is required.
+
+        Webhooks and workflow triggers do not fire for these writes, so migrating history does not replay automations. Search indexes and caches are still updated, and formula attributes that depend on this attribute are still recalculated.
+
+        Value history cannot be written for relationship attributes, formula attributes, enriched attributes, or immutable system attributes such as the entry's parent record.
+
+        This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
+
+        Required scopes: `list_entry:read-write`, `list_configuration:read`.
+
+        :param list:
+        :param entry_id:
+        :param attribute:
+        :param data:
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.PutV2ListsListEntriesEntryIDAttributesAttributeValuesRequest(
+            list=list,
+            entry_id=entry_id,
+            attribute=attribute,
+            request_body=models.PutV2ListsListEntriesEntryIDAttributesAttributeValuesRequestBody(
+                data=utils.get_pydantic_model(
+                    data,
+                    models.PutV2ListsListEntriesEntryIDAttributesAttributeValuesDataRequest,
+                ),
+            ),
+        )
+
+        req = self._build_request(
+            method="PUT",
+            path="/v2/lists/{list}/entries/{entry_id}/attributes/{attribute}/values",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request.request_body,
+                False,
+                False,
+                "json",
+                models.PutV2ListsListEntriesEntryIDAttributesAttributeValuesRequestBody,
+            ),
+            allow_empty_value=None,
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="put_/v2/lists/{list}/entries/{entry_id}/attributes/{attribute}/values",
+                oauth2_scopes=None,
+                security_source=self.sdk_configuration.security,
+                tags=["Entries"],
+                extensions={"x-mint": {"metadata": {"tag": "BETA"}}},
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        response_data: Any = None
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models.PutV2ListsListEntriesEntryIDAttributesAttributeValuesResponse,
+                http_res,
+            )
+        if utils.match_response(http_res, "400", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PutV2ListsListEntriesEntryIDAttributesAttributeValuesBadRequestInvalidRequestErrorData,
+                http_res,
+            )
+            raise errors.PutV2ListsListEntriesEntryIDAttributesAttributeValuesBadRequestInvalidRequestError(
+                response_data, http_res
+            )
+        if utils.match_response(http_res, "403", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PutV2ListsListEntriesEntryIDAttributesAttributeValuesUnauthorizedErrorData,
+                http_res,
+            )
+            raise errors.PutV2ListsListEntriesEntryIDAttributesAttributeValuesUnauthorizedError(
+                response_data, http_res
+            )
+        if utils.match_response(http_res, "404", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PutV2ListsListEntriesEntryIDAttributesAttributeValuesNotFoundInvalidRequestErrorData,
+                http_res,
+            )
+            raise errors.PutV2ListsListEntriesEntryIDAttributesAttributeValuesNotFoundInvalidRequestError(
+                response_data, http_res
+            )
+        if utils.match_response(http_res, "4XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.SDKDefaultError("API error occurred", http_res, http_res_text)
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.SDKDefaultError("API error occurred", http_res, http_res_text)
+
+        raise errors.SDKDefaultError("Unexpected response received", http_res)
+
+    async def put_v2_lists_list_entries_entry_id_attributes_attribute_values_async(
+        self,
+        *,
+        list: str,
+        entry_id: str,
+        attribute: str,
+        data: Union[
+            models.PutV2ListsListEntriesEntryIDAttributesAttributeValuesDataRequest,
+            models.PutV2ListsListEntriesEntryIDAttributesAttributeValuesDataRequestTypedDict,
+        ],
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.PutV2ListsListEntriesEntryIDAttributesAttributeValuesResponse:
+        r"""Write list entry attribute values
+
+        Replaces the entire value history of a single attribute on a list entry, primarily to migrate historic data from an external source. Every value the attribute currently has is destroyed, including values not present in the request, and the supplied values are written with the `active_from` and `active_until` timestamps given.
+
+        Values may be supplied in any order and gaps between intervals are allowed. For attributes that accept a single value, at most one value may be active at a time, so intervals may not overlap and at most one may have a `null` `active_until`. At least one value is required.
+
+        Webhooks and workflow triggers do not fire for these writes, so migrating history does not replay automations. Search indexes and caches are still updated, and formula attributes that depend on this attribute are still recalculated.
+
+        Value history cannot be written for relationship attributes, formula attributes, enriched attributes, or immutable system attributes such as the entry's parent record.
+
+        This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
+
+        Required scopes: `list_entry:read-write`, `list_configuration:read`.
+
+        :param list:
+        :param entry_id:
+        :param attribute:
+        :param data:
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.PutV2ListsListEntriesEntryIDAttributesAttributeValuesRequest(
+            list=list,
+            entry_id=entry_id,
+            attribute=attribute,
+            request_body=models.PutV2ListsListEntriesEntryIDAttributesAttributeValuesRequestBody(
+                data=utils.get_pydantic_model(
+                    data,
+                    models.PutV2ListsListEntriesEntryIDAttributesAttributeValuesDataRequest,
+                ),
+            ),
+        )
+
+        req = self._build_request_async(
+            method="PUT",
+            path="/v2/lists/{list}/entries/{entry_id}/attributes/{attribute}/values",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request.request_body,
+                False,
+                False,
+                "json",
+                models.PutV2ListsListEntriesEntryIDAttributesAttributeValuesRequestBody,
+            ),
+            allow_empty_value=None,
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="put_/v2/lists/{list}/entries/{entry_id}/attributes/{attribute}/values",
+                oauth2_scopes=None,
+                security_source=self.sdk_configuration.security,
+                tags=["Entries"],
+                extensions={"x-mint": {"metadata": {"tag": "BETA"}}},
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        response_data: Any = None
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models.PutV2ListsListEntriesEntryIDAttributesAttributeValuesResponse,
+                http_res,
+            )
+        if utils.match_response(http_res, "400", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PutV2ListsListEntriesEntryIDAttributesAttributeValuesBadRequestInvalidRequestErrorData,
+                http_res,
+            )
+            raise errors.PutV2ListsListEntriesEntryIDAttributesAttributeValuesBadRequestInvalidRequestError(
+                response_data, http_res
+            )
+        if utils.match_response(http_res, "403", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PutV2ListsListEntriesEntryIDAttributesAttributeValuesUnauthorizedErrorData,
+                http_res,
+            )
+            raise errors.PutV2ListsListEntriesEntryIDAttributesAttributeValuesUnauthorizedError(
+                response_data, http_res
+            )
+        if utils.match_response(http_res, "404", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PutV2ListsListEntriesEntryIDAttributesAttributeValuesNotFoundInvalidRequestErrorData,
+                http_res,
+            )
+            raise errors.PutV2ListsListEntriesEntryIDAttributesAttributeValuesNotFoundInvalidRequestError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "4XX", "*"):
