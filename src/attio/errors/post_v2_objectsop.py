@@ -12,7 +12,7 @@ from typing import Optional
 class PostV2ObjectsSlugConflictErrorData(BaseModel):
     status_code: float
     type: models_post_v2_objectsop.PostV2ObjectsConflictType
-    code: models_post_v2_objectsop.PostV2ObjectsConflictCode
+    code: models_post_v2_objectsop.PostV2ObjectsCodeSlugConflict
     message: str
 
 
@@ -25,6 +25,31 @@ class PostV2ObjectsSlugConflictError(SDKError):
     def __init__(
         self,
         data: PostV2ObjectsSlugConflictErrorData,
+        raw_response: httpx.Response,
+        body: Optional[str] = None,
+    ):
+        fallback = body or raw_response.text
+        message = str(data.message) or fallback
+        super().__init__(message, raw_response, body)
+        object.__setattr__(self, "data", data)
+
+
+class PostV2ObjectsUnauthorizedErrorData(BaseModel):
+    status_code: float
+    type: models_post_v2_objectsop.PostV2ObjectsForbiddenType
+    code: models_post_v2_objectsop.PostV2ObjectsCodeUnauthorized
+    message: str
+
+
+@dataclass(unsafe_hash=True)
+class PostV2ObjectsUnauthorizedError(SDKError):
+    r"""Forbidden"""
+
+    data: PostV2ObjectsUnauthorizedErrorData = field(hash=False)
+
+    def __init__(
+        self,
+        data: PostV2ObjectsUnauthorizedErrorData,
         raw_response: httpx.Response,
         body: Optional[str] = None,
     ):

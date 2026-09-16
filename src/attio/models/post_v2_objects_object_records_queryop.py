@@ -1756,12 +1756,10 @@ class PostV2ObjectsObjectRecordsQueryCreatedByActor8(BaseModel):
 
 
 PostV2ObjectsObjectRecordsQueryInteractionType = Literal[
-    "calendar-event",
-    "call",
-    "chat-thread",
+    "activity",
     "email",
-    "in-person-meeting",
     "meeting",
+    "calendar-event",
 ]
 r"""The type of interaction e.g. calendar or email."""
 
@@ -2363,6 +2361,7 @@ PostV2ObjectsObjectRecordsQueryCurrencyCode = Literal[
     "COP",
     "CZK",
     "DKK",
+    "EGP",
     "EUR",
     "FJD",
     "GHS",

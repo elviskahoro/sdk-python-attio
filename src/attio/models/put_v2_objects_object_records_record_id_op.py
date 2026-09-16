@@ -61,6 +61,12 @@ PutV2ObjectsObjectRecordsRecordIDNotFoundType = Literal["invalid_request_error",
 PutV2ObjectsObjectRecordsRecordIDNotFoundCode = Literal["not_found",]
 
 
+PutV2ObjectsObjectRecordsRecordIDForbiddenType = Literal["auth_error",]
+
+
+PutV2ObjectsObjectRecordsRecordIDCodeUnauthorized = Literal["unauthorized",]
+
+
 PutV2ObjectsObjectRecordsRecordIDBadRequestType = Literal["invalid_request_error",]
 
 
@@ -1660,12 +1666,10 @@ class PutV2ObjectsObjectRecordsRecordIDCreatedByActor8(BaseModel):
 
 
 PutV2ObjectsObjectRecordsRecordIDInteractionType = Literal[
-    "calendar-event",
-    "call",
-    "chat-thread",
+    "activity",
     "email",
-    "in-person-meeting",
     "meeting",
+    "calendar-event",
 ]
 r"""The type of interaction e.g. calendar or email."""
 
@@ -2267,6 +2271,7 @@ PutV2ObjectsObjectRecordsRecordIDCurrencyCode = Literal[
     "COP",
     "CZK",
     "DKK",
+    "EGP",
     "EUR",
     "FJD",
     "GHS",

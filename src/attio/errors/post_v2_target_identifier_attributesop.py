@@ -14,7 +14,7 @@ from typing import Optional
 class PostV2TargetIdentifierAttributesSlugConflictErrorData(BaseModel):
     status_code: float
     type: models_post_v2_target_identifier_attributesop.PostV2TargetIdentifierAttributesConflictType
-    code: models_post_v2_target_identifier_attributesop.PostV2TargetIdentifierAttributesConflictCode
+    code: models_post_v2_target_identifier_attributesop.PostV2TargetIdentifierAttributesCodeSlugConflict
     message: str
 
 
@@ -52,6 +52,31 @@ class PostV2TargetIdentifierAttributesNotFoundError(SDKError):
     def __init__(
         self,
         data: PostV2TargetIdentifierAttributesNotFoundErrorData,
+        raw_response: httpx.Response,
+        body: Optional[str] = None,
+    ):
+        fallback = body or raw_response.text
+        message = str(data.message) or fallback
+        super().__init__(message, raw_response, body)
+        object.__setattr__(self, "data", data)
+
+
+class PostV2TargetIdentifierAttributesUnauthorizedErrorData(BaseModel):
+    status_code: float
+    type: models_post_v2_target_identifier_attributesop.PostV2TargetIdentifierAttributesForbiddenType
+    code: models_post_v2_target_identifier_attributesop.PostV2TargetIdentifierAttributesCodeUnauthorized
+    message: str
+
+
+@dataclass(unsafe_hash=True)
+class PostV2TargetIdentifierAttributesUnauthorizedError(SDKError):
+    r"""Forbidden"""
+
+    data: PostV2TargetIdentifierAttributesUnauthorizedErrorData = field(hash=False)
+
+    def __init__(
+        self,
+        data: PostV2TargetIdentifierAttributesUnauthorizedErrorData,
         raw_response: httpx.Response,
         body: Optional[str] = None,
     ):

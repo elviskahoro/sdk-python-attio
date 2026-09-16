@@ -18,6 +18,7 @@ class GetV2EmailsRequestTypedDict(TypedDict):
     domain: NotRequired[str]
     sent_after: NotRequired[Nullable[str]]
     sent_before: NotRequired[Nullable[str]]
+    exclude_automated_participants: NotRequired[bool]
 
 
 class GetV2EmailsRequest(BaseModel):
@@ -61,6 +62,11 @@ class GetV2EmailsRequest(BaseModel):
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = UNSET
 
+    exclude_automated_participants: Annotated[
+        Optional[bool],
+        FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
+    ] = False
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
@@ -73,6 +79,7 @@ class GetV2EmailsRequest(BaseModel):
                 "domain",
                 "sent_after",
                 "sent_before",
+                "exclude_automated_participants",
             ]
         )
         nullable_fields = set(["sent_after", "sent_before"])

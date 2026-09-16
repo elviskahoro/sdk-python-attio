@@ -16,7 +16,7 @@ class PatchV2TargetIdentifierAttributesAttributeOptionsOptionSlugConflictErrorDa
 ):
     status_code: float
     type: models_patch_v2_target_identifier_attributes_attribute_options_option_op.PatchV2TargetIdentifierAttributesAttributeOptionsOptionConflictType
-    code: models_patch_v2_target_identifier_attributes_attribute_options_option_op.PatchV2TargetIdentifierAttributesAttributeOptionsOptionConflictCode
+    code: models_patch_v2_target_identifier_attributes_attribute_options_option_op.PatchV2TargetIdentifierAttributesAttributeOptionsOptionCodeSlugConflict
     message: str
 
 
@@ -62,6 +62,37 @@ class PatchV2TargetIdentifierAttributesAttributeOptionsOptionNotFoundError(SDKEr
     def __init__(
         self,
         data: PatchV2TargetIdentifierAttributesAttributeOptionsOptionNotFoundErrorData,
+        raw_response: httpx.Response,
+        body: Optional[str] = None,
+    ):
+        fallback = body or raw_response.text
+        message = str(data.message) or fallback
+        super().__init__(message, raw_response, body)
+        object.__setattr__(self, "data", data)
+
+
+class PatchV2TargetIdentifierAttributesAttributeOptionsOptionUnauthorizedErrorData(
+    BaseModel
+):
+    status_code: float
+    type: models_patch_v2_target_identifier_attributes_attribute_options_option_op.PatchV2TargetIdentifierAttributesAttributeOptionsOptionForbiddenType
+    code: models_patch_v2_target_identifier_attributes_attribute_options_option_op.PatchV2TargetIdentifierAttributesAttributeOptionsOptionCodeUnauthorized
+    message: str
+
+
+@dataclass(unsafe_hash=True)
+class PatchV2TargetIdentifierAttributesAttributeOptionsOptionUnauthorizedError(
+    SDKError
+):
+    r"""Forbidden"""
+
+    data: PatchV2TargetIdentifierAttributesAttributeOptionsOptionUnauthorizedErrorData = field(
+        hash=False
+    )
+
+    def __init__(
+        self,
+        data: PatchV2TargetIdentifierAttributesAttributeOptionsOptionUnauthorizedErrorData,
         raw_response: httpx.Response,
         body: Optional[str] = None,
     ):

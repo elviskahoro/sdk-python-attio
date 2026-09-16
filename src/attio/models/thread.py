@@ -24,17 +24,17 @@ class ThreadID(BaseModel):
 
 class ThreadTypedDict(TypedDict):
     id: ThreadIDTypedDict
-    comments: List[CommentTypedDict]
-    r"""An array of comments in the thread, sorted by `created_at`."""
     created_at: str
     r"""When the thread was created."""
+    comments: List[CommentTypedDict]
+    r"""The requested page of comments in the thread, sorted by `created_at`, oldest first. Keep paginating for as long as a `next_cursor` is returned."""
 
 
 class Thread(BaseModel):
     id: ThreadID
 
-    comments: List[Comment]
-    r"""An array of comments in the thread, sorted by `created_at`."""
-
     created_at: str
     r"""When the thread was created."""
+
+    comments: List[Comment]
+    r"""The requested page of comments in the thread, sorted by `created_at`, oldest first. Keep paginating for as long as a `next_cursor` is returned."""

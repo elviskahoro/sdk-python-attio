@@ -2,20 +2,64 @@
 
 from __future__ import annotations
 from .thread import Thread, ThreadTypedDict
-from attio.types import BaseModel
-from attio.utils import FieldMetadata, PathParamMetadata
-from typing import Literal
-from typing_extensions import Annotated, TypedDict
+from attio.types import BaseModel, Nullable, OptionalNullable, UNSET, UNSET_SENTINEL
+from attio.utils import FieldMetadata, PathParamMetadata, QueryParamMetadata
+from pydantic import model_serializer
+from typing import Literal, Optional
+from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 class GetV2ThreadsThreadIDRequestTypedDict(TypedDict):
     thread_id: str
+    limit: NotRequired[int]
+    cursor: NotRequired[str]
+    created_after: NotRequired[Nullable[str]]
 
 
 class GetV2ThreadsThreadIDRequest(BaseModel):
     thread_id: Annotated[
         str, FieldMetadata(path=PathParamMetadata(style="simple", explode=False))
     ]
+
+    limit: Annotated[
+        Optional[int],
+        FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
+    ] = None
+
+    cursor: Annotated[
+        Optional[str],
+        FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
+    ] = None
+
+    created_after: Annotated[
+        OptionalNullable[str],
+        FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
+    ] = UNSET
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["limit", "cursor", "created_after"])
+        nullable_fields = set(["created_after"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+            is_nullable_and_explicitly_set = (
+                k in nullable_fields
+                and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
+            )
+
+            if val != UNSET_SENTINEL:
+                if (
+                    val is not None
+                    or k not in optional_fields
+                    or is_nullable_and_explicitly_set
+                ):
+                    m[k] = val
+
+        return m
 
 
 GetV2ThreadsThreadIDType = Literal["invalid_request_error",]
@@ -24,13 +68,38 @@ GetV2ThreadsThreadIDType = Literal["invalid_request_error",]
 GetV2ThreadsThreadIDCode = Literal["not_found",]
 
 
+class GetV2ThreadsThreadIDPaginationTypedDict(TypedDict):
+    next_cursor: Nullable[str]
+
+
+class GetV2ThreadsThreadIDPagination(BaseModel):
+    next_cursor: Nullable[str]
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                m[k] = val
+
+        return m
+
+
 class GetV2ThreadsThreadIDResponseTypedDict(TypedDict):
     r"""Success"""
 
     data: ThreadTypedDict
+    pagination: GetV2ThreadsThreadIDPaginationTypedDict
 
 
 class GetV2ThreadsThreadIDResponse(BaseModel):
     r"""Success"""
 
     data: Thread
+
+    pagination: GetV2ThreadsThreadIDPagination

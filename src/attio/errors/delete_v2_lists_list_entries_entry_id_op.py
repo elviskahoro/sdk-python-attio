@@ -13,8 +13,8 @@ from typing import Optional
 
 class DeleteV2ListsListEntriesEntryIDNotFoundErrorData(BaseModel):
     status_code: float
-    type: models_delete_v2_lists_list_entries_entry_id_op.DeleteV2ListsListEntriesEntryIDType
-    code: models_delete_v2_lists_list_entries_entry_id_op.DeleteV2ListsListEntriesEntryIDCode
+    type: models_delete_v2_lists_list_entries_entry_id_op.DeleteV2ListsListEntriesEntryIDNotFoundType
+    code: models_delete_v2_lists_list_entries_entry_id_op.DeleteV2ListsListEntriesEntryIDNotFoundCode
     message: str
 
 
@@ -27,6 +27,31 @@ class DeleteV2ListsListEntriesEntryIDNotFoundError(SDKError):
     def __init__(
         self,
         data: DeleteV2ListsListEntriesEntryIDNotFoundErrorData,
+        raw_response: httpx.Response,
+        body: Optional[str] = None,
+    ):
+        fallback = body or raw_response.text
+        message = str(data.message) or fallback
+        super().__init__(message, raw_response, body)
+        object.__setattr__(self, "data", data)
+
+
+class DeleteV2ListsListEntriesEntryIDUnauthorizedErrorData(BaseModel):
+    status_code: float
+    type: models_delete_v2_lists_list_entries_entry_id_op.DeleteV2ListsListEntriesEntryIDForbiddenType
+    code: models_delete_v2_lists_list_entries_entry_id_op.DeleteV2ListsListEntriesEntryIDCodeUnauthorized
+    message: str
+
+
+@dataclass(unsafe_hash=True)
+class DeleteV2ListsListEntriesEntryIDUnauthorizedError(SDKError):
+    r"""Forbidden"""
+
+    data: DeleteV2ListsListEntriesEntryIDUnauthorizedErrorData = field(hash=False)
+
+    def __init__(
+        self,
+        data: DeleteV2ListsListEntriesEntryIDUnauthorizedErrorData,
         raw_response: httpx.Response,
         body: Optional[str] = None,
     ):

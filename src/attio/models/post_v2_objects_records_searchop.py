@@ -85,7 +85,7 @@ class PostV2ObjectsRecordsSearchRequest(BaseModel):
     request_as: RequestAs
     r"""Specifies the context in which to perform the search. Use 'workspace' to return all search results or specify a workspace member to limit results to what one specific person in your workspace can see."""
 
-    limit: Optional[float] = 25
+    limit: Optional[float] = 25.0
     r"""The maximum number of results to return. Defaults to 25."""
 
     @model_serializer(mode="wrap")

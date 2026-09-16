@@ -13,8 +13,8 @@ from typing import Optional
 
 class DeleteV2ObjectsObjectRecordsRecordIDNotFoundErrorData(BaseModel):
     status_code: float
-    type: models_delete_v2_objects_object_records_record_id_op.DeleteV2ObjectsObjectRecordsRecordIDType
-    code: models_delete_v2_objects_object_records_record_id_op.DeleteV2ObjectsObjectRecordsRecordIDCode
+    type: models_delete_v2_objects_object_records_record_id_op.DeleteV2ObjectsObjectRecordsRecordIDNotFoundType
+    code: models_delete_v2_objects_object_records_record_id_op.DeleteV2ObjectsObjectRecordsRecordIDNotFoundCode
     message: str
 
 
@@ -27,6 +27,31 @@ class DeleteV2ObjectsObjectRecordsRecordIDNotFoundError(SDKError):
     def __init__(
         self,
         data: DeleteV2ObjectsObjectRecordsRecordIDNotFoundErrorData,
+        raw_response: httpx.Response,
+        body: Optional[str] = None,
+    ):
+        fallback = body or raw_response.text
+        message = str(data.message) or fallback
+        super().__init__(message, raw_response, body)
+        object.__setattr__(self, "data", data)
+
+
+class DeleteV2ObjectsObjectRecordsRecordIDUnauthorizedErrorData(BaseModel):
+    status_code: float
+    type: models_delete_v2_objects_object_records_record_id_op.DeleteV2ObjectsObjectRecordsRecordIDForbiddenType
+    code: models_delete_v2_objects_object_records_record_id_op.DeleteV2ObjectsObjectRecordsRecordIDCodeUnauthorized
+    message: str
+
+
+@dataclass(unsafe_hash=True)
+class DeleteV2ObjectsObjectRecordsRecordIDUnauthorizedError(SDKError):
+    r"""Forbidden"""
+
+    data: DeleteV2ObjectsObjectRecordsRecordIDUnauthorizedErrorData = field(hash=False)
+
+    def __init__(
+        self,
+        data: DeleteV2ObjectsObjectRecordsRecordIDUnauthorizedErrorData,
         raw_response: httpx.Response,
         body: Optional[str] = None,
     ):

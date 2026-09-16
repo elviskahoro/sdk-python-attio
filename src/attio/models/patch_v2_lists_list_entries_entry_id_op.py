@@ -64,6 +64,12 @@ PatchV2ListsListEntriesEntryIDNotFoundType = Literal["invalid_request_error",]
 PatchV2ListsListEntriesEntryIDNotFoundCode = Literal["not_found",]
 
 
+PatchV2ListsListEntriesEntryIDForbiddenType = Literal["auth_error",]
+
+
+PatchV2ListsListEntriesEntryIDCodeUnauthorized = Literal["unauthorized",]
+
+
 PatchV2ListsListEntriesEntryIDBadRequestType = Literal["invalid_request_error",]
 
 
@@ -1647,12 +1653,10 @@ class PatchV2ListsListEntriesEntryIDCreatedByActor8(BaseModel):
 
 
 PatchV2ListsListEntriesEntryIDInteractionType = Literal[
-    "calendar-event",
-    "call",
-    "chat-thread",
+    "activity",
     "email",
-    "in-person-meeting",
     "meeting",
+    "calendar-event",
 ]
 r"""The type of interaction e.g. calendar or email."""
 
@@ -2254,6 +2258,7 @@ PatchV2ListsListEntriesEntryIDCurrencyCode = Literal[
     "COP",
     "CZK",
     "DKK",
+    "EGP",
     "EUR",
     "FJD",
     "GHS",

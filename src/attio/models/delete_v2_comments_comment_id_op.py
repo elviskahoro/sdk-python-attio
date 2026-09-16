@@ -17,10 +17,16 @@ class DeleteV2CommentsCommentIDRequest(BaseModel):
     ]
 
 
-DeleteV2CommentsCommentIDType = Literal["invalid_request_error",]
+DeleteV2CommentsCommentIDNotFoundType = Literal["invalid_request_error",]
 
 
-DeleteV2CommentsCommentIDCode = Literal["not_found",]
+DeleteV2CommentsCommentIDNotFoundCode = Literal["not_found",]
+
+
+DeleteV2CommentsCommentIDForbiddenType = Literal["auth_error",]
+
+
+DeleteV2CommentsCommentIDCodeUnauthorized = Literal["unauthorized",]
 
 
 class DeleteV2CommentsCommentIDResponseTypedDict(TypedDict):

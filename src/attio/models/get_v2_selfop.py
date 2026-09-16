@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 from attio.types import BaseModel, Nullable, UNSET_SENTINEL
-from pydantic import model_serializer, model_validator
+from pydantic import model_serializer
 from typing import Literal, Optional, Union
 from typing_extensions import NotRequired, TypeAliasType, TypedDict
 
@@ -89,16 +89,6 @@ class AttioCom(BaseModel):
     authorized_by_workspace_member_id: Optional[str] = None
     r"""The ID of the workspace member who authorized this token initially. Almost every token has one, but it is omitted for the app access tokens that Attio created itself rather than on a member's behalf."""
 
-    @model_validator(mode="after")
-    def _validate_active(self):
-        # overlay.yaml strips the `active` const enum so Speakeasy generates
-        # a plain `active: bool` instead of an ACTIVE-aliased const field;
-        # this restores the discriminating check the const used to provide.
-        # NOTE: manual patch on generated code — re-apply after regenerating.
-        if self.active is not True:
-            raise ValueError("active must be true for AttioCom")
-        return self
-
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(["authorized_by_workspace_member_id"])
@@ -131,13 +121,6 @@ class ResponseBodyTypedDict(TypedDict):
 
 class ResponseBody(BaseModel):
     active: bool
-
-    @model_validator(mode="after")
-    def _validate_active(self):
-        # See AttioCom._validate_active — same manual patch, inverted assertion.
-        if self.active is not False:
-            raise ValueError("active must be false for ResponseBody")
-        return self
 
 
 GetV2SelfResponseTypedDict = TypeAliasType(

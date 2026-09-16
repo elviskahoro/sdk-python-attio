@@ -38,7 +38,13 @@ class PostV2ObjectsRequest(BaseModel):
 PostV2ObjectsConflictType = Literal["invalid_request_error",]
 
 
-PostV2ObjectsConflictCode = Literal["slug_conflict",]
+PostV2ObjectsCodeSlugConflict = Literal["slug_conflict",]
+
+
+PostV2ObjectsForbiddenType = Literal["auth_error",]
+
+
+PostV2ObjectsCodeUnauthorized = Literal["unauthorized",]
 
 
 PostV2ObjectsBadRequestType = Literal["invalid_request_error",]

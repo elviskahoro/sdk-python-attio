@@ -76,7 +76,7 @@ PostV2ObjectsObjectRecordsMergeCodeUnion = TypeAliasType(
 PostV2ObjectsObjectRecordsMergeForbiddenType = Literal["auth_error",]
 
 
-CodeUnauthorized = Literal["unauthorized",]
+PostV2ObjectsObjectRecordsMergeCodeUnauthorized = Literal["unauthorized",]
 
 
 PostV2ObjectsObjectRecordsMergeBadRequestType = Literal["invalid_request_error",]

@@ -11,10 +11,35 @@ import httpx
 from typing import Optional
 
 
+class PatchV2WebhooksWebhookIDUniquenessConflictErrorData(BaseModel):
+    status_code: float
+    type: models_patch_v2_webhooks_webhook_id_op.PatchV2WebhooksWebhookIDConflictType
+    code: models_patch_v2_webhooks_webhook_id_op.PatchV2WebhooksWebhookIDCodeUniquenessConflict
+    message: str
+
+
+@dataclass(unsafe_hash=True)
+class PatchV2WebhooksWebhookIDUniquenessConflictError(SDKError):
+    r"""Conflict"""
+
+    data: PatchV2WebhooksWebhookIDUniquenessConflictErrorData = field(hash=False)
+
+    def __init__(
+        self,
+        data: PatchV2WebhooksWebhookIDUniquenessConflictErrorData,
+        raw_response: httpx.Response,
+        body: Optional[str] = None,
+    ):
+        fallback = body or raw_response.text
+        message = str(data.message) or fallback
+        super().__init__(message, raw_response, body)
+        object.__setattr__(self, "data", data)
+
+
 class PatchV2WebhooksWebhookIDNotFoundErrorData(BaseModel):
     status_code: float
-    type: models_patch_v2_webhooks_webhook_id_op.PatchV2WebhooksWebhookIDType
-    code: models_patch_v2_webhooks_webhook_id_op.PatchV2WebhooksWebhookIDCode
+    type: models_patch_v2_webhooks_webhook_id_op.PatchV2WebhooksWebhookIDNotFoundType
+    code: models_patch_v2_webhooks_webhook_id_op.PatchV2WebhooksWebhookIDNotFoundCode
     message: str
 
 

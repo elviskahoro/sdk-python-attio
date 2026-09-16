@@ -69,6 +69,12 @@ PutV2ListsListEntriesNotFoundType = Literal["invalid_request_error",]
 PutV2ListsListEntriesNotFoundCode = Literal["not_found",]
 
 
+PutV2ListsListEntriesForbiddenType = Literal["auth_error",]
+
+
+PutV2ListsListEntriesCodeUnauthorized = Literal["unauthorized",]
+
+
 PutV2ListsListEntriesBadRequestType = Literal["invalid_request_error",]
 
 
@@ -1646,12 +1652,10 @@ class PutV2ListsListEntriesCreatedByActor8(BaseModel):
 
 
 PutV2ListsListEntriesInteractionType = Literal[
-    "calendar-event",
-    "call",
-    "chat-thread",
+    "activity",
     "email",
-    "in-person-meeting",
     "meeting",
+    "calendar-event",
 ]
 r"""The type of interaction e.g. calendar or email."""
 
@@ -2251,6 +2255,7 @@ PutV2ListsListEntriesCurrencyCode = Literal[
     "COP",
     "CZK",
     "DKK",
+    "EGP",
     "EUR",
     "FJD",
     "GHS",

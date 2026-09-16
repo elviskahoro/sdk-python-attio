@@ -56,6 +56,12 @@ PostV2ObjectsObjectRecordsNotFoundType = Literal["invalid_request_error",]
 PostV2ObjectsObjectRecordsNotFoundCode = Literal["not_found",]
 
 
+PostV2ObjectsObjectRecordsForbiddenType = Literal["auth_error",]
+
+
+PostV2ObjectsObjectRecordsCodeUnauthorized = Literal["unauthorized",]
+
+
 PostV2ObjectsObjectRecordsBadRequestType = Literal["invalid_request_error",]
 
 
@@ -1621,12 +1627,10 @@ class PostV2ObjectsObjectRecordsCreatedByActor8(BaseModel):
 
 
 PostV2ObjectsObjectRecordsInteractionType = Literal[
-    "calendar-event",
-    "call",
-    "chat-thread",
+    "activity",
     "email",
-    "in-person-meeting",
     "meeting",
+    "calendar-event",
 ]
 r"""The type of interaction e.g. calendar or email."""
 
@@ -2226,6 +2230,7 @@ PostV2ObjectsObjectRecordsCurrencyCode = Literal[
     "COP",
     "CZK",
     "DKK",
+    "EGP",
     "EUR",
     "FJD",
     "GHS",
