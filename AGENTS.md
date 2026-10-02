@@ -67,6 +67,11 @@ This SDK is generated using Speakeasy from an OpenAPI spec.
    speakeasy run
    ```
 
+   `speakeasy run` rewrites `src/` and drops manual patches that `overlay.yaml`
+   cannot express. Re-apply them so the regenerated tree keeps the GET /v2/self
+   `active` value discriminators (the pipeline does this automatically; for a
+   direct `speakeasy run`, run `python ci/post_generate_patch.py` after).
+
 6. **Review generated changes**:
    - Check `git diff` for new/modified SDK methods in `src/attio/`
    - Verify new models in `src/attio/models/`

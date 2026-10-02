@@ -247,6 +247,20 @@ def _replace_dist_directory() -> None:
         shutil.rmtree(dist_dir)
 
 
+def _apply_post_generation_patches() -> None:
+    """Re-apply manual patches to the freshly generated SDK source.
+
+    ``speakeasy run`` rewrites ``src/`` from the OpenAPI overlay, dropping
+    hand-edits to generated files. ``ci/post_generate_patch.py`` idempotently
+    re-injects the patches that ``overlay.yaml`` cannot express, so the tree
+    the tests, build, and PR commit consume already carries them. Run after
+    every generation export so a regeneration can no longer silently drop
+    the manual edits.
+    """
+    script = Path(__file__).resolve().parent / "post_generate_patch.py"
+    subprocess.run([sys.executable, str(script)], check=True)
+
+
 def _publish_artifacts() -> None:
     """Publish the just-built artifacts through the shared Dagger module.
 
@@ -486,6 +500,7 @@ async def cmd_generate(*, force: bool, version: str | None) -> None:
     if not api_key_str:
         _ = force
         await _run_local_speakeasy(version=version)
+        _apply_post_generation_patches()
         print("SDK generated with the local Speakeasy CLI", file=sys.stderr)
         return
 
@@ -495,6 +510,7 @@ async def cmd_generate(*, force: bool, version: str | None) -> None:
         pipeline = AttioSDKPipeline(source=source_dir)
         generated = await pipeline.generate(api_key=api_key, force=force, version=version)
         await generated.export("./src")
+        _apply_post_generation_patches()
         print("SDK generated and exported to ./src", file=sys.stderr)
 
 
@@ -554,10 +570,12 @@ async def cmd_ci(
                 version=version,
             )
             await generated.export("./src")
+            _apply_post_generation_patches()
             print("SDK generated and exported to ./src", file=sys.stderr)
         else:
             _ = force
             await _run_local_speakeasy(version=version)
+            _apply_post_generation_patches()
             print("SDK generated with the local Speakeasy CLI", file=sys.stderr)
 
         # Re-read the host directory after export so test/build consume the
