@@ -100,7 +100,7 @@ class PutV2ListsListEntriesEntryIDAttributesAttributeValuesRequestBody(BaseModel
 
 
 class PutV2ListsListEntriesEntryIDAttributesAttributeValuesRequestTypedDict(TypedDict):
-    list: str
+    list_id: str
     entry_id: str
     attribute: str
     request_body: (
@@ -109,8 +109,10 @@ class PutV2ListsListEntriesEntryIDAttributesAttributeValuesRequestTypedDict(Type
 
 
 class PutV2ListsListEntriesEntryIDAttributesAttributeValuesRequest(BaseModel):
-    list: Annotated[
-        str, FieldMetadata(path=PathParamMetadata(style="simple", explode=False))
+    list_id: Annotated[
+        str,
+        pydantic.Field(alias="list"),
+        FieldMetadata(path=PathParamMetadata(style="simple", explode=False)),
     ]
 
     entry_id: Annotated[

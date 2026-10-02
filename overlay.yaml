@@ -323,6 +323,18 @@ actions:
       in: "path"
       x-speakeasy-name-override: "list_id"
 
+  - target: "$.paths['/v2/lists/{list}/entries/{entry_id}/attributes/{attribute}/values'].put.parameters[?(@.name=='list')]"
+    description: "Rename list parameter to list_id in PUT /v2/lists/{list}/entries/{entry_id}/attributes/{attribute}/values"
+    update:
+      schema:
+        type: string
+        description: "A UUID or slug to identify the list."
+        example: "33ebdbe9-e529-47c9-b894-0ba25e9c15c0"
+      required: true
+      name: "list"
+      in: "path"
+      x-speakeasy-name-override: "list_id"
+
   # Fix SCIM endpoints missing path parameters (upstream spec bug)
   - target: "$.paths['/scim/v2/Users/{user_id}'].get"
     description: "Add missing user_id path parameter to GET /scim/v2/Users/{user_id}"
