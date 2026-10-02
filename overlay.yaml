@@ -512,35 +512,16 @@ actions:
   # `allowEmptyValue` field; it reads the `x-speakeasy-allow-empty-value`
   # extension (`internal/extensions/extensions.go::ExtAllowEmptyValue`), which
   # `pkg/generate/parameters.go::handleQueryParameters` consults via
-  # `HandleAllowEmptyQueryParameterValueExtension`. These actions set that
-  # extension on every nullable GET query param so the fix survives
-  # `speakeasy run` regeneration.
+  # `HandleAllowEmptyQueryParameterValueExtension`. This action sets that
+  # extension on the nullable `assignee` query param (whose OpenAPI description
+  # explicitly documents "Pass an empty value or the string `null` to find
+  # tasks with no assignee") so the fix survives `speakeasy run` regeneration.
+  # The other nullable GET query params (`sent_after`, `sent_before`,
+  # `ends_from`, `starts_before`, `created_after`) are timestamp filters whose
+  # contract only accepts a timestamp string; an empty value is not a valid
+  # filter for them, so `None` must keep the omit-the-param behavior and they
+  # are intentionally NOT listed here.
   - target: "$.paths['/v2/tasks'].get.parameters[?(@.name=='assignee')]"
     description: "Allow empty value for nullable assignee query param in GET /v2/tasks so assignee=None filters for unassigned tasks"
-    update:
-      x-speakeasy-allow-empty-value: true
-
-  - target: "$.paths['/v2/emails'].get.parameters[?(@.name=='sent_after')]"
-    description: "Allow empty value for nullable sent_after query param in GET /v2/emails"
-    update:
-      x-speakeasy-allow-empty-value: true
-
-  - target: "$.paths['/v2/emails'].get.parameters[?(@.name=='sent_before')]"
-    description: "Allow empty value for nullable sent_before query param in GET /v2/emails"
-    update:
-      x-speakeasy-allow-empty-value: true
-
-  - target: "$.paths['/v2/meetings'].get.parameters[?(@.name=='ends_from')]"
-    description: "Allow empty value for nullable ends_from query param in GET /v2/meetings"
-    update:
-      x-speakeasy-allow-empty-value: true
-
-  - target: "$.paths['/v2/meetings'].get.parameters[?(@.name=='starts_before')]"
-    description: "Allow empty value for nullable starts_before query param in GET /v2/meetings"
-    update:
-      x-speakeasy-allow-empty-value: true
-
-  - target: "$.paths['/v2/threads/{thread_id}'].get.parameters[?(@.name=='created_after')]"
-    description: "Allow empty value for nullable created_after query param in GET /v2/threads/{thread_id}"
     update:
       x-speakeasy-allow-empty-value: true
