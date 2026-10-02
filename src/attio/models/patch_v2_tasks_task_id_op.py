@@ -472,16 +472,13 @@ class PatchV2TasksTaskIDLinkedRecords1(BaseModel):
 
 PatchV2TasksTaskIDLinkedRecordsUnion2TypedDict = TypeAliasType(
     "PatchV2TasksTaskIDLinkedRecordsUnion2TypedDict",
-    Union[
-        PatchV2TasksTaskIDLinkedRecords1TypedDict,
-        PatchV2TasksTaskIDLinkedRecords2TypedDict,
-    ],
+    PatchV2TasksTaskIDLinkedRecords1TypedDict,
 )
 
 
 PatchV2TasksTaskIDLinkedRecordsUnion2 = TypeAliasType(
     "PatchV2TasksTaskIDLinkedRecordsUnion2",
-    Union[PatchV2TasksTaskIDLinkedRecords1, PatchV2TasksTaskIDLinkedRecords2],
+    PatchV2TasksTaskIDLinkedRecords1,
 )
 
 

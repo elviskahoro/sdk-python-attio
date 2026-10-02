@@ -500,3 +500,23 @@ actions:
   - target: "$.paths['/v2/self'].get.responses['200'].content['application/json'].schema.anyOf[1].properties.active.enum"
     description: "Remove single-value enum from active-token `active` field in GET /v2/self so it doesn't generate as a const field"
     remove: true
+
+  # Tasks linked_records: the upstream spec models a *dynamic* JSON key (the
+  # matching attribute slug/ID) as a literal placeholder property named
+  # "[slug_or_id_of_matching_attribute]". Speakeasy faithfully generates a
+  # fixed `pydantic.Field(alias="[slug_or_id_of_matching_attribute]")`, so the
+  # literal placeholder (square brackets and all) is emitted as the wire JSON
+  # key. The user's intended attribute slug can never be sent, and the
+  # documented/example shape (real slug as key) fails union validation.
+  # Remove the broken matching-attribute variant from the `linked_records`
+  # union so the SDK fails fast with a validation error instead of silently
+  # emitting a placeholder-keyed body. Linking by record ID and by email/domain
+  # string remain available. Long-term fix is for upstream to model the dynamic
+  # key via additionalProperties.
+  - target: "$.paths['/v2/tasks'].post.requestBody.content['application/json'].schema.properties.data.properties.linked_records.anyOf[1].items.anyOf[1]"
+    description: "Remove the broken matching-attribute linked-records variant (placeholder key '[slug_or_id_of_matching_attribute]') from POST /v2/tasks"
+    remove: true
+
+  - target: "$.paths['/v2/tasks/{task_id}'].patch.requestBody.content['application/json'].schema.properties.data.properties.linked_records.anyOf[1].items.anyOf[1]"
+    description: "Remove the broken matching-attribute linked-records variant from PATCH /v2/tasks/{task_id}"
+    remove: true

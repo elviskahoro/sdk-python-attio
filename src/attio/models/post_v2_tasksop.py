@@ -475,13 +475,13 @@ class PostV2TasksLinkedRecords1(BaseModel):
 
 PostV2TasksLinkedRecordsUnion2TypedDict = TypeAliasType(
     "PostV2TasksLinkedRecordsUnion2TypedDict",
-    Union[PostV2TasksLinkedRecords1TypedDict, PostV2TasksLinkedRecords2TypedDict],
+    PostV2TasksLinkedRecords1TypedDict,
 )
 
 
 PostV2TasksLinkedRecordsUnion2 = TypeAliasType(
     "PostV2TasksLinkedRecordsUnion2",
-    Union[PostV2TasksLinkedRecords1, PostV2TasksLinkedRecords2],
+    PostV2TasksLinkedRecords1,
 )
 
 
