@@ -93,16 +93,16 @@ listed in `allow_empty_value`; it was simply never switched on.
 
 ### Changes Made
 - `src/attio/tasks.py` (2 call sites), `src/attio/emails.py` (2), `src/attio/meetings.py` (2), `src/attio/threads.py` (2): changed `allow_empty_value=None` to `allow_empty_value=[...]` for the GET operations above.
-- `overlay.yaml`: added `allowEmptyValue: true` to the corresponding nullable query parameters so the next `speakeasy run` regenerates the same wiring (durable, generation-layer fix).
+- `overlay.yaml`: added `x-speakeasy-allow-empty-value: true` to the corresponding nullable query parameters so the next `speakeasy run` regenerates the same wiring (durable, generation-layer fix). Speakeasy's Python generator reads the `x-speakeasy-allow-empty-value` extension (`internal/extensions/extensions.go::ExtAllowEmptyValue`) rather than the standard OpenAPI `allowEmptyValue` field, so the extension form is required for the wiring to survive regeneration.
 
 ## Note on Overlay
-The overlay entries (`allowEmptyValue: true`) are the durable, generation-layer
-fix per the recommended approach. Because `speakeasy` was unavailable to
-regenerate in the fixing environment, the matching change was also applied
-directly to the generated call sites and is tracked here. After the next
-`speakeasy run`, verify `git diff src/attio/{tasks,emails,meetings,threads}.py`
+The overlay entries (`x-speakeasy-allow-empty-value: true`) are the durable,
+generation-layer fix per the recommended approach. Because `speakeasy` was
+unavailable to regenerate in the fixing environment, the matching change was
+also applied directly to the generated call sites and is tracked here. After the
+next `speakeasy run`, verify `git diff src/attio/{tasks,emails,meetings,threads}.py`
 shows the `allow_empty_value=[...]` wiring; if the generator does not emit it
-from `allowEmptyValue`, re-apply the call-site edits documented here.
+from `x-speakeasy-allow-empty-value`, re-apply the call-site edits documented here.
 
 ## Testing
 `tests/test_nullable_query_params.py` exercises all four operations (sync +
