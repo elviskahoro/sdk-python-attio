@@ -754,11 +754,8 @@ class CallRecordings(BaseSDK):
         )
 
         response_data: Any = None
-        if utils.match_response(http_res, "204", "application/json"):
-            return unmarshal_json_response(
-                models.DeleteV2MeetingsMeetingIDCallRecordingsCallRecordingIDResponse,
-                http_res,
-            )
+        if utils.match_status_codes(["204"], http_res.status_code):
+            return models.DeleteV2MeetingsMeetingIDCallRecordingsCallRecordingIDResponse()
         if utils.match_response(http_res, "404", "application/json"):
             response_data = unmarshal_json_response(
                 errors.DeleteV2MeetingsMeetingIDCallRecordingsCallRecordingIDNotFoundErrorData,
@@ -857,11 +854,8 @@ class CallRecordings(BaseSDK):
         )
 
         response_data: Any = None
-        if utils.match_response(http_res, "204", "application/json"):
-            return unmarshal_json_response(
-                models.DeleteV2MeetingsMeetingIDCallRecordingsCallRecordingIDResponse,
-                http_res,
-            )
+        if utils.match_status_codes(["204"], http_res.status_code):
+            return models.DeleteV2MeetingsMeetingIDCallRecordingsCallRecordingIDResponse()
         if utils.match_response(http_res, "404", "application/json"):
             response_data = unmarshal_json_response(
                 errors.DeleteV2MeetingsMeetingIDCallRecordingsCallRecordingIDNotFoundErrorData,
