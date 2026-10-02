@@ -60,3 +60,61 @@ An attempt was made to fix this at the spec level using `overlay.yaml` to remove
 
 ## Impact
 This change allows the SDK to correctly parse API responses containing timestamp values in record objects, enabling the `post_v2_objects_object_records()` method to work correctly with the returned data.
+
+# SDK Changes for Nullable GET Query Params (None vs UNSET)
+
+## Problem
+Several GET operations declare nullable query parameters (`schema.type:
+["string","null"]`). Speakeasy therefore generates these as three-state fields
+(`OptionalNullable[T] = UNSET`): `UNSET` means "omit the param", while an
+explicitly-passed `None` means "send an empty value" (e.g. the `assignee` param
+documents "Pass an empty value or the string `null` to find tasks with no
+assignee").
+
+The generated operation call sites all pass `allow_empty_value=None`. The query-param builder (`utils/values.py::_is_set` / `utils/forms.py::_populate_form`)
+treats `None` the same as `UNSET` ("not set") and drops the param. So passing
+`assignee=None` produced a request with NO `assignee` param, returning ALL
+tasks (assigned and unassigned) instead of only unassigned tasks. The
+nullable-aware `serialize_model` that preserves explicit `None` is never
+reached on the query-param HTTP path.
+
+## Solution
+Wire `allow_empty_value=[...]` at each affected operation call site so the
+runtime's existing mechanism (`utils/queryparams.py`) sends an empty value
+(`param=`) for an explicitly-set `None` while still omitting the param for
+`UNSET`. The runtime already handles this correctly when the field name is
+listed in `allow_empty_value`; it was simply never switched on.
+
+### Affected operations (nullable query params)
+- `tasks.get_v2_tasks` / `get_v2_tasks_async` -> `allow_empty_value=["assignee"]`
+- `emails.get_v2_emails` / `get_v2_emails_async` -> `allow_empty_value=["sent_after", "sent_before"]`
+- `meetings.get_v2_meetings` / `get_v2_meetings_async` -> `allow_empty_value=["ends_from", "starts_before"]`
+- `threads.get_v2_threads_thread_id_` / `get_v2_threads_thread_id__async` -> `allow_empty_value=["created_after"]`
+
+### Changes Made
+- `src/attio/tasks.py` (2 call sites), `src/attio/emails.py` (2), `src/attio/meetings.py` (2), `src/attio/threads.py` (2): changed `allow_empty_value=None` to `allow_empty_value=[...]` for the GET operations above.
+- `overlay.yaml`: added `allowEmptyValue: true` to the corresponding nullable query parameters so the next `speakeasy run` regenerates the same wiring (durable, generation-layer fix).
+
+## Note on Overlay
+The overlay entries (`allowEmptyValue: true`) are the durable, generation-layer
+fix per the recommended approach. Because `speakeasy` was unavailable to
+regenerate in the fixing environment, the matching change was also applied
+directly to the generated call sites and is tracked here. After the next
+`speakeasy run`, verify `git diff src/attio/{tasks,emails,meetings,threads}.py`
+shows the `allow_empty_value=[...]` wiring; if the generator does not emit it
+from `allowEmptyValue`, re-apply the call-site edits documented here.
+
+## Testing
+`tests/test_nullable_query_params.py` exercises all four operations (sync +
+async) end-to-end with a mocked httpx transport, asserting:
+- `None` -> param sent empty (`param=`)
+- omitted (`UNSET`) -> param omitted
+- a real value -> param sent with the value
+- two-state `Optional[X]=None` sibling fields are still omitted (no regression)
+
+Run with `uv run pytest tests/test_nullable_query_params.py -v`.
+
+## Impact
+Passing `None` for a nullable query param now filters for the null/empty case
+on the wire (e.g. `assignee=None` returns only unassigned tasks) instead of
+silently returning a superset of results.

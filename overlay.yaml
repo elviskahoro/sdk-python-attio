@@ -500,3 +500,41 @@ actions:
   - target: "$.paths['/v2/self'].get.responses['200'].content['application/json'].schema.anyOf[1].properties.active.enum"
     description: "Remove single-value enum from active-token `active` field in GET /v2/self so it doesn't generate as a const field"
     remove: true
+
+  # Nullable GET query params are generated as three-state fields
+  # (`OptionalNullable[T] = UNSET`): `UNSET` means omit the param, an explicitly
+  # passed `None` means "send an empty value to filter for the null/empty case".
+  # Speakeasy's query-param builder drops an explicitly-set `None` (collapsing it
+  # with `UNSET`) unless `allowEmptyValue` is surfaced on the parameter so the
+  # generator emits `allow_empty_value=["<param>"]` at the operation call site.
+  # The runtime then sends `param=` (empty) for `None` and omits it for `UNSET`.
+  # These actions add `allowEmptyValue: true` to every nullable GET query param.
+  - target: "$.paths['/v2/tasks'].get.parameters[?(@.name=='assignee')]"
+    description: "Allow empty value for nullable assignee query param in GET /v2/tasks so assignee=None filters for unassigned tasks"
+    update:
+      allowEmptyValue: true
+
+  - target: "$.paths['/v2/emails'].get.parameters[?(@.name=='sent_after')]"
+    description: "Allow empty value for nullable sent_after query param in GET /v2/emails"
+    update:
+      allowEmptyValue: true
+
+  - target: "$.paths['/v2/emails'].get.parameters[?(@.name=='sent_before')]"
+    description: "Allow empty value for nullable sent_before query param in GET /v2/emails"
+    update:
+      allowEmptyValue: true
+
+  - target: "$.paths['/v2/meetings'].get.parameters[?(@.name=='ends_from')]"
+    description: "Allow empty value for nullable ends_from query param in GET /v2/meetings"
+    update:
+      allowEmptyValue: true
+
+  - target: "$.paths['/v2/meetings'].get.parameters[?(@.name=='starts_before')]"
+    description: "Allow empty value for nullable starts_before query param in GET /v2/meetings"
+    update:
+      allowEmptyValue: true
+
+  - target: "$.paths['/v2/threads/{thread_id}'].get.parameters[?(@.name=='created_after')]"
+    description: "Allow empty value for nullable created_after query param in GET /v2/threads/{thread_id}"
+    update:
+      allowEmptyValue: true
