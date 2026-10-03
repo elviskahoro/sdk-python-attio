@@ -1,0 +1,37 @@
+# roborev review configuration for sdk-python-attio.
+#
+# `review_guidelines` is embedded into every review prompt. Use it to encode
+# deliberate house decisions so the reviewer stops re-flagging them as findings.
+
+# Use the Pi coding agent with the Fireworks provider for review jobs.
+agent = "pi"
+model = "fireworks/accounts/fireworks/models/glm-5p3"
+
+review_guidelines = """
+- src/attio/ is FULLY GENERATED code (Speakeasy). Do not raise findings against
+  its style, patterns, or duplication — manual edits there are overwritten on
+  the next regeneration. If generated output is actually wrong, the actionable
+  fix belongs upstream: in overlay.yaml, .speakeasy/gen.yaml, or
+  ci/post_generate_patch.py. Review those source files; treat src/attio/ diff
+  hunks as regeneration output, not hand-written code to critique.
+
+- overlay.yaml intentionally strips `format: date` from ISO8601 timestamp
+  values so they regenerate as `str`, not datetime/date. This is deliberate:
+  Attio returns timestamps as plain strings. Do not suggest modeling them as
+  datetime objects.
+
+- The `list` -> `list_id` parameter renames in the overlay are deliberate, to
+  avoid shadowing Python's built-in `list`. Do not flag the resulting
+  parameter names as inconsistent with the API docs.
+
+- pyproject.toml is rewritten by speakeasy on every regeneration. The dev
+  dependencies (dagger-io, pytest, pytest-asyncio) survive only because they
+  are declared in .speakeasy/gen.yaml under
+  python.additionalDependencies.dev. If they vanish from pyproject.toml, the
+  fix is to confirm the gen.yaml declaration and run `uv lock && uv sync` —
+  not a one-off manual pyproject edit.
+
+- The patch version in .speakeasy/gen.yaml (python.version), pyproject.toml,
+  and src/attio/_version.py is auto-bumped by speakeasy on regenerations that
+  produce changes. Do not flag version-bump-only hunks as suspicious.
+"""
