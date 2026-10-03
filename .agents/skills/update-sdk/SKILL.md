@@ -58,6 +58,20 @@ speakeasy run
 
 This applies the overlay to the spec and regenerates all SDK code under `src/attio/`.
 
+`speakeasy run` rewrites `src/` from scratch, so it drops the manual patches
+that `overlay.yaml` cannot express (the GET /v2/self `active` value
+discriminators on `AttioCom` and `ResponseBody`). Re-apply them right after
+regenerating so the tree the tests run against carries the invariant:
+
+```bash
+python ci/post_generate_patch.py
+```
+
+`python ci/pipeline.py generate` and `python ci/pipeline.py ci` run this patch
+automatically after generation. Run it manually only after a direct
+`speakeasy run`. The patch is idempotent and fails loudly if the generated
+layout drifts, so a regeneration can no longer silently drop the invariant.
+
 ### 5. Review generated changes
 
 Check what changed in the generated code:
