@@ -57375,12 +57375,13 @@
           {
             "schema": {
               "type": "string",
-              "description": "A UUID or slug identifying the list the entry is in.",
-              "example": "enterprise_sales"
+              "description": "A UUID or slug to identify the list.",
+              "example": "33ebdbe9-e529-47c9-b894-0ba25e9c15c0"
             },
             "required": true,
             "name": "list",
-            "in": "path"
+            "in": "path",
+            "x-speakeasy-name-override": "list_id"
           },
           {
             "schema": {
@@ -64864,16 +64865,7 @@
         ],
         "responses": {
           "204": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {},
-                  "description": "Success"
-                }
-              }
-            }
+            "description": "Success"
           },
           "404": {
             "description": "Call recording not found",

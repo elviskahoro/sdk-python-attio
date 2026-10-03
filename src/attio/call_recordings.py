@@ -694,7 +694,7 @@ class CallRecordings(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.DeleteV2MeetingsMeetingIDCallRecordingsCallRecordingIDResponse:
+    ):
         r"""Delete call recording
 
         Deletes the specified call recording. This will remove the call recording and all associated data.
@@ -768,11 +768,8 @@ class CallRecordings(BaseSDK):
         )
 
         response_data: Any = None
-        if utils.match_response(http_res, "204", "application/json"):
-            return unmarshal_json_response(
-                models.DeleteV2MeetingsMeetingIDCallRecordingsCallRecordingIDResponse,
-                http_res,
-            )
+        if utils.match_response(http_res, "204", "*"):
+            return
         if utils.match_response(http_res, "404", "application/json"):
             response_data = unmarshal_json_response(
                 errors.DeleteV2MeetingsMeetingIDCallRecordingsCallRecordingIDNotFoundErrorData,
@@ -799,7 +796,7 @@ class CallRecordings(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.DeleteV2MeetingsMeetingIDCallRecordingsCallRecordingIDResponse:
+    ):
         r"""Delete call recording
 
         Deletes the specified call recording. This will remove the call recording and all associated data.
@@ -873,11 +870,8 @@ class CallRecordings(BaseSDK):
         )
 
         response_data: Any = None
-        if utils.match_response(http_res, "204", "application/json"):
-            return unmarshal_json_response(
-                models.DeleteV2MeetingsMeetingIDCallRecordingsCallRecordingIDResponse,
-                http_res,
-            )
+        if utils.match_response(http_res, "204", "*"):
+            return
         if utils.match_response(http_res, "404", "application/json"):
             response_data = unmarshal_json_response(
                 errors.DeleteV2MeetingsMeetingIDCallRecordingsCallRecordingIDNotFoundErrorData,

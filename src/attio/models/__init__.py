@@ -133,8 +133,6 @@ if TYPE_CHECKING:
         DeleteV2MeetingsMeetingIDCallRecordingsCallRecordingIDCode,
         DeleteV2MeetingsMeetingIDCallRecordingsCallRecordingIDRequest,
         DeleteV2MeetingsMeetingIDCallRecordingsCallRecordingIDRequestTypedDict,
-        DeleteV2MeetingsMeetingIDCallRecordingsCallRecordingIDResponse,
-        DeleteV2MeetingsMeetingIDCallRecordingsCallRecordingIDResponseTypedDict,
         DeleteV2MeetingsMeetingIDCallRecordingsCallRecordingIDType,
     )
     from .delete_v2_meetings_meeting_id_op import (
@@ -4617,8 +4615,6 @@ __all__ = [
     "DeleteV2MeetingsMeetingIDCallRecordingsCallRecordingIDCode",
     "DeleteV2MeetingsMeetingIDCallRecordingsCallRecordingIDRequest",
     "DeleteV2MeetingsMeetingIDCallRecordingsCallRecordingIDRequestTypedDict",
-    "DeleteV2MeetingsMeetingIDCallRecordingsCallRecordingIDResponse",
-    "DeleteV2MeetingsMeetingIDCallRecordingsCallRecordingIDResponseTypedDict",
     "DeleteV2MeetingsMeetingIDCallRecordingsCallRecordingIDType",
     "DeleteV2MeetingsMeetingIDCodeSystemEditUnauthorized",
     "DeleteV2MeetingsMeetingIDNotFoundCode",
@@ -8884,8 +8880,6 @@ _dynamic_imports: dict[str, str] = {
     "DeleteV2MeetingsMeetingIDCallRecordingsCallRecordingIDCode": ".delete_v2_meetings_meeting_id_call_recordings_call_recording_id_op",
     "DeleteV2MeetingsMeetingIDCallRecordingsCallRecordingIDRequest": ".delete_v2_meetings_meeting_id_call_recordings_call_recording_id_op",
     "DeleteV2MeetingsMeetingIDCallRecordingsCallRecordingIDRequestTypedDict": ".delete_v2_meetings_meeting_id_call_recordings_call_recording_id_op",
-    "DeleteV2MeetingsMeetingIDCallRecordingsCallRecordingIDResponse": ".delete_v2_meetings_meeting_id_call_recordings_call_recording_id_op",
-    "DeleteV2MeetingsMeetingIDCallRecordingsCallRecordingIDResponseTypedDict": ".delete_v2_meetings_meeting_id_call_recordings_call_recording_id_op",
     "DeleteV2MeetingsMeetingIDCallRecordingsCallRecordingIDType": ".delete_v2_meetings_meeting_id_call_recordings_call_recording_id_op",
     "DeleteV2MeetingsMeetingIDBadRequestType": ".delete_v2_meetings_meeting_id_op",
     "DeleteV2MeetingsMeetingIDCodeSystemEditUnauthorized": ".delete_v2_meetings_meeting_id_op",

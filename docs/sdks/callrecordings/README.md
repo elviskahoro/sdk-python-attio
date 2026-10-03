@@ -190,10 +190,9 @@ with SDK(
     oauth2="<YOUR_OAUTH2_HERE>",
 ) as sdk:
 
-    res = sdk.call_recordings.delete_v2_meetings_meeting_id_call_recordings_call_recording_id_(meeting_id="cb59ab17-ad15-460c-a126-0715617c0853", call_recording_id="e8f2a3b7-9b4d-4c5e-8a1f-3d7b2c5e8f9a")
+    sdk.call_recordings.delete_v2_meetings_meeting_id_call_recordings_call_recording_id_(meeting_id="cb59ab17-ad15-460c-a126-0715617c0853", call_recording_id="e8f2a3b7-9b4d-4c5e-8a1f-3d7b2c5e8f9a")
 
-    # Handle response
-    print(res)
+    # Use the SDK ...
 
 ```
 
@@ -204,10 +203,6 @@ with SDK(
 | `meeting_id`                                                        | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 | cb59ab17-ad15-460c-a126-0715617c0853                                |
 | `call_recording_id`                                                 | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 | e8f2a3b7-9b4d-4c5e-8a1f-3d7b2c5e8f9a                                |
 | `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
-
-### Response
-
-**[models.DeleteV2MeetingsMeetingIDCallRecordingsCallRecordingIDResponse](../../models/deletev2meetingsmeetingidcallrecordingscallrecordingidresponse.md)**
 
 ### Errors
 
