@@ -36,6 +36,8 @@ class Records(BaseSDK):
 
         Required scopes: `record_permission:read`, `object_configuration:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param object:
         :param filter_: An object used to filter results to a subset of results. Cannot be used together with `filter_view_id`. See the [full guide to filtering and sorting here](/rest-api/guides/filtering-and-sorting).
         :param filter_view_id: UUID of a saved view on this object or list. When set, results are filtered using that view's filter configuration. Cannot be used together with `filter`. Note: sorts, limits, and offsets are applied independently and are not taken from the view. All attributes are returned regardless of which attributes are visible in the view.
@@ -171,6 +173,8 @@ class Records(BaseSDK):
 
         Required scopes: `record_permission:read`, `object_configuration:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param object:
         :param filter_: An object used to filter results to a subset of results. Cannot be used together with `filter_view_id`. See the [full guide to filtering and sorting here](/rest-api/guides/filtering-and-sorting).
         :param filter_view_id: UUID of a saved view on this object or list. When set, results are filtered using that view's filter configuration. Cannot be used together with `filter`. Note: sorts, limits, and offsets are applied independently and are not taken from the view. All attributes are returned regardless of which attributes are visible in the view.
@@ -300,6 +304,8 @@ class Records(BaseSDK):
 
         Required scopes: `record_permission:read-write`, `object_configuration:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param object:
         :param data:
         :param retries: Override the default retry configuration for this method
@@ -399,6 +405,14 @@ class Records(BaseSDK):
             raise errors.PostV2ObjectsObjectRecordsNotFoundError(
                 response_data, http_res
             )
+        if utils.match_response(http_res, "409", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PostV2ObjectsObjectRecordsConcurrentWriteConflictErrorData,
+                http_res,
+            )
+            raise errors.PostV2ObjectsObjectRecordsConcurrentWriteConflictError(
+                response_data, http_res
+            )
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.SDKDefaultError("API error occurred", http_res, http_res_text)
@@ -426,6 +440,8 @@ class Records(BaseSDK):
         Creates a new person, company or other record. This endpoint will throw on conflicts of unique attributes. If you would prefer to update records on conflicts, please use the [Upsert record endpoint](/rest-api/endpoint-reference/records/upsert-a-record) instead.
 
         Required scopes: `record_permission:read-write`, `object_configuration:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param object:
         :param data:
@@ -524,6 +540,14 @@ class Records(BaseSDK):
                 errors.PostV2ObjectsObjectRecordsNotFoundErrorData, http_res
             )
             raise errors.PostV2ObjectsObjectRecordsNotFoundError(
+                response_data, http_res
+            )
+        if utils.match_response(http_res, "409", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PostV2ObjectsObjectRecordsConcurrentWriteConflictErrorData,
+                http_res,
+            )
+            raise errors.PostV2ObjectsObjectRecordsConcurrentWriteConflictError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "4XX", "*"):
@@ -557,6 +581,8 @@ class Records(BaseSDK):
 
         Required scopes: `record_permission:read-write`, `object_configuration:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param object:
         :param matching_attribute:
         :param data:
@@ -656,6 +682,14 @@ class Records(BaseSDK):
                 errors.PutV2ObjectsObjectRecordsNotFoundErrorData, http_res
             )
             raise errors.PutV2ObjectsObjectRecordsNotFoundError(response_data, http_res)
+        if utils.match_response(http_res, "409", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PutV2ObjectsObjectRecordsConcurrentWriteConflictErrorData,
+                http_res,
+            )
+            raise errors.PutV2ObjectsObjectRecordsConcurrentWriteConflictError(
+                response_data, http_res
+            )
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.SDKDefaultError("API error occurred", http_res, http_res_text)
@@ -686,6 +720,8 @@ class Records(BaseSDK):
         If the matching attribute is a multiselect attribute, new values will be added and existing values will not be deleted. For any other multiselect attribute, all values will be either created or deleted as necessary to match the list of supplied values.
 
         Required scopes: `record_permission:read-write`, `object_configuration:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param object:
         :param matching_attribute:
@@ -786,6 +822,14 @@ class Records(BaseSDK):
                 errors.PutV2ObjectsObjectRecordsNotFoundErrorData, http_res
             )
             raise errors.PutV2ObjectsObjectRecordsNotFoundError(response_data, http_res)
+        if utils.match_response(http_res, "409", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PutV2ObjectsObjectRecordsConcurrentWriteConflictErrorData,
+                http_res,
+            )
+            raise errors.PutV2ObjectsObjectRecordsConcurrentWriteConflictError(
+                response_data, http_res
+            )
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.SDKDefaultError("API error occurred", http_res, http_res_text)
@@ -810,6 +854,8 @@ class Records(BaseSDK):
         Gets a single person, company or other record by its `record_id`.
 
         Required scopes: `record_permission:read`, `object_configuration:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param object:
         :param record_id:
@@ -910,6 +956,8 @@ class Records(BaseSDK):
         Gets a single person, company or other record by its `record_id`.
 
         Required scopes: `record_permission:read`, `object_configuration:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param object:
         :param record_id:
@@ -1015,6 +1063,8 @@ class Records(BaseSDK):
 
         Required scopes: `record_permission:read-write`, `object_configuration:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param object:
         :param record_id:
         :param data:
@@ -1116,6 +1166,14 @@ class Records(BaseSDK):
                 errors.PatchV2ObjectsObjectRecordsRecordIDNotFoundErrorData, http_res
             )
             raise errors.PatchV2ObjectsObjectRecordsRecordIDNotFoundError(
+                response_data, http_res
+            )
+        if utils.match_response(http_res, "409", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PatchV2ObjectsObjectRecordsRecordIDConcurrentWriteConflictErrorData,
+                http_res,
+            )
+            raise errors.PatchV2ObjectsObjectRecordsRecordIDConcurrentWriteConflictError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "4XX", "*"):
@@ -1147,6 +1205,8 @@ class Records(BaseSDK):
 
         Required scopes: `record_permission:read-write`, `object_configuration:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param object:
         :param record_id:
         :param data:
@@ -1250,6 +1310,14 @@ class Records(BaseSDK):
             raise errors.PatchV2ObjectsObjectRecordsRecordIDNotFoundError(
                 response_data, http_res
             )
+        if utils.match_response(http_res, "409", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PatchV2ObjectsObjectRecordsRecordIDConcurrentWriteConflictErrorData,
+                http_res,
+            )
+            raise errors.PatchV2ObjectsObjectRecordsRecordIDConcurrentWriteConflictError(
+                response_data, http_res
+            )
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.SDKDefaultError("API error occurred", http_res, http_res_text)
@@ -1278,6 +1346,8 @@ class Records(BaseSDK):
         Use this endpoint to update people, companies, and other records by `record_id`. If the update payload includes multiselect attributes, the values supplied will overwrite/remove the list of values that already exist (if any). Use the `PATCH` endpoint to append multiselect values without removing those that already exist.
 
         Required scopes: `record_permission:read-write`, `object_configuration:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param object:
         :param record_id:
@@ -1381,6 +1451,14 @@ class Records(BaseSDK):
             raise errors.PutV2ObjectsObjectRecordsRecordIDNotFoundError(
                 response_data, http_res
             )
+        if utils.match_response(http_res, "409", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PutV2ObjectsObjectRecordsRecordIDConcurrentWriteConflictErrorData,
+                http_res,
+            )
+            raise errors.PutV2ObjectsObjectRecordsRecordIDConcurrentWriteConflictError(
+                response_data, http_res
+            )
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.SDKDefaultError("API error occurred", http_res, http_res_text)
@@ -1409,6 +1487,8 @@ class Records(BaseSDK):
         Use this endpoint to update people, companies, and other records by `record_id`. If the update payload includes multiselect attributes, the values supplied will overwrite/remove the list of values that already exist (if any). Use the `PATCH` endpoint to append multiselect values without removing those that already exist.
 
         Required scopes: `record_permission:read-write`, `object_configuration:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param object:
         :param record_id:
@@ -1512,6 +1592,14 @@ class Records(BaseSDK):
             raise errors.PutV2ObjectsObjectRecordsRecordIDNotFoundError(
                 response_data, http_res
             )
+        if utils.match_response(http_res, "409", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PutV2ObjectsObjectRecordsRecordIDConcurrentWriteConflictErrorData,
+                http_res,
+            )
+            raise errors.PutV2ObjectsObjectRecordsRecordIDConcurrentWriteConflictError(
+                response_data, http_res
+            )
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.SDKDefaultError("API error occurred", http_res, http_res_text)
@@ -1536,6 +1624,8 @@ class Records(BaseSDK):
         Deletes a single record (e.g. a company or person) by ID.
 
         Required scopes: `object_configuration:read`, `record_permission:read-write`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param object:
         :param record_id:
@@ -1643,6 +1733,8 @@ class Records(BaseSDK):
         Deletes a single record (e.g. a company or person) by ID.
 
         Required scopes: `object_configuration:read`, `record_permission:read-write`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param object:
         :param record_id:
@@ -1763,6 +1855,8 @@ class Records(BaseSDK):
         This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
         Required scopes: `record_permission:read-write`, `object_configuration:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param object:
         :param data:
@@ -1901,6 +1995,8 @@ class Records(BaseSDK):
 
         Required scopes: `record_permission:read-write`, `object_configuration:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param object:
         :param data:
         :param retries: Override the default retry configuration for this method
@@ -2029,6 +2125,8 @@ class Records(BaseSDK):
 
         Required scopes: `record_permission:read`, `object_configuration:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param object:
         :param record_id:
         :param attribute:
@@ -2151,6 +2249,8 @@ class Records(BaseSDK):
         Gets all values for a given attribute on a record. Historic values can be queried using the `show_historic` query param. Historic values cannot be queried on COMINT (Communication Intelligence) or enriched attributes and the endpoint will return a 400 error if this is attempted. Historic values are sorted from oldest to newest (by `active_from`). Some attributes are subject to billing status and will return an empty array of values if theworkspace being queried does not have the required billing flag enabled.
 
         Required scopes: `record_permission:read`, `object_configuration:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param object:
         :param record_id:
@@ -2283,6 +2383,8 @@ class Records(BaseSDK):
         This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
         Required scopes: `record_permission:read-write`, `object_configuration:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param object:
         :param record_id:
@@ -2430,6 +2532,8 @@ class Records(BaseSDK):
 
         Required scopes: `record_permission:read-write`, `object_configuration:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param object:
         :param record_id:
         :param attribute:
@@ -2565,6 +2669,8 @@ class Records(BaseSDK):
 
         Required scopes: `record_permission:read`, `object_configuration:read`, `list_entry:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param object:
         :param record_id:
         :param limit:
@@ -2661,6 +2767,8 @@ class Records(BaseSDK):
         List all entries, across all lists, for which this record is the parent. The response includes metadata for each entry, including `entry_id`, `list_id`, and `created_at`, but does not include entry values. To retrieve the values, call [Get a list entry](/rest-api/endpoint-reference/entries/get-a-list-entry) separately for each entry.
 
         Required scopes: `record_permission:read`, `object_configuration:read`, `list_entry:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param object:
         :param record_id:
@@ -2762,6 +2870,8 @@ class Records(BaseSDK):
         This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
         Required scopes: `record_permission:read`, `object_configuration:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param query: Query string to search for. An empty string returns a default set of results.
         :param objects: Specifies which objects to filter results by. At least one object must be specified. Accepts object slugs or IDs.
@@ -2874,6 +2984,8 @@ class Records(BaseSDK):
         This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
         Required scopes: `record_permission:read`, `object_configuration:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param query: Query string to search for. An empty string returns a default set of results.
         :param objects: Specifies which objects to filter results by. At least one object must be specified. Accepts object slugs or IDs.

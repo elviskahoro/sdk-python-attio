@@ -31,6 +31,8 @@ class Sequences(BaseSDK):
 
         Required scopes: `sequence_unsubscribe:read-write`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param data:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -141,6 +143,8 @@ class Sequences(BaseSDK):
         This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
         Required scopes: `sequence_unsubscribe:read-write`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param data:
         :param retries: Override the default retry configuration for this method

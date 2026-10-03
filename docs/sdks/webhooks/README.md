@@ -18,6 +18,8 @@ Get all of the webhooks in your workspace.
 
 Required scopes: `webhook:read`.
 
+Supported token levels: `workspace`.
+
 ### Example Usage
 
 <!-- UsageSnippet language="python" operationID="get_/v2/webhooks" method="get" path="/v2/webhooks" -->
@@ -58,7 +60,11 @@ with SDK(
 
 Create a webhook and associated subscriptions.
 
+Each combination of target URL, event type and filter must be unique within your workspace; duplicates are rejected with a 409.
+
 Required scopes: `webhook:read-write`.
+
+Supported token levels: `workspace`.
 
 ### Example Usage
 
@@ -94,16 +100,19 @@ with SDK(
 
 ### Errors
 
-| Error Type                               | Status Code                              | Content Type                             |
-| ---------------------------------------- | ---------------------------------------- | ---------------------------------------- |
-| errors.PostV2WebhooksValidationTypeError | 400                                      | application/json                         |
-| errors.SDKDefaultError                   | 4XX, 5XX                                 | \*/\*                                    |
+| Error Type                                   | Status Code                                  | Content Type                                 |
+| -------------------------------------------- | -------------------------------------------- | -------------------------------------------- |
+| errors.PostV2WebhooksValidationTypeError     | 400                                          | application/json                             |
+| errors.PostV2WebhooksUniquenessConflictError | 409                                          | application/json                             |
+| errors.SDKDefaultError                       | 4XX, 5XX                                     | \*/\*                                        |
 
 ## get_v2_webhooks_webhook_id_
 
 Get a single webhook.
 
 Required scopes: `webhook:read`.
+
+Supported token levels: `workspace`.
 
 ### Example Usage
 
@@ -145,7 +154,11 @@ with SDK(
 
 Update a webhook and associated subscriptions.
 
+Each combination of target URL, event type and filter must be unique within your workspace; duplicates are rejected with a 409. Changing the target URL re-checks the webhook's existing subscriptions against the new URL.
+
 Required scopes: `webhook:read-write`.
+
+Supported token levels: `workspace`.
 
 ### Example Usage
 
@@ -195,16 +208,19 @@ with SDK(
 
 ### Errors
 
-| Error Type                                   | Status Code                                  | Content Type                                 |
-| -------------------------------------------- | -------------------------------------------- | -------------------------------------------- |
-| errors.PatchV2WebhooksWebhookIDNotFoundError | 404                                          | application/json                             |
-| errors.SDKDefaultError                       | 4XX, 5XX                                     | \*/\*                                        |
+| Error Type                                             | Status Code                                            | Content Type                                           |
+| ------------------------------------------------------ | ------------------------------------------------------ | ------------------------------------------------------ |
+| errors.PatchV2WebhooksWebhookIDNotFoundError           | 404                                                    | application/json                                       |
+| errors.PatchV2WebhooksWebhookIDUniquenessConflictError | 409                                                    | application/json                                       |
+| errors.SDKDefaultError                                 | 4XX, 5XX                                               | \*/\*                                                  |
 
 ## delete_v2_webhooks_webhook_id_
 
 Delete a webhook by ID.
 
 Required scopes: `webhook:read-write`.
+
+Supported token levels: `workspace`.
 
 ### Example Usage
 

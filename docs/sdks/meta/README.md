@@ -57,6 +57,23 @@ with SDK(
     print(res)
 
 ```
+### Example Usage: User-level app access token
+
+<!-- UsageSnippet language="python" operationID="get_/v2/self" method="get" path="/v2/self" example="User-level app access token" -->
+```python
+from attio import SDK
+
+
+with SDK(
+    oauth2="<YOUR_OAUTH2_HERE>",
+) as sdk:
+
+    res = sdk.meta.get_v2_self()
+
+    # Handle response
+    print(res)
+
+```
 ### Example Usage: Workspace access token
 
 <!-- UsageSnippet language="python" operationID="get_/v2/self" method="get" path="/v2/self" example="Workspace access token" -->

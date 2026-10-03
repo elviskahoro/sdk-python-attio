@@ -30,6 +30,8 @@ class Attributes(BaseSDK):
 
         When `target` is `objects`, the required scopes are `object_configuration:read`. When `target` is `lists`, the required scopes are `list_configuration:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param target: Whether the attributes are on an object or a list.
         :param identifier:
         :param limit:
@@ -129,6 +131,8 @@ class Attributes(BaseSDK):
         Lists all attributes defined on a specific object or list. Attributes are returned in the order that they are sorted by in the UI.
 
         When `target` is `objects`, the required scopes are `object_configuration:read`. When `target` is `lists`, the required scopes are `list_configuration:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param target: Whether the attributes are on an object or a list.
         :param identifier:
@@ -234,6 +238,8 @@ class Attributes(BaseSDK):
         To create an attribute on an object, you must also have the `object_configuration:read-write` scope.
 
         To create an attribute on a list, you must also have the `list_configuration:read-write` scope.
+
+        Supported token levels: `workspace`, `user`.
 
         :param target: Whether the attribute is to be created on an object or a list.
         :param identifier:
@@ -376,6 +382,8 @@ class Attributes(BaseSDK):
 
         To create an attribute on a list, you must also have the `list_configuration:read-write` scope.
 
+        Supported token levels: `workspace`, `user`.
+
         :param target: Whether the attribute is to be created on an object or a list.
         :param identifier:
         :param data:
@@ -510,6 +518,8 @@ class Attributes(BaseSDK):
 
         When `target` is `objects`, the required scopes are `object_configuration:read`. When `target` is `lists`, the required scopes are `list_configuration:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param target: Whether the attribute is on an object or a list.
         :param identifier:
         :param attribute:
@@ -612,6 +622,8 @@ class Attributes(BaseSDK):
         Gets information about a single attribute on either an object or a list.
 
         When `target` is `objects`, the required scopes are `object_configuration:read`. When `target` is `lists`, the required scopes are `list_configuration:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param target: Whether the attribute is on an object or a list.
         :param identifier:
@@ -719,6 +731,8 @@ class Attributes(BaseSDK):
         Updates a single attribute on a given object or list.
 
         When `target` is `objects`, the required scopes are `object_configuration:read-write`. When `target` is `lists`, the required scopes are `list_configuration:read-write`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param target: Whether the attribute is on an object or a list.
         :param identifier:
@@ -856,6 +870,8 @@ class Attributes(BaseSDK):
 
         When `target` is `objects`, the required scopes are `object_configuration:read-write`. When `target` is `lists`, the required scopes are `list_configuration:read-write`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param target: Whether the attribute is on an object or a list.
         :param identifier:
         :param attribute:
@@ -989,6 +1005,8 @@ class Attributes(BaseSDK):
 
         When `target` is `objects`, the required scopes are `object_configuration:read`. When `target` is `lists`, the required scopes are `list_configuration:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param target: Whether the attribute is on an object or a list.
         :param identifier:
         :param attribute:
@@ -1094,6 +1112,8 @@ class Attributes(BaseSDK):
         Lists all select options for a particular attribute on either an object or a list.
 
         When `target` is `objects`, the required scopes are `object_configuration:read`. When `target` is `lists`, the required scopes are `list_configuration:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param target: Whether the attribute is on an object or a list.
         :param identifier:
@@ -1203,6 +1223,8 @@ class Attributes(BaseSDK):
         Adds a select option to a select attribute on an object or a list.
 
         When `target` is `objects`, the required scopes are `object_configuration:read-write`. When `target` is `lists`, the required scopes are `list_configuration:read-write`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param target: Whether the attribute is on an object or a list.
         :param identifier:
@@ -1349,6 +1371,8 @@ class Attributes(BaseSDK):
 
         When `target` is `objects`, the required scopes are `object_configuration:read-write`. When `target` is `lists`, the required scopes are `list_configuration:read-write`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param target: Whether the attribute is on an object or a list.
         :param identifier:
         :param attribute:
@@ -1494,6 +1518,8 @@ class Attributes(BaseSDK):
         Updates a select option on an attribute on either an object or a list.
 
         When `target` is `objects`, the required scopes are `object_configuration:read-write`. When `target` is `lists`, the required scopes are `list_configuration:read-write`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param target: Whether the attribute is on an object or a list.
         :param identifier:
@@ -1644,6 +1670,8 @@ class Attributes(BaseSDK):
 
         When `target` is `objects`, the required scopes are `object_configuration:read-write`. When `target` is `lists`, the required scopes are `list_configuration:read-write`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param target: Whether the attribute is on an object or a list.
         :param identifier:
         :param attribute:
@@ -1789,6 +1817,8 @@ class Attributes(BaseSDK):
 
         When `target` is `objects`, the required scopes are `object_configuration:read`. When `target` is `lists`, the required scopes are `list_configuration:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param target: Whether the attribute is on an object or a list.
         :param identifier:
         :param attribute:
@@ -1895,6 +1925,8 @@ class Attributes(BaseSDK):
         Lists all statuses for a particular status attribute on either an object or a list.
 
         When `target` is `objects`, the required scopes are `object_configuration:read`. When `target` is `lists`, the required scopes are `list_configuration:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param target: Whether the attribute is on an object or a list.
         :param identifier:
@@ -2005,6 +2037,8 @@ class Attributes(BaseSDK):
         Add a new status to a status attribute on either an object or a list.
 
         When `target` is `objects`, the required scopes are `object_configuration:read-write`. When `target` is `lists`, the required scopes are `list_configuration:read-write`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param target: Whether the attribute is on an object or a list.
         :param identifier:
@@ -2151,6 +2185,8 @@ class Attributes(BaseSDK):
 
         When `target` is `objects`, the required scopes are `object_configuration:read-write`. When `target` is `lists`, the required scopes are `list_configuration:read-write`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param target: Whether the attribute is on an object or a list.
         :param identifier:
         :param attribute:
@@ -2296,6 +2332,8 @@ class Attributes(BaseSDK):
         Update a status on an status attribute on either an object or a list.
 
         When `target` is `objects`, the required scopes are `object_configuration:read-write`. When `target` is `lists`, the required scopes are `list_configuration:read-write`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param target: Whether the attribute is on an object or a list.
         :param identifier:
@@ -2445,6 +2483,8 @@ class Attributes(BaseSDK):
         Update a status on an status attribute on either an object or a list.
 
         When `target` is `objects`, the required scopes are `object_configuration:read-write`. When `target` is `lists`, the required scopes are `list_configuration:read-write`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param target: Whether the attribute is on an object or a list.
         :param identifier:

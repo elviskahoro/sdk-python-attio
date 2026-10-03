@@ -22,6 +22,7 @@ value: PatchV2ListsListEntriesEntryIDCurrencyCode = "ARS"
 - `"COP"`
 - `"CZK"`
 - `"DKK"`
+- `"EGP"`
 - `"EUR"`
 - `"FJD"`
 - `"GHS"`

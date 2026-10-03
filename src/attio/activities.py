@@ -27,6 +27,8 @@ class Activities(BaseSDK):
 
         Required scopes: `activity_configuration:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param limit:
         :param cursor:
         :param retries: Override the default retry configuration for this method
@@ -118,6 +120,8 @@ class Activities(BaseSDK):
 
         Required scopes: `activity_configuration:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param limit:
         :param cursor:
         :param retries: Override the default retry configuration for this method
@@ -202,11 +206,13 @@ class Activities(BaseSDK):
     ) -> models.PostV2ActivitiesResponse:
         r"""Create an activity
 
-        Creates a new custom activity in your workspace.
+        Creates a new custom activity in your workspace. Your workspace must have the custom activities billing feature enabled. Public apps may instead create activities with the integration activities billing feature.
 
         This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
 
         Required scopes: `activity_configuration:read-write`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param data:
         :param retries: Override the default retry configuration for this method
@@ -276,9 +282,9 @@ class Activities(BaseSDK):
             return unmarshal_json_response(models.PostV2ActivitiesResponse, http_res)
         if utils.match_response(http_res, "403", "application/json"):
             response_data = unmarshal_json_response(
-                errors.PostV2ActivitiesUnauthorizedErrorData, http_res
+                errors.PostV2ActivitiesAuthErrorData, http_res
             )
-            raise errors.PostV2ActivitiesUnauthorizedError(response_data, http_res)
+            raise errors.PostV2ActivitiesAuthError(response_data, http_res)
         if utils.match_response(http_res, "409", "application/json"):
             response_data = unmarshal_json_response(
                 errors.PostV2ActivitiesSlugConflictErrorData, http_res
@@ -304,11 +310,13 @@ class Activities(BaseSDK):
     ) -> models.PostV2ActivitiesResponse:
         r"""Create an activity
 
-        Creates a new custom activity in your workspace.
+        Creates a new custom activity in your workspace. Your workspace must have the custom activities billing feature enabled. Public apps may instead create activities with the integration activities billing feature.
 
         This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
 
         Required scopes: `activity_configuration:read-write`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param data:
         :param retries: Override the default retry configuration for this method
@@ -378,9 +386,9 @@ class Activities(BaseSDK):
             return unmarshal_json_response(models.PostV2ActivitiesResponse, http_res)
         if utils.match_response(http_res, "403", "application/json"):
             response_data = unmarshal_json_response(
-                errors.PostV2ActivitiesUnauthorizedErrorData, http_res
+                errors.PostV2ActivitiesAuthErrorData, http_res
             )
-            raise errors.PostV2ActivitiesUnauthorizedError(response_data, http_res)
+            raise errors.PostV2ActivitiesAuthError(response_data, http_res)
         if utils.match_response(http_res, "409", "application/json"):
             response_data = unmarshal_json_response(
                 errors.PostV2ActivitiesSlugConflictErrorData, http_res
@@ -411,6 +419,8 @@ class Activities(BaseSDK):
         This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
 
         Required scopes: `activity_configuration:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param activity:
         :param retries: Override the default retry configuration for this method
@@ -507,6 +517,8 @@ class Activities(BaseSDK):
         This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
 
         Required scopes: `activity_configuration:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param activity:
         :param retries: Override the default retry configuration for this method
@@ -607,6 +619,8 @@ class Activities(BaseSDK):
         This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
 
         Required scopes: `activity_configuration:read-write`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param activity:
         :param data:
@@ -742,6 +756,8 @@ class Activities(BaseSDK):
 
         Required scopes: `activity_configuration:read-write`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param activity:
         :param data:
         :param retries: Override the default retry configuration for this method
@@ -874,6 +890,8 @@ class Activities(BaseSDK):
 
         Required scopes: `activity_configuration:read-write`, `activity_record:read-write`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param activity:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -988,6 +1006,8 @@ class Activities(BaseSDK):
         This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
 
         Required scopes: `activity_configuration:read-write`, `activity_record:read-write`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param activity:
         :param retries: Override the default retry configuration for this method

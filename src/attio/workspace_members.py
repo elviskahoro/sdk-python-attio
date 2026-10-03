@@ -25,6 +25,8 @@ class WorkspaceMembers(BaseSDK):
 
         Required scopes: `user_management:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -105,6 +107,8 @@ class WorkspaceMembers(BaseSDK):
         Lists all workspace members in the workspace.
 
         Required scopes: `user_management:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -187,6 +191,8 @@ class WorkspaceMembers(BaseSDK):
         Gets a single workspace member by ID.
 
         Required scopes: `user_management:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param workspace_member_id:
         :param retries: Override the default retry configuration for this method
@@ -283,6 +289,8 @@ class WorkspaceMembers(BaseSDK):
         Gets a single workspace member by ID.
 
         Required scopes: `user_management:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param workspace_member_id:
         :param retries: Override the default retry configuration for this method

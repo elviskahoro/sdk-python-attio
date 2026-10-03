@@ -20,6 +20,8 @@ To create comments on list entries, you will need the `list_configuration:read` 
 
 Required scopes: `comment:read-write`.
 
+Supported token levels: `workspace`, `user`.
+
 ### Example Usage
 
 <!-- UsageSnippet language="python" operationID="post_/v2/comments" method="post" path="/v2/comments" -->
@@ -78,6 +80,8 @@ To view comments on list entries, you will need the `list_configuration:read` an
 
 Required scopes: `comment:read`.
 
+Supported token levels: `workspace`, `user`.
+
 ### Example Usage
 
 <!-- UsageSnippet language="python" operationID="get_/v2/comments/{comment_id}" method="get" path="/v2/comments/{comment_id}" -->
@@ -118,7 +122,11 @@ with SDK(
 
 Deletes a comment by ID. If deleting a comment at the head of a thread, all messages in the thread are also deleted.
 
+A workspace-level access token may delete any comment. A user-level access token may only delete comments authored by the member it acts for.
+
 Required scopes: `comment:read-write`.
+
+Supported token levels: `workspace`, `user`.
 
 ### Example Usage
 
@@ -151,7 +159,8 @@ with SDK(
 
 ### Errors
 
-| Error Type                                    | Status Code                                   | Content Type                                  |
-| --------------------------------------------- | --------------------------------------------- | --------------------------------------------- |
-| errors.DeleteV2CommentsCommentIDNotFoundError | 404                                           | application/json                              |
-| errors.SDKDefaultError                        | 4XX, 5XX                                      | \*/\*                                         |
+| Error Type                                        | Status Code                                       | Content Type                                      |
+| ------------------------------------------------- | ------------------------------------------------- | ------------------------------------------------- |
+| errors.DeleteV2CommentsCommentIDUnauthorizedError | 403                                               | application/json                                  |
+| errors.DeleteV2CommentsCommentIDNotFoundError     | 404                                               | application/json                                  |
+| errors.SDKDefaultError                            | 4XX, 5XX                                          | \*/\*                                             |

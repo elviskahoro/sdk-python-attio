@@ -1,0 +1,18 @@
+# PutV2ActivitiesActivityRecordsOwnerActorType
+
+The type of actor. [Read more information on actor types here](/docs/actors).
+
+## Example Usage
+
+```python
+from attio.models import PutV2ActivitiesActivityRecordsOwnerActorType
+value: PutV2ActivitiesActivityRecordsOwnerActorType = "api-token"
+```
+
+
+## Values
+
+- `"api-token"`
+- `"workspace-member"`
+- `"system"`
+- `"app"`

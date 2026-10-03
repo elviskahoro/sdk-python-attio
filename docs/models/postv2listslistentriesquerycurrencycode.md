@@ -22,6 +22,7 @@ value: PostV2ListsListEntriesQueryCurrencyCode = "ARS"
 - `"COP"`
 - `"CZK"`
 - `"DKK"`
+- `"EGP"`
 - `"EUR"`
 - `"FJD"`
 - `"GHS"`

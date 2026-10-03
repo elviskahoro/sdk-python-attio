@@ -3,8 +3,8 @@
 from __future__ import annotations
 from .activity import Activity, ActivityTypedDict
 from attio.types import BaseModel
-from typing import Literal
-from typing_extensions import TypedDict
+from typing import Literal, Union
+from typing_extensions import TypeAliasType, TypedDict
 
 
 Extends = Literal[
@@ -59,6 +59,21 @@ PostV2ActivitiesForbiddenType = Literal["auth_error",]
 
 
 PostV2ActivitiesCodeUnauthorized = Literal["unauthorized",]
+
+
+PostV2ActivitiesCodeBillingError = Literal["billing_error",]
+
+
+PostV2ActivitiesCodeUnionTypedDict = TypeAliasType(
+    "PostV2ActivitiesCodeUnionTypedDict",
+    Union[PostV2ActivitiesCodeBillingError, PostV2ActivitiesCodeUnauthorized],
+)
+
+
+PostV2ActivitiesCodeUnion = TypeAliasType(
+    "PostV2ActivitiesCodeUnion",
+    Union[PostV2ActivitiesCodeBillingError, PostV2ActivitiesCodeUnauthorized],
+)
 
 
 class PostV2ActivitiesResponseTypedDict(TypedDict):

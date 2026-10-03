@@ -21,6 +21,8 @@ This endpoint is in beta. We will aim to avoid breaking changes, but small updat
 
 Required scopes: `object_configuration:read`, `record_permission:read`, `file:read`.
 
+Supported token levels: `workspace`, `user`.
+
 ### Example Usage
 
 <!-- UsageSnippet language="python" operationID="get_/v2/files" method="get" path="/v2/files" -->
@@ -69,6 +71,8 @@ This endpoint is in beta. We will aim to avoid breaking changes, but small updat
 
 Required scopes: `file:read-write`, `object_configuration:read`, `record_permission:read`.
 
+Supported token levels: `workspace`, `user`.
+
 ### Example Usage
 
 <!-- UsageSnippet language="python" operationID="post_/v2/files" method="post" path="/v2/files" -->
@@ -114,9 +118,13 @@ with SDK(
 
 Uploads a file to native Attio storage for a record. Send multipart/form-data with a single binary field named `file` together with the body fields `object`, `record_id`, and optional `parent_folder_id`. Maximum file size is 50 MB.
 
+This endpoint is rate limited to 1 request per second.
+
 This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
 Required scopes: `file:read-write`, `object_configuration:read`, `record_permission:read`.
+
+Supported token levels: `workspace`, `user`.
 
 ### Example Usage
 
@@ -168,6 +176,8 @@ This endpoint is in beta. We will aim to avoid breaking changes, but small updat
 
 Required scopes: `file:read`, `object_configuration:read`, `record_permission:read`.
 
+Supported token levels: `workspace`, `user`.
+
 ### Example Usage
 
 <!-- UsageSnippet language="python" operationID="get_/v2/files/{file_id}" method="get" path="/v2/files/{file_id}" -->
@@ -212,6 +222,8 @@ This endpoint is in beta. We will aim to avoid breaking changes, but small updat
 
 Required scopes: `file:read-write`, `object_configuration:read`, `record_permission:read`.
 
+Supported token levels: `workspace`, `user`.
+
 ### Example Usage
 
 <!-- UsageSnippet language="python" operationID="delete_/v2/files/{file_id}" method="delete" path="/v2/files/{file_id}" -->
@@ -255,6 +267,8 @@ Downloads a file by redirecting to a signed URL.
 This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
 Required scopes: `object_configuration:read`, `record_permission:read`, `file:read`.
+
+Supported token levels: `workspace`, `user`.
 
 ### Example Usage
 

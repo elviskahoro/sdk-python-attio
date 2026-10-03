@@ -36,6 +36,8 @@ class Entries(BaseSDK):
 
         Required scopes: `list_entry:read`, `list_configuration:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param list_id:
         :param filter_: An object used to filter results to a subset of results. Cannot be used together with `filter_view_id`. See the [full guide to filtering and sorting here](/rest-api/guides/filtering-and-sorting).
         :param filter_view_id: UUID of a saved view on this object or list. When set, results are filtered using that view's filter configuration. Cannot be used together with `filter`. Note: sorts, limits, and offsets are applied independently and are not taken from the view. All attributes are returned regardless of which attributes are visible in the view.
@@ -163,6 +165,8 @@ class Entries(BaseSDK):
 
         Required scopes: `list_entry:read`, `list_configuration:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param list_id:
         :param filter_: An object used to filter results to a subset of results. Cannot be used together with `filter_view_id`. See the [full guide to filtering and sorting here](/rest-api/guides/filtering-and-sorting).
         :param filter_view_id: UUID of a saved view on this object or list. When set, results are filtered using that view's filter configuration. Cannot be used together with `filter`. Note: sorts, limits, and offsets are applied independently and are not taken from the view. All attributes are returned regardless of which attributes are visible in the view.
@@ -283,6 +287,8 @@ class Entries(BaseSDK):
         Adds a record to a list as a new list entry. This endpoint will throw on conflicts of unique attributes. Multiple list entries are allowed for the same parent record
 
         Required scopes: `list_entry:read-write`, `list_configuration:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param list_id:
         :param data:
@@ -409,6 +415,8 @@ class Entries(BaseSDK):
 
         Required scopes: `list_entry:read-write`, `list_configuration:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param list_id:
         :param data:
         :param retries: Override the default retry configuration for this method
@@ -534,6 +542,8 @@ class Entries(BaseSDK):
 
         Required scopes: `list_entry:read-write`, `list_configuration:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param list_id:
         :param data:
         :param retries: Override the default retry configuration for this method
@@ -657,6 +667,8 @@ class Entries(BaseSDK):
 
         Required scopes: `list_entry:read-write`, `list_configuration:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param list_id:
         :param data:
         :param retries: Override the default retry configuration for this method
@@ -777,6 +789,8 @@ class Entries(BaseSDK):
 
         Required scopes: `list_entry:read`, `list_configuration:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param list_id:
         :param entry_id:
         :param retries: Override the default retry configuration for this method
@@ -875,6 +889,8 @@ class Entries(BaseSDK):
         Gets a single list entry by its `entry_id`.
 
         Required scopes: `list_entry:read`, `list_configuration:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param list_id:
         :param entry_id:
@@ -978,6 +994,8 @@ class Entries(BaseSDK):
         Use this endpoint to update list entries by `entry_id`. If the update payload includes multiselect attributes, the values supplied will be created and prepended to the list of values that already exist (if any). Use the `PUT` endpoint to overwrite or remove multiselect attribute values.
 
         Required scopes: `list_entry:read-write`, `list_configuration:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param list_id:
         :param entry_id:
@@ -1109,6 +1127,8 @@ class Entries(BaseSDK):
 
         Required scopes: `list_entry:read-write`, `list_configuration:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param list_id:
         :param entry_id:
         :param data:
@@ -1238,6 +1258,8 @@ class Entries(BaseSDK):
         Use this endpoint to update list entries by `entry_id`. If the update payload includes multiselect attributes, the values supplied will overwrite/remove the list of values that already exist (if any). Use the `PATCH` endpoint to add multiselect attribute values without removing those value that already exist.
 
         Required scopes: `list_entry:read-write`, `list_configuration:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param list_id:
         :param entry_id:
@@ -1369,6 +1391,8 @@ class Entries(BaseSDK):
 
         Required scopes: `list_entry:read-write`, `list_configuration:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param list_id:
         :param entry_id:
         :param data:
@@ -1495,6 +1519,8 @@ class Entries(BaseSDK):
 
         Required scopes: `list_entry:read-write`, `list_configuration:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param list_id:
         :param entry_id:
         :param retries: Override the default retry configuration for this method
@@ -1600,6 +1626,8 @@ class Entries(BaseSDK):
         Deletes a single list entry by its `entry_id`.
 
         Required scopes: `list_entry:read-write`, `list_configuration:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param list_id:
         :param entry_id:
@@ -1710,6 +1738,8 @@ class Entries(BaseSDK):
         Gets all values for a given attribute on a list entry. This endpoint has the ability to return all historic values using the `show_historic` query param. Historic values are sorted from oldest to newest (by `active_from`).
 
         Required scopes: `list_entry:read`, `list_configuration:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param list_id:
         :param entry_id:
@@ -1823,6 +1853,8 @@ class Entries(BaseSDK):
         Gets all values for a given attribute on a list entry. This endpoint has the ability to return all historic values using the `show_historic` query param. Historic values are sorted from oldest to newest (by `active_from`).
 
         Required scopes: `list_entry:read`, `list_configuration:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param list_id:
         :param entry_id:
@@ -1945,6 +1977,8 @@ class Entries(BaseSDK):
         This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
         Required scopes: `list_entry:read-write`, `list_configuration:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param list:
         :param entry_id:
@@ -2091,6 +2125,8 @@ class Entries(BaseSDK):
         This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
         Required scopes: `list_entry:read-write`, `list_configuration:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param list:
         :param entry_id:

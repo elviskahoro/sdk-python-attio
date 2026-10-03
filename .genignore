@@ -1,0 +1,11 @@
+# Paths Speakeasy generation must never write to or clean up.
+#
+# scripts/ only holds thin wrappers that delegate to the real implementations
+# in ci/ (which is outside the generator's output paths entirely and therefore
+# untouchable by construction). Without this file, `speakeasy run` rewrites
+# scripts/publish.sh with its naive `uv build && uv publish --token` template
+# and silently drops the dual attio/gtm-attio release pipeline.
+#
+# ci/post_generate_patch.py additionally restores the wrappers after every
+# generation in case this ignore file ever stops being honored.
+scripts/

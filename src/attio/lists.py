@@ -25,6 +25,8 @@ class Lists(BaseSDK):
 
         Required scopes: `list_configuration:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -103,6 +105,8 @@ class Lists(BaseSDK):
         List all lists that your access token has access to. lists are returned in the order that they are sorted in the sidebar.
 
         Required scopes: `list_configuration:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -189,6 +193,8 @@ class Lists(BaseSDK):
         Please note that new lists must have either `workspace_access` set to `\"full-access\"` or one or more element of `workspace_member_access` with a `\"full-access\"` level. It is also possible to receive a `403` billing error if your workspace is not on a plan that supports either advanced workspace or workspace member-level access for lists.
 
         Required scopes: `list_configuration:read-write`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param data:
         :param retries: Override the default retry configuration for this method
@@ -304,6 +310,8 @@ class Lists(BaseSDK):
 
         Required scopes: `list_configuration:read-write`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param data:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -412,6 +420,8 @@ class Lists(BaseSDK):
 
         Required scopes: `list_configuration:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param list_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -503,6 +513,8 @@ class Lists(BaseSDK):
         Gets a single list in your workspace that your access token has access to.
 
         Required scopes: `list_configuration:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param list_id:
         :param retries: Override the default retry configuration for this method
@@ -596,6 +608,8 @@ class Lists(BaseSDK):
         Updates an existing list. Permissions for the list are controlled with the `workspace_access` and `workspace_member_access` parameters. Please note that lists must have either `workspace_access` set to `\"full-access\"` or one or more element of `workspace_member_access` with a `\"full-access\"` level. It is also possible to receive a `403` billing error if your workspace is not on a plan that supports either advanced workspace or workspace member level access for lists. Changing the parent object of a list is not possible through the API as it can have unintended side-effects that should be considered carefully. If you wish to carry out a parent object change you should do so through the UI.
 
         Required scopes: `list_configuration:read-write`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param list_id:
         :param data:
@@ -705,6 +719,8 @@ class Lists(BaseSDK):
         Updates an existing list. Permissions for the list are controlled with the `workspace_access` and `workspace_member_access` parameters. Please note that lists must have either `workspace_access` set to `\"full-access\"` or one or more element of `workspace_member_access` with a `\"full-access\"` level. It is also possible to receive a `403` billing error if your workspace is not on a plan that supports either advanced workspace or workspace member level access for lists. Changing the parent object of a list is not possible through the API as it can have unintended side-effects that should be considered carefully. If you wish to carry out a parent object change you should do so through the UI.
 
         Required scopes: `list_configuration:read-write`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param list_id:
         :param data:
@@ -817,6 +833,8 @@ class Lists(BaseSDK):
 
         Required scopes: `list_configuration:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param list_id:
         :param show_archived:
         :param limit:
@@ -917,6 +935,8 @@ class Lists(BaseSDK):
         Lists saved views for a list. Results are ordered by view ID (`id.view_id` ascending).
 
         Required scopes: `list_configuration:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param list_id:
         :param show_archived:

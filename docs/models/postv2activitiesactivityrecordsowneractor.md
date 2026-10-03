@@ -1,0 +1,11 @@
+# PostV2ActivitiesActivityRecordsOwnerActor
+
+The actor that created this value.
+
+
+## Fields
+
+| Field                                                                                                                                | Type                                                                                                                                 | Required                                                                                                                             | Description                                                                                                                          |
+| ------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `id`                                                                                                                                 | *OptionalNullable[str]*                                                                                                              | :heavy_minus_sign:                                                                                                                   | An ID to identify the actor.                                                                                                         |
+| `type`                                                                                                                               | [OptionalNullable[models.PostV2ActivitiesActivityRecordsOwnerActorType]](../models/postv2activitiesactivityrecordsowneractortype.md) | :heavy_minus_sign:                                                                                                                   | The type of actor. [Read more information on actor types here](/docs/actors).                                                        |

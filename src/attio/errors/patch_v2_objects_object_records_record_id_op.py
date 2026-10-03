@@ -11,6 +11,33 @@ import httpx
 from typing import Optional
 
 
+class PatchV2ObjectsObjectRecordsRecordIDConcurrentWriteConflictErrorData(BaseModel):
+    status_code: float
+    type: models_patch_v2_objects_object_records_record_id_op.PatchV2ObjectsObjectRecordsRecordIDConflictType
+    code: models_patch_v2_objects_object_records_record_id_op.PatchV2ObjectsObjectRecordsRecordIDCodeConcurrentWriteConflict
+    message: str
+
+
+@dataclass(unsafe_hash=True)
+class PatchV2ObjectsObjectRecordsRecordIDConcurrentWriteConflictError(SDKError):
+    r"""Conflict"""
+
+    data: PatchV2ObjectsObjectRecordsRecordIDConcurrentWriteConflictErrorData = field(
+        hash=False
+    )
+
+    def __init__(
+        self,
+        data: PatchV2ObjectsObjectRecordsRecordIDConcurrentWriteConflictErrorData,
+        raw_response: httpx.Response,
+        body: Optional[str] = None,
+    ):
+        fallback = body or raw_response.text
+        message = str(data.message) or fallback
+        super().__init__(message, raw_response, body)
+        object.__setattr__(self, "data", data)
+
+
 class PatchV2ObjectsObjectRecordsRecordIDNotFoundErrorData(BaseModel):
     status_code: float
     type: models_patch_v2_objects_object_records_record_id_op.PatchV2ObjectsObjectRecordsRecordIDNotFoundType

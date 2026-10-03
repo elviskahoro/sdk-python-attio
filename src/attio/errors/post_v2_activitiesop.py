@@ -34,22 +34,22 @@ class PostV2ActivitiesSlugConflictError(SDKError):
         object.__setattr__(self, "data", data)
 
 
-class PostV2ActivitiesUnauthorizedErrorData(BaseModel):
+class PostV2ActivitiesAuthErrorData(BaseModel):
     status_code: float
     type: models_post_v2_activitiesop.PostV2ActivitiesForbiddenType
-    code: models_post_v2_activitiesop.PostV2ActivitiesCodeUnauthorized
+    code: models_post_v2_activitiesop.PostV2ActivitiesCodeUnion
     message: str
 
 
 @dataclass(unsafe_hash=True)
-class PostV2ActivitiesUnauthorizedError(SDKError):
+class PostV2ActivitiesAuthError(SDKError):
     r"""Forbidden"""
 
-    data: PostV2ActivitiesUnauthorizedErrorData = field(hash=False)
+    data: PostV2ActivitiesAuthErrorData = field(hash=False)
 
     def __init__(
         self,
-        data: PostV2ActivitiesUnauthorizedErrorData,
+        data: PostV2ActivitiesAuthErrorData,
         raw_response: httpx.Response,
         body: Optional[str] = None,
     ):

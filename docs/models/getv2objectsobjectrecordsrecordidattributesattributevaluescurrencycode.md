@@ -22,6 +22,7 @@ value: GetV2ObjectsObjectRecordsRecordIDAttributesAttributeValuesCurrencyCode = 
 - `"COP"`
 - `"CZK"`
 - `"DKK"`
+- `"EGP"`
 - `"EUR"`
 - `"FJD"`
 - `"GHS"`

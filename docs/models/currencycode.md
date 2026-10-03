@@ -22,6 +22,7 @@ value: CurrencyCode = "ARS"
 - `"COP"`
 - `"CZK"`
 - `"DKK"`
+- `"EGP"`
 - `"EUR"`
 - `"FJD"`
 - `"GHS"`

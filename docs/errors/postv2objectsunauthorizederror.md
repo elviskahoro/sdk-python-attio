@@ -1,0 +1,13 @@
+# PostV2ObjectsUnauthorizedError
+
+Forbidden
+
+
+## Fields
+
+| Field                                                                              | Type                                                                               | Required                                                                           | Description                                                                        | Example                                                                            |
+| ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `status_code`                                                                      | *float*                                                                            | :heavy_check_mark:                                                                 | N/A                                                                                |                                                                                    |
+| `type`                                                                             | [models.PostV2ObjectsForbiddenType](../models/postv2objectsforbiddentype.md)       | :heavy_check_mark:                                                                 | N/A                                                                                |                                                                                    |
+| `code`                                                                             | [models.PostV2ObjectsCodeUnauthorized](../models/postv2objectscodeunauthorized.md) | :heavy_check_mark:                                                                 | N/A                                                                                |                                                                                    |
+| `message`                                                                          | *str*                                                                              | :heavy_check_mark:                                                                 | N/A                                                                                | You do not have the necessary permissions to create objects in this workspace.     |

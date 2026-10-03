@@ -9,6 +9,7 @@ ACTIVE_PAYLOAD = {
     "scope": "x",
     "client_id": "c",
     "token_type": "Bearer",
+    "token_level": "workspace",  # nosec B105 - test fixture, not a credential
     "exp": None,
     "iat": 1.0,
     "sub": "s",

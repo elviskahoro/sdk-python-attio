@@ -11,6 +11,33 @@ import httpx
 from typing import Optional
 
 
+class PutV2ActivitiesActivityRecordsRecordIDConcurrentWriteConflictErrorData(BaseModel):
+    status_code: float
+    type: models_put_v2_activities_activity_records_record_id_op.PutV2ActivitiesActivityRecordsRecordIDConflictType
+    code: models_put_v2_activities_activity_records_record_id_op.PutV2ActivitiesActivityRecordsRecordIDCodeConcurrentWriteConflict
+    message: str
+
+
+@dataclass(unsafe_hash=True)
+class PutV2ActivitiesActivityRecordsRecordIDConcurrentWriteConflictError(SDKError):
+    r"""Conflict"""
+
+    data: PutV2ActivitiesActivityRecordsRecordIDConcurrentWriteConflictErrorData = (
+        field(hash=False)
+    )
+
+    def __init__(
+        self,
+        data: PutV2ActivitiesActivityRecordsRecordIDConcurrentWriteConflictErrorData,
+        raw_response: httpx.Response,
+        body: Optional[str] = None,
+    ):
+        fallback = body or raw_response.text
+        message = str(data.message) or fallback
+        super().__init__(message, raw_response, body)
+        object.__setattr__(self, "data", data)
+
+
 class PutV2ActivitiesActivityRecordsRecordIDNotFoundErrorData(BaseModel):
     status_code: float
     type: models_put_v2_activities_activity_records_record_id_op.PutV2ActivitiesActivityRecordsRecordIDNotFoundType
@@ -63,24 +90,24 @@ class PutV2ActivitiesActivityRecordsRecordIDUnauthorizedError(SDKError):
         object.__setattr__(self, "data", data)
 
 
-class PutV2ActivitiesActivityRecordsRecordIDMissingValueErrorData(BaseModel):
+class PutV2ActivitiesActivityRecordsRecordIDInvalidRequestErrorData(BaseModel):
     status_code: float
     type: models_put_v2_activities_activity_records_record_id_op.PutV2ActivitiesActivityRecordsRecordIDBadRequestType
-    code: models_put_v2_activities_activity_records_record_id_op.PutV2ActivitiesActivityRecordsRecordIDCodeMissingValue
+    code: models_put_v2_activities_activity_records_record_id_op.PutV2ActivitiesActivityRecordsRecordIDCodeUnion
     message: str
 
 
 @dataclass(unsafe_hash=True)
-class PutV2ActivitiesActivityRecordsRecordIDMissingValueError(SDKError):
+class PutV2ActivitiesActivityRecordsRecordIDInvalidRequestError(SDKError):
     r"""Bad Request"""
 
-    data: PutV2ActivitiesActivityRecordsRecordIDMissingValueErrorData = field(
+    data: PutV2ActivitiesActivityRecordsRecordIDInvalidRequestErrorData = field(
         hash=False
     )
 
     def __init__(
         self,
-        data: PutV2ActivitiesActivityRecordsRecordIDMissingValueErrorData,
+        data: PutV2ActivitiesActivityRecordsRecordIDInvalidRequestErrorData,
         raw_response: httpx.Response,
         body: Optional[str] = None,
     ):

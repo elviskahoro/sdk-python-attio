@@ -15,3 +15,9 @@ value: models.PatchV2ObjectsObjectRecordsRecordIDCodeMissingValue = /* values he
 value: models.PatchV2ObjectsObjectRecordsRecordIDCodeMergeInProgress = /* values here */
 ```
 
+### `models.PatchV2ObjectsObjectRecordsRecordIDCodeParticleGateViolation`
+
+```python
+value: models.PatchV2ObjectsObjectRecordsRecordIDCodeParticleGateViolation = /* values here */
+```
+

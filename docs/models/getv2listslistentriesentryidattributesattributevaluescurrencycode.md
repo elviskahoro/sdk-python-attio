@@ -22,6 +22,7 @@ value: GetV2ListsListEntriesEntryIDAttributesAttributeValuesCurrencyCode = "ARS"
 - `"COP"`
 - `"CZK"`
 - `"DKK"`
+- `"EGP"`
 - `"EUR"`
 - `"FJD"`
 - `"GHS"`

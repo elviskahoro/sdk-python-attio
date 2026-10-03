@@ -22,6 +22,7 @@ value: PostV2TargetIdentifierAttributesDefaultCurrencyCode = "ARS"
 - `"COP"`
 - `"CZK"`
 - `"DKK"`
+- `"EGP"`
 - `"EUR"`
 - `"FJD"`
 - `"GHS"`

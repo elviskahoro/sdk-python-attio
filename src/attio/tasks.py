@@ -32,6 +32,8 @@ class Tasks(BaseSDK):
 
         Required scopes: `task:read`, `object_configuration:read`, `record_permission:read`, `user_management:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param limit:
         :param offset:
         :param sort: Optionally sort the results. \"created_at:asc\" returns oldest results first, \"created_at:desc\" returns the newest results first. \"completed_at:asc\" and \"completed_at:desc\" sort by completion time. With \"completed_at:asc\", incomplete tasks (no completion date) appear first, followed by completed tasks oldest-first. With \"completed_at:desc\", completed tasks appear first (newest-first), followed by incomplete tasks. To exclude incomplete tasks, filter by is_completed. If unspecified, defaults to \"created_at:asc\" (oldest results first).
@@ -136,6 +138,8 @@ class Tasks(BaseSDK):
 
         Required scopes: `task:read`, `object_configuration:read`, `record_permission:read`, `user_management:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param limit:
         :param offset:
         :param sort: Optionally sort the results. \"created_at:asc\" returns oldest results first, \"created_at:desc\" returns the newest results first. \"completed_at:asc\" and \"completed_at:desc\" sort by completion time. With \"completed_at:asc\", incomplete tasks (no completion date) appear first, followed by completed tasks oldest-first. With \"completed_at:desc\", completed tasks appear first (newest-first), followed by incomplete tasks. To exclude incomplete tasks, filter by is_completed. If unspecified, defaults to \"created_at:asc\" (oldest results first).
@@ -235,6 +239,8 @@ class Tasks(BaseSDK):
         At present, tasks can only be created from plaintext without record reference formatting.
 
         Required scopes: `task:read-write`, `object_configuration:read`, `record_permission:read`, `user_management:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param data:
         :param retries: Override the default retry configuration for this method
@@ -338,6 +344,8 @@ class Tasks(BaseSDK):
 
         Required scopes: `task:read-write`, `object_configuration:read`, `record_permission:read`, `user_management:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param data:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -438,6 +446,8 @@ class Tasks(BaseSDK):
 
         Required scopes: `task:read`, `object_configuration:read`, `record_permission:read`, `user_management:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param task_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -529,6 +539,8 @@ class Tasks(BaseSDK):
         Get a single task by ID.
 
         Required scopes: `task:read`, `object_configuration:read`, `record_permission:read`, `user_management:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param task_id:
         :param retries: Override the default retry configuration for this method
@@ -624,6 +636,8 @@ class Tasks(BaseSDK):
         Updates an existing task by `task_id`. At present, only the `deadline_at`, `is_completed`, `linked_records`, and `assignees` fields can be updated.
 
         Required scopes: `task:read-write`, `object_configuration:read`, `record_permission:read`, `user_management:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param task_id:
         :param data:
@@ -736,6 +750,8 @@ class Tasks(BaseSDK):
 
         Required scopes: `task:read-write`, `object_configuration:read`, `record_permission:read`, `user_management:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param task_id:
         :param data:
         :param retries: Override the default retry configuration for this method
@@ -844,6 +860,8 @@ class Tasks(BaseSDK):
 
         Required scopes: `task:read-write`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param task_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -935,6 +953,8 @@ class Tasks(BaseSDK):
         Delete a task by ID.
 
         Required scopes: `task:read-write`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param task_id:
         :param retries: Override the default retry configuration for this method

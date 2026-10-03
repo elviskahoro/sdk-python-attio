@@ -22,6 +22,7 @@ value: GetV2ObjectsObjectRecordsRecordIDCurrencyCode = "ARS"
 - `"COP"`
 - `"CZK"`
 - `"DKK"`
+- `"EGP"`
 - `"EUR"`
 - `"FJD"`
 - `"GHS"`

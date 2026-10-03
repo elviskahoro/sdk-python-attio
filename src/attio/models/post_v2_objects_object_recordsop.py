@@ -50,6 +50,14 @@ class PostV2ObjectsObjectRecordsRequest(BaseModel):
     ]
 
 
+PostV2ObjectsObjectRecordsConflictType = Literal["invalid_request_error",]
+
+
+PostV2ObjectsObjectRecordsCodeConcurrentWriteConflict = Literal[
+    "concurrent_write_conflict",
+]
+
+
 PostV2ObjectsObjectRecordsNotFoundType = Literal["invalid_request_error",]
 
 
@@ -67,6 +75,7 @@ PostV2ObjectsObjectRecordsBadRequestType = Literal["invalid_request_error",]
 
 PostV2ObjectsObjectRecordsBadRequestCode = Literal[
     "value_not_found",
+    "particle_gate_violation",
     "validation_type",
 ]
 

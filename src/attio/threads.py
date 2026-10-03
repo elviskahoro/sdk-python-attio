@@ -37,6 +37,8 @@ class Threads(BaseSDK):
 
         Required scopes: `comment:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param record_id:
         :param object:
         :param entry_id:
@@ -144,6 +146,8 @@ class Threads(BaseSDK):
 
         Required scopes: `comment:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param record_id:
         :param object:
         :param entry_id:
@@ -250,6 +254,8 @@ class Threads(BaseSDK):
         To view threads on list entries, you will need the `list_configuration:read` and `list_entry:read` scopes.
 
         Required scopes: `comment:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param thread_id:
         :param limit:
@@ -361,6 +367,8 @@ class Threads(BaseSDK):
         To view threads on list entries, you will need the `list_configuration:read` and `list_entry:read` scopes.
 
         Required scopes: `comment:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param thread_id:
         :param limit:

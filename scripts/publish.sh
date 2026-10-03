@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-
+# Thin wrapper — do not add logic here.
+#
+# `speakeasy run` regenerates scripts/ with its own templates (see
+# .genignore), so this file deliberately only delegates to the real
+# implementation in ci/, which the generator never touches.
+# ci/post_generate_patch.py restores this wrapper after every regeneration
+# in case it is ever overwritten anyway.
 set -euo pipefail
-
-cd "$(dirname "$0")/.."
-
-# The SDK has custom staging logic and produces both attio and gtm-attio.
-# Build those artifacts once, then let the shared module receive the token as
-# a Dagger Secret rather than exposing it to uv or the shell command line.
-uv run --env-file .env.local python ci/pipeline.py publish
+exec bash "$(dirname "$0")/../ci/publish.sh" "$@"

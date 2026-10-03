@@ -18,6 +18,8 @@ List all tasks. Results are sorted by creation date, from oldest to newest.
 
 Required scopes: `task:read`, `object_configuration:read`, `record_permission:read`, `user_management:read`.
 
+Supported token levels: `workspace`, `user`.
+
 ### Example Usage
 
 <!-- UsageSnippet language="python" operationID="get_/v2/tasks" method="get" path="/v2/tasks" -->
@@ -66,6 +68,8 @@ Creates a new task.
 At present, tasks can only be created from plaintext without record reference formatting.
 
 Required scopes: `task:read-write`, `object_configuration:read`, `record_permission:read`, `user_management:read`.
+
+Supported token levels: `workspace`, `user`.
 
 ### Example Usage
 
@@ -120,6 +124,8 @@ Get a single task by ID.
 
 Required scopes: `task:read`, `object_configuration:read`, `record_permission:read`, `user_management:read`.
 
+Supported token levels: `workspace`, `user`.
+
 ### Example Usage
 
 <!-- UsageSnippet language="python" operationID="get_/v2/tasks/{task_id}" method="get" path="/v2/tasks/{task_id}" -->
@@ -161,6 +167,8 @@ with SDK(
 Updates an existing task by `task_id`. At present, only the `deadline_at`, `is_completed`, `linked_records`, and `assignees` fields can be updated.
 
 Required scopes: `task:read-write`, `object_configuration:read`, `record_permission:read`, `user_management:read`.
+
+Supported token levels: `workspace`, `user`.
 
 ### Example Usage
 
@@ -217,6 +225,8 @@ with SDK(
 Delete a task by ID.
 
 Required scopes: `task:read-write`.
+
+Supported token levels: `workspace`, `user`.
 
 ### Example Usage
 
