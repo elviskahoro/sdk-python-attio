@@ -1,4 +1,4 @@
-speakeasyVersion: 1.795.3
+speakeasyVersion: 1.800.1
 sources:
     Attio API:
         sourceNamespace: attio-api
@@ -25,10 +25,10 @@ workflow:
     sources:
         attio:
             inputs:
-                - location: openapi/api-202608130204.json
+                - location: openapi/api-202610030405.json
             overlays:
                 - location: overlay.yaml
-            output: openapi/api-202608130204-overlay.json
+            output: openapi/api-202610030405-overlay.json
             registry:
                 location: registry.speakeasyapi.dev/elviskahoro/attio/attio
     targets:

@@ -323,94 +323,11 @@ actions:
       in: "path"
       x-speakeasy-name-override: "list_id"
 
-  # Fix SCIM endpoints missing path parameters (upstream spec bug)
-  - target: "$.paths['/scim/v2/Users/{user_id}'].get"
-    description: "Add missing user_id path parameter to GET /scim/v2/Users/{user_id}"
-    update:
-      parameters:
-        - schema:
-            type: string
-          required: true
-          name: "user_id"
-          in: "path"
-          description: "The ID of the SCIM user to retrieve."
-
-  - target: "$.paths['/scim/v2/Users/{user_id}'].patch"
-    description: "Add missing user_id path parameter to PATCH /scim/v2/Users/{user_id}"
-    update:
-      parameters:
-        - schema:
-            type: string
-          required: true
-          name: "user_id"
-          in: "path"
-          description: "The ID of the SCIM user to update."
-
-  - target: "$.paths['/scim/v2/Users/{user_id}'].put"
-    description: "Add missing user_id path parameter to PUT /scim/v2/Users/{user_id}"
-    update:
-      parameters:
-        - schema:
-            type: string
-          required: true
-          name: "user_id"
-          in: "path"
-          description: "The ID of the SCIM user to replace."
-
-  - target: "$.paths['/scim/v2/Users/{user_id}'].delete"
-    description: "Add missing user_id path parameter to DELETE /scim/v2/Users/{user_id}"
-    update:
-      parameters:
-        - schema:
-            type: string
-          required: true
-          name: "user_id"
-          in: "path"
-          description: "The ID of the SCIM user to delete."
-
-  - target: "$.paths['/scim/v2/Groups/{workspace_team_id}'].get"
-    description: "Add missing workspace_team_id path parameter to GET /scim/v2/Groups/{workspace_team_id}"
-    update:
-      parameters:
-        - schema:
-            type: string
-          required: true
-          name: "workspace_team_id"
-          in: "path"
-          description: "The ID of the SCIM group to retrieve."
-
-  - target: "$.paths['/scim/v2/Groups/{workspace_team_id}'].patch"
-    description: "Add missing workspace_team_id path parameter to PATCH /scim/v2/Groups/{workspace_team_id}"
-    update:
-      parameters:
-        - schema:
-            type: string
-          required: true
-          name: "workspace_team_id"
-          in: "path"
-          description: "The ID of the SCIM group to update."
-
-  - target: "$.paths['/scim/v2/Groups/{workspace_team_id}'].put"
-    description: "Add missing workspace_team_id path parameter to PUT /scim/v2/Groups/{workspace_team_id}"
-    update:
-      parameters:
-        - schema:
-            type: string
-          required: true
-          name: "workspace_team_id"
-          in: "path"
-          description: "The ID of the SCIM group to replace."
-
-  - target: "$.paths['/scim/v2/Groups/{workspace_team_id}'].delete"
-    description: "Add missing workspace_team_id path parameter to DELETE /scim/v2/Groups/{workspace_team_id}"
-    update:
-      parameters:
-        - schema:
-            type: string
-          required: true
-          name: "workspace_team_id"
-          in: "path"
-          description: "The ID of the SCIM group to delete."
+  # SCIM parameter-fix entries removed 2026-10: the /scim/* endpoints are not
+  # present in the published spec anymore, so those targets matched nothing
+  # (speakeasy silently skips them). ci/spec_diff.py check-overlay now fails
+  # loudly on dead targets, so if SCIM returns to the spec the entries must be
+  # re-added with fresh verification.
 
   - target: "$.paths['/v2/lists/{list}/views'].get.parameters[?(@.name=='list')]"
     description: "Rename list parameter to list_id in GET /v2/lists/{list}/views"
@@ -448,15 +365,45 @@ actions:
     update:
       - "validation_type"
 
-  - target: "$.paths['/v2/objects/{object}/records'].post.responses['400'].content['application/json'].schema.properties.code.enum"
+  # Some endpoints currently return validation_type for 400s in addition to value_not_found.
+  # Accept both to avoid ResponseValidationError when unmarshalling error responses.
+  # Since the 2026-10-03 spec, these code fields are anyOf unions of single-value
+  # enums instead of one flat enum, so the old `.code.enum` targets silently
+  # stopped matching. Flatten the unions back to a single enum (and include
+  # validation_type) so the generated type stays one Literal that accepts
+  # every code the API can actually return.
+  #
+  # The enum lists below REPLACE the spec's union values, so they must stay
+  # in sync with the union members: if Attio adds an error code to one of
+  # these unions, add it here too. `uv run python ci/spec_diff.py
+  # check-overlay` fails loudly when a spec union grows a value this list
+  # does not cover ("drops spec error code").
+  - target: "$.paths['/v2/objects/{object}/records'].post.responses['400'].content['application/json'].schema.properties.code.anyOf"
+    description: "Flatten anyOf error-code union in POST /v2/objects/{object}/records so code generates as one enum"
+    remove: true
+
+  - target: "$.paths['/v2/objects/{object}/records'].post.responses['400'].content['application/json'].schema.properties.code"
     description: "Allow validation_type code in POST /v2/objects/{object}/records"
     update:
-      - "validation_type"
+      type: string
+      enum:
+        - "value_not_found"
+        - "particle_gate_violation"
+        - "validation_type"
 
-  - target: "$.paths['/v2/objects/{object}/records'].put.responses['400'].content['application/json'].schema.properties.code.enum"
+  - target: "$.paths['/v2/objects/{object}/records'].put.responses['400'].content['application/json'].schema.properties.code.anyOf"
+    description: "Flatten anyOf error-code union in PUT /v2/objects/{object}/records so code generates as one enum"
+    remove: true
+
+  - target: "$.paths['/v2/objects/{object}/records'].put.responses['400'].content['application/json'].schema.properties.code"
     description: "Allow validation_type code in PUT /v2/objects/{object}/records"
     update:
-      - "validation_type"
+      type: string
+      enum:
+        - "value_not_found"
+        - "merge_in_progress"
+        - "particle_gate_violation"
+        - "validation_type"
 
   - target: "$.paths['/v2/objects/records/search'].post.responses['400'].content['application/json'].schema.properties.code.enum"
     description: "Allow validation_type code in POST /v2/objects/records/search"
@@ -500,3 +447,127 @@ actions:
   - target: "$.paths['/v2/self'].get.responses['200'].content['application/json'].schema.anyOf[1].properties.active.enum"
     description: "Remove single-value enum from active-token `active` field in GET /v2/self so it doesn't generate as a const field"
     remove: true
+
+  # Timestamp value fixes for the /v2/activities/{activity}/records* endpoints.
+  # These endpoints have carried the same oneOf[16] timestamp value as the
+  # objects/lists record endpoints since they were added, but were never
+  # covered here, so activity record timestamps generated as `date` instead
+  # of `str` (a full ISO 8601 timestamp like 2023-01-02T13:00:00.000000000Z
+  # fails date parsing). Same format/example/description recipe as above.
+
+  - target: "$.paths['/v2/activities/{activity}/records/query'].post.responses['200'].content['application/json'].schema.properties.data.items.properties.values.additionalProperties.items.oneOf[16].properties.value.format"
+    description: "Remove format field from timestamp value in POST /v2/activities/{activity}/records/query response"
+    remove: true
+
+  - target: "$.paths['/v2/activities/{activity}/records/query'].post.responses['200'].content['application/json'].schema.properties.data.items.properties.values.additionalProperties.items.oneOf[16].properties.value.example"
+    description: "Change timestamp example to non-ISO8601 format in POST /v2/activities/{activity}/records/query"
+    update: "timestamp_string_value"
+
+  - target: "$.paths['/v2/activities/{activity}/records/query'].post.responses['200'].content['application/json'].schema.properties.data.items.properties.values.additionalProperties.items.oneOf[16].properties.value.description"
+    description: "Change timestamp description in POST /v2/activities/{activity}/records/query"
+    update: "A timestamp string value"
+
+  - target: "$.paths['/v2/activities/{activity}/records'].post.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.format"
+    description: "Remove format field from timestamp value in POST /v2/activities/{activity}/records response"
+    remove: true
+
+  - target: "$.paths['/v2/activities/{activity}/records'].post.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.example"
+    description: "Change timestamp example to non-ISO8601 format in POST /v2/activities/{activity}/records"
+    update: "timestamp_string_value"
+
+  - target: "$.paths['/v2/activities/{activity}/records'].post.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.description"
+    description: "Change timestamp description in POST /v2/activities/{activity}/records"
+    update: "A timestamp string value"
+
+  - target: "$.paths['/v2/activities/{activity}/records'].put.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.format"
+    description: "Remove format field from timestamp value in PUT /v2/activities/{activity}/records response (upsert endpoint added in the 2026-10-03 spec)"
+    remove: true
+
+  - target: "$.paths['/v2/activities/{activity}/records'].put.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.example"
+    description: "Change timestamp example to non-ISO8601 format in PUT /v2/activities/{activity}/records"
+    update: "timestamp_string_value"
+
+  - target: "$.paths['/v2/activities/{activity}/records'].put.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.description"
+    description: "Change timestamp description in PUT /v2/activities/{activity}/records"
+    update: "A timestamp string value"
+
+  - target: "$.paths['/v2/activities/{activity}/records/{record_id}'].get.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.format"
+    description: "Remove format field from timestamp value in GET /v2/activities/{activity}/records/{record_id} response"
+    remove: true
+
+  - target: "$.paths['/v2/activities/{activity}/records/{record_id}'].get.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.example"
+    description: "Change timestamp example to non-ISO8601 format in GET /v2/activities/{activity}/records/{record_id}"
+    update: "timestamp_string_value"
+
+  - target: "$.paths['/v2/activities/{activity}/records/{record_id}'].get.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.description"
+    description: "Change timestamp description in GET /v2/activities/{activity}/records/{record_id}"
+    update: "A timestamp string value"
+
+  - target: "$.paths['/v2/activities/{activity}/records/{record_id}'].patch.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.format"
+    description: "Remove format field from timestamp value in PATCH /v2/activities/{activity}/records/{record_id} response"
+    remove: true
+
+  - target: "$.paths['/v2/activities/{activity}/records/{record_id}'].patch.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.example"
+    description: "Change timestamp example to non-ISO8601 format in PATCH /v2/activities/{activity}/records/{record_id}"
+    update: "timestamp_string_value"
+
+  - target: "$.paths['/v2/activities/{activity}/records/{record_id}'].patch.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.description"
+    description: "Change timestamp description in PATCH /v2/activities/{activity}/records/{record_id}"
+    update: "A timestamp string value"
+
+  - target: "$.paths['/v2/activities/{activity}/records/{record_id}'].put.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.format"
+    description: "Remove format field from timestamp value in PUT /v2/activities/{activity}/records/{record_id} response"
+    remove: true
+
+  - target: "$.paths['/v2/activities/{activity}/records/{record_id}'].put.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.example"
+    description: "Change timestamp example to non-ISO8601 format in PUT /v2/activities/{activity}/records/{record_id}"
+    update: "timestamp_string_value"
+
+  - target: "$.paths['/v2/activities/{activity}/records/{record_id}'].put.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.description"
+    description: "Change timestamp description in PUT /v2/activities/{activity}/records/{record_id}"
+    update: "A timestamp string value"
+
+  # The PUT twins of the attribute-values endpoints that already had GET
+  # coverage above; they also carry the oneOf[16] timestamp value and were
+  # never covered, so their upsert responses generated timestamps as `date`.
+
+  - target: "$.paths['/v2/objects/{object}/records/{record_id}/attributes/{attribute}/values'].put.responses['200'].content['application/json'].schema.properties.data.items.oneOf[16].properties.value.format"
+    description: "Remove format field from timestamp value in PUT object record attribute values response"
+    remove: true
+
+  - target: "$.paths['/v2/objects/{object}/records/{record_id}/attributes/{attribute}/values'].put.responses['200'].content['application/json'].schema.properties.data.items.oneOf[16].properties.value.example"
+    description: "Change timestamp example to non-ISO8601 format in PUT /v2/objects/{object}/records/{record_id}/attributes/{attribute}/values"
+    update: "timestamp_string_value"
+
+  - target: "$.paths['/v2/objects/{object}/records/{record_id}/attributes/{attribute}/values'].put.responses['200'].content['application/json'].schema.properties.data.items.oneOf[16].properties.value.description"
+    description: "Change timestamp description in PUT /v2/objects/{object}/records/{record_id}/attributes/{attribute}/values"
+    update: "A timestamp string value"
+
+  - target: "$.paths['/v2/lists/{list}/entries/{entry_id}/attributes/{attribute}/values'].put.responses['200'].content['application/json'].schema.properties.data.items.oneOf[16].properties.value.format"
+    description: "Remove format field from timestamp value in PUT list entry attribute values response"
+    remove: true
+
+  - target: "$.paths['/v2/lists/{list}/entries/{entry_id}/attributes/{attribute}/values'].put.responses['200'].content['application/json'].schema.properties.data.items.oneOf[16].properties.value.example"
+    description: "Change timestamp example to non-ISO8601 format in PUT /v2/lists/{list}/entries/{entry_id}/attributes/{attribute}/values"
+    update: "timestamp_string_value"
+
+  - target: "$.paths['/v2/lists/{list}/entries/{entry_id}/attributes/{attribute}/values'].put.responses['200'].content['application/json'].schema.properties.data.items.oneOf[16].properties.value.description"
+    description: "Change timestamp description in PUT /v2/lists/{list}/entries/{entry_id}/attributes/{attribute}/values"
+    update: "A timestamp string value"
+
+  # The input-value component (attribute default_value templates) carries the
+  # same anyOf[18] timestamp value as output-value above but was never covered,
+  # so the request side generated `date` and forced callers to pass datetime.date
+  # objects instead of Attio's ISO 8601 timestamp strings.
+
+  - target: "$.components.schemas['input-value'].anyOf[18].properties.value.format"
+    description: "Remove format field from timestamp value in input-value schema to generate as str instead of date"
+    remove: true
+
+  - target: "$.components.schemas['input-value'].anyOf[18].properties.value.example"
+    description: "Change timestamp example to non-ISO8601 format in input-value schema"
+    update: "timestamp_string_value"
+
+  - target: "$.components.schemas['input-value'].anyOf[18].properties.value.description"
+    description: "Change timestamp description in input-value schema"
+    update: "A timestamp string value"

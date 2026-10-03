@@ -11,6 +11,31 @@ import httpx
 from typing import Optional
 
 
+class PutV2ObjectsObjectRecordsConcurrentWriteConflictErrorData(BaseModel):
+    status_code: float
+    type: models_put_v2_objects_object_recordsop.PutV2ObjectsObjectRecordsConflictType
+    code: models_put_v2_objects_object_recordsop.PutV2ObjectsObjectRecordsCodeConcurrentWriteConflict
+    message: str
+
+
+@dataclass(unsafe_hash=True)
+class PutV2ObjectsObjectRecordsConcurrentWriteConflictError(SDKError):
+    r"""Conflict"""
+
+    data: PutV2ObjectsObjectRecordsConcurrentWriteConflictErrorData = field(hash=False)
+
+    def __init__(
+        self,
+        data: PutV2ObjectsObjectRecordsConcurrentWriteConflictErrorData,
+        raw_response: httpx.Response,
+        body: Optional[str] = None,
+    ):
+        fallback = body or raw_response.text
+        message = str(data.message) or fallback
+        super().__init__(message, raw_response, body)
+        object.__setattr__(self, "data", data)
+
+
 class PutV2ObjectsObjectRecordsNotFoundErrorData(BaseModel):
     status_code: float
     type: models_put_v2_objects_object_recordsop.PutV2ObjectsObjectRecordsNotFoundType
@@ -66,7 +91,7 @@ class PutV2ObjectsObjectRecordsUnauthorizedError(SDKError):
 class PutV2ObjectsObjectRecordsInvalidRequestErrorData(BaseModel):
     status_code: float
     type: models_put_v2_objects_object_recordsop.PutV2ObjectsObjectRecordsBadRequestType
-    code: models_put_v2_objects_object_recordsop.PutV2ObjectsObjectRecordsCodeUnion
+    code: models_put_v2_objects_object_recordsop.PutV2ObjectsObjectRecordsBadRequestCode
     message: str
 
 

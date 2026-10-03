@@ -33,6 +33,8 @@ class Files(BaseSDK):
 
         Required scopes: `object_configuration:read`, `record_permission:read`, `file:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param object:
         :param record_id:
         :param storage_provider: Filter results by storage provider.
@@ -136,6 +138,8 @@ class Files(BaseSDK):
 
         Required scopes: `object_configuration:read`, `record_permission:read`, `file:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param object:
         :param record_id:
         :param storage_provider: Filter results by storage provider.
@@ -234,6 +238,8 @@ class Files(BaseSDK):
 
         Required scopes: `file:read-write`, `object_configuration:read`, `record_permission:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param request: The request object to send.
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -324,6 +330,8 @@ class Files(BaseSDK):
         This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
         Required scopes: `file:read-write`, `object_configuration:read`, `record_permission:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param request: The request object to send.
         :param retries: Override the default retry configuration for this method
@@ -417,9 +425,13 @@ class Files(BaseSDK):
 
         Uploads a file to native Attio storage for a record. Send multipart/form-data with a single binary field named `file` together with the body fields `object`, `record_id`, and optional `parent_folder_id`. Maximum file size is 50 MB.
 
+        This endpoint is rate limited to 1 request per second.
+
         This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
         Required scopes: `file:read-write`, `object_configuration:read`, `record_permission:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param file: The file to upload.
         :param object: The object slug or ID.
@@ -525,9 +537,13 @@ class Files(BaseSDK):
 
         Uploads a file to native Attio storage for a record. Send multipart/form-data with a single binary field named `file` together with the body fields `object`, `record_id`, and optional `parent_folder_id`. Maximum file size is 50 MB.
 
+        This endpoint is rate limited to 1 request per second.
+
         This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
         Required scopes: `file:read-write`, `object_configuration:read`, `record_permission:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param file: The file to upload.
         :param object: The object slug or ID.
@@ -632,6 +648,8 @@ class Files(BaseSDK):
 
         Required scopes: `file:read`, `object_configuration:read`, `record_permission:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param file_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -725,6 +743,8 @@ class Files(BaseSDK):
         This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
         Required scopes: `file:read`, `object_configuration:read`, `record_permission:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param file_id:
         :param retries: Override the default retry configuration for this method
@@ -820,6 +840,8 @@ class Files(BaseSDK):
 
         Required scopes: `file:read-write`, `object_configuration:read`, `record_permission:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param file_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -913,6 +935,8 @@ class Files(BaseSDK):
         This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
         Required scopes: `file:read-write`, `object_configuration:read`, `record_permission:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param file_id:
         :param retries: Override the default retry configuration for this method
@@ -1008,6 +1032,8 @@ class Files(BaseSDK):
 
         Required scopes: `object_configuration:read`, `record_permission:read`, `file:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param file_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1097,6 +1123,8 @@ class Files(BaseSDK):
         This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
         Required scopes: `object_configuration:read`, `record_permission:read`, `file:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param file_id:
         :param retries: Override the default retry configuration for this method

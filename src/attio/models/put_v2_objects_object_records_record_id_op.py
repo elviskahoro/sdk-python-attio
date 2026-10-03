@@ -55,6 +55,14 @@ class PutV2ObjectsObjectRecordsRecordIDRequest(BaseModel):
     ]
 
 
+PutV2ObjectsObjectRecordsRecordIDConflictType = Literal["invalid_request_error",]
+
+
+PutV2ObjectsObjectRecordsRecordIDCodeConcurrentWriteConflict = Literal[
+    "concurrent_write_conflict",
+]
+
+
 PutV2ObjectsObjectRecordsRecordIDNotFoundType = Literal["invalid_request_error",]
 
 
@@ -70,6 +78,11 @@ PutV2ObjectsObjectRecordsRecordIDCodeUnauthorized = Literal["unauthorized",]
 PutV2ObjectsObjectRecordsRecordIDBadRequestType = Literal["invalid_request_error",]
 
 
+PutV2ObjectsObjectRecordsRecordIDCodeParticleGateViolation = Literal[
+    "particle_gate_violation",
+]
+
+
 PutV2ObjectsObjectRecordsRecordIDCodeMergeInProgress = Literal["merge_in_progress",]
 
 
@@ -81,6 +94,7 @@ PutV2ObjectsObjectRecordsRecordIDCodeUnionTypedDict = TypeAliasType(
     Union[
         PutV2ObjectsObjectRecordsRecordIDCodeMissingValue,
         PutV2ObjectsObjectRecordsRecordIDCodeMergeInProgress,
+        PutV2ObjectsObjectRecordsRecordIDCodeParticleGateViolation,
     ],
 )
 
@@ -90,6 +104,7 @@ PutV2ObjectsObjectRecordsRecordIDCodeUnion = TypeAliasType(
     Union[
         PutV2ObjectsObjectRecordsRecordIDCodeMissingValue,
         PutV2ObjectsObjectRecordsRecordIDCodeMergeInProgress,
+        PutV2ObjectsObjectRecordsRecordIDCodeParticleGateViolation,
     ],
 )
 

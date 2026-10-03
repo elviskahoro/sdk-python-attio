@@ -56,6 +56,14 @@ class PutV2ObjectsObjectRecordsRequest(BaseModel):
     ]
 
 
+PutV2ObjectsObjectRecordsConflictType = Literal["invalid_request_error",]
+
+
+PutV2ObjectsObjectRecordsCodeConcurrentWriteConflict = Literal[
+    "concurrent_write_conflict",
+]
+
+
 PutV2ObjectsObjectRecordsNotFoundType = Literal["invalid_request_error",]
 
 
@@ -71,28 +79,12 @@ PutV2ObjectsObjectRecordsCodeUnauthorized = Literal["unauthorized",]
 PutV2ObjectsObjectRecordsBadRequestType = Literal["invalid_request_error",]
 
 
-PutV2ObjectsObjectRecordsCodeMergeInProgress = Literal["merge_in_progress",]
-
-
-PutV2ObjectsObjectRecordsCodeValueNotFound = Literal["value_not_found",]
-
-
-PutV2ObjectsObjectRecordsCodeUnionTypedDict = TypeAliasType(
-    "PutV2ObjectsObjectRecordsCodeUnionTypedDict",
-    Union[
-        PutV2ObjectsObjectRecordsCodeValueNotFound,
-        PutV2ObjectsObjectRecordsCodeMergeInProgress,
-    ],
-)
-
-
-PutV2ObjectsObjectRecordsCodeUnion = TypeAliasType(
-    "PutV2ObjectsObjectRecordsCodeUnion",
-    Union[
-        PutV2ObjectsObjectRecordsCodeValueNotFound,
-        PutV2ObjectsObjectRecordsCodeMergeInProgress,
-    ],
-)
+PutV2ObjectsObjectRecordsBadRequestCode = Literal[
+    "value_not_found",
+    "merge_in_progress",
+    "particle_gate_violation",
+    "validation_type",
+]
 
 
 class PutV2ObjectsObjectRecordsIDTypedDict(TypedDict):

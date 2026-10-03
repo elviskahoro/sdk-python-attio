@@ -25,6 +25,8 @@ class Objects(BaseSDK):
 
         Required scopes: `object_configuration:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -103,6 +105,8 @@ class Objects(BaseSDK):
         Lists all system-defined and user-defined objects in your workspace.
 
         Required scopes: `object_configuration:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -183,6 +187,8 @@ class Objects(BaseSDK):
         Creates a new custom object in your workspace.
 
         Required scopes: `object_configuration:read-write`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param data:
         :param retries: Override the default retry configuration for this method
@@ -289,6 +295,8 @@ class Objects(BaseSDK):
 
         Required scopes: `object_configuration:read-write`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param data:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -394,6 +402,8 @@ class Objects(BaseSDK):
 
         Required scopes: `object_configuration:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param object:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -485,6 +495,8 @@ class Objects(BaseSDK):
         Gets a single object by its `object_id` or slug.
 
         Required scopes: `object_configuration:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param object:
         :param retries: Override the default retry configuration for this method
@@ -580,6 +592,8 @@ class Objects(BaseSDK):
         Updates a single object. The object to be updated is identified by its `object_id`.
 
         Required scopes: `object_configuration:read-write`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param object:
         :param data:
@@ -706,6 +720,8 @@ class Objects(BaseSDK):
 
         Required scopes: `object_configuration:read-write`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param object:
         :param data:
         :param retries: Override the default retry configuration for this method
@@ -830,6 +846,8 @@ class Objects(BaseSDK):
 
         Required scopes: `object_configuration:read-write`, `record_permission:read-write`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param object:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -937,6 +955,8 @@ class Objects(BaseSDK):
         This endpoint should be used with caution as it has the potential to remove a large amount of potentially valuable data.
 
         Required scopes: `object_configuration:read-write`, `record_permission:read-write`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param object:
         :param retries: Override the default retry configuration for this method
@@ -1047,6 +1067,8 @@ class Objects(BaseSDK):
 
         Required scopes: `object_configuration:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param object:
         :param show_archived:
         :param limit:
@@ -1149,6 +1171,8 @@ class Objects(BaseSDK):
         Lists saved views for an object. Results are ordered by view ID (`id.view_id` ascending).
 
         Required scopes: `object_configuration:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param object:
         :param show_archived:

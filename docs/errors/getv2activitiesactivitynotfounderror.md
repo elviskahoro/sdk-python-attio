@@ -1,0 +1,13 @@
+# GetV2ActivitiesActivityNotFoundError
+
+Not Found
+
+
+## Fields
+
+| Field                                                                          | Type                                                                           | Required                                                                       | Description                                                                    | Example                                                                        |
+| ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ |
+| `status_code`                                                                  | *float*                                                                        | :heavy_check_mark:                                                             | N/A                                                                            |                                                                                |
+| `type`                                                                         | [models.GetV2ActivitiesActivityType](../models/getv2activitiesactivitytype.md) | :heavy_check_mark:                                                             | N/A                                                                            |                                                                                |
+| `code`                                                                         | [models.GetV2ActivitiesActivityCode](../models/getv2activitiesactivitycode.md) | :heavy_check_mark:                                                             | N/A                                                                            |                                                                                |
+| `message`                                                                      | *str*                                                                          | :heavy_check_mark:                                                             | N/A                                                                            | Activity with slug/ID "phone_calls" not found.                                 |

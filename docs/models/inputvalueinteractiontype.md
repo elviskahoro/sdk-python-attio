@@ -6,15 +6,13 @@ The type of interaction e.g. calendar or email.
 
 ```python
 from attio.models import InputValueInteractionType
-value: InputValueInteractionType = "calendar-event"
+value: InputValueInteractionType = "activity"
 ```
 
 
 ## Values
 
-- `"calendar-event"`
-- `"call"`
-- `"chat-thread"`
+- `"activity"`
 - `"email"`
-- `"in-person-meeting"`
 - `"meeting"`
+- `"calendar-event"`

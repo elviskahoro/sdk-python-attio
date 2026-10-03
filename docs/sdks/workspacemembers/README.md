@@ -15,6 +15,8 @@ Lists all workspace members in the workspace.
 
 Required scopes: `user_management:read`.
 
+Supported token levels: `workspace`, `user`.
+
 ### Example Usage
 
 <!-- UsageSnippet language="python" operationID="get_/v2/workspace_members" method="get" path="/v2/workspace_members" -->
@@ -54,6 +56,8 @@ with SDK(
 Gets a single workspace member by ID.
 
 Required scopes: `user_management:read`.
+
+Supported token levels: `workspace`, `user`.
 
 ### Example Usage
 

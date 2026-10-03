@@ -11,6 +11,35 @@ import httpx
 from typing import Optional
 
 
+class PatchV2ActivitiesActivityRecordsRecordIDConcurrentWriteConflictErrorData(
+    BaseModel
+):
+    status_code: float
+    type: models_patch_v2_activities_activity_records_record_id_op.PatchV2ActivitiesActivityRecordsRecordIDConflictType
+    code: models_patch_v2_activities_activity_records_record_id_op.PatchV2ActivitiesActivityRecordsRecordIDCodeConcurrentWriteConflict
+    message: str
+
+
+@dataclass(unsafe_hash=True)
+class PatchV2ActivitiesActivityRecordsRecordIDConcurrentWriteConflictError(SDKError):
+    r"""Conflict"""
+
+    data: PatchV2ActivitiesActivityRecordsRecordIDConcurrentWriteConflictErrorData = (
+        field(hash=False)
+    )
+
+    def __init__(
+        self,
+        data: PatchV2ActivitiesActivityRecordsRecordIDConcurrentWriteConflictErrorData,
+        raw_response: httpx.Response,
+        body: Optional[str] = None,
+    ):
+        fallback = body or raw_response.text
+        message = str(data.message) or fallback
+        super().__init__(message, raw_response, body)
+        object.__setattr__(self, "data", data)
+
+
 class PatchV2ActivitiesActivityRecordsRecordIDNotFoundErrorData(BaseModel):
     status_code: float
     type: models_patch_v2_activities_activity_records_record_id_op.PatchV2ActivitiesActivityRecordsRecordIDNotFoundType
@@ -63,24 +92,24 @@ class PatchV2ActivitiesActivityRecordsRecordIDUnauthorizedError(SDKError):
         object.__setattr__(self, "data", data)
 
 
-class PatchV2ActivitiesActivityRecordsRecordIDMissingValueErrorData(BaseModel):
+class PatchV2ActivitiesActivityRecordsRecordIDInvalidRequestErrorData(BaseModel):
     status_code: float
     type: models_patch_v2_activities_activity_records_record_id_op.PatchV2ActivitiesActivityRecordsRecordIDBadRequestType
-    code: models_patch_v2_activities_activity_records_record_id_op.PatchV2ActivitiesActivityRecordsRecordIDCodeMissingValue
+    code: models_patch_v2_activities_activity_records_record_id_op.PatchV2ActivitiesActivityRecordsRecordIDCodeUnion
     message: str
 
 
 @dataclass(unsafe_hash=True)
-class PatchV2ActivitiesActivityRecordsRecordIDMissingValueError(SDKError):
+class PatchV2ActivitiesActivityRecordsRecordIDInvalidRequestError(SDKError):
     r"""Bad Request"""
 
-    data: PatchV2ActivitiesActivityRecordsRecordIDMissingValueErrorData = field(
+    data: PatchV2ActivitiesActivityRecordsRecordIDInvalidRequestErrorData = field(
         hash=False
     )
 
     def __init__(
         self,
-        data: PatchV2ActivitiesActivityRecordsRecordIDMissingValueErrorData,
+        data: PatchV2ActivitiesActivityRecordsRecordIDInvalidRequestErrorData,
         raw_response: httpx.Response,
         body: Optional[str] = None,
     ):

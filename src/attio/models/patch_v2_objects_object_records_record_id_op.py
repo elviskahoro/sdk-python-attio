@@ -55,6 +55,14 @@ class PatchV2ObjectsObjectRecordsRecordIDRequest(BaseModel):
     ]
 
 
+PatchV2ObjectsObjectRecordsRecordIDConflictType = Literal["invalid_request_error",]
+
+
+PatchV2ObjectsObjectRecordsRecordIDCodeConcurrentWriteConflict = Literal[
+    "concurrent_write_conflict",
+]
+
+
 PatchV2ObjectsObjectRecordsRecordIDNotFoundType = Literal["invalid_request_error",]
 
 
@@ -70,6 +78,11 @@ PatchV2ObjectsObjectRecordsRecordIDCodeUnauthorized = Literal["unauthorized",]
 PatchV2ObjectsObjectRecordsRecordIDBadRequestType = Literal["invalid_request_error",]
 
 
+PatchV2ObjectsObjectRecordsRecordIDCodeParticleGateViolation = Literal[
+    "particle_gate_violation",
+]
+
+
 PatchV2ObjectsObjectRecordsRecordIDCodeMergeInProgress = Literal["merge_in_progress",]
 
 
@@ -81,6 +94,7 @@ PatchV2ObjectsObjectRecordsRecordIDCodeUnionTypedDict = TypeAliasType(
     Union[
         PatchV2ObjectsObjectRecordsRecordIDCodeMissingValue,
         PatchV2ObjectsObjectRecordsRecordIDCodeMergeInProgress,
+        PatchV2ObjectsObjectRecordsRecordIDCodeParticleGateViolation,
     ],
 )
 
@@ -90,6 +104,7 @@ PatchV2ObjectsObjectRecordsRecordIDCodeUnion = TypeAliasType(
     Union[
         PatchV2ObjectsObjectRecordsRecordIDCodeMissingValue,
         PatchV2ObjectsObjectRecordsRecordIDCodeMergeInProgress,
+        PatchV2ObjectsObjectRecordsRecordIDCodeParticleGateViolation,
     ],
 )
 

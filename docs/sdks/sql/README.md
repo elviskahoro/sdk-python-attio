@@ -12,9 +12,13 @@ Query records and list entries across your workspace using SQL. A single query c
 
 Query records and lists with SQL. Your workspace must be on the Enterprise plan in order to access this endpoint.
 
+This endpoint is rate limited to 2 requests per second.
+
 This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
 Required scopes: `record_permission:read`, `object_configuration:read`.
+
+Supported token levels: `workspace`, `user`.
 
 ### Example Usage
 

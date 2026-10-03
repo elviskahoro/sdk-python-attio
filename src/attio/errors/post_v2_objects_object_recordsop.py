@@ -11,6 +11,31 @@ import httpx
 from typing import Optional
 
 
+class PostV2ObjectsObjectRecordsConcurrentWriteConflictErrorData(BaseModel):
+    status_code: float
+    type: models_post_v2_objects_object_recordsop.PostV2ObjectsObjectRecordsConflictType
+    code: models_post_v2_objects_object_recordsop.PostV2ObjectsObjectRecordsCodeConcurrentWriteConflict
+    message: str
+
+
+@dataclass(unsafe_hash=True)
+class PostV2ObjectsObjectRecordsConcurrentWriteConflictError(SDKError):
+    r"""Conflict"""
+
+    data: PostV2ObjectsObjectRecordsConcurrentWriteConflictErrorData = field(hash=False)
+
+    def __init__(
+        self,
+        data: PostV2ObjectsObjectRecordsConcurrentWriteConflictErrorData,
+        raw_response: httpx.Response,
+        body: Optional[str] = None,
+    ):
+        fallback = body or raw_response.text
+        message = str(data.message) or fallback
+        super().__init__(message, raw_response, body)
+        object.__setattr__(self, "data", data)
+
+
 class PostV2ObjectsObjectRecordsNotFoundErrorData(BaseModel):
     status_code: float
     type: models_post_v2_objects_object_recordsop.PostV2ObjectsObjectRecordsNotFoundType

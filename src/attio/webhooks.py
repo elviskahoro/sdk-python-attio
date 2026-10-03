@@ -27,6 +27,8 @@ class Webhooks(BaseSDK):
 
         Required scopes: `webhook:read`.
 
+        Supported token levels: `workspace`.
+
         :param limit:
         :param offset:
         :param retries: Override the default retry configuration for this method
@@ -115,6 +117,8 @@ class Webhooks(BaseSDK):
         Get all of the webhooks in your workspace.
 
         Required scopes: `webhook:read`.
+
+        Supported token levels: `workspace`.
 
         :param limit:
         :param offset:
@@ -207,6 +211,8 @@ class Webhooks(BaseSDK):
         Each combination of target URL, event type and filter must be unique within your workspace; duplicates are rejected with a 409.
 
         Required scopes: `webhook:read-write`.
+
+        Supported token levels: `workspace`.
 
         :param data:
         :param retries: Override the default retry configuration for this method
@@ -312,6 +318,8 @@ class Webhooks(BaseSDK):
 
         Required scopes: `webhook:read-write`.
 
+        Supported token levels: `workspace`.
+
         :param data:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -412,6 +420,8 @@ class Webhooks(BaseSDK):
 
         Required scopes: `webhook:read`.
 
+        Supported token levels: `workspace`.
+
         :param webhook_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -505,6 +515,8 @@ class Webhooks(BaseSDK):
         Get a single webhook.
 
         Required scopes: `webhook:read`.
+
+        Supported token levels: `workspace`.
 
         :param webhook_id:
         :param retries: Override the default retry configuration for this method
@@ -605,6 +617,8 @@ class Webhooks(BaseSDK):
         Each combination of target URL, event type and filter must be unique within your workspace; duplicates are rejected with a 409. Changing the target URL re-checks the webhook's existing subscriptions against the new URL.
 
         Required scopes: `webhook:read-write`.
+
+        Supported token levels: `workspace`.
 
         :param webhook_id:
         :param data:
@@ -726,6 +740,8 @@ class Webhooks(BaseSDK):
 
         Required scopes: `webhook:read-write`.
 
+        Supported token levels: `workspace`.
+
         :param webhook_id:
         :param data:
         :param retries: Override the default retry configuration for this method
@@ -840,6 +856,8 @@ class Webhooks(BaseSDK):
 
         Required scopes: `webhook:read-write`.
 
+        Supported token levels: `workspace`.
+
         :param webhook_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -933,6 +951,8 @@ class Webhooks(BaseSDK):
         Delete a webhook by ID.
 
         Required scopes: `webhook:read-write`.
+
+        Supported token levels: `workspace`.
 
         :param webhook_id:
         :param retries: Override the default retry configuration for this method

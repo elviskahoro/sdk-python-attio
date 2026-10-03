@@ -31,6 +31,8 @@ class Notes(BaseSDK):
 
         Required scopes: `note:read`, `object_configuration:read`, `record_permission:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param limit:
         :param offset:
         :param parent_object:
@@ -134,6 +136,8 @@ class Notes(BaseSDK):
 
         Required scopes: `note:read`, `object_configuration:read`, `record_permission:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param limit:
         :param offset:
         :param parent_object:
@@ -231,6 +235,8 @@ class Notes(BaseSDK):
         Creates a new note for a given record.
 
         Required scopes: `note:read-write`, `object_configuration:read`, `record_permission:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param data:
         :param retries: Override the default retry configuration for this method
@@ -332,6 +338,8 @@ class Notes(BaseSDK):
 
         Required scopes: `note:read-write`, `object_configuration:read`, `record_permission:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param data:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -432,6 +440,8 @@ class Notes(BaseSDK):
 
         Required scopes: `note:read`, `object_configuration:read`, `record_permission:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param note_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -523,6 +533,8 @@ class Notes(BaseSDK):
         Get a single note by ID.
 
         Required scopes: `note:read`, `object_configuration:read`, `record_permission:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param note_id:
         :param retries: Override the default retry configuration for this method
@@ -618,6 +630,8 @@ class Notes(BaseSDK):
         Updates an existing note's title and/or content. Only the fields you provide are changed, and any field you omit is left untouched. Providing `content` replaces the note's entire content. A note's parent record cannot be changed.
 
         Required scopes: `note:read-write`, `object_configuration:read`, `record_permission:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param note_id:
         :param data:
@@ -730,6 +744,8 @@ class Notes(BaseSDK):
 
         Required scopes: `note:read-write`, `object_configuration:read`, `record_permission:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param note_id:
         :param data:
         :param retries: Override the default retry configuration for this method
@@ -838,6 +854,8 @@ class Notes(BaseSDK):
 
         Required scopes: `note:read-write`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param note_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -929,6 +947,8 @@ class Notes(BaseSDK):
         Delete a single note by ID.
 
         Required scopes: `note:read-write`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param note_id:
         :param retries: Override the default retry configuration for this method

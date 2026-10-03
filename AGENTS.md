@@ -27,61 +27,94 @@ This SDK is generated using Speakeasy from an OpenAPI spec.
 
 ### Update Steps
 
-1. **Fetch the latest spec** (if not already done):
+1. **Check for updates first** — this fetches the latest spec, diffs it
+   against the current one, and verifies overlay health in one shot:
 
    ```bash
-   dagger run python ci/pipeline.py fetch-openapi
+   uv run python ci/pipeline.py check-openapi
    ```
 
-   This downloads from `https://api.attio.com/openapi/api`, saves it with a timestamp, and updates `workflow.yaml`.
+   Exit 0 means nothing to do. Exit 1 prints a report of structural drift
+   (new/removed/changed operations, schema changes) and/or overlay problems.
+   It never touches `openapi/` — the fetched spec lands in `tmp/` and is
+   deleted. Add `--report PATH` for a JSON report, `--no-strict` to always
+   exit 0. `ci/spec_diff.py` also has standalone `diff OLD NEW` and
+   `check-overlay` subcommands.
 
-2. **Diff the new spec against the previous one** to understand what changed:
+   The scheduled `.github/workflows/spec-update-check.yml` workflow runs this
+   check weekly (Mondays 09:00 UTC). On drift it regenerates, runs pytest,
+   and opens a PR (needs the `SPEAKEASY_API_KEY` repo secret); without the
+   secret it opens an issue with the report instead. It replaces the old
+   daily `Generate` workflow (sdk_generation.yaml), which fetched and
+   regenerated blindly every day regardless of drift — the weekly check is
+   now the only automated regeneration path. Generation itself refuses to
+   run while the overlay is unhealthy (`_verify_overlay_health`), so a
+   manual `generate` is gated the same way as the workflow.
+
+2. **Fetch the latest spec** (when the check reports drift):
 
    ```bash
-   # Compare endpoint counts
-   python3 -c "import json; old=json.load(open('openapi/api-OLD.json')); new=json.load(open('openapi/api-NEW.json')); print(f'Old paths: {len(old[\"paths\"])}'); print(f'New paths: {len(new[\"paths\"])}')"
-
-   # List new/removed endpoints
-   python3 -c "
-   import json
-   old = set(json.load(open('openapi/api-OLD.json'))['paths'].keys())
-   new = set(json.load(open('openapi/api-NEW.json'))['paths'].keys())
-   added = new - old
-   removed = old - new
-   if added: print('Added:', *sorted(added), sep='\n  ')
-   if removed: print('Removed:', *sorted(removed), sep='\n  ')
-   if not added and not removed: print('No endpoint changes')
-   "
+   uv run python ci/pipeline.py fetch-openapi
    ```
 
-3. **Verify the overlay still applies cleanly**. The overlay uses JSONPath targets that reference specific `oneOf` indices (e.g., `oneOf[16]`). If the spec schema changed, these indices may have shifted. Check:
-   - Do `oneOf[16]` entries still correspond to timestamp value types?
-   - Are there new endpoints with timestamp values that need overlay entries?
-   - Do the `list` parameter rename targets still match?
+   This downloads from `https://api.attio.com/openapi/api`, saves it with a
+   timestamp, and updates `workflow.yaml`.
 
-4. **Update the overlay if needed**. If indices shifted or new endpoints were added, update `overlay.yaml` accordingly. Refer to `overlay_guide.md` for syntax and patterns.
+3. **Verify the overlay still applies cleanly**:
+
+   ```bash
+   uv run python ci/spec_diff.py check-overlay
+   ```
+
+   This catches three silent failure modes: dead targets (JSONPath matches
+   nothing — speakeasy silently skips the action, so a fix you think is
+   applied is not), uncovered timestamp values (`format: date` value nodes
+   with no *live* `.format` removal action, which regenerate as `date`
+   instead of `str`), and error-code enums out of sync (a hardcoded overlay
+   enum that drops a value the spec's `anyOf` union gained). Historical
+   examples: the `POST/PUT /v2/objects/{object}/records` 400 `.code.enum`
+   targets died when Attio moved error codes to `anyOf` unions; all
+   `/v2/activities/{activity}/records*` endpoints shipped with `date`-typed
+   timestamps before they got overlay entries.
+
+4. **Update the overlay if needed**. If `oneOf` indices shifted, endpoints
+   were added, or error schemas changed shape, update `overlay.yaml`
+   accordingly, then re-run `check-overlay` until it is healthy.
 
 5. **Run Speakeasy generation**:
 
    ```bash
-   speakeasy run
+   uv run python ci/pipeline.py generate --no-fetch
    ```
 
-   `speakeasy run` rewrites `src/` and drops manual patches that `overlay.yaml`
-   cannot express. Re-apply them so the regenerated tree keeps the GET /v2/self
-   `active` value discriminators (the pipeline does this automatically; for a
-   direct `speakeasy run`, run `python ci/post_generate_patch.py` after).
+   This runs `speakeasy run` (host CLI when authenticated via login, or when
+   `SPEAKEASY_USE_HOST_CLI` + `SPEAKEASY_API_KEY` are set — the scheduled
+   workflow's path; pinned Dagger container otherwise), then re-applies
+   `ci/post_generate_patch.py` (the GET /v2/self `active` value
+   discriminators and the `scripts/` wrappers). Drop `--no-fetch` to also
+   adopt a freshly fetched spec. Note the Dagger path exports only `src/`
+   back to the host — docs/, README, pyproject and USAGE refresh on the
+   host-CLI path (the default) — and it logs that when chosen.
 
 6. **Review generated changes**:
    - Check `git diff` for new/modified SDK methods in `src/attio/`
    - Verify new models in `src/attio/models/`
    - Check for any type errors: `uv run mypy src/`
+   - Run tests: `uv run pytest -q`
    - Ensure the package still builds: `uv build`
+   - Confirm `pyproject.toml`'s dev group still contains `dagger-io`,
+     `pytest`, `pytest-asyncio` — speakeasy rewrites `pyproject.toml` from
+     `.speakeasy/gen.yaml`, and they only survive because they are declared
+     in `gen.yaml` `python.additionalDependencies.dev`. If they vanish,
+     restore them and run `uv lock && uv sync`.
 
-7. **Update the version** in `.speakeasy/gen.yaml` (`python.version`) and verify it matches `pyproject.toml`.
+7. **Verify the version** in `.speakeasy/gen.yaml` (`python.version`) matches
+   `pyproject.toml` and `src/attio/_version.py` (speakeasy auto-bumps the
+   patch version on each regeneration with changes).
 
 ### Important Notes
 
 - The SDK is fully generated code — manual edits to `src/attio/` will be overwritten on next generation.
 - The overlay exists because Speakeasy infers `date` type from ISO8601 timestamp strings, but Attio returns timestamps as strings that should stay as `str` in Python.
 - The `list` → `list_id` renames avoid shadowing Python's built-in `list`.
+- Description-only spec changes (marketing copy) are reported by `check-openapi` but do not count as structural drift, so they do not trigger the automated workflow.

@@ -16,6 +16,8 @@ This endpoint is in beta. We will aim to avoid breaking changes, but small updat
 
 Required scopes: `meeting:read`, `call_recording:read`.
 
+Supported token levels: `workspace`.
+
 ### Example Usage
 
 <!-- UsageSnippet language="python" operationID="get_/v2/meetings/{meeting_id}/call_recordings/{call_recording_id}/transcript" method="get" path="/v2/meetings/{meeting_id}/call_recordings/{call_recording_id}/transcript" -->

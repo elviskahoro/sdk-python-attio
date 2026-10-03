@@ -19,6 +19,8 @@ This endpoint is in beta. We will aim to avoid breaking changes, but small updat
 
 Required scopes: `meeting:read`, `call_recording:read`.
 
+Supported token levels: `workspace`, `user`.
+
 ### Example Usage
 
 <!-- UsageSnippet language="python" operationID="get_/v2/meetings/{meeting_id}/call_recordings" method="get" path="/v2/meetings/{meeting_id}/call_recordings" -->
@@ -65,6 +67,8 @@ A `transcript` should always be provided — it is technically optional for back
 This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
 Required scopes: `meeting:read`, `call_recording:read-write`.
+
+Supported token levels: `workspace`, `user`.
 
 ### Example Usage
 
@@ -126,6 +130,8 @@ This endpoint is in beta. We will aim to avoid breaking changes, but small updat
 
 Required scopes: `meeting:read`, `call_recording:read`.
 
+Supported token levels: `workspace`, `user`.
+
 ### Example Usage
 
 <!-- UsageSnippet language="python" operationID="get_/v2/meetings/{meeting_id}/call_recordings/{call_recording_id}" method="get" path="/v2/meetings/{meeting_id}/call_recordings/{call_recording_id}" -->
@@ -170,6 +176,8 @@ Deletes the specified call recording. This will remove the call recording and al
 This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
 Required scopes: `meeting:read`, `call_recording:read-write`.
+
+Supported token levels: `workspace`, `user`.
 
 ### Example Usage
 

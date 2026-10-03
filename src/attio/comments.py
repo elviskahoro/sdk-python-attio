@@ -32,6 +32,8 @@ class Comments(BaseSDK):
 
         Required scopes: `comment:read-write`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param data:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -133,6 +135,8 @@ class Comments(BaseSDK):
 
         Required scopes: `comment:read-write`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param data:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -232,6 +236,8 @@ class Comments(BaseSDK):
 
         Required scopes: `comment:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param comment_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -330,6 +336,8 @@ class Comments(BaseSDK):
 
         Required scopes: `comment:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param comment_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -425,6 +433,8 @@ class Comments(BaseSDK):
         A workspace-level access token may delete any comment. A user-level access token may only delete comments authored by the member it acts for.
 
         Required scopes: `comment:read-write`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param comment_id:
         :param retries: Override the default retry configuration for this method
@@ -528,6 +538,8 @@ class Comments(BaseSDK):
         A workspace-level access token may delete any comment. A user-level access token may only delete comments authored by the member it acts for.
 
         Required scopes: `comment:read-write`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param comment_id:
         :param retries: Override the default retry configuration for this method

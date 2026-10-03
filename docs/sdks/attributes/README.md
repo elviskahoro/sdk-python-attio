@@ -23,6 +23,8 @@ Lists all attributes defined on a specific object or list. Attributes are return
 
 When `target` is `objects`, the required scopes are `object_configuration:read`. When `target` is `lists`, the required scopes are `list_configuration:read`.
 
+Supported token levels: `workspace`, `user`.
+
 ### Example Usage
 
 <!-- UsageSnippet language="python" operationID="get_/v2/{target}/{identifier}/attributes" method="get" path="/v2/{target}/{identifier}/attributes" -->
@@ -72,6 +74,8 @@ To create an attribute on an object, you must also have the `object_configuratio
 
 To create an attribute on a list, you must also have the `list_configuration:read-write` scope.
 
+Supported token levels: `workspace`, `user`.
+
 ### Example Usage
 
 <!-- UsageSnippet language="python" operationID="post_/v2/{target}/{identifier}/attributes" method="post" path="/v2/{target}/{identifier}/attributes" -->
@@ -95,7 +99,7 @@ with SDK(
             "type": "static",
             "template": [
                 {
-                    "value": 5,
+                    "value": 5.0,
                 },
             ],
         },
@@ -136,6 +140,7 @@ with SDK(
 | Error Type                                                 | Status Code                                                | Content Type                                               |
 | ---------------------------------------------------------- | ---------------------------------------------------------- | ---------------------------------------------------------- |
 | errors.PostV2TargetIdentifierAttributesValidationTypeError | 400                                                        | application/json                                           |
+| errors.PostV2TargetIdentifierAttributesUnauthorizedError   | 403                                                        | application/json                                           |
 | errors.PostV2TargetIdentifierAttributesNotFoundError       | 404                                                        | application/json                                           |
 | errors.PostV2TargetIdentifierAttributesSlugConflictError   | 409                                                        | application/json                                           |
 | errors.SDKDefaultError                                     | 4XX, 5XX                                                   | \*/\*                                                      |
@@ -145,6 +150,8 @@ with SDK(
 Gets information about a single attribute on either an object or a list.
 
 When `target` is `objects`, the required scopes are `object_configuration:read`. When `target` is `lists`, the required scopes are `list_configuration:read`.
+
+Supported token levels: `workspace`, `user`.
 
 ### Example Usage
 
@@ -190,6 +197,8 @@ Updates a single attribute on a given object or list.
 
 When `target` is `objects`, the required scopes are `object_configuration:read-write`. When `target` is `lists`, the required scopes are `list_configuration:read-write`.
 
+Supported token levels: `workspace`, `user`.
+
 ### Example Usage
 
 <!-- UsageSnippet language="python" operationID="patch_/v2/{target}/{identifier}/attributes/{attribute}" method="patch" path="/v2/{target}/{identifier}/attributes/{attribute}" -->
@@ -211,7 +220,7 @@ with SDK(
             "type": "static",
             "template": [
                 {
-                    "value": 5,
+                    "value": 5.0,
                 },
             ],
         },
@@ -250,17 +259,20 @@ with SDK(
 
 ### Errors
 
-| Error Type                                                     | Status Code                                                    | Content Type                                                   |
-| -------------------------------------------------------------- | -------------------------------------------------------------- | -------------------------------------------------------------- |
-| errors.SystemEditUnauthorizedError                             | 400                                                            | application/json                                               |
-| errors.PatchV2TargetIdentifierAttributesAttributeNotFoundError | 404                                                            | application/json                                               |
-| errors.SDKDefaultError                                         | 4XX, 5XX                                                       | \*/\*                                                          |
+| Error Type                                                                   | Status Code                                                                  | Content Type                                                                 |
+| ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| errors.PatchV2TargetIdentifierAttributesAttributeSystemEditUnauthorizedError | 400                                                                          | application/json                                                             |
+| errors.PatchV2TargetIdentifierAttributesAttributeUnauthorizedError           | 403                                                                          | application/json                                                             |
+| errors.PatchV2TargetIdentifierAttributesAttributeNotFoundError               | 404                                                                          | application/json                                                             |
+| errors.SDKDefaultError                                                       | 4XX, 5XX                                                                     | \*/\*                                                                        |
 
 ## get_v2_target_identifier_attributes_attribute_options
 
 Lists all select options for a particular attribute on either an object or a list.
 
 When `target` is `objects`, the required scopes are `object_configuration:read`. When `target` is `lists`, the required scopes are `list_configuration:read`.
+
+Supported token levels: `workspace`, `user`.
 
 ### Example Usage
 
@@ -307,6 +319,8 @@ Adds a select option to a select attribute on an object or a list.
 
 When `target` is `objects`, the required scopes are `object_configuration:read-write`. When `target` is `lists`, the required scopes are `list_configuration:read-write`.
 
+Supported token levels: `workspace`, `user`.
+
 ### Example Usage
 
 <!-- UsageSnippet language="python" operationID="post_/v2/{target}/{identifier}/attributes/{attribute}/options" method="post" path="/v2/{target}/{identifier}/attributes/{attribute}/options" -->
@@ -346,6 +360,7 @@ with SDK(
 | Error Type                                                                 | Status Code                                                                | Content Type                                                               |
 | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
 | errors.PostV2TargetIdentifierAttributesAttributeOptionsValidationTypeError | 400                                                                        | application/json                                                           |
+| errors.PostV2TargetIdentifierAttributesAttributeOptionsUnauthorizedError   | 403                                                                        | application/json                                                           |
 | errors.PostV2TargetIdentifierAttributesAttributeOptionsNotFoundError       | 404                                                                        | application/json                                                           |
 | errors.PostV2TargetIdentifierAttributesAttributeOptionsSlugConflictError   | 409                                                                        | application/json                                                           |
 | errors.SDKDefaultError                                                     | 4XX, 5XX                                                                   | \*/\*                                                                      |
@@ -355,6 +370,8 @@ with SDK(
 Updates a select option on an attribute on either an object or a list.
 
 When `target` is `objects`, the required scopes are `object_configuration:read-write`. When `target` is `lists`, the required scopes are `list_configuration:read-write`.
+
+Supported token levels: `workspace`, `user`.
 
 ### Example Usage
 
@@ -397,6 +414,7 @@ with SDK(
 | Error Type                                                                        | Status Code                                                                       | Content Type                                                                      |
 | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
 | errors.PatchV2TargetIdentifierAttributesAttributeOptionsOptionInvalidRequestError | 400                                                                               | application/json                                                                  |
+| errors.PatchV2TargetIdentifierAttributesAttributeOptionsOptionUnauthorizedError   | 403                                                                               | application/json                                                                  |
 | errors.PatchV2TargetIdentifierAttributesAttributeOptionsOptionNotFoundError       | 404                                                                               | application/json                                                                  |
 | errors.PatchV2TargetIdentifierAttributesAttributeOptionsOptionSlugConflictError   | 409                                                                               | application/json                                                                  |
 | errors.SDKDefaultError                                                            | 4XX, 5XX                                                                          | \*/\*                                                                             |
@@ -406,6 +424,8 @@ with SDK(
 Lists all statuses for a particular status attribute on either an object or a list.
 
 When `target` is `objects`, the required scopes are `object_configuration:read`. When `target` is `lists`, the required scopes are `list_configuration:read`.
+
+Supported token levels: `workspace`, `user`.
 
 ### Example Usage
 
@@ -452,6 +472,8 @@ Add a new status to a status attribute on either an object or a list.
 
 When `target` is `objects`, the required scopes are `object_configuration:read-write`. When `target` is `lists`, the required scopes are `list_configuration:read-write`.
 
+Supported token levels: `workspace`, `user`.
+
 ### Example Usage
 
 <!-- UsageSnippet language="python" operationID="post_/v2/{target}/{identifier}/attributes/{attribute}/statuses" method="post" path="/v2/{target}/{identifier}/attributes/{attribute}/statuses" -->
@@ -493,6 +515,7 @@ with SDK(
 | Error Type                                                                  | Status Code                                                                 | Content Type                                                                |
 | --------------------------------------------------------------------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
 | errors.PostV2TargetIdentifierAttributesAttributeStatusesValidationTypeError | 400                                                                         | application/json                                                            |
+| errors.PostV2TargetIdentifierAttributesAttributeStatusesUnauthorizedError   | 403                                                                         | application/json                                                            |
 | errors.PostV2TargetIdentifierAttributesAttributeStatusesNotFoundError       | 404                                                                         | application/json                                                            |
 | errors.PostV2TargetIdentifierAttributesAttributeStatusesSlugConflictError   | 409                                                                         | application/json                                                            |
 | errors.SDKDefaultError                                                      | 4XX, 5XX                                                                    | \*/\*                                                                       |
@@ -502,6 +525,8 @@ with SDK(
 Update a status on an status attribute on either an object or a list.
 
 When `target` is `objects`, the required scopes are `object_configuration:read-write`. When `target` is `lists`, the required scopes are `list_configuration:read-write`.
+
+Supported token levels: `workspace`, `user`.
 
 ### Example Usage
 
@@ -546,6 +571,7 @@ with SDK(
 | Error Type                                                                         | Status Code                                                                        | Content Type                                                                       |
 | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
 | errors.PatchV2TargetIdentifierAttributesAttributeStatusesStatusInvalidRequestError | 400                                                                                | application/json                                                                   |
+| errors.PatchV2TargetIdentifierAttributesAttributeStatusesStatusUnauthorizedError   | 403                                                                                | application/json                                                                   |
 | errors.PatchV2TargetIdentifierAttributesAttributeStatusesStatusNotFoundError       | 404                                                                                | application/json                                                                   |
 | errors.PatchV2TargetIdentifierAttributesAttributeStatusesStatusSlugConflictError   | 409                                                                                | application/json                                                                   |
 | errors.SDKDefaultError                                                             | 4XX, 5XX                                                                           | \*/\*                                                                              |

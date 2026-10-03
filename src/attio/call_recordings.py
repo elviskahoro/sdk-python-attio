@@ -30,6 +30,8 @@ class CallRecordings(BaseSDK):
 
         Required scopes: `meeting:read`, `call_recording:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param meeting_id:
         :param limit:
         :param cursor:
@@ -125,6 +127,8 @@ class CallRecordings(BaseSDK):
         This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
         Required scopes: `meeting:read`, `call_recording:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param meeting_id:
         :param limit:
@@ -225,6 +229,8 @@ class CallRecordings(BaseSDK):
         This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
         Required scopes: `meeting:read`, `call_recording:read-write`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param meeting_id:
         :param data:
@@ -358,6 +364,8 @@ class CallRecordings(BaseSDK):
 
         Required scopes: `meeting:read`, `call_recording:read-write`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param meeting_id:
         :param data:
         :param retries: Override the default retry configuration for this method
@@ -485,6 +493,8 @@ class CallRecordings(BaseSDK):
 
         Required scopes: `meeting:read`, `call_recording:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param meeting_id:
         :param call_recording_id:
         :param retries: Override the default retry configuration for this method
@@ -587,6 +597,8 @@ class CallRecordings(BaseSDK):
         This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
         Required scopes: `meeting:read`, `call_recording:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param meeting_id:
         :param call_recording_id:
@@ -691,6 +703,8 @@ class CallRecordings(BaseSDK):
 
         Required scopes: `meeting:read`, `call_recording:read-write`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param meeting_id:
         :param call_recording_id:
         :param retries: Override the default retry configuration for this method
@@ -793,6 +807,8 @@ class CallRecordings(BaseSDK):
         This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
         Required scopes: `meeting:read`, `call_recording:read-write`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param meeting_id:
         :param call_recording_id:

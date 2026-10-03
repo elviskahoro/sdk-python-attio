@@ -15,6 +15,13 @@ Iss = Literal["attio.com",]
 r"""The issuer of the token. Always attio.com"""
 
 
+TokenLevel = Literal[
+    "workspace",
+    "user",
+]
+r"""Whether the token acts for the whole workspace or for a single workspace member."""
+
+
 class AttioComTypedDict(TypedDict):
     active: bool
     r"""Whether the token is currently active and usable."""
@@ -34,6 +41,8 @@ class AttioComTypedDict(TypedDict):
     r"""The intended audience for this token, for Bearer tokens this is the same as the client_id."""
     iss: Iss
     r"""The issuer of the token. Always attio.com"""
+    token_level: TokenLevel
+    r"""Whether the token acts for the whole workspace or for a single workspace member."""
     workspace_id: str
     r"""The ID of the workspace the token is scoped to."""
     workspace_name: str
@@ -73,6 +82,9 @@ class AttioCom(BaseModel):
 
     iss: Iss
     r"""The issuer of the token. Always attio.com"""
+
+    token_level: TokenLevel
+    r"""Whether the token acts for the whole workspace or for a single workspace member."""
 
     workspace_id: str
     r"""The ID of the workspace the token is scoped to."""

@@ -10,7 +10,7 @@ from attio.utils import (
     RequestMetadata,
     get_discriminator,
 )
-from datetime import date, datetime
+from datetime import datetime
 from pydantic import Discriminator, Tag, model_serializer
 from typing import Any, Dict, List, Literal, Union
 from typing_extensions import Annotated, NotRequired, TypeAliasType, TypedDict
@@ -50,6 +50,14 @@ class PostV2ActivitiesActivityRecordsRequest(BaseModel):
     ]
 
 
+PostV2ActivitiesActivityRecordsConflictType = Literal["invalid_request_error",]
+
+
+PostV2ActivitiesActivityRecordsCodeConcurrentWriteConflict = Literal[
+    "concurrent_write_conflict",
+]
+
+
 PostV2ActivitiesActivityRecordsNotFoundType = Literal["invalid_request_error",]
 
 
@@ -59,13 +67,57 @@ PostV2ActivitiesActivityRecordsNotFoundCode = Literal["not_found",]
 PostV2ActivitiesActivityRecordsForbiddenType = Literal["auth_error",]
 
 
+PostV2ActivitiesActivityRecordsCodeBillingError = Literal["billing_error",]
+
+
 PostV2ActivitiesActivityRecordsCodeUnauthorized = Literal["unauthorized",]
+
+
+PostV2ActivitiesActivityRecordsForbiddenCodeUnionTypedDict = TypeAliasType(
+    "PostV2ActivitiesActivityRecordsForbiddenCodeUnionTypedDict",
+    Union[
+        PostV2ActivitiesActivityRecordsCodeUnauthorized,
+        PostV2ActivitiesActivityRecordsCodeBillingError,
+    ],
+)
+
+
+PostV2ActivitiesActivityRecordsForbiddenCodeUnion = TypeAliasType(
+    "PostV2ActivitiesActivityRecordsForbiddenCodeUnion",
+    Union[
+        PostV2ActivitiesActivityRecordsCodeUnauthorized,
+        PostV2ActivitiesActivityRecordsCodeBillingError,
+    ],
+)
 
 
 PostV2ActivitiesActivityRecordsBadRequestType = Literal["invalid_request_error",]
 
 
+PostV2ActivitiesActivityRecordsCodeParticleGateViolation = Literal[
+    "particle_gate_violation",
+]
+
+
 PostV2ActivitiesActivityRecordsCodeValueNotFound = Literal["value_not_found",]
+
+
+PostV2ActivitiesActivityRecordsBadRequestCodeUnionTypedDict = TypeAliasType(
+    "PostV2ActivitiesActivityRecordsBadRequestCodeUnionTypedDict",
+    Union[
+        PostV2ActivitiesActivityRecordsCodeValueNotFound,
+        PostV2ActivitiesActivityRecordsCodeParticleGateViolation,
+    ],
+)
+
+
+PostV2ActivitiesActivityRecordsBadRequestCodeUnion = TypeAliasType(
+    "PostV2ActivitiesActivityRecordsBadRequestCodeUnion",
+    Union[
+        PostV2ActivitiesActivityRecordsCodeValueNotFound,
+        PostV2ActivitiesActivityRecordsCodeParticleGateViolation,
+    ],
+)
 
 
 class PostV2ActivitiesActivityRecordsIDTypedDict(TypedDict):
@@ -154,8 +206,8 @@ class PostV2ActivitiesActivityRecordsValueTimestampTypedDict(TypedDict):
     r"""The actor that created this value."""
     attribute_type: PostV2ActivitiesActivityRecordsAttributeTypeTimestamp
     r"""The attribute type of the value."""
-    value: date
-    r"""A timestamp value represents a single, universal moment in time using an ISO 8601 formatted string. This means that a timestamp consists of a date, a time (with nanosecond precision), and a time zone. Attio will coerce timestamps which do not provide full nanosecond precision and UTC is assumed if no time zone is provided. For example, \"2023\", \"2023-01\", \"2023-01-02\", \"2023-01-02T13:00\", \"2023-01-02T13:00:00\", and \"2023-01-02T13:00:00.000000000\" will all be coerced to \"2023-01-02T13:00:00.000000000Z\". Timestamps are always returned in UTC. For example, writing a timestamp value using the string \"2023-01-02T13:00:00.000000000+02:00\" will result in the value \"2023-01-02T11:00:00.000000000Z\" being returned. The maximum date is \"9999-12-31T23:59:59.999999999Z\"."""
+    value: str
+    r"""A timestamp string value"""
 
 
 class PostV2ActivitiesActivityRecordsValueTimestamp(BaseModel):
@@ -171,8 +223,8 @@ class PostV2ActivitiesActivityRecordsValueTimestamp(BaseModel):
     attribute_type: PostV2ActivitiesActivityRecordsAttributeTypeTimestamp
     r"""The attribute type of the value."""
 
-    value: date
-    r"""A timestamp value represents a single, universal moment in time using an ISO 8601 formatted string. This means that a timestamp consists of a date, a time (with nanosecond precision), and a time zone. Attio will coerce timestamps which do not provide full nanosecond precision and UTC is assumed if no time zone is provided. For example, \"2023\", \"2023-01\", \"2023-01-02\", \"2023-01-02T13:00\", \"2023-01-02T13:00:00\", and \"2023-01-02T13:00:00.000000000\" will all be coerced to \"2023-01-02T13:00:00.000000000Z\". Timestamps are always returned in UTC. For example, writing a timestamp value using the string \"2023-01-02T13:00:00.000000000+02:00\" will result in the value \"2023-01-02T11:00:00.000000000Z\" being returned. The maximum date is \"9999-12-31T23:59:59.999999999Z\"."""
+    value: str
+    r"""A timestamp string value"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):

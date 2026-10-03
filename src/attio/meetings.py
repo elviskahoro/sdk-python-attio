@@ -36,6 +36,8 @@ class Meetings(BaseSDK):
 
         Required scopes: `meeting:read`, `record_permission:read`.
 
+        Supported token levels: `workspace`.
+
         :param limit:
         :param cursor:
         :param linked_object:
@@ -148,6 +150,8 @@ class Meetings(BaseSDK):
 
         Required scopes: `meeting:read`, `record_permission:read`.
 
+        Supported token levels: `workspace`.
+
         :param limit:
         :param cursor:
         :param linked_object:
@@ -252,6 +256,8 @@ class Meetings(BaseSDK):
 
         Required scopes: `meeting:read-write`, `record_permission:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param data:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -348,6 +354,8 @@ class Meetings(BaseSDK):
         This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
         Required scopes: `meeting:read-write`, `record_permission:read`.
+
+        Supported token levels: `workspace`, `user`.
 
         :param data:
         :param retries: Override the default retry configuration for this method
@@ -446,6 +454,8 @@ class Meetings(BaseSDK):
 
         Required scopes: `meeting:read`, `record_permission:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param meeting_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -542,6 +552,8 @@ class Meetings(BaseSDK):
 
         Required scopes: `meeting:read`, `record_permission:read`.
 
+        Supported token levels: `workspace`, `user`.
+
         :param meeting_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -612,6 +624,714 @@ class Meetings(BaseSDK):
                 errors.GetV2MeetingsMeetingIDNotFoundErrorData, http_res
             )
             raise errors.GetV2MeetingsMeetingIDNotFoundError(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.SDKDefaultError("API error occurred", http_res, http_res_text)
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.SDKDefaultError("API error occurred", http_res, http_res_text)
+
+        raise errors.SDKDefaultError("Unexpected response received", http_res)
+
+    def patch_v2_meetings_meeting_id_(
+        self,
+        *,
+        meeting_id: str,
+        data: Union[
+            models.PatchV2MeetingsMeetingIDData,
+            models.PatchV2MeetingsMeetingIDDataTypedDict,
+        ],
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.PatchV2MeetingsMeetingIDResponse:
+        r"""Update a meeting (append linked records)
+
+        Links records to a meeting. The records supplied are added to the meeting's existing linked records, and records which are already linked are ignored. Use the `PUT` endpoint to replace or remove linked records.
+
+        No other meeting fields can be updated. Attio automatically links the meeting participants' companies to the meeting; this behavior is asynchronous.
+
+        This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
+
+        Required scopes: `meeting:read-write`, `record_permission:read`.
+
+        Supported token levels: `workspace`, `user`.
+
+        :param meeting_id:
+        :param data:
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.PatchV2MeetingsMeetingIDRequest(
+            meeting_id=meeting_id,
+            request_body=models.PatchV2MeetingsMeetingIDRequestBody(
+                data=utils.get_pydantic_model(
+                    data, models.PatchV2MeetingsMeetingIDData
+                ),
+            ),
+        )
+
+        req = self._build_request(
+            method="PATCH",
+            path="/v2/meetings/{meeting_id}",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request.request_body,
+                False,
+                False,
+                "json",
+                models.PatchV2MeetingsMeetingIDRequestBody,
+            ),
+            allow_empty_value=None,
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="patch_/v2/meetings/{meeting_id}",
+                oauth2_scopes=None,
+                security_source=self.sdk_configuration.security,
+                tags=["Meetings"],
+                extensions={"x-mint": {"metadata": {"tag": "BETA"}}},
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        response_data: Any = None
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models.PatchV2MeetingsMeetingIDResponse, http_res
+            )
+        if utils.match_response(http_res, "400", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PatchV2MeetingsMeetingIDInvalidRequestErrorData, http_res
+            )
+            raise errors.PatchV2MeetingsMeetingIDInvalidRequestError(
+                response_data, http_res
+            )
+        if utils.match_response(http_res, "404", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PatchV2MeetingsMeetingIDNotFoundErrorData, http_res
+            )
+            raise errors.PatchV2MeetingsMeetingIDNotFoundError(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.SDKDefaultError("API error occurred", http_res, http_res_text)
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.SDKDefaultError("API error occurred", http_res, http_res_text)
+
+        raise errors.SDKDefaultError("Unexpected response received", http_res)
+
+    async def patch_v2_meetings_meeting_id__async(
+        self,
+        *,
+        meeting_id: str,
+        data: Union[
+            models.PatchV2MeetingsMeetingIDData,
+            models.PatchV2MeetingsMeetingIDDataTypedDict,
+        ],
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.PatchV2MeetingsMeetingIDResponse:
+        r"""Update a meeting (append linked records)
+
+        Links records to a meeting. The records supplied are added to the meeting's existing linked records, and records which are already linked are ignored. Use the `PUT` endpoint to replace or remove linked records.
+
+        No other meeting fields can be updated. Attio automatically links the meeting participants' companies to the meeting; this behavior is asynchronous.
+
+        This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
+
+        Required scopes: `meeting:read-write`, `record_permission:read`.
+
+        Supported token levels: `workspace`, `user`.
+
+        :param meeting_id:
+        :param data:
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.PatchV2MeetingsMeetingIDRequest(
+            meeting_id=meeting_id,
+            request_body=models.PatchV2MeetingsMeetingIDRequestBody(
+                data=utils.get_pydantic_model(
+                    data, models.PatchV2MeetingsMeetingIDData
+                ),
+            ),
+        )
+
+        req = self._build_request_async(
+            method="PATCH",
+            path="/v2/meetings/{meeting_id}",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request.request_body,
+                False,
+                False,
+                "json",
+                models.PatchV2MeetingsMeetingIDRequestBody,
+            ),
+            allow_empty_value=None,
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="patch_/v2/meetings/{meeting_id}",
+                oauth2_scopes=None,
+                security_source=self.sdk_configuration.security,
+                tags=["Meetings"],
+                extensions={"x-mint": {"metadata": {"tag": "BETA"}}},
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        response_data: Any = None
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models.PatchV2MeetingsMeetingIDResponse, http_res
+            )
+        if utils.match_response(http_res, "400", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PatchV2MeetingsMeetingIDInvalidRequestErrorData, http_res
+            )
+            raise errors.PatchV2MeetingsMeetingIDInvalidRequestError(
+                response_data, http_res
+            )
+        if utils.match_response(http_res, "404", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PatchV2MeetingsMeetingIDNotFoundErrorData, http_res
+            )
+            raise errors.PatchV2MeetingsMeetingIDNotFoundError(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.SDKDefaultError("API error occurred", http_res, http_res_text)
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.SDKDefaultError("API error occurred", http_res, http_res_text)
+
+        raise errors.SDKDefaultError("Unexpected response received", http_res)
+
+    def put_v2_meetings_meeting_id_(
+        self,
+        *,
+        meeting_id: str,
+        data: Union[
+            models.PutV2MeetingsMeetingIDData,
+            models.PutV2MeetingsMeetingIDDataTypedDict,
+        ],
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.PutV2MeetingsMeetingIDResponse:
+        r"""Update a meeting (overwrite linked records)
+
+        Replaces a meeting's linked records with the records supplied. Any record which is currently linked and is not in the request is unlinked, including records which Attio linked automatically from the meeting's participants. Passing an empty array unlinks every record. Use the `PATCH` endpoint to add linked records without removing the records which already exist.
+
+        No other meeting fields can be updated. Attio automatically links the meeting participants' companies to the meeting; this behavior is asynchronous, so a company which is linked after this request completes is not removed by it.
+
+        This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
+
+        Required scopes: `meeting:read-write`, `record_permission:read`.
+
+        Supported token levels: `workspace`, `user`.
+
+        :param meeting_id:
+        :param data:
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.PutV2MeetingsMeetingIDRequest(
+            meeting_id=meeting_id,
+            request_body=models.PutV2MeetingsMeetingIDRequestBody(
+                data=utils.get_pydantic_model(data, models.PutV2MeetingsMeetingIDData),
+            ),
+        )
+
+        req = self._build_request(
+            method="PUT",
+            path="/v2/meetings/{meeting_id}",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request.request_body,
+                False,
+                False,
+                "json",
+                models.PutV2MeetingsMeetingIDRequestBody,
+            ),
+            allow_empty_value=None,
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="put_/v2/meetings/{meeting_id}",
+                oauth2_scopes=None,
+                security_source=self.sdk_configuration.security,
+                tags=["Meetings"],
+                extensions={"x-mint": {"metadata": {"tag": "BETA"}}},
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        response_data: Any = None
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models.PutV2MeetingsMeetingIDResponse, http_res
+            )
+        if utils.match_response(http_res, "400", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PutV2MeetingsMeetingIDInvalidRequestErrorData, http_res
+            )
+            raise errors.PutV2MeetingsMeetingIDInvalidRequestError(
+                response_data, http_res
+            )
+        if utils.match_response(http_res, "404", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PutV2MeetingsMeetingIDNotFoundErrorData, http_res
+            )
+            raise errors.PutV2MeetingsMeetingIDNotFoundError(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.SDKDefaultError("API error occurred", http_res, http_res_text)
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.SDKDefaultError("API error occurred", http_res, http_res_text)
+
+        raise errors.SDKDefaultError("Unexpected response received", http_res)
+
+    async def put_v2_meetings_meeting_id__async(
+        self,
+        *,
+        meeting_id: str,
+        data: Union[
+            models.PutV2MeetingsMeetingIDData,
+            models.PutV2MeetingsMeetingIDDataTypedDict,
+        ],
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.PutV2MeetingsMeetingIDResponse:
+        r"""Update a meeting (overwrite linked records)
+
+        Replaces a meeting's linked records with the records supplied. Any record which is currently linked and is not in the request is unlinked, including records which Attio linked automatically from the meeting's participants. Passing an empty array unlinks every record. Use the `PATCH` endpoint to add linked records without removing the records which already exist.
+
+        No other meeting fields can be updated. Attio automatically links the meeting participants' companies to the meeting; this behavior is asynchronous, so a company which is linked after this request completes is not removed by it.
+
+        This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
+
+        Required scopes: `meeting:read-write`, `record_permission:read`.
+
+        Supported token levels: `workspace`, `user`.
+
+        :param meeting_id:
+        :param data:
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.PutV2MeetingsMeetingIDRequest(
+            meeting_id=meeting_id,
+            request_body=models.PutV2MeetingsMeetingIDRequestBody(
+                data=utils.get_pydantic_model(data, models.PutV2MeetingsMeetingIDData),
+            ),
+        )
+
+        req = self._build_request_async(
+            method="PUT",
+            path="/v2/meetings/{meeting_id}",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request.request_body,
+                False,
+                False,
+                "json",
+                models.PutV2MeetingsMeetingIDRequestBody,
+            ),
+            allow_empty_value=None,
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="put_/v2/meetings/{meeting_id}",
+                oauth2_scopes=None,
+                security_source=self.sdk_configuration.security,
+                tags=["Meetings"],
+                extensions={"x-mint": {"metadata": {"tag": "BETA"}}},
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        response_data: Any = None
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models.PutV2MeetingsMeetingIDResponse, http_res
+            )
+        if utils.match_response(http_res, "400", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PutV2MeetingsMeetingIDInvalidRequestErrorData, http_res
+            )
+            raise errors.PutV2MeetingsMeetingIDInvalidRequestError(
+                response_data, http_res
+            )
+        if utils.match_response(http_res, "404", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PutV2MeetingsMeetingIDNotFoundErrorData, http_res
+            )
+            raise errors.PutV2MeetingsMeetingIDNotFoundError(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.SDKDefaultError("API error occurred", http_res, http_res_text)
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.SDKDefaultError("API error occurred", http_res, http_res_text)
+
+        raise errors.SDKDefaultError("Unexpected response received", http_res)
+
+    def delete_v2_meetings_meeting_id_(
+        self,
+        *,
+        meeting_id: str,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.DeleteV2MeetingsMeetingIDResponse:
+        r"""Delete a meeting
+
+        Deletes a single meeting by ID.
+
+        Meetings created by calendar sync cannot be deleted through the API. Delete the underlying calendar event, or disconnect the calendar, instead.
+
+        This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
+
+        Required scopes: `meeting:read-write`.
+
+        Supported token levels: `workspace`, `user`.
+
+        :param meeting_id:
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.DeleteV2MeetingsMeetingIDRequest(
+            meeting_id=meeting_id,
+        )
+
+        req = self._build_request(
+            method="DELETE",
+            path="/v2/meetings/{meeting_id}",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=False,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            allow_empty_value=None,
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="delete_/v2/meetings/{meeting_id}",
+                oauth2_scopes=None,
+                security_source=self.sdk_configuration.security,
+                tags=["Meetings"],
+                extensions={"x-mint": {"metadata": {"tag": "BETA"}}},
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        response_data: Any = None
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models.DeleteV2MeetingsMeetingIDResponse, http_res
+            )
+        if utils.match_response(http_res, "400", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.DeleteV2MeetingsMeetingIDSystemEditUnauthorizedErrorData,
+                http_res,
+            )
+            raise errors.DeleteV2MeetingsMeetingIDSystemEditUnauthorizedError(
+                response_data, http_res
+            )
+        if utils.match_response(http_res, "404", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.DeleteV2MeetingsMeetingIDNotFoundErrorData, http_res
+            )
+            raise errors.DeleteV2MeetingsMeetingIDNotFoundError(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.SDKDefaultError("API error occurred", http_res, http_res_text)
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.SDKDefaultError("API error occurred", http_res, http_res_text)
+
+        raise errors.SDKDefaultError("Unexpected response received", http_res)
+
+    async def delete_v2_meetings_meeting_id__async(
+        self,
+        *,
+        meeting_id: str,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.DeleteV2MeetingsMeetingIDResponse:
+        r"""Delete a meeting
+
+        Deletes a single meeting by ID.
+
+        Meetings created by calendar sync cannot be deleted through the API. Delete the underlying calendar event, or disconnect the calendar, instead.
+
+        This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
+
+        Required scopes: `meeting:read-write`.
+
+        Supported token levels: `workspace`, `user`.
+
+        :param meeting_id:
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.DeleteV2MeetingsMeetingIDRequest(
+            meeting_id=meeting_id,
+        )
+
+        req = self._build_request_async(
+            method="DELETE",
+            path="/v2/meetings/{meeting_id}",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=False,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            allow_empty_value=None,
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="delete_/v2/meetings/{meeting_id}",
+                oauth2_scopes=None,
+                security_source=self.sdk_configuration.security,
+                tags=["Meetings"],
+                extensions={"x-mint": {"metadata": {"tag": "BETA"}}},
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        response_data: Any = None
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models.DeleteV2MeetingsMeetingIDResponse, http_res
+            )
+        if utils.match_response(http_res, "400", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.DeleteV2MeetingsMeetingIDSystemEditUnauthorizedErrorData,
+                http_res,
+            )
+            raise errors.DeleteV2MeetingsMeetingIDSystemEditUnauthorizedError(
+                response_data, http_res
+            )
+        if utils.match_response(http_res, "404", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.DeleteV2MeetingsMeetingIDNotFoundErrorData, http_res
+            )
+            raise errors.DeleteV2MeetingsMeetingIDNotFoundError(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.SDKDefaultError("API error occurred", http_res, http_res_text)

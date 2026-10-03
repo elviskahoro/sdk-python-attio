@@ -25,6 +25,23 @@ Patch: ``src/attio/models/get_v2_selfop.py``
     matching ``@model_validator(mode="after")`` checks on ``AttioCom``
     (``active`` must be ``True``) and ``ResponseBody`` (``active`` must be
     ``False``) are re-added here to restore the discriminating invariant.
+
+Patch: ``scripts/publish.sh`` and ``scripts/release.sh`` wrappers
+
+    Speakeasy regenerates ``scripts/`` with its own templates, which in the
+    2026-10 regeneration silently reverted ``scripts/publish.sh`` to a naive
+    ``uv build && uv publish --token`` script, dropping the dual
+    attio/gtm-attio release pipeline. ``.genignore`` now excludes ``scripts/``
+    from generation, and this script additionally rewrites both wrappers to
+    their canonical delegating form (the real implementations live in
+    ``ci/publish.sh`` / ``ci/release.sh``, which the generator never
+    touches) so a regeneration can never again ship the naive script — worst
+    case it is restored here, loudly.
+
+    Note: the pipeline's Dagger generation path exports only ``src/`` back
+    to the host, so on that path this script sees the host's unmodified
+    ``scripts/`` — the wrapper restoration is only exercised after host-CLI
+    generation (the default) or when run standalone.
 """
 
 from __future__ import annotations
@@ -34,6 +51,24 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 TARGET = REPO_ROOT / "src" / "attio" / "models" / "get_v2_selfop.py"
+
+# scripts/ wrappers -> the ci/ implementation each wrapper must delegate to.
+WRAPPER_IMPLS = {
+    REPO_ROOT / "scripts" / "publish.sh": "ci/publish.sh",
+    REPO_ROOT / "scripts" / "release.sh": "ci/release.sh",
+}
+
+_WRAPPER_TEMPLATE = """#!/usr/bin/env bash
+# Thin wrapper — do not add logic here.
+#
+# `speakeasy run` regenerates scripts/ with its own templates (see
+# .genignore), so this file deliberately only delegates to the real
+# implementation in ci/, which the generator never touches.
+# ci/post_generate_patch.py restores this wrapper after every regeneration
+# in case it is ever overwritten anyway.
+set -euo pipefail
+exec bash "$(dirname "$0")/../{impl}" "$@"
+"""
 
 ATTIO_COM_VALIDATOR_LINES = [
     '    @model_validator(mode="after")',
@@ -146,13 +181,61 @@ def patch_get_v2_selfop(path: Path) -> bool:
     return True
 
 
+def restore_script_wrappers() -> list[Path]:
+    """Rewrite the ``scripts/*.sh`` wrappers to their canonical form.
+
+    Speakeasy owns ``scripts/`` and rewrites it from its templates on every
+    ``speakeasy run``; the wrappers must therefore contain nothing but the
+    delegation to the real implementation under ``ci/``. Any other content
+    (e.g. Speakeasy's naive ``uv build && uv publish`` publish script) is
+    replaced here. Returns the list of wrappers that were rewritten; an
+    already-canonical tree returns an empty list.
+    """
+    restored: list[Path] = []
+    for wrapper, impl in WRAPPER_IMPLS.items():
+        if not (REPO_ROOT / impl).is_file():
+            msg = (
+                f"{impl} is missing; cannot restore the "
+                f"{wrapper.relative_to(REPO_ROOT)} wrapper it delegates to"
+            )
+            raise RuntimeError(msg)
+        canonical = _WRAPPER_TEMPLATE.format(impl=impl)
+        # Mode counts too: the generator writes non-executable files, so a
+        # wrapper with the right text but a lost exec bit must be repaired,
+        # not skipped.
+        is_canonical = wrapper.exists() and wrapper.read_text() == canonical
+        if is_canonical and wrapper.stat().st_mode & 0o111:
+            continue
+        # The generator may also have cleaned up scripts/ entirely; this
+        # function is the fallback for .genignore not being honored, so it
+        # must cope with the directory being gone too.
+        wrapper.parent.mkdir(parents=True, exist_ok=True)
+        wrapper.write_text(canonical)
+        wrapper.chmod(0o755)
+        restored.append(wrapper)
+    return restored
+
+
 def main() -> int:
+    messages: list[str] = []
+
+    # Wrappers first: a layout drift that makes patch_get_v2_selfop raise
+    # must not skip the scripts/ restoration — that restore is the fallback
+    # for .genignore not being honored, and aborting before it runs is how
+    # a naive publish script survives in the tree.
+    for wrapper in restore_script_wrappers():
+        messages.append(
+            f"post_generate_patch: restored wrapper {wrapper.relative_to(REPO_ROOT)}",
+        )
+
     changed = patch_get_v2_selfop(TARGET)
     rel = TARGET.relative_to(REPO_ROOT)
     if changed:
-        print(f"post_generate_patch: patched {rel}")
+        messages.append(f"post_generate_patch: patched {rel}")
     else:
-        print(f"post_generate_patch: unchanged {rel}")
+        messages.append(f"post_generate_patch: unchanged {rel}")
+
+    print("\n".join(messages))
     return 0
 
 

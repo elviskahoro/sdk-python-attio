@@ -49,6 +49,8 @@ class Emails(BaseSDK):
 
         Required scopes: `email:read`, `record_permission:read`, `object_configuration:read`.
 
+        Supported token levels: `workspace`.
+
         :param limit:
         :param cursor:
         :param linked_object:
@@ -173,6 +175,8 @@ class Emails(BaseSDK):
         This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
 
         Required scopes: `email:read`, `record_permission:read`, `object_configuration:read`.
+
+        Supported token levels: `workspace`.
 
         :param limit:
         :param cursor:

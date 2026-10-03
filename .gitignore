@@ -14,3 +14,9 @@ src/*.egg-info/
 .claude/
 .beads/
 tmp/
+# Emitted by Speakeasy generation (see .speakeasy/gen.lock generatedFiles)
+# for IDE support; deliberately untracked, and hidden on machines whose
+# global gitignore covers .vscode/ — ignored here so CI runners see the
+# same tree and the spec-update workflow's leftover guard does not fail
+# on it.
+.vscode/

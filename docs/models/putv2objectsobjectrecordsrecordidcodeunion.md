@@ -15,3 +15,9 @@ value: models.PutV2ObjectsObjectRecordsRecordIDCodeMissingValue = /* values here
 value: models.PutV2ObjectsObjectRecordsRecordIDCodeMergeInProgress = /* values here */
 ```
 
+### `models.PutV2ObjectsObjectRecordsRecordIDCodeParticleGateViolation`
+
+```python
+value: models.PutV2ObjectsObjectRecordsRecordIDCodeParticleGateViolation = /* values here */
+```
+

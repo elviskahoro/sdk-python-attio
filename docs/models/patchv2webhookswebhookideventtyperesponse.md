@@ -6,12 +6,19 @@ Type of event the webhook is subscribed to.
 
 ```python
 from attio.models import PatchV2WebhooksWebhookIDEventTypeResponse
-value: PatchV2WebhooksWebhookIDEventTypeResponse = "call-recording.created"
+value: PatchV2WebhooksWebhookIDEventTypeResponse = "activity.created"
 ```
 
 
 ## Values
 
+- `"activity.created"`
+- `"activity.updated"`
+- `"activity.deleted"`
+- `"activity-attribute.created"`
+- `"activity-attribute.updated"`
+- `"activity-record.created"`
+- `"activity-record.deleted"`
 - `"call-recording.created"`
 - `"comment.created"`
 - `"comment.resolved"`
