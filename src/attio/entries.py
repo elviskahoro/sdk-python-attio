@@ -1952,7 +1952,7 @@ class Entries(BaseSDK):
     def put_v2_lists_list_entries_entry_id_attributes_attribute_values(
         self,
         *,
-        list: str,
+        list_id: str,
         entry_id: str,
         attribute: str,
         data: Union[
@@ -1980,7 +1980,7 @@ class Entries(BaseSDK):
 
         Supported token levels: `workspace`, `user`.
 
-        :param list:
+        :param list_id:
         :param entry_id:
         :param attribute:
         :param data:
@@ -2000,7 +2000,7 @@ class Entries(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
 
         request = models.PutV2ListsListEntriesEntryIDAttributesAttributeValuesRequest(
-            list=list,
+            list_id=list_id,
             entry_id=entry_id,
             attribute=attribute,
             request_body=models.PutV2ListsListEntriesEntryIDAttributesAttributeValuesRequestBody(
@@ -2100,7 +2100,7 @@ class Entries(BaseSDK):
     async def put_v2_lists_list_entries_entry_id_attributes_attribute_values_async(
         self,
         *,
-        list: str,
+        list_id: str,
         entry_id: str,
         attribute: str,
         data: Union[
@@ -2128,7 +2128,7 @@ class Entries(BaseSDK):
 
         Supported token levels: `workspace`, `user`.
 
-        :param list:
+        :param list_id:
         :param entry_id:
         :param attribute:
         :param data:
@@ -2148,7 +2148,7 @@ class Entries(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
 
         request = models.PutV2ListsListEntriesEntryIDAttributesAttributeValuesRequest(
-            list=list,
+            list_id=list_id,
             entry_id=entry_id,
             attribute=attribute,
             request_body=models.PutV2ListsListEntriesEntryIDAttributesAttributeValuesRequestBody(

@@ -28,13 +28,3 @@ DeleteV2MeetingsMeetingIDCallRecordingsCallRecordingIDType = Literal[
 
 
 DeleteV2MeetingsMeetingIDCallRecordingsCallRecordingIDCode = Literal["not_found",]
-
-
-class DeleteV2MeetingsMeetingIDCallRecordingsCallRecordingIDResponseTypedDict(
-    TypedDict
-):
-    r"""Success"""
-
-
-class DeleteV2MeetingsMeetingIDCallRecordingsCallRecordingIDResponse(BaseModel):
-    r"""Success"""

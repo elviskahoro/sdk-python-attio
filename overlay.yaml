@@ -323,6 +323,23 @@ actions:
       in: "path"
       x-speakeasy-name-override: "list_id"
 
+  # The 13th and last `list` parameter rename (tracked as attio-eji): the PUT
+  # twin of the attribute-values endpoint above. Without it the generated
+  # method is the only list-scoped call that still shadows the `list` builtin
+  # while its GET sibling takes `list_id`.
+
+  - target: "$.paths['/v2/lists/{list}/entries/{entry_id}/attributes/{attribute}/values'].put.parameters[?(@.name=='list')]"
+    description: "Rename list parameter to list_id in PUT /v2/lists/{list}/entries/{entry_id}/attributes/{attribute}/values"
+    update:
+      schema:
+        type: string
+        description: "A UUID or slug to identify the list."
+        example: "33ebdbe9-e529-47c9-b894-0ba25e9c15c0"
+      required: true
+      name: "list"
+      in: "path"
+      x-speakeasy-name-override: "list_id"
+
   # SCIM parameter-fix entries removed 2026-10: the /scim/* endpoints are not
   # present in the published spec anymore, so those targets matched nothing
   # (speakeasy silently skips them). ci/spec_diff.py check-overlay now fails
@@ -571,3 +588,19 @@ actions:
   - target: "$.components.schemas['input-value'].anyOf[18].properties.value.description"
     description: "Change timestamp description in input-value schema"
     update: "A timestamp string value"
+
+  # DELETE /v2/meetings/{meeting_id}/call_recordings/{call_recording_id} returns
+  # 204 No Content, but the upstream spec declares a 204 response body
+  # (`content: application/json` with an empty-object schema). A 204 carries no
+  # body (RFC 9110 sec. 15.4.5), so Speakeasy's generated
+  # `match_response(http_res, "204", "application/json")` +
+  # `unmarshal_json_response(...)` branch cannot succeed on a real bodyless 204
+  # (it either misses the response when there is no content-type header, or
+  # fails JSON parsing on the empty body when the server mirrors the client's
+  # `Accept: application/json`). Removing the `content` here makes Speakeasy
+  # generate a status-code-only match returning the empty response model, which
+  # is the correct behavior for a bodyless 204 and survives regeneration.
+  # (Tracked as attio-khf.)
+  - target: "$.paths['/v2/meetings/{meeting_id}/call_recordings/{call_recording_id}'].delete.responses['204'].content"
+    description: "Remove the 204 response body for DELETE call-recording so Speakeasy generates a bodyless-204 handler instead of unmarshaling an empty body"
+    remove: true
