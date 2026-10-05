@@ -42,6 +42,11 @@ Patch: ``scripts/publish.sh`` and ``scripts/release.sh`` wrappers
     to the host, so on that path this script sees the host's unmodified
     ``scripts/`` — the wrapper restoration is only exercised after host-CLI
     generation (the default) or when run standalone.
+
+Patch: ``pyproject.toml`` and ``README.md``
+
+    Speakeasy owns both files, so this script also restores the standalone
+    ``gtm-attio`` console entry point and its user-facing CLI documentation.
 """
 
 from __future__ import annotations
@@ -69,6 +74,149 @@ _WRAPPER_TEMPLATE = """#!/usr/bin/env bash
 set -euo pipefail
 exec bash "$(dirname "$0")/../{impl}" "$@"
 """
+
+CLI_SCRIPT_LINE = 'gtm-attio = "attio_cli.main:main"'
+README_CLI_START = "<!-- Start Standalone CLI [cli] -->"
+README_CLI_END = "<!-- End Standalone CLI [cli] -->"
+README_CLI_SECTION = """<!-- Start Standalone CLI [cli] -->
+## Standalone CLI
+
+Install and run the agent-friendly CLI without cloning this repository:
+
+```bash
+export ATTIO_API_KEY="your-attio-api-key"
+uvx gtm-attio people upsert person@example.com \\
+  --first-name Ada --last-name Lovelace
+```
+
+The CLI also reads `ATTIO_API_KEY` from `.env.local` or `.env` in the current
+directory. Environment variables take precedence. Search/list commands are
+read-only. Add, update, and upsert commands write directly to Attio without a
+confirmation prompt; every command prints a JSON reliability envelope.
+
+Both the `attio` and `gtm-attio` distribution artifacts expose the
+`gtm-attio` command for compatibility. They are alternate names for packages
+that provide the same `attio` import namespace; install only one distribution
+in a Python environment.
+
+People commands use email as their identity key. `search` is read-only; `add`
+fails if the email already exists; `update` requires exactly one matching
+person. `upsert` creates or updates as before. Common write options include
+repeatable `--add-email`, `--replace-emails`, `--job-title`, `--phone`,
+`--phone-country-code`, `--linkedin`, `--company` (company domain), `--notes`,
+and `--strict`. Prefix international phone numbers with `+`; local numbers
+require `--phone-country-code` (ISO-3166-1 alpha-2). Pair `--location` with
+`--country-code`; `--location-mode city|raw` controls its mapping.
+
+```bash
+uvx gtm-attio people upsert --json '{"email":"person@example.com","first_name":"Ada","job_title":"Mathematician"}'
+```
+
+```bash
+uvx gtm-attio people search person@example.com
+uvx gtm-attio people add person@example.com --first-name Ada --last-name Lovelace
+uvx gtm-attio people update person@example.com --job-title Mathematician
+```
+
+Company commands use validated JSON. The `domain` is the exact identity and is
+written to Attio's `domains` attribute; `values` contains other Attio record
+attribute values in the API's `{attribute_slug: [value, ...]}` format. Add
+rejects an existing domain and update requires exactly one match:
+
+```bash
+uvx gtm-attio companies search --json '{"domain":"example.com"}'
+uvx gtm-attio companies add --json '{"domain":"example.com","values":{"name":[{"value":"Example Inc"}]}}'
+uvx gtm-attio companies update --json '{"domain":"example.com","values":{"description":["Prospect"]}}'
+```
+
+Notes attach to one existing record. List is read-only; add and update write
+immediately. Updates target a note ID and only replace the supplied fields:
+
+```bash
+uvx gtm-attio notes list --json '{"parent_object":"people","parent_record_id":"RECORD_ID"}'
+uvx gtm-attio notes add --json '{"parent_object":"people","parent_record_id":"RECORD_ID","title":"Discovery call","content":"Discussed the launch plan.","format":"plaintext"}'
+uvx gtm-attio notes update --json '{"note_id":"NOTE_ID","content":"Updated call notes."}'
+```
+
+The output envelope reports `success`, `partial_success`, `action`,
+`record_id`, `warnings`, `skipped_fields`, `errors`, and `meta`. Missing
+optional workspace attributes are retried without that field and reported as
+warnings for people writes. Search/list results are in `meta.results`. Invalid
+optional person values are skipped and reported; `--strict` turns those
+mismatches and invalid values into errors. Ambiguous person/company writes
+always fail without modifying a record.
+Successful and partial-success operations exit 0, runtime failures exit 1,
+and command-line usage errors exit 2.
+<!-- End Standalone CLI [cli] -->"""
+
+
+def ensure_project_script(path: Path) -> bool:
+    """Ensure the ``gtm-attio`` console entry point exists in pyproject.toml."""
+    text = path.read_text()
+    lines = text.splitlines(keepends=True)
+    header = "[project.scripts]"
+    try:
+        header_index = next(i for i, line in enumerate(lines) if line.strip() == header)
+    except StopIteration:
+        updated = text.rstrip() + "\n\n[project.scripts]\n" + CLI_SCRIPT_LINE + "\n"
+        path.write_text(updated)
+        return True
+
+    next_header = next(
+        (
+            i
+            for i in range(header_index + 1, len(lines))
+            if lines[i].lstrip().startswith("[")
+        ),
+        len(lines),
+    )
+    existing = next(
+        (
+            i
+            for i in range(header_index + 1, next_header)
+            if lines[i].lstrip().startswith("gtm-attio =")
+        ),
+        None,
+    )
+    if existing is not None and lines[existing].strip() == CLI_SCRIPT_LINE:
+        return False
+    if existing is not None:
+        lines[existing] = CLI_SCRIPT_LINE + "\n"
+    else:
+        lines.insert(header_index + 1, CLI_SCRIPT_LINE + "\n")
+    path.write_text("".join(lines))
+    return True
+
+
+def ensure_readme_cli_section(path: Path) -> bool:
+    """Restore the CLI documentation and its table-of-contents link."""
+    text = path.read_text()
+    if README_CLI_START in text and README_CLI_END in text:
+        start = text.index(README_CLI_START)
+        end = text.index(README_CLI_END, start) + len(README_CLI_END)
+        updated = text[:start] + README_CLI_SECTION + text[end:]
+    else:
+        marker = "<!-- End SDK Installation [installation] -->"
+        if marker in text:
+            index = text.index(marker) + len(marker)
+            updated = text[:index] + "\n\n" + README_CLI_SECTION + text[index:]
+        else:
+            updated = text.rstrip() + "\n\n" + README_CLI_SECTION + "\n"
+
+    toc_label = "  * [Standalone CLI](#standalone-cli)"
+    if toc_label not in updated:
+        installation_line = "  * [SDK Installation](#sdk-installation)"
+        if installation_line in updated:
+            updated = updated.replace(
+                installation_line,
+                installation_line + "\n" + toc_label,
+                1,
+            )
+    if updated == text:
+        return False
+    path.write_text(updated)
+    return True
+
 
 ATTIO_COM_VALIDATOR_LINES = [
     '    @model_validator(mode="after")',
@@ -218,6 +366,17 @@ def restore_script_wrappers() -> list[Path]:
 
 def main() -> int:
     messages: list[str] = []
+
+    for path, ensure, name in (
+        (
+            REPO_ROOT / "pyproject.toml",
+            ensure_project_script,
+            "pyproject.toml CLI entry point",
+        ),
+        (REPO_ROOT / "README.md", ensure_readme_cli_section, "README CLI section"),
+    ):
+        if ensure(path):
+            messages.append(f"post_generate_patch: restored {name}")
 
     # Wrappers first: a layout drift that makes patch_get_v2_selfop raise
     # must not skip the scripts/ restoration — that restore is the fallback

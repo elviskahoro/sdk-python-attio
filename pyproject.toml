@@ -5,8 +5,15 @@ description = "Attio API client library from elviskahoro"
 authors = [{ name = "elviskahoro" }]
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies = ["httpcore >=1.0.9", "httpx >=0.28.1", "pydantic >=2.11.2"]
+dependencies = [
+  "httpcore >=1.0.9",
+  "httpx >=0.28.1",
+  "pydantic >=2.11.2",
+]
 urls.homepage = "https://github.com/elviskahoro/attio-sdk-python"
+
+[project.scripts]
+gtm-attio = "attio_cli.main:main"
 
 [dependency-groups]
 dev = [

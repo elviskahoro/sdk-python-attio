@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased — 2026-10-05
+
+Expands the standalone `uvx gtm-attio` CLI with safe people search/add/update,
+company search/add/update, and note list/add/update commands. Mutations write
+immediately, validate JSON inputs, and return the versioned reliability
+envelope; search and list results are returned in `meta.results`.
+
 ## 0.25.1 — 2026-10-03
 
 Adopts Attio's 2026-10-03 OpenAPI spec and repairs the Speakeasy overlay.

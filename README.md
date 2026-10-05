@@ -21,6 +21,7 @@ Type-safe Python client for the [Attio API](https://developers.attio.com/), with
 <!-- $toc-max-depth=2 -->
 * [Attio Python SDK](#attio-python-sdk)
   * [SDK Installation](#sdk-installation)
+  * [Standalone CLI](#standalone-cli)
   * [IDE Support](#ide-support)
   * [SDK Example Usage](#sdk-example-usage)
   * [Authentication](#authentication)
@@ -105,6 +106,77 @@ sdk = SDK(
 Once that is saved to a file, you can run it with `uv run script.py` where
 `script.py` can be replaced with the actual file name.
 <!-- End SDK Installation [installation] -->
+
+<!-- Start Standalone CLI [cli] -->
+## Standalone CLI
+
+Install and run the agent-friendly CLI without cloning this repository:
+
+```bash
+export ATTIO_API_KEY="your-attio-api-key"
+uvx gtm-attio people upsert person@example.com \
+  --first-name Ada --last-name Lovelace
+```
+
+The CLI also reads `ATTIO_API_KEY` from `.env.local` or `.env` in the current
+directory. Environment variables take precedence. Search/list commands are
+read-only. Add, update, and upsert commands write directly to Attio without a
+confirmation prompt; every command prints a JSON reliability envelope.
+
+Both the `attio` and `gtm-attio` distribution artifacts expose the
+`gtm-attio` command for compatibility. They are alternate names for packages
+that provide the same `attio` import namespace; install only one distribution
+in a Python environment.
+
+People commands use email as their identity key. `search` is read-only; `add`
+fails if the email already exists; `update` requires exactly one matching
+person. `upsert` creates or updates as before. Common write options include
+repeatable `--add-email`, `--replace-emails`, `--job-title`, `--phone`,
+`--phone-country-code`, `--linkedin`, `--company` (company domain), `--notes`,
+and `--strict`. Prefix international phone numbers with `+`; local numbers
+require `--phone-country-code` (ISO-3166-1 alpha-2). Pair `--location` with
+`--country-code`; `--location-mode city|raw` controls its mapping.
+
+```bash
+uvx gtm-attio people upsert --json '{"email":"person@example.com","first_name":"Ada","job_title":"Mathematician"}'
+```
+
+```bash
+uvx gtm-attio people search person@example.com
+uvx gtm-attio people add person@example.com --first-name Ada --last-name Lovelace
+uvx gtm-attio people update person@example.com --job-title Mathematician
+```
+
+Company commands use validated JSON. The `domain` is the exact identity and is
+written to Attio's `domains` attribute; `values` contains other Attio record
+attribute values in the API's `{attribute_slug: [value, ...]}` format. Add
+rejects an existing domain and update requires exactly one match:
+
+```bash
+uvx gtm-attio companies search --json '{"domain":"example.com"}'
+uvx gtm-attio companies add --json '{"domain":"example.com","values":{"name":[{"value":"Example Inc"}]}}'
+uvx gtm-attio companies update --json '{"domain":"example.com","values":{"description":["Prospect"]}}'
+```
+
+Notes attach to one existing record. List is read-only; add and update write
+immediately. Updates target a note ID and only replace the supplied fields:
+
+```bash
+uvx gtm-attio notes list --json '{"parent_object":"people","parent_record_id":"RECORD_ID"}'
+uvx gtm-attio notes add --json '{"parent_object":"people","parent_record_id":"RECORD_ID","title":"Discovery call","content":"Discussed the launch plan.","format":"plaintext"}'
+uvx gtm-attio notes update --json '{"note_id":"NOTE_ID","content":"Updated call notes."}'
+```
+
+The output envelope reports `success`, `partial_success`, `action`,
+`record_id`, `warnings`, `skipped_fields`, `errors`, and `meta`. Missing
+optional workspace attributes are retried without that field and reported as
+warnings for people writes. Search/list results are in `meta.results`. Invalid
+optional person values are skipped and reported; `--strict` turns those
+mismatches and invalid values into errors. Ambiguous person/company writes
+always fail without modifying a record.
+Successful and partial-success operations exit 0, runtime failures exit 1,
+and command-line usage errors exit 2.
+<!-- End Standalone CLI [cli] -->
 
 <!-- Start IDE Support [idesupport] -->
 ## IDE Support
