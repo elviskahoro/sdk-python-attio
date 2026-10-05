@@ -173,10 +173,16 @@ def _sync_write_spec(spec_path: str, spec_data: dict[str, object]) -> None:
 
 
 def _sync_update_workflow(overlay_path: str, spec_path: str) -> None:
-    """Update workflow.yaml (synchronous)."""
+    """Update workflow.yaml (synchronous).
+
+    Both the read and the write go through ``_WORKFLOW_YAML`` (the same
+    anchor the gate's snapshot/restore uses) so the adoption touches the
+    repo's ``workflow.yaml`` regardless of the directory the pipeline is
+    invoked from — the invariant ``_sync_write_spec`` already obeys.
+    """
     import re
 
-    workflow_content = (_REPO_ROOT / ".speakeasy" / "workflow.yaml").read_text()
+    workflow_content = _WORKFLOW_YAML.read_text(encoding="utf-8")
 
     workflow_content = re.sub(
         r"location: openapi/api-[\d]+\.json",
@@ -189,7 +195,7 @@ def _sync_update_workflow(overlay_path: str, spec_path: str) -> None:
         workflow_content,
     )
 
-    Path(".speakeasy/workflow.yaml").write_text(workflow_content)
+    _WORKFLOW_YAML.write_text(workflow_content, encoding="utf-8")
 
 
 async def fetch_latest_spec() -> str:
