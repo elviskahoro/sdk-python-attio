@@ -207,6 +207,26 @@ def test_flatten_actions_are_parsed_with_expected_enums() -> None:
     assert "validation_type" in actions[post]
     assert "particle_gate_violation" in actions[put]
 
+    # The activity-record write endpoints mirror the objects-records write
+    # endpoints and must carry the same validation_type extension so a 400
+    # with code="validation_type" unmarshals to ...InvalidRequestError instead
+    # of raising ResponseValidationError.
+    activities_post = (
+        "$.paths['/v2/activities/{activity}/records'].post.responses['400']"
+        ".content['application/json'].schema.properties.code"
+    )
+    activities_put = (
+        "$.paths['/v2/activities/{activity}/records'].put.responses['400']"
+        ".content['application/json'].schema.properties.code"
+    )
+    assert activities_post in actions
+    assert activities_put in actions
+    assert "validation_type" in actions[activities_post]
+    assert "particle_gate_violation" in actions[activities_post]
+    assert "validation_type" in actions[activities_put]
+    assert "matching_attribute_definition_not_unique" in actions[activities_put]
+    assert "multiple_match_results" in actions[activities_put]
+
 
 # ---------------------------------------------------------------------------
 # Failure detection on mutated specs

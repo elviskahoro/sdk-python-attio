@@ -94,30 +94,11 @@ PostV2ActivitiesActivityRecordsForbiddenCodeUnion = TypeAliasType(
 PostV2ActivitiesActivityRecordsBadRequestType = Literal["invalid_request_error",]
 
 
-PostV2ActivitiesActivityRecordsCodeParticleGateViolation = Literal[
+PostV2ActivitiesActivityRecordsBadRequestCode = Literal[
+    "value_not_found",
     "particle_gate_violation",
+    "validation_type",
 ]
-
-
-PostV2ActivitiesActivityRecordsCodeValueNotFound = Literal["value_not_found",]
-
-
-PostV2ActivitiesActivityRecordsBadRequestCodeUnionTypedDict = TypeAliasType(
-    "PostV2ActivitiesActivityRecordsBadRequestCodeUnionTypedDict",
-    Union[
-        PostV2ActivitiesActivityRecordsCodeValueNotFound,
-        PostV2ActivitiesActivityRecordsCodeParticleGateViolation,
-    ],
-)
-
-
-PostV2ActivitiesActivityRecordsBadRequestCodeUnion = TypeAliasType(
-    "PostV2ActivitiesActivityRecordsBadRequestCodeUnion",
-    Union[
-        PostV2ActivitiesActivityRecordsCodeValueNotFound,
-        PostV2ActivitiesActivityRecordsCodeParticleGateViolation,
-    ],
-)
 
 
 class PostV2ActivitiesActivityRecordsIDTypedDict(TypedDict):

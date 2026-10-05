@@ -91,7 +91,7 @@ class PutV2ActivitiesActivityRecordsAuthError(SDKError):
 class PutV2ActivitiesActivityRecordsInvalidRequestErrorData(BaseModel):
     status_code: float
     type: models_put_v2_activities_activity_recordsop.PutV2ActivitiesActivityRecordsBadRequestType
-    code: models_put_v2_activities_activity_recordsop.PutV2ActivitiesActivityRecordsBadRequestCodeUnion
+    code: models_put_v2_activities_activity_recordsop.PutV2ActivitiesActivityRecordsBadRequestCode
     message: str
 
 

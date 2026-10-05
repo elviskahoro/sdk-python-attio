@@ -422,6 +422,43 @@ actions:
         - "particle_gate_violation"
         - "validation_type"
 
+  # The activity-record write endpoints mirror the objects-records write
+  # endpoints above: POST /v2/activities/{activity}/records has a 400 code
+  # anyOf that is byte-identical to POST /v2/objects/{object}/records, and the
+  # 2026-10-03 spec added a PUT upsert twin. Without these targets the
+  # generated Literal union omits validation_type, so a 400 with
+  # code="validation_type" (the code Attio uses for malformed values
+  # submissions) raises ResponseValidationError from the 400 branch's
+  # unmarshal call instead of the intended ...InvalidRequestError. Same
+  # flatten-and-extend recipe as the objects-records block above.
+  - target: "$.paths['/v2/activities/{activity}/records'].post.responses['400'].content['application/json'].schema.properties.code.anyOf"
+    description: "Flatten anyOf error-code union in POST /v2/activities/{activity}/records so code generates as one enum"
+    remove: true
+
+  - target: "$.paths['/v2/activities/{activity}/records'].post.responses['400'].content['application/json'].schema.properties.code"
+    description: "Allow validation_type code in POST /v2/activities/{activity}/records"
+    update:
+      type: string
+      enum:
+        - "value_not_found"
+        - "particle_gate_violation"
+        - "validation_type"
+
+  - target: "$.paths['/v2/activities/{activity}/records'].put.responses['400'].content['application/json'].schema.properties.code.anyOf"
+    description: "Flatten anyOf error-code union in PUT /v2/activities/{activity}/records so code generates as one enum"
+    remove: true
+
+  - target: "$.paths['/v2/activities/{activity}/records'].put.responses['400'].content['application/json'].schema.properties.code"
+    description: "Allow validation_type code in PUT /v2/activities/{activity}/records"
+    update:
+      type: string
+      enum:
+        - "value_not_found"
+        - "matching_attribute_definition_not_unique"
+        - "multiple_match_results"
+        - "particle_gate_violation"
+        - "validation_type"
+
   - target: "$.paths['/v2/objects/records/search'].post.responses['400'].content['application/json'].schema.properties.code.enum"
     description: "Allow validation_type code in POST /v2/objects/records/search"
     update:
