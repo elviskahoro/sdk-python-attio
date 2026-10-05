@@ -366,7 +366,6 @@ class InputValue12TypedDict(TypedDict):
 
 
 class InputValue12(BaseModel):
-    model_config = pydantic.ConfigDict(extra="forbid")
     first_name: Optional[str] = None
     r"""The first name."""
 
@@ -1279,7 +1278,6 @@ class InputValue6TypedDict(TypedDict):
 
 
 class InputValue6(BaseModel):
-    model_config = pydantic.ConfigDict(extra="forbid")
     email_address: Optional[str] = None
     r"""An email address string"""
 
@@ -1306,7 +1304,6 @@ class InputValue5TypedDict(TypedDict):
 
 
 class InputValue5(BaseModel):
-    model_config = pydantic.ConfigDict(extra="forbid")
     domain: Optional[str] = None
     r"""The full domain of the website."""
 

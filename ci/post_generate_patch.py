@@ -42,6 +42,35 @@ Patch: ``scripts/publish.sh`` and ``scripts/release.sh`` wrappers
     to the host, so on that path this script sees the host's unmodified
     ``scripts/`` — the wrapper restoration is only exercised after host-CLI
     generation (the default) or when run standalone.
+
+Patch: ``src/attio/models/input_value_union.py``
+
+    The 0.25.1 breaking change (commit 07e4d5f) migrated ``InputValue18``
+    (the timestamp variant) from ``value: date`` to ``value: str`` so
+    callers must pass Attio's ISO 8601 timestamp strings. Direct
+    construction of ``InputValue18(value=date(...))`` correctly raises
+    ``ValidationError`` after the change, but a dict payload validated
+    through ``List[InputValueUnion]`` (the element type of
+    ``default_value.template`` on attribute create/update requests) did
+    not: the all-optional variants ``InputValue5`` (``domain``),
+    ``InputValue6`` (``email_address``), and ``InputValue12`` (``name``)
+    have no required fields and inherit the Pydantic default ``extra=
+    'ignore'``, so union resolution silently fell through to one of them,
+    dropped the unknown ``value`` key, and serialized ``"template": [{}]`` —
+    sending an empty object as the default value instead of raising.
+
+    The overlay can't express this fix: setting ``additionalProperties:
+    false`` on those three schema members would document the intent, but
+    Speakeasy 1.800.1 does not translate it into ``extra='forbid'`` (the
+    variants that already carry ``additionalProperties: false`` in the spec
+    still generate with the default ``extra='ignore'``), so the generated
+    code is unchanged. This patch instead injects
+    ``model_config = pydantic.ConfigDict(extra="forbid")`` into the three
+    all-optional classes so a payload whose keys match no union member
+    exhausts the variants and raises ``ValidationError`` instead of being
+    silently absorbed. Legitimate single-key payloads (``{"domain": ...}``,
+    ``{"email_address": ...}``, ``{"first_name": ..., "last_name": ...}``)
+    continue to validate and serialize identically.
 """
 
 from __future__ import annotations
@@ -51,6 +80,9 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 TARGET = REPO_ROOT / "src" / "attio" / "models" / "get_v2_selfop.py"
+TARGET_INPUT_VALUE_UNION = (
+    REPO_ROOT / "src" / "attio" / "models" / "input_value_union.py"
+)
 
 # scripts/ wrappers -> the ci/ implementation each wrapper must delegate to.
 WRAPPER_IMPLS = {
@@ -181,6 +213,104 @@ def patch_get_v2_selfop(path: Path) -> bool:
     return True
 
 
+# The all-optional ``InputValue`` variants have no required fields and
+# inherit the Pydantic default ``extra='ignore'``, which makes them silent
+# catch-alls in ``InputValueUnion``: a dict payload whose keys match no
+# value-typed member (e.g. ``{"value": <date>}`` after the 0.25.1 timestamp
+# migration to ``str``) validates as an empty one of these and serializes
+# to ``{}``. Forbidding extras makes the union exhaust its members and
+# raise ``ValidationError`` instead. See the module docstring for context.
+INPUT_VALUE_FORBID_EXTRA_CLASSES = ("InputValue5", "InputValue6", "InputValue12")
+_FORBID_EXTRA_MARKER = 'model_config = pydantic.ConfigDict(extra="forbid")'
+
+
+def _ensure_pydantic_import(text: str) -> str:
+    """Ensure ``import pydantic`` is present for ``pydantic.ConfigDict``.
+
+    The generated ``input_value_union.py`` already imports ``pydantic``
+    (it uses ``pydantic.Field``); this fails loudly if a future
+    regeneration drops the import, since the injected line would then
+    reference an undefined name.
+    """
+    if not any(
+        line == "import pydantic" or line.startswith("import pydantic ")
+        for line in text.splitlines()
+    ):
+        msg = (
+            "the generated input_value_union.py no longer has an "
+            "`import pydantic` line; the post-generation patch must be "
+            "updated."
+        )
+        raise RuntimeError(msg)
+    return text
+
+
+def _inject_forbid_extra(text: str, class_name: str) -> str:
+    """Inject ``extra="forbid"`` as the first body line of ``class_name``.
+
+    Idempotent: returns the text unchanged when the class already carries
+    the ``extra="forbid"`` config. Raises ``RuntimeError`` if the class
+    declaration is missing (layout drift) or if the class already carries a
+    different ``model_config`` (so a future regeneration that emits its own
+    config is surfaced loudly rather than silently overridden).
+    """
+    lines = text.splitlines(keepends=False)
+    class_line = f"class {class_name}(BaseModel):"
+    start = next(
+        (i for i, line in enumerate(lines) if line == class_line),
+        None,
+    )
+    if start is None:
+        msg = (
+            f"class {class_name} not found in the generated "
+            "input_value_union.py; the post-generation patch must be "
+            "updated for the new generated layout."
+        )
+        raise RuntimeError(msg)
+    end = _class_body_end(lines, start)
+    existing_idx = next(
+        (
+            i
+            for i in range(start + 1, end)
+            if lines[i].lstrip().startswith("model_config")
+        ),
+        None,
+    )
+    if existing_idx is not None:
+        if _FORBID_EXTRA_MARKER in lines[existing_idx]:
+            return text
+        msg = (
+            f"class {class_name} in input_value_union.py already carries a "
+            f"model_config that is not `extra=\"forbid\"` "
+            f"({lines[existing_idx].strip()!r}); the post-generation patch "
+            "must be updated."
+        )
+        raise RuntimeError(msg)
+    lines.insert(start + 1, f"    {_FORBID_EXTRA_MARKER}")
+    return "\n".join(lines) + "\n"
+
+
+def patch_input_value_union(path: Path) -> bool:
+    """Re-inject ``extra="forbid"`` into the all-optional InputValue variants.
+
+    Returns ``True`` if ``path`` was modified, ``False`` if it was already
+    patched. Raises ``RuntimeError`` if the generated layout no longer
+    matches the anchors the patch depends on, so a regeneration that breaks
+    it fails loudly instead of silently shipping the silent-catch-all bug
+    back into the tree.
+    """
+    text = path.read_text()
+    original = text
+    text = _ensure_pydantic_import(text)
+    for class_name in INPUT_VALUE_FORBID_EXTRA_CLASSES:
+        text = _inject_forbid_extra(text, class_name)
+    if text == original:
+        return False
+    compile(text, str(path), "exec")
+    path.write_text(text)
+    return True
+
+
 def restore_script_wrappers() -> list[Path]:
     """Rewrite the ``scripts/*.sh`` wrappers to their canonical form.
 
@@ -234,6 +364,13 @@ def main() -> int:
         messages.append(f"post_generate_patch: patched {rel}")
     else:
         messages.append(f"post_generate_patch: unchanged {rel}")
+
+    ivu_changed = patch_input_value_union(TARGET_INPUT_VALUE_UNION)
+    ivu_rel = TARGET_INPUT_VALUE_UNION.relative_to(REPO_ROOT)
+    if ivu_changed:
+        messages.append(f"post_generate_patch: patched {ivu_rel}")
+    else:
+        messages.append(f"post_generate_patch: unchanged {ivu_rel}")
 
     print("\n".join(messages))
     return 0
