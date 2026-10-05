@@ -41,6 +41,12 @@ FIXTURE_INPUT_VALUE_UNION_UNPATCHED = (
 FORBID_EXTRA_CLASSES = ("InputValue5", "InputValue6", "InputValue12")
 _FORBID_EXTRA_MARKER = 'model_config = pydantic.ConfigDict(extra="forbid")'
 
+COMMITTED_BASEMODEL = REPO_ROOT / "src" / "attio" / "types" / "basemodel.py"
+FIXTURE_BASEMODEL_UNPATCHED = (
+    REPO_ROOT / "tests" / "fixtures" / "basemodel_unpatched.txt"
+)
+_UNSET_VALIDATOR_MARKER = "def _reject_non_unset"
+
 ACTIVE_PAYLOAD = {
     "active": True,
     "scope": "x",
@@ -183,6 +189,7 @@ def test_patch_raises_when_pydantic_import_missing(tmp_path: Path) -> None:
 def test_script_subprocess_is_noop_on_committed_tree() -> None:
     before = COMMITTED_MODEL.read_text()
     before_ivu = COMMITTED_INPUT_VALUE_UNION.read_text()
+    before_bm = COMMITTED_BASEMODEL.read_text()
     result = subprocess.run(
         [sys.executable, str(PATCH_SCRIPT)],
         capture_output=True,
@@ -195,6 +202,7 @@ def test_script_subprocess_is_noop_on_committed_tree() -> None:
     assert "unchanged" in result.stdout
     assert COMMITTED_MODEL.read_text() == before
     assert COMMITTED_INPUT_VALUE_UNION.read_text() == before_ivu
+    assert COMMITTED_BASEMODEL.read_text() == before_bm
 
 
 # ---------------------------------------------------------------------------
@@ -328,36 +336,37 @@ def test_patch_input_value_union_output_forbids_unknown_keys_on_catchall_variant
 
 
 def test_patch_input_value_union_no_longer_emits_empty_template_item() -> None:
-    """End-to-end against the committed SDK: the public attribute-create
-    request model must not serialize ``"template":[{}]`` for a date-typed
-    default value. The union-level error is swallowed by the
-    ``OptionalNullable`` wrapper around ``default_value`` (orthogonal to
-    this fix), so the offending template is dropped rather than sent as a
-    corrupt empty object — strictly better than the pre-fix corruption."""
+    """End-to-end against the committed SDK: a date-typed default value
+    passed through the public attribute-create request model must raise a
+    ``ValidationError`` rather than silently serializing ``"template":[{}]``
+    (the pre-fix corruption) or silently dropping ``default_value`` (the
+    intermediate state where the union raised but the ``OptionalNullable``
+    ``Unset`` fallback swallowed the error). The ``Unset`` validator injected
+    by ``patch_unset_reject_mappings`` makes the wrapper exhaust its members
+    and surface the real error."""
     from datetime import date
 
     from attio.models.post_v2_target_identifier_attributesop import (
         PostV2TargetIdentifierAttributesData,
     )
 
-    out = PostV2TargetIdentifierAttributesData.model_validate(
-        {
-            "title": "t",
-            "description": None,
-            "api_slug": "ts",
-            "type": "timestamp",
-            "is_required": False,
-            "is_unique": False,
-            "is_multiselect": False,
-            "config": {},
-            "default_value": {
-                "type": "static",
-                "template": [{"value": date(2023, 1, 2)}],
-            },
-        }
-    ).model_dump_json()
-    assert '"template":[{}]' not in out
-    assert '"template": [{}]' not in out
+    with pytest.raises(pydantic.ValidationError):
+        PostV2TargetIdentifierAttributesData.model_validate(
+            {
+                "title": "t",
+                "description": None,
+                "api_slug": "ts",
+                "type": "timestamp",
+                "is_required": False,
+                "is_unique": False,
+                "is_multiselect": False,
+                "config": {},
+                "default_value": {
+                    "type": "static",
+                    "template": [{"value": date(2023, 1, 2)}],
+                },
+            }
+        )
 
 
 def test_patch_input_value_union_patch_endpoint_no_longer_emits_empty_template_item() -> None:
@@ -369,21 +378,20 @@ def test_patch_input_value_union_patch_endpoint_no_longer_emits_empty_template_i
         PatchV2TargetIdentifierAttributesAttributeData,
     )
 
-    out = PatchV2TargetIdentifierAttributesAttributeData.model_validate(
-        {
-            "description": None,
-            "is_required": False,
-            "is_unique": False,
-            "is_multiselect": False,
-            "config": {},
-            "default_value": {
-                "type": "static",
-                "template": [{"value": date(2023, 1, 2)}],
-            },
-        }
-    ).model_dump_json()
-    assert '"template":[{}]' not in out
-    assert '"template": [{}]' not in out
+    with pytest.raises(pydantic.ValidationError):
+        PatchV2TargetIdentifierAttributesAttributeData.model_validate(
+            {
+                "description": None,
+                "is_required": False,
+                "is_unique": False,
+                "is_multiselect": False,
+                "config": {},
+                "default_value": {
+                    "type": "static",
+                    "template": [{"value": date(2023, 1, 2)}],
+                },
+            }
+        )
 
 
 def test_committed_sdk_accepts_legitimate_template_defaults() -> None:
@@ -468,6 +476,123 @@ def test_patch_input_value_union_raises_on_drift_model_config_present(
 
     with pytest.raises(RuntimeError, match=r'model_config that is not'):
         PGP.patch_input_value_union(target)
+
+
+# ---------------------------------------------------------------------------
+# basemodel.py: Unset rejects non-sentinel values so OptionalNullable raises
+# ---------------------------------------------------------------------------
+
+
+def test_basemodel_fixture_is_actually_unpatched() -> None:
+    """The fixture is a verbatim snapshot of the freshly generated
+    ``basemodel.py`` before the post-generation patch runs."""
+    text = FIXTURE_BASEMODEL_UNPATCHED.read_text()
+    assert _UNSET_VALIDATOR_MARKER not in text
+    assert "class Unset(BaseModel):" in text
+    assert "@model_serializer" in text
+
+
+def test_committed_basemodel_carries_unset_validator() -> None:
+    text = COMMITTED_BASEMODEL.read_text()
+    assert "model_validator" in text
+    assert _UNSET_VALIDATOR_MARKER in text
+    assert "class Unset(BaseModel):" in text
+
+
+def test_patch_unset_reject_mappings_is_noop_on_committed_file(
+    tmp_path: Path,
+) -> None:
+    target = tmp_path / "basemodel.py"
+    target.write_text(COMMITTED_BASEMODEL.read_text())
+
+    changed = PGP.patch_unset_reject_mappings(target)
+
+    assert changed is False
+    assert target.read_text() == COMMITTED_BASEMODEL.read_text()
+
+
+def test_patch_unset_reject_mappings_applies_to_unpatched_and_matches_committed(
+    tmp_path: Path,
+) -> None:
+    target = tmp_path / "basemodel.py"
+    target.write_text(FIXTURE_BASEMODEL_UNPATCHED.read_text())
+
+    changed = PGP.patch_unset_reject_mappings(target)
+
+    assert changed is True
+    assert target.read_text() == COMMITTED_BASEMODEL.read_text()
+
+
+def test_patch_unset_reject_mappings_is_idempotent_after_application(
+    tmp_path: Path,
+) -> None:
+    target = tmp_path / "basemodel.py"
+    target.write_text(FIXTURE_BASEMODEL_UNPATCHED.read_text())
+
+    first = PGP.patch_unset_reject_mappings(target)
+    first_text = target.read_text()
+    second = PGP.patch_unset_reject_mappings(target)
+
+    assert first is True
+    assert second is False
+    assert target.read_text() == first_text
+
+
+def test_patch_unset_reject_mappings_raises_when_unset_class_missing(
+    tmp_path: Path,
+) -> None:
+    text = FIXTURE_BASEMODEL_UNPATCHED.read_text().replace(
+        "class Unset(BaseModel):", "class UnsetRenamed(BaseModel):", 1
+    )
+    target = tmp_path / "basemodel.py"
+    target.write_text(text)
+
+    with pytest.raises(RuntimeError, match="class Unset not found"):
+        PGP.patch_unset_reject_mappings(target)
+
+
+def test_patch_unset_reject_mappings_raises_when_model_serializer_missing(
+    tmp_path: Path,
+) -> None:
+    text = FIXTURE_BASEMODEL_UNPATCHED.read_text().replace(
+        "    @model_serializer(mode=\"plain\")\n    def serialize_model(self):",
+        "    def serialize_model(self):",
+        1,
+    )
+    target = tmp_path / "basemodel.py"
+    target.write_text(text)
+
+    with pytest.raises(RuntimeError, match="@model_serializer"):
+        PGP.patch_unset_reject_mappings(target)
+
+
+def test_unset_rejects_non_sentinel_mappings() -> None:
+    """End-to-end against the committed SDK: the ``Unset`` validator makes
+    ``OptionalNullable`` surface a ``ValidationError`` instead of silently
+    swallowing a mapping that fails the wrapped type."""
+    from datetime import date
+
+    from attio.models.post_v2_target_identifier_attributesop import (
+        PostV2TargetIdentifierAttributesData,
+    )
+
+    with pytest.raises(pydantic.ValidationError):
+        PostV2TargetIdentifierAttributesData.model_validate(
+            {
+                "title": "t",
+                "description": None,
+                "api_slug": "ts",
+                "type": "timestamp",
+                "is_required": False,
+                "is_unique": False,
+                "is_multiselect": False,
+                "config": {},
+                "default_value": {
+                    "type": "static",
+                    "template": [{"value": date(2023, 1, 2)}],
+                },
+            }
+        )
 
 
 # ---------------------------------------------------------------------------

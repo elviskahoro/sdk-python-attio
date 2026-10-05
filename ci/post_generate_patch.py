@@ -71,6 +71,21 @@ Patch: ``src/attio/models/input_value_union.py``
     silently absorbed. Legitimate single-key payloads (``{"domain": ...}``,
     ``{"email_address": ...}``, ``{"first_name": ..., "last_name": ...}``)
     continue to validate and serialize identically.
+
+Patch: ``src/attio/types/basemodel.py``
+
+    The ``extra='forbid'`` patch on the ``InputValue`` catch-all variants
+    makes ``InputValueUnion`` raise for a malformed template item, but the
+    public attribute-create/attribute-patch models wrap ``default_value`` in
+    ``OptionalNullable[DefaultValueUnion]``, whose ``Unset`` fallback is a
+    zero-field model with the default ``extra='ignore'``. ``Unset`` therefore
+    accepts any mapping, so the now-surfaced inner union error is swallowed
+    and the request proceeds with ``default_value`` silently omitted rather
+    than raising. This patch injects a ``@model_validator(mode="before")``
+    onto ``Unset`` that rejects any value that is not the ``UNSET`` singleton
+    (or the empty-dict no-arg construction form), so a mapping that fails the
+    wrapped type exhausts the ``OptionalNullable`` union and surfaces the
+    ``ValidationError`` instead of being silently dropped.
 """
 
 from __future__ import annotations
@@ -83,6 +98,7 @@ TARGET = REPO_ROOT / "src" / "attio" / "models" / "get_v2_selfop.py"
 TARGET_INPUT_VALUE_UNION = (
     REPO_ROOT / "src" / "attio" / "models" / "input_value_union.py"
 )
+TARGET_BASEMODEL = REPO_ROOT / "src" / "attio" / "types" / "basemodel.py"
 
 # scripts/ wrappers -> the ci/ implementation each wrapper must delegate to.
 WRAPPER_IMPLS = {
@@ -311,6 +327,129 @@ def patch_input_value_union(path: Path) -> bool:
     return True
 
 
+# ``Unset`` is the permissive zero-field fallback in ``OptionalNullable[T]``.
+# With the default ``extra='ignore'`` it accepts any mapping, so a payload that
+# fails the wrapped type ``T`` silently serializes as the unset sentinel and
+# the field is dropped from the request instead of raising. The injected
+# ``@model_validator(mode="before")`` rejects any value that is not the
+# ``UNSET`` singleton (or the empty-dict no-arg construction form), so the
+# union exhausts its members and surfaces the real error. See the module
+# docstring for context.
+_UNSET_VALIDATOR_LINES = [
+    '    @model_validator(mode="before")',
+    "    @classmethod",
+    "    def _reject_non_unset(cls, value: Any) -> Any:",
+    '        r"""Reject values that are not the ``UNSET`` sentinel.',
+    "",
+    "        ``Unset`` is the permissive zero-field fallback in",
+    "        ``OptionalNullable[T]``. Without this validator it accepts any",
+    "        mapping (extra keys are ignored), so a payload that fails the",
+    "        wrapped type ``T`` silently serializes as the unset sentinel and",
+    "        the field is dropped from the request instead of raising a",
+    "        ``ValidationError``. Restricting construction to the ``Unset``",
+    "        instance (and the empty-dict no-arg form) makes the union exhaust",
+    "        its members and surface the real error.",
+    '        """',
+    "        if isinstance(value, Unset) or value == {}:",
+    "            return value",
+    "        raise ValueError(",
+    '            "expected the UNSET sentinel; got a value that should have "',
+    '            "matched the wrapped type"',
+    "        )",
+    "",
+]
+
+
+def _ensure_basemodel_import(text: str) -> str:
+    """Ensure ``model_validator`` is imported in ``basemodel.py``.
+
+    The generated file imports ``ConfigDict, model_serializer`` from
+    ``pydantic``; this adds ``model_validator`` to that import. Fails loudly
+    if the expected import line is missing.
+    """
+    line = next(
+        (
+            l
+            for l in text.splitlines()
+            if l.startswith("from pydantic import ") and "model_serializer" in l
+        ),
+        None,
+    )
+    if line is None:
+        msg = (
+            "the generated basemodel.py no longer has the expected "
+            "`from pydantic import model_serializer` import line; the "
+            "post-generation patch must be updated."
+        )
+        raise RuntimeError(msg)
+    if "model_validator" in line:
+        return text
+    new_line = line.replace("model_serializer", "model_serializer, model_validator", 1)
+    return text.replace(line, new_line, 1)
+
+
+def _inject_unset_validator(text: str) -> str:
+    """Insert the ``_reject_non_unset`` validator into the ``Unset`` class.
+
+    The validator is anchored before the existing ``@model_serializer``
+    decorator so source order reads validators-then-serializer. Idempotent:
+    returns the text unchanged when ``Unset`` already carries the validator.
+    Raises ``RuntimeError`` if the ``Unset`` class declaration or the
+    ``@model_serializer`` anchor is missing (layout drift).
+    """
+    lines = text.splitlines(keepends=False)
+    start = next(
+        (i for i, l in enumerate(lines) if l.startswith("class Unset(")),
+        None,
+    )
+    if start is None:
+        msg = (
+            "class Unset not found in basemodel.py; the post-generation "
+            "patch must be updated for the new generated layout."
+        )
+        raise RuntimeError(msg)
+    end = _class_body_end(lines, start)
+    if any("_reject_non_unset" in l for l in lines[start:end]):
+        return text
+    serializer_idx = next(
+        (
+            i
+            for i in range(start + 1, end)
+            if lines[i].lstrip().startswith("@model_serializer(")
+        ),
+        None,
+    )
+    if serializer_idx is None:
+        msg = (
+            "class Unset in basemodel.py no longer carries the "
+            "@model_serializer decorator the patch anchors to; the "
+            "post-generation patch must be updated."
+        )
+        raise RuntimeError(msg)
+    lines[serializer_idx:serializer_idx] = _UNSET_VALIDATOR_LINES
+    return "\n".join(lines) + "\n"
+
+
+def patch_unset_reject_mappings(path: Path) -> bool:
+    """Re-inject the ``_reject_non_unset`` validator into ``Unset``.
+
+    Returns ``True`` if ``path`` was modified, ``False`` if it was already
+    patched. Raises ``RuntimeError`` if the generated layout no longer
+    matches the anchors the patch depends on, so a regeneration that breaks
+    it fails loudly instead of silently shipping the silent-drop bug back
+    into the tree.
+    """
+    text = path.read_text()
+    original = text
+    text = _ensure_basemodel_import(text)
+    text = _inject_unset_validator(text)
+    if text == original:
+        return False
+    compile(text, str(path), "exec")
+    path.write_text(text)
+    return True
+
+
 def restore_script_wrappers() -> list[Path]:
     """Rewrite the ``scripts/*.sh`` wrappers to their canonical form.
 
@@ -371,6 +510,13 @@ def main() -> int:
         messages.append(f"post_generate_patch: patched {ivu_rel}")
     else:
         messages.append(f"post_generate_patch: unchanged {ivu_rel}")
+
+    bm_changed = patch_unset_reject_mappings(TARGET_BASEMODEL)
+    bm_rel = TARGET_BASEMODEL.relative_to(REPO_ROOT)
+    if bm_changed:
+        messages.append(f"post_generate_patch: patched {bm_rel}")
+    else:
+        messages.append(f"post_generate_patch: unchanged {bm_rel}")
 
     print("\n".join(messages))
     return 0
