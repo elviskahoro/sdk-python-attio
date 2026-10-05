@@ -176,7 +176,7 @@ def _sync_update_workflow(overlay_path: str, spec_path: str) -> None:
     """Update workflow.yaml (synchronous)."""
     import re
 
-    workflow_content = (_REPO_ROOT / ".speakeasy" / "workflow.yaml").read_text()
+    workflow_content = _WORKFLOW_YAML.read_text(encoding="utf-8")
 
     workflow_content = re.sub(
         r"location: openapi/api-[\d]+\.json",
@@ -189,7 +189,7 @@ def _sync_update_workflow(overlay_path: str, spec_path: str) -> None:
         workflow_content,
     )
 
-    Path(".speakeasy/workflow.yaml").write_text(workflow_content)
+    _WORKFLOW_YAML.write_text(workflow_content, encoding="utf-8")
 
 
 async def fetch_latest_spec() -> str:
