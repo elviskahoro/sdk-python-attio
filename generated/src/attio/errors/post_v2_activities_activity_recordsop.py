@@ -91,7 +91,7 @@ class PostV2ActivitiesActivityRecordsAuthError(SDKError):
 class PostV2ActivitiesActivityRecordsInvalidRequestErrorData(BaseModel):
     status_code: float
     type: models_post_v2_activities_activity_recordsop.PostV2ActivitiesActivityRecordsBadRequestType
-    code: models_post_v2_activities_activity_recordsop.PostV2ActivitiesActivityRecordsBadRequestCodeUnion
+    code: models_post_v2_activities_activity_recordsop.PostV2ActivitiesActivityRecordsBadRequestCode
     message: str
 
 
