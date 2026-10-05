@@ -25,10 +25,13 @@ class Unset(BaseModel):
         wrapped type ``T`` silently serializes as the unset sentinel and
         the field is dropped from the request instead of raising a
         ``ValidationError``. Restricting construction to the ``Unset``
-        instance (and the empty-dict no-arg form) makes the union exhaust
-        its members and surface the real error.
+        instance makes the union exhaust its members and surface the real
+        error. The module-level ``UNSET`` singleton is built with
+        ``Unset.model_construct()`` to bypass this validator, since
+        ``Unset()`` would pass ``{}`` to the before-validator and be
+        rejected alongside any other explicit empty mapping.
         """
-        if isinstance(value, Unset) or value == {}:
+        if isinstance(value, Unset):
             return value
         raise ValueError(
             "expected the UNSET sentinel; got a value that should have "
@@ -43,7 +46,7 @@ class Unset(BaseModel):
         return False
 
 
-UNSET = Unset()
+UNSET = Unset.model_construct()
 UNSET_SENTINEL = "~?~unset~?~sentinel~?~"
 
 

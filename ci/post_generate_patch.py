@@ -82,10 +82,15 @@ Patch: ``src/attio/types/basemodel.py``
     accepts any mapping, so the now-surfaced inner union error is swallowed
     and the request proceeds with ``default_value`` silently omitted rather
     than raising. This patch injects a ``@model_validator(mode="before")``
-    onto ``Unset`` that rejects any value that is not the ``UNSET`` singleton
-    (or the empty-dict no-arg construction form), so a mapping that fails the
-    wrapped type exhausts the ``OptionalNullable`` union and surfaces the
-    ``ValidationError`` instead of being silently dropped.
+    onto ``Unset`` that rejects any value that is not the ``UNSET`` singleton,
+    so a mapping that fails the wrapped type exhausts the
+    ``OptionalNullable`` union and surfaces the ``ValidationError`` instead
+    of being silently dropped. Because ``Unset()`` no-args construction also
+    passes ``{}`` to the before-validator, the module-level ``UNSET``
+    singleton is rewritten to ``Unset.model_construct()`` so the singleton
+    is built without triggering the validator; explicit empty mappings from
+    user input (``Unset.model_validate({})``) are then rejected alongside
+    every other non-sentinel value.
 """
 
 from __future__ import annotations
@@ -332,9 +337,13 @@ def patch_input_value_union(path: Path) -> bool:
 # fails the wrapped type ``T`` silently serializes as the unset sentinel and
 # the field is dropped from the request instead of raising. The injected
 # ``@model_validator(mode="before")`` rejects any value that is not the
-# ``UNSET`` singleton (or the empty-dict no-arg construction form), so the
-# union exhausts its members and surfaces the real error. See the module
-# docstring for context.
+# ``UNSET`` singleton, so the union exhausts its members and surfaces the real
+# error. Because ``Unset()`` no-args construction also passes ``{}`` to the
+# before-validator, the module-level ``UNSET = Unset()`` line is rewritten to
+# ``UNSET = Unset.model_construct()`` so the singleton is built without
+# triggering the validator; explicit empty mappings from user input are then
+# rejected alongside every other non-sentinel value. See the module docstring
+# for context.
 _UNSET_VALIDATOR_LINES = [
     '    @model_validator(mode="before")',
     "    @classmethod",
@@ -347,10 +356,13 @@ _UNSET_VALIDATOR_LINES = [
     "        wrapped type ``T`` silently serializes as the unset sentinel and",
     "        the field is dropped from the request instead of raising a",
     "        ``ValidationError``. Restricting construction to the ``Unset``",
-    "        instance (and the empty-dict no-arg form) makes the union exhaust",
-    "        its members and surface the real error.",
+    "        instance makes the union exhaust its members and surface the real",
+    "        error. The module-level ``UNSET`` singleton is built with",
+    "        ``Unset.model_construct()`` to bypass this validator, since",
+    "        ``Unset()`` would pass ``{}`` to the before-validator and be",
+    "        rejected alongside any other explicit empty mapping.",
     '        """',
-    "        if isinstance(value, Unset) or value == {}:",
+    "        if isinstance(value, Unset):",
     "            return value",
     "        raise ValueError(",
     '            "expected the UNSET sentinel; got a value that should have "',
@@ -358,6 +370,15 @@ _UNSET_VALIDATOR_LINES = [
     "        )",
     "",
 ]
+
+
+# The generated ``UNSET = Unset()`` constructs the singleton through the
+# before-validator, which the patch now makes reject ``{}`` (the value pydantic
+# passes for no-args construction). Rewrite it to ``Unset.model_construct()``
+# so the singleton is built without validation; ``Unset.model_validate(UNSET)``
+# still returns the singleton (the validator accepts ``Unset`` instances).
+_UNSET_SINGLETON_LINE = "UNSET = Unset.model_construct()"
+_UNSET_SINGLETON_ORIGINAL = "UNSET = Unset()"
 
 
 def _ensure_basemodel_import(text: str) -> str:
@@ -430,6 +451,44 @@ def _inject_unset_validator(text: str) -> str:
     return "\n".join(lines) + "\n"
 
 
+def _rewrite_unset_singleton(text: str) -> str:
+    """Rewrite ``UNSET = Unset()`` to ``UNSET = Unset.model_construct()``.
+
+    The before-validator injected by ``_inject_unset_validator`` rejects
+    ``{}``, which is the value pydantic passes to ``Unset()`` no-args
+    construction, so the module-level singleton must be built without
+    validation to avoid the validator rejecting it at import time. Idempotent:
+    returns the text unchanged when the line is already the ``model_construct``
+    form. Raises ``RuntimeError`` if the ``UNSET =`` line is missing or
+    carries an unexpected form (layout drift).
+    """
+    lines = text.splitlines(keepends=False)
+    idx = next(
+        (i for i, l in enumerate(lines) if l.startswith("UNSET =")),
+        None,
+    )
+    if idx is None:
+        msg = (
+            "the generated basemodel.py no longer has the expected "
+            "`UNSET = ...` singleton line; the post-generation patch must "
+            "be updated."
+        )
+        raise RuntimeError(msg)
+    if lines[idx] == _UNSET_SINGLETON_LINE:
+        return text
+    if lines[idx] != _UNSET_SINGLETON_ORIGINAL:
+        msg = (
+            f"the `UNSET =` line in basemodel.py is "
+            f"{lines[idx]!r}, neither the expected "
+            f"{_UNSET_SINGLETON_ORIGINAL!r} nor the patched "
+            f"{_UNSET_SINGLETON_LINE!r}; the post-generation patch must be "
+            "updated."
+        )
+        raise RuntimeError(msg)
+    lines[idx] = _UNSET_SINGLETON_LINE
+    return "\n".join(lines) + "\n"
+
+
 def patch_unset_reject_mappings(path: Path) -> bool:
     """Re-inject the ``_reject_non_unset`` validator into ``Unset``.
 
@@ -443,6 +502,7 @@ def patch_unset_reject_mappings(path: Path) -> bool:
     original = text
     text = _ensure_basemodel_import(text)
     text = _inject_unset_validator(text)
+    text = _rewrite_unset_singleton(text)
     if text == original:
         return False
     compile(text, str(path), "exec")

@@ -46,6 +46,7 @@ FIXTURE_BASEMODEL_UNPATCHED = (
     REPO_ROOT / "tests" / "fixtures" / "basemodel_unpatched.txt"
 )
 _UNSET_VALIDATOR_MARKER = "def _reject_non_unset"
+_UNSET_SINGLETON_LINE = "UNSET = Unset.model_construct()"
 
 ACTIVE_PAYLOAD = {
     "active": True,
@@ -497,6 +498,11 @@ def test_committed_basemodel_carries_unset_validator() -> None:
     assert "model_validator" in text
     assert _UNSET_VALIDATOR_MARKER in text
     assert "class Unset(BaseModel):" in text
+    # The singleton must be built without validation so the before-validator
+    # (which rejects ``{}``) does not reject the module-level ``UNSET``.
+    assert _UNSET_SINGLETON_LINE in text
+    assert "if isinstance(value, Unset):" in text
+    assert "value == {}" not in text
 
 
 def test_patch_unset_reject_mappings_is_noop_on_committed_file(
@@ -593,6 +599,84 @@ def test_unset_rejects_non_sentinel_mappings() -> None:
                 },
             }
         )
+
+
+def test_unset_rejects_explicit_empty_mapping() -> None:
+    """An explicit empty mapping ``{}`` must not be accepted by the ``Unset``
+    fallback. ``Unset.model_validate({})`` raises, and a plain
+    ``OptionalNullable[T]`` field fed ``{}`` surfaces the ``ValidationError``
+    instead of silently dropping the field (the silent-drop behavior the
+    ``value == {}`` allowance left open for every ``OptionalNullable`` field).
+    The ``UNSET`` singleton (built via ``Unset.model_construct()``) is
+    unaffected and still serializes to the unset sentinel."""
+    from typing import List
+
+    from attio.types.basemodel import (
+        UNSET,
+        UNSET_SENTINEL,
+        OptionalNullable,
+        Unset,
+    )
+
+    # Direct: explicit empty mapping is rejected.
+    with pytest.raises(pydantic.ValidationError):
+        Unset.model_validate({})
+
+    # The UNSET singleton still works and round-trips.
+    assert Unset.model_validate(UNSET) is UNSET
+    assert UNSET.model_dump() == UNSET_SENTINEL
+    assert not UNSET
+
+    # End-to-end through OptionalNullable: {} no longer silently drops.
+    class _M(pydantic.BaseModel):
+        model_config = pydantic.ConfigDict(
+            populate_by_name=True, arbitrary_types_allowed=True,
+            protected_namespaces=(),
+        )
+        default_value: OptionalNullable[List[str]] = UNSET
+
+    with pytest.raises(pydantic.ValidationError):
+        _M.model_validate({"default_value": {}})
+
+    # Legitimate values still round-trip. The default is compared with ``==``
+    # (the SDK uses ``retries == UNSET``); pydantic re-instantiates the union
+    # member, so identity (``is``) is not preserved, but equality and the
+    # ``__bool__``/serializer behavior are.
+    assert _M.model_validate({"default_value": None}).default_value is None
+    assert _M.model_validate({"default_value": ["a"]}).default_value == ["a"]
+    assert _M().default_value == UNSET
+    assert not _M().default_value
+
+
+def test_patch_unset_reject_mappings_raises_when_unset_singleton_line_missing(
+    tmp_path: Path,
+) -> None:
+    """A future regeneration that drops the ``UNSET =`` singleton line must
+    surface loudly rather than silently shipping a ``Unset()`` that the
+    validator would reject at import time."""
+    text = FIXTURE_BASEMODEL_UNPATCHED.read_text().replace(
+        "UNSET = Unset()\n", "", 1
+    )
+    target = tmp_path / "basemodel.py"
+    target.write_text(text)
+
+    with pytest.raises(RuntimeError, match="`UNSET = ...`"):
+        PGP.patch_unset_reject_mappings(target)
+
+
+def test_patch_unset_reject_mappings_raises_on_unexpected_singleton_form(
+    tmp_path: Path,
+) -> None:
+    """A ``UNSET =`` line that is neither the generated ``Unset()`` nor the
+    patched ``Unset.model_construct()`` form is layout drift."""
+    text = FIXTURE_BASEMODEL_UNPATCHED.read_text().replace(
+        "UNSET = Unset()", "UNSET = Unset.__new__(Unset)", 1
+    )
+    target = tmp_path / "basemodel.py"
+    target.write_text(text)
+
+    with pytest.raises(RuntimeError, match="neither the expected"):
+        PGP.patch_unset_reject_mappings(target)
 
 
 # ---------------------------------------------------------------------------
