@@ -27,14 +27,9 @@ from attio_cli.people import (
     upsert_person,
 )
 from attio_cli.query import PersonUpsertQuery
-
-
-def _record(record_id: str, emails: list[str] | None = None, name: str | None = None):
-    values = {
-        "email_addresses": [NS(email_address=email) for email in emails or []],
-        "name": [NS(full_name=name)] if name else [],
-    }
-    return NS(id=NS(record_id=record_id), values=values)
+from _attio_cli_helpers import FakeClient as _FakeClient
+from _attio_cli_helpers import FakeRecords as _FakeRecords
+from _attio_cli_helpers import record as _record
 
 
 def _attribute_not_found(field: str, *, wording: str = "standard") -> RuntimeError:
@@ -52,39 +47,6 @@ def _attribute_not_found(field: str, *, wording: str = "standard") -> RuntimeErr
             }
         )
     )
-
-
-class _FakeRecords:
-    def __init__(self, matches=None, existing=None, written=None):
-        self.matches = matches or []
-        self.existing = existing or _record("existing")
-        self.written = written or _record("written")
-        self.calls = []
-
-    def post_v2_objects_object_records_query(self, **kwargs):
-        self.calls.append(("query", kwargs))
-        return NS(data=self.matches)
-
-    def get_v2_objects_object_records_record_id_(self, **kwargs):
-        self.calls.append(("get", kwargs))
-        return NS(data=self.existing)
-
-    def post_v2_objects_object_records(self, **kwargs):
-        self.calls.append(("post", kwargs))
-        return NS(data=self.written)
-
-    def patch_v2_objects_object_records_record_id_(self, **kwargs):
-        self.calls.append(("patch", kwargs))
-        return NS(data=self.written)
-
-    def put_v2_objects_object_records_record_id_(self, **kwargs):
-        self.calls.append(("put", kwargs))
-        return NS(data=self.written)
-
-
-class _FakeClient:
-    def __init__(self, records):
-        self.records = records
 
 
 def test_normalize_emails_strips_and_deduplicates_case_insensitively():
@@ -293,8 +255,8 @@ def test_update_one_match_merges_and_deduplicates_emails():
         ),
         _FakeClient(records),
     )
-    patch = next(kwargs for method, kwargs in records.calls if method == "patch")
-    assert patch["data"]["values"]["email_addresses"] == [
+    put = next(kwargs for method, kwargs in records.calls if method == "put")
+    assert put["data"]["values"]["email_addresses"] == [
         {"email_address": "ada@example.com"},
         {"email_address": "ada@old.example"},
         {"email_address": "ada@work.example"},
@@ -319,8 +281,8 @@ def test_partial_name_update_preserves_existing_name_component():
         _FakeClient(records),
     )
 
-    patch = next(kwargs for method, kwargs in records.calls if method == "patch")
-    assert patch["data"]["values"]["name"] == [
+    put = next(kwargs for method, kwargs in records.calls if method == "put")
+    assert put["data"]["values"]["name"] == [
         {
             "first_name": "Augusta",
             "last_name": "Lovelace",
@@ -362,7 +324,7 @@ def test_update_email_uniqueness_conflict_names_requested_address():
             '"code":"uniqueness_conflict","message":"Email already in use."}'
         )
 
-    records.patch_v2_objects_object_records_record_id_ = conflict
+    records.put_v2_objects_object_records_record_id_ = conflict
     with pytest.raises(CLIError, match="new@example.com") as exc_info:
         upsert_person(
             PersonUpsertQuery(
@@ -511,18 +473,18 @@ def test_optional_field_fallback_is_used_during_record_update():
         existing=_record("existing", ["ada@example.com"]),
     )
 
-    def patch(**kwargs):
-        records.calls.append(("patch", kwargs))
+    def put(**kwargs):
+        records.calls.append(("put", kwargs))
         if "notes" in kwargs["data"]["values"]:
             raise _attribute_not_found("notes")
         return NS(data=records.written)
 
-    records.patch_v2_objects_object_records_record_id_ = patch
+    records.put_v2_objects_object_records_record_id_ = put
     result = upsert_person(
         PersonUpsertQuery(email="ada@example.com", notes="hello"),
         _FakeClient(records),
     )
-    assert len([call for call in records.calls if call[0] == "patch"]) == 2
+    assert len([call for call in records.calls if call[0] == "put"]) == 2
     assert result["warnings"][0]["code"] == "attio_notes_field_unavailable"
     assert result["skipped_fields"] == [
         {"field": "notes", "reason": "schema_mismatch"}

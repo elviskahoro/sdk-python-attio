@@ -537,12 +537,7 @@ def upsert_person(query: PersonUpsertQuery, client: Any) -> dict[str, Any]:
         optional = _build_optional_values(query)
 
         def update(values: dict[str, Any]) -> Any:
-            update_record = (
-                client.records.put_v2_objects_object_records_record_id_
-                if query.replace_emails
-                else client.records.patch_v2_objects_object_records_record_id_
-            )
-            return update_record(
+            return client.records.put_v2_objects_object_records_record_id_(
                 object="people",
                 record_id=record_id,
                 data={"values": values},

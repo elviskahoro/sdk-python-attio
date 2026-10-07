@@ -163,6 +163,7 @@ def update_person(query: PersonUpsertQuery, client: Any) -> dict[str, Any]:
             "validation_error",
             "provide at least one field to update in addition to the email identity.",
         )
+    warnings, skipped = _validation_warnings(query)
     matches = _query_records(client, "people", {"email_addresses": normalized})
     if not matches:
         raise CLIError("record_not_found", f"No person matches email '{normalized}'.", field="email")
@@ -173,7 +174,6 @@ def update_person(query: PersonUpsertQuery, client: Any) -> dict[str, Any]:
             field="email",
         )
 
-    warnings, skipped = _validation_warnings(query)
     record_id = _record_id(matches[0])
     existing = client.records.get_v2_objects_object_records_record_id_(
         object="people", record_id=record_id
@@ -204,12 +204,7 @@ def update_person(query: PersonUpsertQuery, client: Any) -> dict[str, Any]:
         )
 
     def update(values: dict[str, Any]) -> Any:
-        method = (
-            client.records.put_v2_objects_object_records_record_id_
-            if query.replace_emails
-            else client.records.patch_v2_objects_object_records_record_id_
-        )
-        return method(
+        return client.records.put_v2_objects_object_records_record_id_(
             object="people", record_id=record_id, data={"values": values}
         )
 
@@ -308,10 +303,13 @@ def update_company(payload: CompanyPayload, client: Any) -> dict[str, Any]:
             field="domain",
         )
     record_id = _record_id(matches[0])
-    response = client.records.patch_v2_objects_object_records_record_id_(
+    # The matching domain is only the lookup key. Omitting it from the write
+    # preserves any other domains on the company while PUT replaces supplied
+    # multiselect attributes instead of appending duplicate values.
+    response = client.records.put_v2_objects_object_records_record_id_(
         object="companies",
         record_id=record_id,
-        data={"values": _company_values(payload, domain)},
+        data={"values": {key: list(value) for key, value in payload.values.items()}},
     )
     record = response.data
     return _success_envelope(

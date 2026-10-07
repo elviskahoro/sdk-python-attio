@@ -95,7 +95,7 @@ class NoteAddPayload(BaseModel):
     parent_object: str = Field(min_length=1)
     parent_record_id: str = Field(min_length=1)
     title: str = Field(min_length=1)
-    content: str
+    content: str = Field(min_length=1)
     format: Literal["plaintext", "markdown"] = "plaintext"
 
 

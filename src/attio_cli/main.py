@@ -279,7 +279,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     except CLIError as exc:
         _emit(error_envelope(exc))
         return 1
-    except (ValueError, json.JSONDecodeError) as exc:
+    except ValueError as exc:
         _emit(error_envelope(CLIError("invalid_json", str(exc))))
         return 1
 

@@ -25,65 +25,10 @@ from attio_cli.workflows import (
     update_note,
     update_person,
 )
-
-
-def _record(record_id: str, *, email: str | None = None, name: str | None = None):
-    values = {"email_addresses": [NS(email_address=email)] if email else []}
-    if name:
-        values["name"] = [NS(first_name=name, last_name="", full_name=name)]
-    return NS(id=NS(record_id=record_id), values=values)
-
-
-class _Records:
-    def __init__(self, matches=None, existing=None, written=None):
-        self.matches = matches or []
-        self.existing = existing or _record("existing")
-        self.written = written or _record("written")
-        self.calls = []
-
-    def post_v2_objects_object_records_query(self, **kwargs):
-        self.calls.append(("query", kwargs))
-        return NS(data=self.matches)
-
-    def get_v2_objects_object_records_record_id_(self, **kwargs):
-        self.calls.append(("get", kwargs))
-        return NS(data=self.existing)
-
-    def post_v2_objects_object_records(self, **kwargs):
-        self.calls.append(("post", kwargs))
-        return NS(data=self.written)
-
-    def patch_v2_objects_object_records_record_id_(self, **kwargs):
-        self.calls.append(("patch", kwargs))
-        return NS(data=self.written)
-
-    def put_v2_objects_object_records_record_id_(self, **kwargs):
-        self.calls.append(("put", kwargs))
-        return NS(data=self.written)
-
-
-class _Notes:
-    def __init__(self):
-        self.calls = []
-        self.note = NS(id=NS(note_id="note-1"), title="Call", content_plaintext="Details")
-
-    def get_v2_notes(self, **kwargs):
-        self.calls.append(("list", kwargs))
-        return NS(data=[self.note])
-
-    def post_v2_notes(self, **kwargs):
-        self.calls.append(("add", kwargs))
-        return NS(data=self.note)
-
-    def patch_v2_notes_note_id_(self, **kwargs):
-        self.calls.append(("update", kwargs))
-        return NS(data=self.note)
-
-
-class _Client:
-    def __init__(self, records=None, notes=None):
-        self.records = records or _Records()
-        self.notes = notes or _Notes()
+from _attio_cli_helpers import FakeClient as _Client
+from _attio_cli_helpers import FakeNotes as _Notes
+from _attio_cli_helpers import FakeRecords as _Records
+from _attio_cli_helpers import record as _record
 
 
 def test_people_search_is_exact_and_returns_versioned_results():
@@ -123,10 +68,10 @@ def test_people_add_and_update_write_expected_partial_values():
         PersonUpsertQuery(email="ada@example.com", first_name="Augusta"),
         _Client(records=records),
     )
-    patch = next(kwargs for method, kwargs in records.calls if method == "patch")
+    put = next(kwargs for method, kwargs in records.calls if method == "put")
     assert updated["action"] == "updated"
-    assert patch["record_id"] == "person-1"
-    assert patch["data"]["values"]["name"][0]["full_name"] == "Augusta"
+    assert put["record_id"] == "person-1"
+    assert put["data"]["values"]["name"][0]["full_name"] == "Augusta"
 
 
 def test_people_update_rejects_missing_and_ambiguous_matches():
@@ -168,12 +113,10 @@ def test_company_update_requires_one_match_and_preserves_partial_payload():
         CompanyPayload(domain="example.com", values={"description": ["Updated"]}),
         _Client(records=records),
     )
-    patch = next(kwargs for method, kwargs in records.calls if method == "patch")
+    put = next(kwargs for method, kwargs in records.calls if method == "put")
     assert result["action"] == "updated"
-    assert patch["record_id"] == "company-1"
-    assert patch["data"]["values"] == {
-        "description": ["Updated"], "domains": [{"domain": "example.com"}]
-    }
+    assert put["record_id"] == "company-1"
+    assert put["data"]["values"] == {"description": ["Updated"]}
 
     records = _Records(matches=[_record("a"), _record("b")])
     with pytest.raises(CLIError, match="update was not applied"):
@@ -272,8 +215,8 @@ def test_update_person_preserves_email_case_for_merges_and_replacement():
 
     merge_records = _Records(matches=[existing], existing=existing, written=existing)
     update_person(query, _Client(records=merge_records))
-    patch = next(kwargs for method, kwargs in merge_records.calls if method == "patch")
-    assert patch["data"]["values"]["email_addresses"] == [
+    put = next(kwargs for method, kwargs in merge_records.calls if method == "put")
+    assert put["data"]["values"]["email_addresses"] == [
         {"email_address": "Ada@Example.com"},
         {"email_address": "Work@Example.com"},
     ]
