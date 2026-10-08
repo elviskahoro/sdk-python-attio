@@ -90,8 +90,9 @@ This SDK is generated using Speakeasy from an OpenAPI spec.
    This runs `speakeasy run` (host CLI when authenticated via login, or when
    `SPEAKEASY_USE_HOST_CLI` + `SPEAKEASY_API_KEY` are set — the scheduled
    workflow's path; pinned Dagger container otherwise), then re-applies
-   `ci/post_generate_patch.py` (the GET /v2/self `active` value
-   discriminators and the `scripts/` wrappers). Drop `--no-fetch` to also
+   `ci/post_generate_patch.py` (manual patches `overlay.yaml` cannot
+   express, e.g. the GET /v2/self `active` value discriminators and the
+   `scripts/` wrappers). Drop `--no-fetch` to also
    adopt a freshly fetched spec. Note the Dagger path exports only `src/`
    back to the host — docs/, README, pyproject and USAGE refresh on the
    host-CLI path (the default) — and it logs that when chosen.
