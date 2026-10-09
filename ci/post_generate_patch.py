@@ -507,6 +507,22 @@ def main() -> int:
             "pyproject.toml CLI entry point",
         ),
         (REPO_ROOT / "README.md", ensure_readme_cli_section, "README CLI section"),
+    ):
+        if ensure(path):
+            messages.append(f"post_generate_patch: restored {name}")
+
+    # Wrappers first: a layout drift that makes any later fallible patch raise
+    # must not skip the scripts/ restoration — that restore is the fallback
+    # for .genignore not being honored, and aborting before it runs is how
+    # a naive publish script survives in the tree.
+    for wrapper in restore_script_wrappers():
+        messages.append(
+            f"post_generate_patch: restored wrapper {wrapper.relative_to(REPO_ROOT)}",
+        )
+
+    # Fallible hook-wiring patches run after wrapper restoration so a drifted
+    # anchor raises here without leaving a naive publish script in the tree.
+    for path, ensure, name in (
         (SDKHOOKS_PATH, ensure_init_hooks_wiring, "SDKHooks init_hooks wiring"),
         (
             HOOKS_INIT_PATH,
@@ -516,15 +532,6 @@ def main() -> int:
     ):
         if ensure(path):
             messages.append(f"post_generate_patch: restored {name}")
-
-    # Wrappers first: a layout drift that makes patch_get_v2_selfop raise
-    # must not skip the scripts/ restoration — that restore is the fallback
-    # for .genignore not being honored, and aborting before it runs is how
-    # a naive publish script survives in the tree.
-    for wrapper in restore_script_wrappers():
-        messages.append(
-            f"post_generate_patch: restored wrapper {wrapper.relative_to(REPO_ROOT)}",
-        )
 
     changed = patch_get_v2_selfop(TARGET)
     rel = TARGET.relative_to(REPO_ROOT)

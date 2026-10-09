@@ -37,6 +37,8 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 PATCH_SCRIPT = REPO_ROOT / "ci" / "post_generate_patch.py"
 COMMITTED_SDKHOOKS = REPO_ROOT / "src" / "attio" / "_hooks" / "sdkhooks.py"
 COMMITTED_HOOKS_INIT = REPO_ROOT / "src" / "attio" / "_hooks" / "__init__.py"
+FIXTURE_SDKHOOKS_UNPATCHED = REPO_ROOT / "tests" / "fixtures" / "sdkhooks_unpatched.txt"
+FIXTURE_HOOKS_INIT_UNPATCHED = REPO_ROOT / "tests" / "fixtures" / "hooks_init_unpatched.txt"
 
 
 def _load_patch_module():
@@ -57,21 +59,14 @@ AFTER_ERROR_HOOKS_ANCHOR = "self.after_error_hooks: List[AfterErrorHook] = []"
 
 
 def _unpatched_sdkhooks() -> str:
-    """The post-regeneration snapshot: committed file with the two wiring
-    lines stripped, so the fixture stays in sync with the generator template."""
-    text = COMMITTED_SDKHOOKS.read_text()
-    text = text.replace(REGISTRATION_IMPORT + "\n", "", 1)
-    text = text.replace("        " + INIT_HOOKS_CALL + "\n", "", 1)
-    assert INIT_HOOKS_CALL not in text
-    assert REGISTRATION_IMPORT not in text
-    return text
+    """The post-regeneration snapshot, pinned as a fixture so surrounding
+    structural drift in the generated template is caught (not just the two
+    wiring lines)."""
+    return FIXTURE_SDKHOOKS_UNPATCHED.read_text()
 
 
 def _unpatched_hooks_init() -> str:
-    text = COMMITTED_HOOKS_INIT.read_text()
-    text = text.replace(REGISTRATION_REEXPORT + "\n", "", 1)
-    assert REGISTRATION_REEXPORT not in text
-    return text
+    return FIXTURE_HOOKS_INIT_UNPATCHED.read_text()
 
 
 # ---------------------------------------------------------------------------
@@ -118,6 +113,20 @@ def test_init_hooks_wiring_applies_to_unpatched_and_matches_committed(
 
     assert PGP.ensure_init_hooks_wiring(target) is True
     assert target.read_text() == COMMITTED_SDKHOOKS.read_text()
+
+
+def test_init_hooks_wiring_is_idempotent_after_application(tmp_path: Path) -> None:
+    target = tmp_path / "sdkhooks.py"
+    target.write_text(_unpatched_sdkhooks())
+
+    first_changed = PGP.ensure_init_hooks_wiring(target)
+    first_text = target.read_text()
+
+    second_changed = PGP.ensure_init_hooks_wiring(target)
+
+    assert first_changed is True
+    assert second_changed is False
+    assert target.read_text() == first_text
 
 
 def test_init_hooks_wiring_raises_when_types_import_missing(tmp_path: Path) -> None:
@@ -180,6 +189,20 @@ def test_hooks_reexport_applies_to_unpatched_and_matches_committed(
 
     assert PGP.ensure_hooks_package_reexport(target) is True
     assert target.read_text() == COMMITTED_HOOKS_INIT.read_text()
+
+
+def test_hooks_reexport_is_idempotent_after_application(tmp_path: Path) -> None:
+    target = tmp_path / "__init__.py"
+    target.write_text(_unpatched_hooks_init())
+
+    first_changed = PGP.ensure_hooks_package_reexport(target)
+    first_text = target.read_text()
+
+    second_changed = PGP.ensure_hooks_package_reexport(target)
+
+    assert first_changed is True
+    assert second_changed is False
+    assert target.read_text() == first_text
 
 
 def test_hooks_reexport_raises_when_anchor_missing(tmp_path: Path) -> None:
