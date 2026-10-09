@@ -119,9 +119,9 @@ This SDK is generated using Speakeasy from an OpenAPI spec.
 - The `list` → `list_id` renames avoid shadowing Python's built-in `list`.
 - Description-only spec changes (marketing copy) are reported by `check-openapi` but do not count as structural drift, so they do not trigger the automated workflow.
 
-<!-- entire-graph:begin -->
-This repo has the entire-graph code graph installed. Before exploring code with
-grep/find/whole-file reads, read .entire/graph-agent.md — resolution-first guidance
-for using graph retrieval, focused source inspection, and verification.
-@.entire/graph-agent.md
-<!-- entire-graph:end -->
+
+
+<!-- entire-agent:begin -->
+Read .entire/agent-guide.md for this repository's workflow, source inspection, and verification guidance.
+@.entire/agent-guide.md
+<!-- entire-agent:end -->
