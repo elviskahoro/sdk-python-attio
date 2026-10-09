@@ -1,6 +1,6 @@
 [project]
 name = "attio"
-version = "0.26.0"
+version = "0.26.1"
 description = "Attio API client library from elviskahoro"
 authors = [{ name = "elviskahoro" }]
 readme = "README.md"
