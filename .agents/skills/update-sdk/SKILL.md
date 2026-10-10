@@ -59,8 +59,8 @@ speakeasy run
 This applies the overlay to the spec and regenerates all SDK code under `src/attio/`.
 
 `speakeasy run` rewrites `src/` from scratch, so it drops the manual patches
-that `overlay.yaml` cannot express (the GET /v2/self `active` value
-discriminators on `AttioCom` and `ResponseBody`). Re-apply them right after
+that `overlay.yaml` cannot express, e.g. the GET /v2/self `active` value
+discriminators on `AttioCom` and `ResponseBody`. Re-apply them right after
 regenerating so the tree the tests run against carries the invariant:
 
 ```bash
