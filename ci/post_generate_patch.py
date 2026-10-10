@@ -47,6 +47,24 @@ Patch: ``pyproject.toml`` and ``README.md``
 
     Speakeasy owns both files, so this script also restores the standalone
     ``gtm-attio`` console entry point and its user-facing CLI documentation.
+
+Patch: ``src/attio/_hooks/sdkhooks.py`` and ``src/attio/_hooks/__init__.py``
+
+    ``registration.py`` is a one-time-generated, maintainer-editable
+    scaffolding file (not tracked in ``.speakeasy/gen.lock``) whose header
+    instructs maintainers to register lifecycle hooks inside the
+    ``init_hooks`` function. The 2026-03-28 regeneration commit (``dc8cebc``)
+    overwrote ``sdkhooks.py`` — a "DO NOT EDIT" generated file — with a clean
+    Speakeasy template that lacked both the ``from .registration import
+    init_hooks`` import and the ``init_hooks(self)`` call in
+    ``SDKHooks.__init__``, orphaning ``init_hooks``: hooks a maintainer
+    added to ``registration.py`` were silently never registered. The same
+    commit also dropped the ``from .registration import *`` re-export from
+    the hooks package ``__init__.py``. This script idempotently restores
+    all three lines after every generation so the maintainership seam
+    survives; nothing changes for end users because the shipped
+    ``init_hooks`` stub is empty (the call is a no-op until a maintainer
+    adds hook registrations).
 """
 
 from __future__ import annotations
@@ -56,6 +74,15 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 TARGET = REPO_ROOT / "src" / "attio" / "models" / "get_v2_selfop.py"
+SDKHOOKS_PATH = REPO_ROOT / "src" / "attio" / "_hooks" / "sdkhooks.py"
+HOOKS_INIT_PATH = REPO_ROOT / "src" / "attio" / "_hooks" / "__init__.py"
+
+# Anchors and lines for the SDKHooks init_hooks wiring patch (see
+# ``ensure_init_hooks_wiring`` / ``ensure_hooks_package_reexport``).
+_REGISTRATION_IMPORT_LINE = "from .registration import init_hooks"
+_REGISTRATION_REEXPORT_LINE = "from .registration import *"
+_INIT_HOOKS_CALL = "init_hooks(self)"
+_AFTER_ERROR_HOOKS_ANCHOR = "self.after_error_hooks: List[AfterErrorHook] = []"
 
 # scripts/ wrappers -> the ci/ implementation each wrapper must delegate to.
 WRAPPER_IMPLS = {
@@ -329,6 +356,112 @@ def patch_get_v2_selfop(path: Path) -> bool:
     return True
 
 
+def ensure_init_hooks_wiring(path: Path) -> bool:
+    """Re-inject the ``init_hooks`` maintenanceship seam into ``sdkhooks.py``.
+
+    ``speakeasy run`` rewrites ``src/attio/_hooks/sdkhooks.py`` from a clean
+    template that lacks the ``from .registration import init_hooks`` import
+    and the ``init_hooks(self)`` call in ``SDKHooks.__init__``. Without
+    them the customization seam in ``registration.py`` (which the generator
+    never overwrites) is orphaned, so hooks a maintainer registers there are
+    silently discarded. This idempotently restores both lines after every
+    generation.
+
+    Returns ``True`` if ``path`` was modified, ``False`` if already wired.
+    Raises ``RuntimeError`` if the generated layout no longer matches the
+    anchors the patch relies on, so a regeneration that breaks it fails
+    loudly instead of silently shipping disconnected hooks.
+    """
+    text = path.read_text()
+    original = text
+
+    # Import: insert `from .registration import init_hooks` right after the
+    # `from .types import (...)` block (the multi-line import's closing
+    # paren is the anchor), matching the pre-dc8cebc placement.
+    if _REGISTRATION_IMPORT_LINE not in text:
+        lines = text.splitlines(keepends=False)
+        types_open_idx = next(
+            (i for i, line in enumerate(lines) if line.startswith("from .types import (")),
+            None,
+        )
+        if types_open_idx is None:
+            msg = (
+                "the generated SDKHooks no longer has the expected "
+                "`from .types import (` import block; the post-generation "
+                "patch must be updated for the new generated layout."
+            )
+            raise RuntimeError(msg)
+        close_idx = next(
+            (
+                i
+                for i in range(types_open_idx + 1, len(lines))
+                if lines[i].rstrip() == ")"
+            ),
+            None,
+        )
+        if close_idx is None:
+            msg = (
+                "the generated `from .types import (...)` block in "
+                "sdkhooks.py has no closing `)`; the post-generation patch "
+                "must be updated."
+            )
+            raise RuntimeError(msg)
+        trailing = "\n" if text.endswith("\n") else ""
+        lines.insert(close_idx + 1, _REGISTRATION_IMPORT_LINE)
+        text = "\n".join(lines) + trailing
+
+    # Call: append `init_hooks(self)` as the last line of SDKHooks.__init__,
+    # immediately after the after_error_hooks assignment (the final init).
+    if _INIT_HOOKS_CALL not in text:
+        if _AFTER_ERROR_HOOKS_ANCHOR not in text:
+            msg = (
+                "the generated SDKHooks.__init__ no longer has the expected "
+                "`self.after_error_hooks: List[AfterErrorHook] = []` "
+                "anchor; the post-generation patch must be updated for the "
+                "new generated layout."
+            )
+            raise RuntimeError(msg)
+        text = text.replace(
+            _AFTER_ERROR_HOOKS_ANCHOR,
+            _AFTER_ERROR_HOOKS_ANCHOR + "\n        " + _INIT_HOOKS_CALL,
+            1,
+        )
+
+    if text == original:
+        return False
+    compile(text, str(path), "exec")
+    path.write_text(text)
+    return True
+
+
+def ensure_hooks_package_reexport(path: Path) -> bool:
+    """Restore the ``from .registration import *`` re-export in the hooks package.
+
+    The 2026-03-28 regeneration dropped this line from
+    ``src/attio/_hooks/__init__.py``, so ``from attio._hooks import
+    init_hooks`` no longer resolved. The direct path
+    ``from attio._hooks.registration import init_hooks`` still works, so the
+    re-export is not load-bearing today, but restoring it keeps the package
+    seam complete. Idempotent; raises if the ``from .types import *`` anchor
+    is gone.
+    """
+    text = path.read_text()
+    if _REGISTRATION_REEXPORT_LINE in text:
+        return False
+    anchor = "from .types import *"
+    if anchor not in text:
+        msg = (
+            "the generated src/attio/_hooks/__init__.py no longer has the "
+            "expected `from .types import *` anchor; the post-generation "
+            "patch must be updated for the new generated layout."
+        )
+        raise RuntimeError(msg)
+    text = text.replace(anchor, anchor + "\n" + _REGISTRATION_REEXPORT_LINE, 1)
+    compile(text, str(path), "exec")
+    path.write_text(text)
+    return True
+
+
 def restore_script_wrappers() -> list[Path]:
     """Rewrite the ``scripts/*.sh`` wrappers to their canonical form.
 
@@ -378,7 +511,7 @@ def main() -> int:
         if ensure(path):
             messages.append(f"post_generate_patch: restored {name}")
 
-    # Wrappers first: a layout drift that makes patch_get_v2_selfop raise
+    # Wrappers first: a layout drift that makes any later fallible patch raise
     # must not skip the scripts/ restoration — that restore is the fallback
     # for .genignore not being honored, and aborting before it runs is how
     # a naive publish script survives in the tree.
@@ -386,6 +519,19 @@ def main() -> int:
         messages.append(
             f"post_generate_patch: restored wrapper {wrapper.relative_to(REPO_ROOT)}",
         )
+
+    # Fallible hook-wiring patches run after wrapper restoration so a drifted
+    # anchor raises here without leaving a naive publish script in the tree.
+    for path, ensure, name in (
+        (SDKHOOKS_PATH, ensure_init_hooks_wiring, "SDKHooks init_hooks wiring"),
+        (
+            HOOKS_INIT_PATH,
+            ensure_hooks_package_reexport,
+            "hooks package registration re-export",
+        ),
+    ):
+        if ensure(path):
+            messages.append(f"post_generate_patch: restored {name}")
 
     changed = patch_get_v2_selfop(TARGET)
     rel = TARGET.relative_to(REPO_ROOT)

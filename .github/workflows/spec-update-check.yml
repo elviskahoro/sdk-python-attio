@@ -214,8 +214,12 @@ jobs:
       # The pipeline prefers the host Speakeasy CLI when SPEAKEASY_USE_HOST_CLI
       # is set alongside SPEAKEASY_API_KEY (this runner has the CLI installed
       # and no container runtime). It logs the CLI version — pinned above —
-      # and re-applies ci/post_generate_patch.py (GET /v2/self validators +
-      # script wrappers) after generation.
+      # and re-applies ci/post_generate_patch.py after generation (manual
+      # patches overlay.yaml cannot express: GET /v2/self validators in
+      # src/attio/models/get_v2_selfop.py; scripts/publish.sh and
+      # scripts/release.sh wrappers; CLI entry point/docs in pyproject.toml
+      # and README.md; SDKHooks wiring and hooks re-export in
+      # src/attio/_hooks/sdkhooks.py and src/attio/_hooks/__init__.py).
       - name: Regenerate SDK
         env:
           SPEAKEASY_API_KEY: ${{ secrets.SPEAKEASY_API_KEY }}
