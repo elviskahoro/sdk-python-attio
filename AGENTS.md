@@ -90,9 +90,13 @@ This SDK is generated using Speakeasy from an OpenAPI spec.
    This runs `speakeasy run` (host CLI when authenticated via login, or when
    `SPEAKEASY_USE_HOST_CLI` + `SPEAKEASY_API_KEY` are set — the scheduled
    workflow's path; pinned Dagger container otherwise), then re-applies
-   `ci/post_generate_patch.py` (the GET /v2/self `active` value
-   discriminators, the `scripts/` wrappers, and the SDKHooks `init_hooks`
-   wiring + hooks package re-export). Drop `--no-fetch` to also
+   `ci/post_generate_patch.py` (manual patches `overlay.yaml` cannot
+   express, e.g. the GET /v2/self `active` value discriminators in
+   `src/attio/models/get_v2_selfop.py`, the `scripts/publish.sh` and
+   `scripts/release.sh` wrappers, the standalone CLI entry point/docs in
+   `pyproject.toml` and `README.md`, and SDKHooks `init_hooks` wiring plus
+   the hooks-package re-export in `src/attio/_hooks/sdkhooks.py` and
+   `src/attio/_hooks/__init__.py`). Drop `--no-fetch` to also
    adopt a freshly fetched spec. Note the Dagger path exports only `src/`
    back to the host — docs/, README, pyproject and USAGE refresh on the
    host-CLI path (the default) — and it logs that when chosen.
@@ -119,3 +123,10 @@ This SDK is generated using Speakeasy from an OpenAPI spec.
 - The overlay exists because Speakeasy infers `date` type from ISO8601 timestamp strings, but Attio returns timestamps as strings that should stay as `str` in Python.
 - The `list` → `list_id` renames avoid shadowing Python's built-in `list`.
 - Description-only spec changes (marketing copy) are reported by `check-openapi` but do not count as structural drift, so they do not trigger the automated workflow.
+
+
+
+<!-- entire-agent:begin -->
+Read .entire/agent-guide.md for this repository's workflow, source inspection, and verification guidance.
+@.entire/agent-guide.md
+<!-- entire-agent:end -->

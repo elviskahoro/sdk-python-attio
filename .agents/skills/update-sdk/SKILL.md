@@ -59,11 +59,14 @@ speakeasy run
 This applies the overlay to the spec and regenerates all SDK code under `src/attio/`.
 
 `speakeasy run` rewrites `src/` from scratch, so it drops the manual patches
-that `overlay.yaml` cannot express (the GET /v2/self `active` value
-discriminators on `AttioCom` and `ResponseBody`, plus the SDKHooks
-`init_hooks` wiring and hooks package `from .registration import *`
-re-export). Re-apply them right after regenerating so the tree the tests run
-against carries the invariant:
+that `overlay.yaml` cannot express, e.g. the GET /v2/self `active` value
+discriminators on `AttioCom` and `ResponseBody` in
+`src/attio/models/get_v2_selfop.py`, the `scripts/publish.sh` and
+`scripts/release.sh` wrappers, the standalone CLI entry point/docs in
+`pyproject.toml` and `README.md`, and the SDKHooks `init_hooks` wiring and
+hooks-package re-export in `src/attio/_hooks/sdkhooks.py` and
+`src/attio/_hooks/__init__.py`. Re-apply them right after regenerating so the
+tree the tests run against carries the invariant:
 
 ```bash
 python ci/post_generate_patch.py
