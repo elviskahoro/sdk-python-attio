@@ -11,15 +11,15 @@
 set -euo pipefail
 
 if [[ $# -ne 1 ]]; then
-  echo "Usage: $0 <version>  e.g. $0 0.22.9" >&2
-  exit 2
+	echo "Usage: $0 <version>  e.g. $0 0.22.9" >&2
+	exit 2
 fi
 
 version="$1"
 
 if ! [[ ${version} =~ ^[0-9]+\.[0-9]+\.[0-9]+([a-zA-Z0-9.+-]*)?$ ]]; then
-  echo "Error: '${version}' does not look like a SemVer (e.g. 0.22.9 or 1.0.0rc1)" >&2
-  exit 2
+	echo "Error: '${version}' does not look like a SemVer (e.g. 0.22.9 or 1.0.0rc1)" >&2
+	exit 2
 fi
 
 repo_root="$(git rev-parse --show-toplevel)"
@@ -27,33 +27,33 @@ cd "${repo_root}"
 
 status_output="$(git status --porcelain)"
 if [[ -n ${status_output} ]]; then
-  echo "Error: working tree is dirty. Commit or stash changes first." >&2
-  git status --short >&2
-  exit 1
+	echo "Error: working tree is dirty. Commit or stash changes first." >&2
+	git status --short >&2
+	exit 1
 fi
 
 branch="$(git rev-parse --abbrev-ref HEAD)"
 if [[ ${branch} != "main" ]]; then
-  echo "Error: not on main (current: ${branch}). Release from main." >&2
-  exit 1
+	echo "Error: not on main (current: ${branch}). Release from main." >&2
+	exit 1
 fi
 
 if git rev-parse -q --verify "refs/tags/v${version}" >/dev/null; then
-  echo "Error: tag v${version} already exists locally." >&2
-  exit 1
+	echo "Error: tag v${version} already exists locally." >&2
+	exit 1
 fi
 
 if git ls-remote --exit-code --tags origin "refs/tags/v${version}" >/dev/null 2>&1; then
-  echo "Error: tag v${version} already exists on origin." >&2
-  exit 1
+	echo "Error: tag v${version} already exists on origin." >&2
+	exit 1
 fi
 
 git pull --ff-only origin main
 
 # Bump versions inside a Dagger container and export the patched files back.
 if ! uv run python ci/pipeline.py release-bump "${version}"; then
-  echo "Error: version bump failed" >&2
-  exit 1
+	echo "Error: version bump failed" >&2
+	exit 1
 fi
 
 # Sanity check: confirm both files agree with the requested version.

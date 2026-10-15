@@ -1,19 +1,52 @@
 # This file controls the behavior of Trunk: https://docs.trunk.io/cli
 # To learn more about the format of this file, see https://docs.trunk.io/reference/trunk-yaml
+#
+# Adapted from the SanhedrinTech/gtm-sdk reference setup. Deviations from the
+# reference config are commented inline; everything else mirrors it.
 version: 0.1
 cli:
   version: 1.25.0
-#
+
 # Trunk provides extensibility via plugins. (https://docs.trunk.io/plugins)
 plugins:
   sources:
     - id: trunk
-      ref: v1.7.6
+      ref: v1.11.0
       uri: https://github.com/trunk-io/plugins
+
     - id: oss-linter-trunk
       ref: v0.2026.04.14.00.00
-      uri: https://github.com/elviskahoro/oss-linter-trunk
-#
+      uri: https://github.com/elviskahoro/oss-linter-trunk-config
+
+    - id: add-trailing-comma-plugin
+      ref: v0.1.0
+      uri: https://github.com/elviskahoro/oss-linter-trunk-add-trailing-comma
+
+    - id: pyrefly-plugin
+      ref: v0.2.0
+      uri: https://github.com/elviskahoro/oss-linter-trunk-pyrefly
+
+# actionlint switched from upstream rhysd/actionlint to the actively maintained
+# fork kjanat/actionlint (forked from upstream v1.7.12, independent releases from
+# v1.8.0, CLI-compatible). Trunk's plugin catalog still pins the rhysd download
+# URL, so override it here until the catalog carries the fork. Asset naming and
+# the -format JSON output the plugin's `lint` command relies on are unchanged.
+downloads:
+  - name: actionlint
+    downloads:
+      - os:
+          linux: linux
+          macos: darwin
+        cpu:
+          x86_64: amd64
+          arm_64: arm64
+        url: https://github.com/kjanat/actionlint/releases/download/v${version}/actionlint_${version}_${os}_${cpu}.tar.gz
+      - os: windows
+        cpu:
+          x86_64: amd64
+          arm_64: arm64
+        url: https://github.com/kjanat/actionlint/releases/download/v${version}/actionlint_${version}_windows_${cpu}.zip
+
 # This is the section where you manage your linters. (https://docs.trunk.io/check/configuration)
 lint:
   definitions:
@@ -21,26 +54,57 @@ lint:
       commands:
         - name: format
           enabled: true
+        - name: lint
+          enabled: true
+
+    # Deviation from the reference config: yamllint's `comments` rule is
+    # disabled. The exported config only downgrades it to warning level,
+    # but trunk's hold-the-line fails new warnings, and the fmt stack
+    # (yamlfmt) writes inline comments with a single space which the rule
+    # flags -- so every newly touched YAML comment would re-red the gate.
+    # The reference repo tolerates this as pre-existing baseline debt; a
+    # fresh adoption cannot. The structural comments-indentation rule and
+    # everything else stay on (this overrides only the run command, which
+    # trunk merges over the plugin definition).
+    - name: yamllint
+      commands:
+        - name: lint
+          run: yamllint -f parsable --disable=comments ${target}
+
+  # Deviation from the reference config: Vale and its custom docs-markdown
+  # file type are not enabled here. The reference scopes Vale to docs/** via
+  # .vale.ini; this repo has no .vale.ini, and docs/ is speakeasy-generated
+  # and already ignored for the markdown linters (see ignore: below).
+
+  # Deviation from the reference config: tach is omitted -- both the enabled
+  # entry and its plugin source below. tach enforces module boundaries via a
+  # tach.toml this repo does not have; re-add the oss-linter-trunk-tach
+  # source and a tach@ pin if that ever changes. Everything else mirrors
+  # gtm-sdk's list.
   enabled:
-    - actionlint@1.7.11
+    - actionlint@1.17.0
+    - add-trailing-comma@4.0.0
     - bandit@1.9.4
-    - checkov@3.2.521
-    - markdown-link-check@3.14.2
-    - markdownlint-cli2@0.22.0
-    - osv-scanner@2.3.5
-    - oxipng@10.1.0
-    - pyright@1.1.409
-    - ruff@0.15.11
-    - semgrep@1.159.0
+    - buildifier@8.2.1
+    - checkov@3.3.19
+    - markdown-link-check@3.15.0
+    - markdownlint-cli2@0.23.3
+    - osv-scanner@2.6.0
+    - oxipng@10.1.1
+    - pinact@4.0.0
+    - pyrefly@1.3.1
+    - pyright@1.1.414
+    - ruff@0.16.8
+    - semgrep@1.177.0
     - shellcheck@0.11.0
-    - shfmt@3.6.0
-    - squawk@2.47.0
-    - svgo@4.0.1
+    - shfmt@3.13.1
+    - squawk@2.65.0
+    - svgo@4.1.0
     - taplo@0.10.0
-    - trivy@0.69.3
-    - trufflehog@3.94.1
-    - ty@0.0.26
-    - yamlfmt@0.20.0
+    - trivy@0.70.0
+    - trufflehog@3.95.3
+    - ty@0.0.35
+    - yamlfmt@0.21.0
     - yamllint@1.38.0
   disabled:
     - ansible-lint
@@ -51,7 +115,6 @@ lint:
     - buf-breaking
     - buf-format
     - buf-lint
-    - buildifier
     - cfnlint
     - circleci
     - clang-format
@@ -139,7 +202,6 @@ lint:
     - trufflehog-git
     - trunk-toolbox
     - txtpbfmt
-    - vale
     - yapf
   ignore:
     - linters: [bandit]
@@ -156,7 +218,12 @@ lint:
       paths:
         - .agents/**
         - agents.md
-    - linters: [pyright, ruff]
+    # Deviation from the reference config: pyrefly and add-trailing-comma
+    # (newly adopted from gtm-sdk) join pyright and ruff off src/** and
+    # tests/** -- src/ is speakeasy-generated (regenerated wholesale, so
+    # linting it just reds every regeneration PR) and tests/ already shares
+    # that exclusion. Handwritten Python (ci/) keeps full coverage.
+    - linters: [pyright, pyrefly, ruff, add-trailing-comma]
       paths:
         - src/**
         - tests/**
@@ -200,8 +267,6 @@ lint:
         - configs/svgo.config.js
 actions:
   enabled:
-    - git-lfs
-    - trunk-announce
     - trunk-cache-prune
     - trunk-upgrade-available
   disabled:
@@ -209,8 +274,10 @@ actions:
     # the machine-wide hook dispatcher (the Entire CLI hook chain); trunk's
     # hook installs collide with it and block commits/pushes.
     # trunk-check-pre-push is redundant with roborev + the merge queue's
-    # required "Trunk Check / lint" status.
+    # required "Lint with Trunk" status.
     - trunk-fmt-pre-commit
+    - git-lfs
+    - trunk-announce
     - trunk-check-pre-push
 
 merge:
@@ -218,16 +285,20 @@ merge:
   # Re-verify after any pipeline rename:
   #   gh pr checks <pr-number> --json name --jq '.[].name'
   #
-  # Both entries are posted by GitHub Actions (.github/workflows/trunk-check.yml
-  # and .github/workflows/tests.yml), which name check runs "<workflow name> /
-  # <job name>". The same names post when the queue tests a PR: both workflows
-  # trigger on the queue's draft test PRs (Draft PR mode, the queue default)
-  # and on pushes to trunk-merge/** (Push-Triggered mode).
+  # Both entries are the GitHub Actions job check runs from
+  # .github/workflows/trunk-check.yml ("Lint with Trunk") and
+  # .github/workflows/tests.yml ("pytest") -- verified live on the setup PR:
+  # GitHub posts Actions job check runs under the bare job name, NOT
+  # "<workflow name> / <job name>". The same names post when the queue tests
+  # a PR: both workflows trigger on the queue's draft test PRs (Draft PR
+  # mode, the queue default) and on pushes to trunk-merge/** (Push-Triggered
+  # mode).
   #
   # Do NOT add path-filtered workflows here -- they do not report on every PR
   # and would deadlock the queue. Same for workflow_run-triggered workflows,
-  # the tag-only "Publish to PyPI" workflow, and the scheduled
-  # "Spec update check" (which also never runs on PRs at all).
+  # the tag-only "Publish to PyPI" workflow, the "Trunk Check" annotation
+  # run (a side-channel posted by the trunk CLI, not the job result), and
+  # the scheduled "Spec update check" (which never runs on PRs at all).
   required_statuses:
-    - "Trunk Check / lint"
-    - "Tests / pytest"
+    - "Lint with Trunk"
+    - "pytest"

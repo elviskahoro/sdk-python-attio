@@ -381,7 +381,11 @@ def ensure_init_hooks_wiring(path: Path) -> bool:
     if _REGISTRATION_IMPORT_LINE not in text:
         lines = text.splitlines(keepends=False)
         types_open_idx = next(
-            (i for i, line in enumerate(lines) if line.startswith("from .types import (")),
+            (
+                i
+                for i, line in enumerate(lines)
+                if line.startswith("from .types import (")
+            ),
             None,
         )
         if types_open_idx is None:
