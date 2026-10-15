@@ -1,0 +1,60 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M505XGFE937F7920YKA88RQ8",
+  "session_id": "01a14045-f367-7555-830f-13cd977aa48c",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-15T16:21:54.521667Z",
+  "branch": "conductor/trunk-merge-queue-setup-prompt",
+  "checkpoints_count": 1,
+  "save_step_count": 1,
+  "files_touched": [
+    ".trunk/plugins/add-trailing-comma-plugin",
+    ".trunk/plugins/oss-linter-trunk",
+    ".trunk/plugins/pyrefly-plugin",
+    ".trunk/plugins/tach-plugin",
+    ".trunk/plugins/trunk",
+    ".trunk/trunk.yaml"
+  ],
+  "agent": "Pi",
+  "model": "accounts/fireworks/models/glm-5p3",
+  "turn_id": "d750c2552013",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 22728,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 155377,
+    "output_tokens": 5855,
+    "api_call_count": 9
+  },
+  "session_metrics": {
+    "turn_count": 1
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-10-15T16:21:54.507509Z",
+    "agent_lines": 64,
+    "agent_removed": 28,
+    "human_added": 62,
+    "human_modified": 24,
+    "human_removed": 0,
+    "total_committed": 150,
+    "total_lines_changed": 232,
+    "agent_percentage": 39.6551724137931,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 5,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_removed_per_file": {
+        ".trunk/actions": 1,
+        ".trunk/logs": 1,
+        ".trunk/notifications": 1,
+        ".trunk/out": 1,
+        ".trunk/tools": 1
+      }
+    }
+  ]
+}
