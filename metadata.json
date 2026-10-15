@@ -3,7 +3,7 @@
   "checkpoint_id": "01M506A3A7M3BPS3K0HYW7G60H",
   "strategy": "manual-commit",
   "branch": "conductor/trunk-merge-queue-setup-prompt",
-  "checkpoints_count": 2,
+  "checkpoints_count": 3,
   "files_touched": [
     ".trunk/actions",
     ".trunk/logs",
@@ -25,13 +25,20 @@
       "compact_transcript": "/1/transcript.jsonl",
       "content_hash": "/1/content_hash.txt",
       "prompt": "/1/prompt.txt"
+    },
+    {
+      "metadata": "/2/metadata.json",
+      "transcript": "/2/full.jsonl",
+      "compact_transcript": "/2/transcript.jsonl",
+      "content_hash": "/2/content_hash.txt",
+      "prompt": "/2/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 37727,
+    "input_tokens": 55179,
     "cache_creation_tokens": 0,
-    "cache_read_tokens": 237487,
-    "output_tokens": 10293,
-    "api_call_count": 14
+    "cache_read_tokens": 398138,
+    "output_tokens": 16948,
+    "api_call_count": 22
   }
 }
