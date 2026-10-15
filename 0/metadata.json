@@ -1,0 +1,43 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M506A3A7M3BPS3K0HYW7G60H",
+  "session_id": "01a14045-f367-7555-830f-13cd977aa48c",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-15T16:28:47.035787Z",
+  "branch": "conductor/trunk-merge-queue-setup-prompt",
+  "checkpoints_count": 1,
+  "save_step_count": 1,
+  "files_touched": [
+    ".trunk/actions",
+    ".trunk/logs",
+    ".trunk/notifications",
+    ".trunk/out",
+    ".trunk/tools"
+  ],
+  "agent": "Pi",
+  "model": "accounts/fireworks/models/glm-5p3",
+  "turn_id": "d750c2552013",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 22728,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 155377,
+    "output_tokens": 5855,
+    "api_call_count": 9
+  },
+  "session_metrics": {
+    "turn_count": 1
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-10-15T16:28:47.017633Z",
+    "agent_lines": 5,
+    "agent_removed": 5,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 5,
+    "total_lines_changed": 10,
+    "agent_percentage": 100,
+    "metric_version": 2
+  }
+}
