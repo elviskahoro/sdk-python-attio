@@ -22,8 +22,13 @@ name: Spec update check
 # create and approve pull requests" (without it, the branch is pushed, PR
 # creation fails, and the job cleans the branch up and reports). Note that
 # PRs opened with the default GITHUB_TOKEN do not trigger other workflows
-# on the PR — acceptable today because this repo gates PRs through Trunk,
-# not GitHub Actions CI.
+# on the PR — including the required "Trunk Check / lint" and
+# "Tests / pytest" gates (merge.required_statuses in .trunk/trunk.yaml).
+# The weekly automated PR therefore shows no CI until a human event fires
+# them (push a commit to the branch from a personal token, or close and
+# reopen the PR). To make CI trigger automatically, this workflow would
+# need to open the PR with a PAT or GitHub App token instead of
+# GITHUB_TOKEN.
 
 on:
   schedule:

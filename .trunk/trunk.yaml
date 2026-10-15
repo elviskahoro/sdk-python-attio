@@ -204,6 +204,30 @@ actions:
     - trunk-announce
     - trunk-cache-prune
     - trunk-upgrade-available
-    - trunk-check-pre-push
   disabled:
+    # Git-hook-triggered actions disabled so trunk releases core.hooksPath to
+    # the machine-wide hook dispatcher (the Entire CLI hook chain); trunk's
+    # hook installs collide with it and block commits/pushes.
+    # trunk-check-pre-push is redundant with roborev + the merge queue's
+    # required "Trunk Check / lint" status.
     - trunk-fmt-pre-commit
+    - trunk-check-pre-push
+
+merge:
+  # These must be live GitHub status names posted on every PR targeting main.
+  # Re-verify after any pipeline rename:
+  #   gh pr checks <pr-number> --json name --jq '.[].name'
+  #
+  # Both entries are posted by GitHub Actions (.github/workflows/trunk-check.yml
+  # and .github/workflows/tests.yml), which name check runs "<workflow name> /
+  # <job name>". The same names post when the queue tests a PR: both workflows
+  # trigger on the queue's draft test PRs (Draft PR mode, the queue default)
+  # and on pushes to trunk-merge/** (Push-Triggered mode).
+  #
+  # Do NOT add path-filtered workflows here -- they do not report on every PR
+  # and would deadlock the queue. Same for workflow_run-triggered workflows,
+  # the tag-only "Publish to PyPI" workflow, and the scheduled
+  # "Spec update check" (which also never runs on PRs at all).
+  required_statuses:
+    - "Trunk Check / lint"
+    - "Tests / pytest"
