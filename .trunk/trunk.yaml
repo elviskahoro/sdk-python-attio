@@ -26,6 +26,9 @@ plugins:
       ref: v0.2.0
       uri: https://github.com/elviskahoro/oss-linter-trunk-pyrefly
 
+    - id: tach-plugin
+      ref: v0.1.0
+      uri: https://github.com/elviskahoro/oss-linter-trunk-tach
 # actionlint switched from upstream rhysd/actionlint to the actively maintained
 # fork kjanat/actionlint (forked from upstream v1.7.12, independent releases from
 # v1.8.0, CLI-compatible). Trunk's plugin catalog still pins the rhysd download
@@ -61,12 +64,6 @@ lint:
   # file type are not enabled here. The reference scopes Vale to docs/** via
   # .vale.ini; this repo has no .vale.ini, and docs/ is speakeasy-generated
   # and already ignored for the markdown linters (see ignore: below).
-
-  # Deviation from the reference config: tach is omitted -- both the enabled
-  # entry and its plugin source below. tach enforces module boundaries via a
-  # tach.toml this repo does not have; re-add the oss-linter-trunk-tach
-  # source and a tach@ pin if that ever changes. Everything else mirrors
-  # gtm-sdk's list.
   enabled:
     - actionlint@1.17.0
     - add-trailing-comma@4.0.0
@@ -86,6 +83,7 @@ lint:
     - shfmt@3.13.1
     - squawk@2.65.0
     - svgo@4.1.0
+    - tach@0.35.1
     - taplo@0.10.0
     - trivy@0.70.0
     - trufflehog@3.95.3
@@ -222,6 +220,10 @@ lint:
     - linters: [semgrep]
       paths:
         - .speakeasy/gen.lock
+    - linters: [tach]
+      paths:
+        - src/**
+        - tests/**
   exported_configs:
     - plugin_id: oss-linter-trunk
       configs:
