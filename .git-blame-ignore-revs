@@ -13,3 +13,6 @@
 
 # a09d8c7327bb8837d1968753e740f27905c0495e - Fix trunk check linting issues (#49)
 a09d8c7327bb8837d1968753e740f27905c0495e
+
+# ab7fe53368bb95f5115f014d9150082b7528b430 - Pad inline YAML comments with two spaces via yamlfmt
+ab7fe53368bb95f5115f014d9150082b7528b430

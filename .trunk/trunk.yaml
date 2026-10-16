@@ -57,20 +57,6 @@ lint:
         - name: lint
           enabled: true
 
-    # Deviation from the reference config: yamllint's `comments` rule is
-    # disabled. The exported config only downgrades it to warning level,
-    # but trunk's hold-the-line fails new warnings, and the fmt stack
-    # (yamlfmt) writes inline comments with a single space which the rule
-    # flags -- so every newly touched YAML comment would re-red the gate.
-    # The reference repo tolerates this as pre-existing baseline debt; a
-    # fresh adoption cannot. The structural comments-indentation rule and
-    # everything else stay on (this overrides only the run command, which
-    # trunk merges over the plugin definition).
-    - name: yamllint
-      commands:
-        - name: lint
-          run: yamllint -f parsable --disable=comments ${target}
-
   # Deviation from the reference config: Vale and its custom docs-markdown
   # file type are not enabled here. The reference scopes Vale to docs/** via
   # .vale.ini; this repo has no .vale.ini, and docs/ is speakeasy-generated
