@@ -275,9 +275,10 @@ def _ensure_import(text: str) -> str:
     """Ensure ``model_validator`` is imported alongside ``model_serializer``."""
     line = next(
         (
-            l
-            for l in text.splitlines()
-            if l.startswith("from pydantic import ") and "model_serializer" in l
+            import_line
+            for import_line in text.splitlines()
+            if import_line.startswith("from pydantic import ")
+            and "model_serializer" in import_line
         ),
         None,
     )
@@ -303,7 +304,11 @@ def _inject_into_class(text: str, class_name: str, method_lines: list[str]) -> s
     """
     lines = text.splitlines(keepends=False)
     start = next(
-        (i for i, l in enumerate(lines) if l.startswith(f"class {class_name}(")),
+        (
+            i
+            for i, line_text in enumerate(lines)
+            if line_text.startswith(f"class {class_name}(")
+        ),
         None,
     )
     if start is None:
@@ -314,7 +319,7 @@ def _inject_into_class(text: str, class_name: str, method_lines: list[str]) -> s
         )
         raise RuntimeError(msg)
     end = _class_body_end(lines, start)
-    if any("_validate_active" in l for l in lines[start:end]):
+    if any("_validate_active" in body_line for body_line in lines[start:end]):
         return text
     serializer_idx = next(
         (

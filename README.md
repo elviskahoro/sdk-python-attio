@@ -13,7 +13,6 @@ Type-safe Python client for the [Attio API](https://developers.attio.com/), with
 <!-- Start Summary [summary] -->
 ## Summary
 
-
 <!-- End Summary [summary] -->
 
 <!-- Start Table of Contents [toc] -->
@@ -42,12 +41,9 @@ Type-safe Python client for the [Attio API](https://developers.attio.com/), with
 
 > [!TIP]
 > To finish publishing your SDK to PyPI you must [run your first generation action](https://www.speakeasy.com/docs/github-setup#step-by-step-guide).
-
-
-> [!NOTE]
-> **Python version upgrade policy**
 >
-> Once a Python version reaches its [official end of life date](https://devguide.python.org/versions/), a 3-month grace period is provided for users to upgrade. Following this grace period, the minimum python version supported in the SDK will be updated.
+> [!NOTE]
+> **Python version upgrade policy**: Once a Python version reaches its [official end of life date](https://devguide.python.org/versions/), a 3-month grace period is provided for users to upgrade. Following this grace period, the minimum python version supported in the SDK will be updated.
 
 The SDK can be installed with *uv*, *pip*, or *poetry* package managers.
 
@@ -244,6 +240,7 @@ This SDK supports the following security scheme globally:
 | `oauth2` | oauth2 | OAuth2 token |
 
 To authenticate with the API the `oauth2` parameter must be set when initializing the SDK client instance. For example:
+
 ```python
 from attio import SDK
 
@@ -507,6 +504,7 @@ with SDK(
 Some of the endpoints in this SDK support retries. If you use the SDK without any configuration, it will fall back to the default retry strategy provided by the API. However, the default retry strategy can be overridden on a per-operation basis, or across the entire SDK.
 
 To change the default retry strategy for a single API call, simply provide a `RetryConfig` object to the call:
+
 ```python
 from attio import SDK
 from attio.utils import BackoffStrategy, RetryConfig
@@ -525,6 +523,7 @@ with SDK(
 ```
 
 If you'd like to override the default retry strategy for all operations that support retries, you can use the `retry_config` optional parameter when initializing the SDK:
+
 ```python
 from attio import SDK
 from attio.utils import BackoffStrategy, RetryConfig
@@ -558,6 +557,7 @@ with SDK(
 | `err.data`         |                  | Optional. Some errors may contain structured data. [See Error Classes](#error-classes). |
 
 ### Example
+
 ```python
 from attio import SDK, errors
 
@@ -595,6 +595,7 @@ with SDK(
 ```
 
 ### Error Classes
+
 **Primary error:**
 * [`SDKError`](./src/attio/errors/sdkerror.py): The base class for HTTP error responses.
 
@@ -606,7 +607,6 @@ with SDK(
 * [`httpx.RequestError`](https://www.python-httpx.org/exceptions/#httpx.RequestError): Base class for request errors.
     * [`httpx.ConnectError`](https://www.python-httpx.org/exceptions/#httpx.ConnectError): HTTP client was unable to make a request to a server.
     * [`httpx.TimeoutException`](https://www.python-httpx.org/exceptions/#httpx.TimeoutException): HTTP request timed out.
-
 
 **Inherit from [`SDKError`](./src/attio/errors/sdkerror.py)**:
 * [`QuotaExceededError`](./src/attio/errors/quotaexceedederror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
@@ -792,6 +792,7 @@ with SDK(
 ### Override Server URL Per-Client
 
 The default server can be overridden globally by passing a URL to the `server_url: str` optional parameter when initializing the SDK client instance. For example:
+
 ```python
 from attio import SDK
 
@@ -817,6 +818,7 @@ Depending on whether you are using the sync or async version of the SDK, you can
 This allows you to wrap the client with your own custom logic, such as adding custom headers, logging, or error handling, or you can just pass an instance of `httpx.Client` or `httpx.AsyncClient` directly.
 
 For example, you could specify a header for every request that this sdk makes as follows:
+
 ```python
 from attio import SDK
 import httpx
@@ -825,7 +827,8 @@ http_client = httpx.Client(headers={"x-custom-header": "someValue"})
 s = SDK(client=http_client)
 ```
 
-or you could wrap the client with your own custom logic:
+Or you could wrap the client with your own custom logic:
+
 ```python
 from attio import SDK
 from attio.httpclient import AsyncHttpClient
@@ -888,9 +891,11 @@ class CustomClient(AsyncHttpClient):
 
 s = SDK(async_client=CustomClient(httpx.AsyncClient()))
 ```
+
 ### httpx2 (Pydantic's httpx fork)
 
 [httpx2](https://httpx2.pydantic.dev/) is Pydantic's maintained fork of `httpx`. To run this SDK on httpx2, call `alias_httpx()` at your program's entry point, before importing the SDK, so every `import httpx` — including the ones inside the SDK — resolves to `httpx2`:
+
 ```python
 import httpx2
 
@@ -937,6 +942,7 @@ async def amain():
 You can setup your SDK to emit debug logs for SDK requests and responses.
 
 You can pass your own logger class directly into your SDK.
+
 ```python
 from attio import SDK
 import logging
