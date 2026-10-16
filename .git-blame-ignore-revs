@@ -4,3 +4,6 @@
 # 66401778c70dbb68609943cf6468444462206f8f - Fix trunk check linting issues
 # Formatting and code style fixes that don't affect logic
 66401778c70dbb68609943cf6468444462206f8f
+
+# 0e623c38e1e816fedd2065e6b674a04f8d8e7f6e - Fix ruff and bandit findings in ci/pipeline.py (#51)
+0e623c38e1e816fedd2065e6b674a04f8d8e7f6e
