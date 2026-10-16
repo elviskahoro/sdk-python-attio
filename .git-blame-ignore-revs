@@ -7,3 +7,9 @@
 
 # 0e623c38e1e816fedd2065e6b674a04f8d8e7f6e - Fix ruff and bandit findings in ci/pipeline.py (#51)
 0e623c38e1e816fedd2065e6b674a04f8d8e7f6e
+
+# 27204ad86f248a15dd2eb08aafac42457b2cebaa - Fix trunk check linting issues
+27204ad86f248a15dd2eb08aafac42457b2cebaa
+
+# a09d8c7327bb8837d1968753e740f27905c0495e - Fix trunk check linting issues (#49)
+a09d8c7327bb8837d1968753e740f27905c0495e
