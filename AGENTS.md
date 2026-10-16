@@ -143,8 +143,6 @@ This SDK is generated using Speakeasy from an OpenAPI spec.
 - The `list` → `list_id` renames avoid shadowing Python's built-in `list`.
 - Description-only spec changes (marketing copy) are reported by `check-openapi` but do not count as structural drift, so they do not trigger the automated workflow.
 
-
-
 <!-- entire-agent:begin -->
 Read .entire/agent-guide.md for this repository's workflow, source inspection, and verification guidance.
 @.entire/agent-guide.md
