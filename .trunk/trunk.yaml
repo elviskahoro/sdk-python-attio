@@ -285,20 +285,44 @@ merge:
   # Re-verify after any pipeline rename:
   #   gh pr checks <pr-number> --json name --jq '.[].name'
   #
-  # Both entries are the GitHub Actions job check runs from
-  # .github/workflows/trunk-check.yml ("Lint with Trunk") and
-  # .github/workflows/tests.yml ("pytest") -- verified live on the setup PR:
-  # GitHub posts Actions job check runs under the bare job name, NOT
-  # "<workflow name> / <job name>". The same names post when the queue tests
-  # a PR: both workflows trigger on the queue's draft test PRs (Draft PR
-  # mode, the queue default) and on pushes to trunk-merge/** (Push-Triggered
-  # mode).
+  # "Lint with Trunk" and "pytest" are the GitHub Actions job check runs from
+  # .github/workflows/trunk-check.yml and .github/workflows/tests.yml --
+  # verified live on the setup PR: GitHub posts Actions job check runs under
+  # the bare job name, NOT "<workflow name> / <job name>". The same names
+  # post when the queue tests a PR: both workflows trigger on the queue's
+  # draft test PRs (Draft PR mode, the queue default) and on pushes to
+  # trunk-merge/** (Push-Triggered mode).
+  #
+  # "pullfrog-approval" is NOT an Actions job: the Pullfrog GitHub App posts
+  # it directly on the PR head once its agent review of that exact commit
+  # finds no outstanding Pullfrog feedback. Two Pullfrog console settings
+  # are hard dependencies -- verify after any console change:
+  #   pullfrog config list --repo elviskahoro/sdk-python-attio
+  #   review.approval-check  -- posts the check at all (without it, no PR
+  #                             ever reports this status)
+  #   review.drafts          -- reviews draft PRs, which is what the queue's
+  #                             test PRs are in Draft PR mode (without it,
+  #                             every queued PR would wait out the test
+  #                             timeout and fail out)
+  # Pullfrog semantics that matter here: a new push has no check until
+  # Pullfrog re-reviews it (review.re-review is on; runs take minutes), and
+  # a failed or cancelled run posts nothing -- the queue then waits out its
+  # test timeout and fails the PR out; resubmit once the next run reports.
   #
   # Do NOT add path-filtered workflows here -- they do not report on every PR
   # and would deadlock the queue. Same for workflow_run-triggered workflows,
   # the tag-only "Publish to PyPI" workflow, the "Trunk Check" annotation
   # run (a side-channel posted by the trunk CLI, not the job result), and
   # the scheduled "Spec update check" (which never runs on PRs at all).
+  #
+  # Known gap: Pullfrog skips bot-opened PRs by default, so the weekly
+  # spec-update PR (opened by github-actions[bot] with GITHUB_TOKEN, which
+  # also fails to trigger the two workflow gates) reports none of these
+  # statuses. That PR already cannot pass the queue today for the workflow
+  # reason; the durable fix is the #43 follow-up to open it with a PAT or
+  # GitHub App token. Until then it needs a human poke (push to its branch,
+  # @pullfrog mention) before it can merge.
   required_statuses:
     - "Lint with Trunk"
     - "pytest"
+    - "pullfrog-approval"
