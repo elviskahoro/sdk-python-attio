@@ -1,0 +1,6 @@
+# Commits to ignore in git blame
+# Format: one commit hash per line, optionally with a comment
+
+# 6640177 - Fix trunk check linting issues
+# Formatting and code style fixes that don't affect logic
+6640177
