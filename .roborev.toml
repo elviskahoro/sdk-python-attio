@@ -3,9 +3,8 @@
 # `review_guidelines` is embedded into every review prompt. Use it to encode
 # deliberate house decisions so the reviewer stops re-flagging them as findings.
 
-# Use the Pi coding agent with the Fireworks provider for review jobs.
-agent = "pi"
-model = "fireworks/accounts/fireworks/models/glm-5p3"
+# Use the Claude Code agent for review jobs.
+agent = "claude-code"
 
 review_guidelines = """
 - src/attio/ is FULLY GENERATED code (Speakeasy). Do not raise findings against
