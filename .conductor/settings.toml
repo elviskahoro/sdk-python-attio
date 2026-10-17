@@ -1,5 +1,8 @@
 "$schema" = "https://conductor.build/schemas/settings.repo.schema.json"
 
+[scripts]
+setup = "bash ci/conductor_trunk_preflight.sh"
+
 [prompts] # Prompts below are generated from flox-conductor-sandbox prompts/conductor/*.md by scripts/install-conductor-prompts.py — edit the .md source and re-run, never this copy.
 create_pr = '''
 <!-- Canonical source: flox-conductor-sandbox prompts/conductor/create-pr.md.
