@@ -1,0 +1,8 @@
+[build]
+strict = false
+
+[[modules]]
+path = "src/attio_cli"
+
+[[modules]]
+path = "ci"
