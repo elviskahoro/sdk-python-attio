@@ -1,5 +1,8 @@
 {
   "venvPath": ".",
   "venv": ".venv",
-  "reportGeneralTypeIssues": "none"
+  "reportGeneralTypeIssues": "none",
+  "extraPaths": [
+    "generated/src"
+  ]
 }

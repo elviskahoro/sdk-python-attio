@@ -1,0 +1,3 @@
+# Trunk symlinks this into the pyrefly sandbox. The generated SDK (import name
+# `attio`) lives under generated/src, so it must be on the search path.
+search-path = ["generated/src"]
