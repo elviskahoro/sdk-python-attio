@@ -52,7 +52,7 @@ expected = os.environ["EXPECTED_VERSION"]
 py = tomllib.loads(pathlib.Path("pyproject.toml").read_text())["project"]["version"]
 m = re.search(
     r'^__version__\s*:\s*str\s*=\s*"([^"]+)"',
-    pathlib.Path("src/attio/_version.py").read_text(),
+    pathlib.Path("generated/src/attio/_version.py").read_text(),
     re.M,
 )
 under = m.group(1) if m else "<unset>"
@@ -81,7 +81,7 @@ if new == text:
     sys.exit('Could not find version = "..." in pyproject.toml')
 pyproject.write_text(new)
 
-vfile = pathlib.Path("src/attio/_version.py")
+vfile = pathlib.Path("generated/src/attio/_version.py")
 text = vfile.read_text()
 new = re.sub(
     r'^(__version__\s*:\s*str\s*=\s*)"[^"]+"',
@@ -98,7 +98,7 @@ new = re.sub(
     flags=re.M,
 )
 if new == text:
-    sys.exit('Could not find __version__ in src/attio/_version.py')
+    sys.exit('Could not find __version__ in generated/src/attio/_version.py')
 vfile.write_text(new)
 """
 
@@ -124,7 +124,7 @@ if new == text:
     sys.exit('Could not change project name from "attio" to "gtm-attio"')
 pyproject.write_text(new)
 
-vfile = pathlib.Path("src/attio/_version.py")
+vfile = pathlib.Path("generated/src/attio/_version.py")
 text = vfile.read_text()
 new = re.sub(
     r'^(__title__\s*:\s*str\s*=\s*)"attio"',
@@ -476,7 +476,7 @@ def _replace_dist_directory() -> None:
 def _apply_post_generation_patches() -> None:
     """Re-apply manual patches to the freshly generated SDK source.
 
-    ``speakeasy run`` rewrites ``src/`` from the OpenAPI overlay, dropping
+    ``speakeasy run`` rewrites ``generated/`` from the OpenAPI overlay, dropping
     hand-edits to generated files. ``ci/post_generate_patch.py`` idempotently
     re-injects the patches that ``overlay.yaml`` cannot express, so the tree
     the tests, build, and PR commit consume already carries them. Run after
@@ -550,7 +550,7 @@ class AttioSDKPipeline:
             Doc("Expected version (no leading 'v')"),
         ],
     ) -> str:
-        """Verify pyproject.toml and src/attio/_version.py match the expected version.
+        """Verify pyproject.toml and generated/src/attio/_version.py match the expected version.
 
         Used by the release workflow before publishing to PyPI to catch tags
         that drift from the in-tree version. Run scripts/release.sh <version>
@@ -574,7 +574,7 @@ class AttioSDKPipeline:
             Doc("Target version (no leading 'v'), e.g. 0.22.9"),
         ],
     ) -> dagger.Directory:
-        """Rewrite pyproject.toml + src/attio/_version.py to the target version.
+        """Rewrite pyproject.toml + generated/src/attio/_version.py to the target version.
 
         Returns the patched repo as a Directory so the caller can export the
         files back to the host (the git commit/tag/push lives in
@@ -659,7 +659,7 @@ class AttioSDKPipeline:
         executed = self.speakeasy_executed(prepared, force=force, version=version)
 
         await executed.sync()
-        return executed.directory("/repo/src")
+        return executed.directory("/repo/generated")
 
     @function
     def build(self) -> dagger.Container:
@@ -725,7 +725,7 @@ async def _generate_sdk(
     two paths cannot drift apart. Prefers the host CLI when usable (faster,
     no engine, and the path the scheduled GitHub workflow takes); otherwise
     generates in the pinned Speakeasy container via Dagger, exporting
-    ``src/`` back to the host. Post-generation patches are re-applied on
+    ``generated/`` back to the host. Post-generation patches are re-applied on
     both paths.
     """
     if _local_speakeasy_usable():
@@ -744,8 +744,7 @@ async def _generate_sdk(
     async with dagger.connection(dagger.Config(log_output=sys.stderr)):
         print(
             "Generating with the pinned Speakeasy container via Dagger "
-            "(src/ only — use the host CLI for the full tree: docs/, "
-            "README, pyproject, USAGE)",
+            "(generated/ only — use the host CLI for the full tree)",
             file=sys.stderr,
         )
         api_key = dag.set_secret("SPEAKEASY_API_KEY", api_key_str)
@@ -756,9 +755,9 @@ async def _generate_sdk(
             force=force,
             version=version,
         )
-        await generated.export("./src")
+        await generated.export("./generated")
         _apply_post_generation_patches()
-        print("SDK generated and exported to ./src", file=sys.stderr)
+        print("SDK generated and exported to ./generated", file=sys.stderr)
 
 
 async def cmd_generate(

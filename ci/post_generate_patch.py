@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Re-apply manual patches to Speakeasy-generated SDK source.
 
-``speakeasy run`` rewrites ``src/`` from the OpenAPI overlay, so any
+``speakeasy run`` rewrites ``generated/`` from the OpenAPI overlay, so any
 hand-edit to a generated file is lost on the next regeneration. This script
 idempotently re-injects the edits that ``overlay.yaml`` cannot express, and
 the generation pipeline (``ci/pipeline.py``) runs it after every generation
@@ -13,7 +13,7 @@ Run it standalone after a direct ``speakeasy run``::
 
 It is safe to run on an already-patched tree (a no-op then).
 
-Patch: ``src/attio/models/get_v2_selfop.py``
+Patch: ``generated/src/attio/models/get_v2_selfop.py``
 
     The GET /v2/self ``anyOf`` discriminates the active and inactive token
     variants with single-value boolean enums on ``active`` (``[true]`` and
@@ -38,7 +38,7 @@ Patch: ``scripts/publish.sh`` and ``scripts/release.sh`` wrappers
     touches) so a regeneration can never again ship the naive script — worst
     case it is restored here, loudly.
 
-    Note: the pipeline's Dagger generation path exports only ``src/`` back
+    Note: the pipeline's Dagger generation path exports only ``generated/`` back
     to the host, so on that path this script sees the host's unmodified
     ``scripts/`` — the wrapper restoration is only exercised after host-CLI
     generation (the default) or when run standalone.
@@ -48,7 +48,7 @@ Patch: ``pyproject.toml`` and ``README.md``
     Speakeasy owns both files, so this script also restores the standalone
     ``gtm-attio`` console entry point and its user-facing CLI documentation.
 
-Patch: ``src/attio/_hooks/sdkhooks.py`` and ``src/attio/_hooks/__init__.py``
+Patch: ``generated/src/attio/_hooks/sdkhooks.py`` and ``generated/src/attio/_hooks/__init__.py``
 
     ``registration.py`` is a one-time-generated, maintainer-editable
     scaffolding file (not tracked in ``.speakeasy/gen.lock``) whose header
@@ -73,9 +73,9 @@ import sys
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-TARGET = REPO_ROOT / "src" / "attio" / "models" / "get_v2_selfop.py"
-SDKHOOKS_PATH = REPO_ROOT / "src" / "attio" / "_hooks" / "sdkhooks.py"
-HOOKS_INIT_PATH = REPO_ROOT / "src" / "attio" / "_hooks" / "__init__.py"
+TARGET = REPO_ROOT / "generated" / "src" / "attio" / "models" / "get_v2_selfop.py"
+SDKHOOKS_PATH = REPO_ROOT / "generated" / "src" / "attio" / "_hooks" / "sdkhooks.py"
+HOOKS_INIT_PATH = REPO_ROOT / "generated" / "src" / "attio" / "_hooks" / "__init__.py"
 
 # Anchors and lines for the SDKHooks init_hooks wiring patch (see
 # ``ensure_init_hooks_wiring`` / ``ensure_hooks_package_reexport``).
@@ -364,7 +364,7 @@ def patch_get_v2_selfop(path: Path) -> bool:
 def ensure_init_hooks_wiring(path: Path) -> bool:
     """Re-inject the ``init_hooks`` maintenanceship seam into ``sdkhooks.py``.
 
-    ``speakeasy run`` rewrites ``src/attio/_hooks/sdkhooks.py`` from a clean
+    ``speakeasy run`` rewrites ``generated/src/attio/_hooks/sdkhooks.py`` from a clean
     template that lacks the ``from .registration import init_hooks`` import
     and the ``init_hooks(self)`` call in ``SDKHooks.__init__``. Without
     them the customization seam in ``registration.py`` (which the generator
@@ -447,7 +447,7 @@ def ensure_hooks_package_reexport(path: Path) -> bool:
     """Restore the ``from .registration import *`` re-export in the hooks package.
 
     The 2026-03-28 regeneration dropped this line from
-    ``src/attio/_hooks/__init__.py``, so ``from attio._hooks import
+    ``generated/src/attio/_hooks/__init__.py``, so ``from attio._hooks import
     init_hooks`` no longer resolved. The direct path
     ``from attio._hooks.registration import init_hooks`` still works, so the
     re-export is not load-bearing today, but restoring it keeps the package
@@ -460,7 +460,7 @@ def ensure_hooks_package_reexport(path: Path) -> bool:
     anchor = "from .types import *"
     if anchor not in text:
         msg = (
-            "the generated src/attio/_hooks/__init__.py no longer has the "
+            "the generated generated/src/attio/_hooks/__init__.py no longer has the "
             "expected `from .types import *` anchor; the post-generation "
             "patch must be updated for the new generated layout."
         )

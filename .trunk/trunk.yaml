@@ -190,39 +190,39 @@ lint:
   ignore:
     - linters: [bandit]
       paths:
-        - src/**
+        - generated/**
     - linters: [checkov]
       paths:
         - openapi/**
         - .speakeasy/out.openapi.yaml
     - linters: [markdown-link-check, markdownlint-cli2, trufflehog]
       paths:
-        - docs/**
+        - generated/docs/**
     - linters: [markdownlint-cli2]
       paths:
         - .agents/**
         - agents.md
     # Deviation from the reference config: pyrefly and add-trailing-comma
-    # (newly adopted from gtm-sdk) join pyright and ruff off src/** and
-    # tests/** -- src/ is speakeasy-generated (regenerated wholesale, so
+    # (newly adopted from gtm-sdk) join pyright and ruff off generated/** and
+    # tests/** -- generated/ is speakeasy-generated (regenerated wholesale, so
     # linting it just reds every regeneration PR) and tests/ already shares
     # that exclusion. Handwritten Python (ci/) keeps full coverage.
     - linters: [pyright, pyrefly, ruff, add-trailing-comma]
       paths:
-        - src/**
+        - generated/**
         - tests/**
     - linters: [semgrep]
       paths:
         - "**/*.md"
-        - src/**
+        - generated/**
         - openapi/api-*.json
         - openapi/api-*-overlay.json
     - linters: [semgrep]
       paths:
-        - .speakeasy/gen.lock
+        - generated/.speakeasy/gen.lock
     - linters: [tach]
       paths:
-        - src/**
+        - generated/**
         - tests/**
   exported_configs:
     - plugin_id: oss-linter-trunk

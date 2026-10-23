@@ -1,11 +1,11 @@
 """Tests for the SDK lifecycle hooks ``init_hooks`` wiring.
 
-``src/attio/_hooks/registration.py`` is a one-time-generated, maintainer-editable
+``generated/src/attio/_hooks/registration.py`` is a one-time-generated, maintainer-editable
 scaffolding file (not tracked in ``.speakeasy/gen.lock``) whose header
 instructs maintainers to register lifecycle hooks (``sdk_init``,
 ``before_request``, ``after_success``, ``after_error``) inside the
 ``init_hooks`` function. Commit ``dc8cebc`` (the 2026-03-28 regeneration)
-overwrote ``src/attio/_hooks/sdkhooks.py`` — a "DO NOT EDIT" generated file —
+overwrote ``generated/src/attio/_hooks/sdkhooks.py`` — a "DO NOT EDIT" generated file —
 with a clean Speakeasy template that lacked both the
 ``from .registration import init_hooks`` import and the ``init_hooks(self)``
 call in ``SDKHooks.__init__``, orphaning ``init_hooks``: hooks a maintainer
@@ -35,8 +35,8 @@ from attio._hooks.types import BeforeRequestHook
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 PATCH_SCRIPT = REPO_ROOT / "ci" / "post_generate_patch.py"
-COMMITTED_SDKHOOKS = REPO_ROOT / "src" / "attio" / "_hooks" / "sdkhooks.py"
-COMMITTED_HOOKS_INIT = REPO_ROOT / "src" / "attio" / "_hooks" / "__init__.py"
+COMMITTED_SDKHOOKS = REPO_ROOT / "generated" / "src" / "attio" / "_hooks" / "sdkhooks.py"
+COMMITTED_HOOKS_INIT = REPO_ROOT / "generated" / "src" / "attio" / "_hooks" / "__init__.py"
 FIXTURE_SDKHOOKS_UNPATCHED = REPO_ROOT / "tests" / "fixtures" / "sdkhooks_unpatched.txt"
 FIXTURE_HOOKS_INIT_UNPATCHED = REPO_ROOT / "tests" / "fixtures" / "hooks_init_unpatched.txt"
 
@@ -93,7 +93,7 @@ def test_committed_hooks_init_reexports_registration() -> None:
 
 
 # ---------------------------------------------------------------------------
-# Post-generation patch: src/attio/_hooks/sdkhooks.py
+# Post-generation patch: generated/src/attio/_hooks/sdkhooks.py
 # ---------------------------------------------------------------------------
 
 
@@ -169,7 +169,7 @@ def test_init_hooks_wiring_output_compiles(tmp_path: Path) -> None:
 
 
 # ---------------------------------------------------------------------------
-# Post-generation patch: src/attio/_hooks/__init__.py
+# Post-generation patch: generated/src/attio/_hooks/__init__.py
 # ---------------------------------------------------------------------------
 
 

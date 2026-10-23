@@ -349,7 +349,7 @@ class _AsyncNullCM:
 def test_generate_sdk_dagger_path_exports_and_patches(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    """The container path must run generation, export src/, and re-apply
+    """The container path must run generation, export generated/, and re-apply
     the post-generation patches."""
     import asyncio
     from types import SimpleNamespace
@@ -392,7 +392,7 @@ def test_generate_sdk_dagger_path_exports_and_patches(
     monkeypatch.setattr(PIPE, "_apply_post_generation_patches", lambda: events.append("patch"))
 
     asyncio.run(PIPE._generate_sdk(force=True, version=None, api_key_str="some-key"))
-    assert events == ["pipeline_init", "generate:force=True", "export:./src", "patch"]
+    assert events == ["pipeline_init", "generate:force=True", "export:./generated", "patch"]
 
 
 def test_generate_sdk_dagger_path_requires_api_key(

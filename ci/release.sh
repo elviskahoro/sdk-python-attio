@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Cut a new release: bump version in pyproject.toml + src/attio/_version.py
+# Cut a new release: bump version in pyproject.toml + generated/src/attio/_version.py
 # via the Dagger pipeline, commit, tag, and push. The Publish to PyPI workflow
 # fires on the tag push.
 #
@@ -59,7 +59,7 @@ fi
 # Sanity check: confirm both files agree with the requested version.
 uv run python ci/pipeline.py verify-version "${version}"
 
-git add pyproject.toml src/attio/_version.py
+git add pyproject.toml generated/src/attio/_version.py
 git commit -m "chore: bump version to ${version}"
 git tag "v${version}"
 git push origin main "v${version}"

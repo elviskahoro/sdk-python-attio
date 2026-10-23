@@ -97,30 +97,28 @@ def test_notify_if_expression_is_a_disjunction_of_known_clauses(workflow: dict) 
         assert any(re.fullmatch(p, clause) for p in allowed_patterns), clause
 
 
-def test_staging_allowlist_covers_gen_lock_generated_top_level() -> None:
-    """The workflow stages an explicit allowlist; if Speakeasy ever emits a
-    new top-level generated file that the list misses, the leftover guard
-    fails the weekly job after regeneration. This pins the list against
-    gen.lock's generatedFiles so that drift surfaces in pytest first."""
+def test_staging_allowlist_covers_generated_tree() -> None:
+    """The workflow stages an explicit allowlist; Speakeasy writes everything
+    it owns under generated/ (gen.lock lives there too), so staging that one
+    directory must cover every file gen.lock claims. This pins the list so
+    drift surfaces in pytest before the weekly job's leftover guard fails."""
     import re
 
-    gen_lock = (REPO_ROOT / ".speakeasy" / "gen.lock").read_text(encoding="utf-8")
-    lock_match = re.search(r"generatedFiles:\n((?:  - .*\n)+)", gen_lock)
-    assert lock_match, "gen.lock generatedFiles section not found"
-    generated = {line.strip("- \n") for line in lock_match.group(1).splitlines()}
-    top_level = {f for f in generated if "/" not in f}
+    gen_lock = (REPO_ROOT / "generated" / ".speakeasy" / "gen.lock").read_text(
+        encoding="utf-8",
+    )
+    assert re.search(r"generatedFiles:\n((?:  - .*\n)+)", gen_lock), (
+        "gen.lock generatedFiles section not found"
+    )
 
     workflow_text = WORKFLOW.read_text(encoding="utf-8")
     staging_match = re.search(r"for p in ([\s\S]+?); do", workflow_text)
     assert staging_match, "staging allowlist loop not found in the workflow"
-    # The list spans a shell line continuation; split() leaves a stray
-    # backslash token, so drop it.
     listed = {
         token for token in staging_match.group(1).split() if token != chr(92)
     }
 
-    missing = top_level - listed - {"pyrightconfig.json"}  # gitignored
-    assert not missing, f"generated top-level files not staged: {missing}"
+    assert "generated" in listed, "generated/ is not staged by the workflow"
 
 
 def test_notify_if_truth_table() -> None:
@@ -244,7 +242,7 @@ def test_commit_guard_ignores_staged_entries_and_flags_leftovers(workflow: dict)
 
     porcelain_shapes = {
         # Staged with a clean worktree — exactly what regeneration produced.
-        "M  src/attio/sdk.py": False,
+        "M  generated/src/attio/sdk.py": False,
         "A  docs/models/new.md": False,
         "D  docs/models/old.md": False,
         "R  docs/a.md -> docs/b.md": False,
@@ -252,7 +250,7 @@ def test_commit_guard_ignores_staged_entries_and_flags_leftovers(workflow: dict)
         # guard exists to catch.
         "?? stray-cache/": True,
         " M pyproject.toml": True,
-        "MM src/attio/sdk.py": True,
+        "MM generated/src/attio/sdk.py": True,
     }
     for line, is_leftover in porcelain_shapes.items():
         excluded_by_guard = re.search(pattern, line) is not None

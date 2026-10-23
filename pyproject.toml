@@ -23,7 +23,8 @@ dev = [
 ]
 
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["generated/src", "."]
+include = ["attio*"]
 
 [tool.setuptools.package-data]
 "*" = ["py.typed"]
@@ -34,12 +35,12 @@ build-backend = "setuptools.build_meta"
 
 [tool.pytest.ini_options]
 asyncio_default_fixture_loop_scope = "function"
-pythonpath = ["src"]
+pythonpath = ["generated/src", "."]
 
 [tool.mypy]
 disable_error_code = "misc"
 explicit_package_bases = true
-mypy_path = "src"
+mypy_path = "generated/src:."
 
 [[tool.mypy.overrides]]
 module = "typing_inspect"
