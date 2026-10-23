@@ -13,7 +13,6 @@ Type-safe Python client for the [Attio API](https://developers.attio.com/), with
 <!-- Start Summary [summary] -->
 ## Summary
 
-
 <!-- End Summary [summary] -->
 
 <!-- Start Table of Contents [toc] -->
@@ -21,6 +20,7 @@ Type-safe Python client for the [Attio API](https://developers.attio.com/), with
 <!-- $toc-max-depth=2 -->
 * [Attio Python SDK](#attio-python-sdk)
   * [SDK Installation](#sdk-installation)
+  * [Standalone CLI](#standalone-cli)
   * [IDE Support](#ide-support)
   * [SDK Example Usage](#sdk-example-usage)
   * [Authentication](#authentication)
@@ -41,12 +41,9 @@ Type-safe Python client for the [Attio API](https://developers.attio.com/), with
 
 > [!TIP]
 > To finish publishing your SDK to PyPI you must [run your first generation action](https://www.speakeasy.com/docs/github-setup#step-by-step-guide).
-
-
-> [!NOTE]
-> **Python version upgrade policy**
 >
-> Once a Python version reaches its [official end of life date](https://devguide.python.org/versions/), a 3-month grace period is provided for users to upgrade. Following this grace period, the minimum python version supported in the SDK will be updated.
+> [!NOTE]
+> **Python version upgrade policy**: Once a Python version reaches its [official end of life date](https://devguide.python.org/versions/), a 3-month grace period is provided for users to upgrade. Following this grace period, the minimum python version supported in the SDK will be updated.
 
 The SDK can be installed with *uv*, *pip*, or *poetry* package managers.
 
@@ -105,6 +102,77 @@ sdk = SDK(
 Once that is saved to a file, you can run it with `uv run script.py` where
 `script.py` can be replaced with the actual file name.
 <!-- End SDK Installation [installation] -->
+
+<!-- Start Standalone CLI [cli] -->
+## Standalone CLI
+
+Install and run the agent-friendly CLI without cloning this repository:
+
+```bash
+export ATTIO_API_KEY="your-attio-api-key"
+uvx gtm-attio people upsert person@example.com \
+  --first-name Ada --last-name Lovelace
+```
+
+The CLI also reads `ATTIO_API_KEY` from `.env.local` or `.env` in the current
+directory. Environment variables take precedence. Search/list commands are
+read-only. Add, update, and upsert commands write directly to Attio without a
+confirmation prompt; every command prints a JSON reliability envelope.
+
+Both the `attio` and `gtm-attio` distribution artifacts expose the
+`gtm-attio` command for compatibility. They are alternate names for packages
+that provide the same `attio` import namespace; install only one distribution
+in a Python environment.
+
+People commands use email as their identity key. `search` is read-only; `add`
+fails if the email already exists; `update` requires exactly one matching
+person. `upsert` creates or updates as before. Common write options include
+repeatable `--add-email`, `--replace-emails`, `--job-title`, `--phone`,
+`--phone-country-code`, `--linkedin`, `--company` (company domain), `--notes`,
+and `--strict`. Prefix international phone numbers with `+`; local numbers
+require `--phone-country-code` (ISO-3166-1 alpha-2). Pair `--location` with
+`--country-code`; `--location-mode city|raw` controls its mapping.
+
+```bash
+uvx gtm-attio people upsert --json '{"email":"person@example.com","first_name":"Ada","job_title":"Mathematician"}'
+```
+
+```bash
+uvx gtm-attio people search person@example.com
+uvx gtm-attio people add person@example.com --first-name Ada --last-name Lovelace
+uvx gtm-attio people update person@example.com --job-title Mathematician
+```
+
+Company commands use validated JSON. The `domain` is the exact identity and is
+written to Attio's `domains` attribute; `values` contains other Attio record
+attribute values in the API's `{attribute_slug: [value, ...]}` format. Add
+rejects an existing domain and update requires exactly one match:
+
+```bash
+uvx gtm-attio companies search --json '{"domain":"example.com"}'
+uvx gtm-attio companies add --json '{"domain":"example.com","values":{"name":[{"value":"Example Inc"}]}}'
+uvx gtm-attio companies update --json '{"domain":"example.com","values":{"description":["Prospect"]}}'
+```
+
+Notes attach to one existing record. List is read-only; add and update write
+immediately. Updates target a note ID and only replace the supplied fields:
+
+```bash
+uvx gtm-attio notes list --json '{"parent_object":"people","parent_record_id":"RECORD_ID"}'
+uvx gtm-attio notes add --json '{"parent_object":"people","parent_record_id":"RECORD_ID","title":"Discovery call","content":"Discussed the launch plan.","format":"plaintext"}'
+uvx gtm-attio notes update --json '{"note_id":"NOTE_ID","content":"Updated call notes."}'
+```
+
+The output envelope reports `success`, `partial_success`, `action`,
+`record_id`, `warnings`, `skipped_fields`, `errors`, and `meta`. Missing
+optional workspace attributes are retried without that field and reported as
+warnings for people writes. Search/list results are in `meta.results`. Invalid
+optional person values are skipped and reported; `--strict` turns those
+mismatches and invalid values into errors. Ambiguous person/company writes
+always fail without modifying a record.
+Successful and partial-success operations exit 0, runtime failures exit 1,
+and command-line usage errors exit 2.
+<!-- End Standalone CLI [cli] -->
 
 <!-- Start IDE Support [idesupport] -->
 ## IDE Support
@@ -172,6 +240,7 @@ This SDK supports the following security scheme globally:
 | `oauth2` | oauth2 | OAuth2 token |
 
 To authenticate with the API the `oauth2` parameter must be set when initializing the SDK client instance. For example:
+
 ```python
 from attio import SDK
 
@@ -435,6 +504,7 @@ with SDK(
 Some of the endpoints in this SDK support retries. If you use the SDK without any configuration, it will fall back to the default retry strategy provided by the API. However, the default retry strategy can be overridden on a per-operation basis, or across the entire SDK.
 
 To change the default retry strategy for a single API call, simply provide a `RetryConfig` object to the call:
+
 ```python
 from attio import SDK
 from attio.utils import BackoffStrategy, RetryConfig
@@ -453,6 +523,7 @@ with SDK(
 ```
 
 If you'd like to override the default retry strategy for all operations that support retries, you can use the `retry_config` optional parameter when initializing the SDK:
+
 ```python
 from attio import SDK
 from attio.utils import BackoffStrategy, RetryConfig
@@ -486,6 +557,7 @@ with SDK(
 | `err.data`         |                  | Optional. Some errors may contain structured data. [See Error Classes](#error-classes). |
 
 ### Example
+
 ```python
 from attio import SDK, errors
 
@@ -523,6 +595,7 @@ with SDK(
 ```
 
 ### Error Classes
+
 **Primary error:**
 * [`SDKError`](./src/attio/errors/sdkerror.py): The base class for HTTP error responses.
 
@@ -534,7 +607,6 @@ with SDK(
 * [`httpx.RequestError`](https://www.python-httpx.org/exceptions/#httpx.RequestError): Base class for request errors.
     * [`httpx.ConnectError`](https://www.python-httpx.org/exceptions/#httpx.ConnectError): HTTP client was unable to make a request to a server.
     * [`httpx.TimeoutException`](https://www.python-httpx.org/exceptions/#httpx.TimeoutException): HTTP request timed out.
-
 
 **Inherit from [`SDKError`](./src/attio/errors/sdkerror.py)**:
 * [`QuotaExceededError`](./src/attio/errors/quotaexceedederror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
@@ -720,6 +792,7 @@ with SDK(
 ### Override Server URL Per-Client
 
 The default server can be overridden globally by passing a URL to the `server_url: str` optional parameter when initializing the SDK client instance. For example:
+
 ```python
 from attio import SDK
 
@@ -745,6 +818,7 @@ Depending on whether you are using the sync or async version of the SDK, you can
 This allows you to wrap the client with your own custom logic, such as adding custom headers, logging, or error handling, or you can just pass an instance of `httpx.Client` or `httpx.AsyncClient` directly.
 
 For example, you could specify a header for every request that this sdk makes as follows:
+
 ```python
 from attio import SDK
 import httpx
@@ -753,7 +827,8 @@ http_client = httpx.Client(headers={"x-custom-header": "someValue"})
 s = SDK(client=http_client)
 ```
 
-or you could wrap the client with your own custom logic:
+Or you could wrap the client with your own custom logic:
+
 ```python
 from attio import SDK
 from attio.httpclient import AsyncHttpClient
@@ -816,9 +891,11 @@ class CustomClient(AsyncHttpClient):
 
 s = SDK(async_client=CustomClient(httpx.AsyncClient()))
 ```
+
 ### httpx2 (Pydantic's httpx fork)
 
 [httpx2](https://httpx2.pydantic.dev/) is Pydantic's maintained fork of `httpx`. To run this SDK on httpx2, call `alias_httpx()` at your program's entry point, before importing the SDK, so every `import httpx` — including the ones inside the SDK — resolves to `httpx2`:
+
 ```python
 import httpx2
 
@@ -865,6 +942,7 @@ async def amain():
 You can setup your SDK to emit debug logs for SDK requests and responses.
 
 You can pass your own logger class directly into your SDK.
+
 ```python
 from attio import SDK
 import logging

@@ -1,0 +1,42 @@
+name: Tests
+
+# Test gate for the Trunk Merge Queue (merge.required_statuses in
+# .trunk/trunk.yaml). Same trigger coverage as trunk-check.yml -- every PR
+# targeting main, the queue's draft test PRs (Draft PR mode), and the
+# queue's trunk-merge/** branches (Push-Triggered mode); see the comments
+# there. Deliberately NOT path-filtered: a path-filtered required check
+# does not report on every PR and would deadlock the queue. Fork PRs get
+# full coverage too -- the suite needs no secrets.
+#
+# `uv sync` + `uv run pytest -q` is the same path the scheduled
+# spec-update-check workflow runs after regenerating the SDK.
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches:
+      - main
+      - "trunk-merge/**"
+      - "trunk-merge-beta/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+
+      - uses: astral-sh/setup-uv@94527f2e458b27549849d47d273a16bec83a01e9  # v7
+
+      - name: Sync dependencies
+        run: uv sync
+
+      - name: Run tests
+        run: uv run pytest -q

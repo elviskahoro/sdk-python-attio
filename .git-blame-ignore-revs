@@ -1,0 +1,21 @@
+# Commits to ignore in git blame
+# Format: one commit hash per line, optionally with a comment
+
+# e3f1ab1 - Apply trunk fmt and autofix linting issues
+e3f1ab1
+
+# 66401778c70dbb68609943cf6468444462206f8f - Fix trunk check linting issues
+# Formatting and code style fixes that don't affect logic
+66401778c70dbb68609943cf6468444462206f8f
+
+# 0e623c38e1e816fedd2065e6b674a04f8d8e7f6e - Fix ruff and bandit findings in ci/pipeline.py (#51)
+0e623c38e1e816fedd2065e6b674a04f8d8e7f6e
+
+# 27204ad86f248a15dd2eb08aafac42457b2cebaa - Fix trunk check linting issues
+27204ad86f248a15dd2eb08aafac42457b2cebaa
+
+# a09d8c7327bb8837d1968753e740f27905c0495e - Fix trunk check linting issues (#49)
+a09d8c7327bb8837d1968753e740f27905c0495e
+
+# ab7fe53368bb95f5115f014d9150082b7528b430 - Pad inline YAML comments with two spaces via yamlfmt
+ab7fe53368bb95f5115f014d9150082b7528b430

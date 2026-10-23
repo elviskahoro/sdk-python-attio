@@ -236,8 +236,8 @@ async def fetch_latest_spec() -> str:
 def _has_local_speakeasy_auth() -> bool:
     """Return whether the installed Speakeasy CLI has an authenticated session."""
     try:
-        result = subprocess.run(
-            ["speakeasy", "auth", "status"],
+        result = subprocess.run(  # noqa: S603 - fixed argv, no user input  # nosec B603 B607
+            ["speakeasy", "auth", "status"],  # noqa: S607 - PATH lookup intended
             check=False,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
@@ -490,7 +490,7 @@ def _apply_post_generation_patches() -> None:
     the manual edits.
     """
     script = Path(__file__).resolve().parent / "post_generate_patch.py"
-    subprocess.run([sys.executable, str(script)], check=True)
+    subprocess.run([sys.executable, str(script)], check=True)  # noqa: S603 - own script
 
 
 def _publish_artifacts() -> None:
@@ -500,11 +500,10 @@ def _publish_artifacts() -> None:
     passed as a command-line token or copied into build artifacts.
     """
     if not Path("dist").is_dir():
-        raise RuntimeError(
-            "dist/ does not exist; run the build command before publishing",
-        )
-    subprocess.run(
-        [
+        msg = "dist/ does not exist; run the build command before publishing"
+        raise RuntimeError(msg)
+    subprocess.run(  # noqa: S603 - fixed argv, token via env: secret  # nosec B603 B607
+        [  # noqa: S607 - PATH lookup intended
             "dagger",
             "-m",
             _PYPI_PUBLISHER_MODULE,
@@ -830,7 +829,8 @@ async def cmd_build() -> None:
 async def cmd_publish() -> None:
     """Build once and publish both SDK distributions with the shared module."""
     if "PYPI_TOKEN" not in os.environ:
-        raise RuntimeError("PYPI_TOKEN environment variable not set")
+        msg = "PYPI_TOKEN environment variable not set"
+        raise RuntimeError(msg)
     await cmd_build()
     _publish_artifacts()
 
@@ -880,7 +880,8 @@ async def cmd_ci(
 
     if publish:
         if "PYPI_TOKEN" not in os.environ:
-            raise RuntimeError("PYPI_TOKEN environment variable not set")
+            msg = "PYPI_TOKEN environment variable not set"
+            raise RuntimeError(msg)
         _publish_artifacts()
 
 

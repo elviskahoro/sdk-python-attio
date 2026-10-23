@@ -99,6 +99,46 @@ def test_local_speakeasy_usable(
     assert PIPE._local_speakeasy_usable() is expected
 
 
+def test_sync_update_workflow_writes_repo_workflow_not_cwd(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    repo = tmp_path / "repo"
+    repo_workflow = repo / ".speakeasy" / "workflow.yaml"
+    repo_workflow.parent.mkdir(parents=True)
+    repo_workflow.write_text(
+        "location: openapi/api-000.json\n"
+        "output: openapi/api-000-overlay.json\n",
+        encoding="utf-8",
+    )
+
+    elsewhere = tmp_path / "elsewhere"
+    cwd_workflow = elsewhere / ".speakeasy" / "workflow.yaml"
+    cwd_workflow.parent.mkdir(parents=True)
+    cwd_workflow.write_text(
+        "location: openapi/api-000.json\n"
+        "output: openapi/api-000-overlay.json\n",
+        encoding="utf-8",
+    )
+
+    monkeypatch.setattr(PIPE, "_WORKFLOW_YAML", repo_workflow)
+    monkeypatch.chdir(elsewhere)
+
+    PIPE._sync_update_workflow(
+        "openapi/api-111-overlay.json",
+        "openapi/api-111.json",
+    )
+
+    assert repo_workflow.read_text(encoding="utf-8") == (
+        "location: openapi/api-111.json\n"
+        "output: openapi/api-111-overlay.json\n"
+    )
+    assert cwd_workflow.read_text(encoding="utf-8") == (
+        "location: openapi/api-000.json\n"
+        "output: openapi/api-000-overlay.json\n"
+    )
+
+
 def test_check_openapi_forwards_flags_to_spec_diff(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:

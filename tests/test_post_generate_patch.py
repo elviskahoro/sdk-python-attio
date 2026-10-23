@@ -122,6 +122,87 @@ def test_patch_is_idempotent_after_application(tmp_path: Path) -> None:
     assert target.read_text() == first_text
 
 
+def test_project_script_is_restored_idempotently(tmp_path: Path) -> None:
+    target = tmp_path / "pyproject.toml"
+    target.write_text('[project]\nname = "attio"\n\n[tool.test]\n')
+
+    assert PGP.ensure_project_script(target) is True
+    assert 'gtm-attio = "attio_cli.main:main"' in target.read_text()
+    assert PGP.ensure_project_script(target) is False
+
+
+def test_existing_project_script_is_corrected(tmp_path: Path) -> None:
+    target = tmp_path / "pyproject.toml"
+    target.write_text(
+        '[project.scripts]\ngtm-attio = "old.module:main"\n\n[tool.test]\n'
+    )
+
+    assert PGP.ensure_project_script(target) is True
+    assert target.read_text().count("gtm-attio =") == 1
+    assert 'gtm-attio = "attio_cli.main:main"' in target.read_text()
+
+
+def test_readme_cli_section_is_restored_idempotently(tmp_path: Path) -> None:
+    target = tmp_path / "README.md"
+    target.write_text(
+        "## Table of Contents\n"
+        "  * [SDK Installation](#sdk-installation)\n\n"
+        "<!-- End SDK Installation [installation] -->\n"
+        "## IDE Support\n"
+    )
+
+    assert PGP.ensure_readme_cli_section(target) is True
+    content = target.read_text()
+    assert "uvx gtm-attio people upsert" in content
+    assert "  * [Standalone CLI](#standalone-cli)" in content
+    assert PGP.ensure_readme_cli_section(target) is False
+
+
+def test_existing_readme_section_is_replaced_in_place(tmp_path: Path) -> None:
+    target = tmp_path / "README.md"
+    target.write_text(
+        "## Table of Contents\n"
+        "  * [SDK Installation](#sdk-installation)\n\n"
+        "<!-- Start Standalone CLI [cli] -->\nold section\n"
+        "<!-- End Standalone CLI [cli] -->\n"
+    )
+
+    assert PGP.ensure_readme_cli_section(target) is True
+    content = target.read_text()
+    assert "old section" not in content
+    assert content.count(PGP.README_CLI_START) == 1
+    assert "  * [Standalone CLI](#standalone-cli)" in content
+
+
+def test_readme_section_without_installation_marker_is_appended(tmp_path: Path) -> None:
+    target = tmp_path / "README.md"
+    target.write_text("# SDK\n\nIntroductory content.\n")
+
+    assert PGP.ensure_readme_cli_section(target) is True
+    content = target.read_text()
+    assert content.startswith("# SDK\n")
+    assert content.endswith(PGP.README_CLI_SECTION + "\n")
+
+
+def test_existing_readme_section_adds_missing_toc_link(tmp_path: Path) -> None:
+    target = tmp_path / "README.md"
+    target.write_text(
+        "## Table of Contents\n"
+        "  * [SDK Installation](#sdk-installation)\n\n"
+        + PGP.README_CLI_SECTION
+    )
+
+    assert PGP.ensure_readme_cli_section(target) is True
+    assert target.read_text().count("  * [Standalone CLI](#standalone-cli)") == 1
+
+
+def test_readme_cli_section_matches_regeneration_template() -> None:
+    readme = (REPO_ROOT / "README.md").read_text()
+    start = readme.index(PGP.README_CLI_START)
+    end = readme.index(PGP.README_CLI_END, start) + len(PGP.README_CLI_END)
+    assert readme[start:end] == PGP.README_CLI_SECTION
+
+
 def test_patch_output_behaves_correctly(tmp_path: Path) -> None:
     target = tmp_path / "get_v2_selfop.py"
     target.write_text(FIXTURE_UNPATCHED.read_text())
