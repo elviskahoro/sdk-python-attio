@@ -200,6 +200,10 @@ lint:
       paths:
         - openapi/**
         - .speakeasy/out.openapi.yaml
+        - .github/workflows/pullfrog.yml
+    - linters: [yamllint]
+      paths:
+        - .speakeasy/gen.yaml
     - linters: [markdown-link-check, markdownlint-cli2, trufflehog]
       paths:
         - generated/docs/**
