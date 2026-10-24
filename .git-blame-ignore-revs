@@ -23,3 +23,7 @@ ab7fe53368bb95f5115f014d9150082b7528b430
 # 301bd81d914a6d14a84850ca9544ee714a531be0 - Move generated SDK to generated/ and CLI to top-level attio_cli/ (#60)
 # Pure path moves; ignoring it keeps blame pointing at the original authors.
 301bd81d914a6d14a84850ca9544ee714a531be0
+
+# c2237bb48694a2ca9007ca47aa38de723981599b - Format attio_cli: trailing commas, import organization, line wrapping
+# Formatting-only changes that don't affect logic.
+c2237bb48694a2ca9007ca47aa38de723981599b
