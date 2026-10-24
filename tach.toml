@@ -45,7 +45,15 @@ file_dependencies = ["tests/**", "pyproject.toml", "uv.lock", "tach.toml"]
 # - httpcore is pinned in [project].dependencies as a floor for httpx but is
 #   never imported directly
 # - _attio_cli_helpers is a local test helper module
-exclude = ["attio", "pytest", "yaml", "pyyaml", "dagger", "httpcore", "_attio_cli_helpers"]
+exclude = [
+  "attio",
+  "pytest",
+  "yaml",
+  "pyyaml",
+  "dagger",
+  "httpcore",
+  "_attio_cli_helpers",
+]
 
 # Hand-written CLI. Uses the SDK (`attio`, external to the graph).
 [[modules]]
