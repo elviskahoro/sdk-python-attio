@@ -19,3 +19,7 @@ a09d8c7327bb8837d1968753e740f27905c0495e
 
 # ab7fe53368bb95f5115f014d9150082b7528b430 - Pad inline YAML comments with two spaces via yamlfmt
 ab7fe53368bb95f5115f014d9150082b7528b430
+
+# 301bd81d914a6d14a84850ca9544ee714a531be0 - Move generated SDK to generated/ and CLI to top-level attio_cli/ (#60)
+# Pure path moves; ignoring it keeps blame pointing at the original authors.
+301bd81d914a6d14a84850ca9544ee714a531be0
