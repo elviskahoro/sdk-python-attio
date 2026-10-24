@@ -37,27 +37,27 @@ class PersonUpsertQuery(BaseModel):
     @model_validator(mode="after")
     def validate_composite_location(self) -> PersonUpsertQuery:
         if self.location and not self.country_code:
-            raise ValueError(
+            msg = (
                 "--country-code is required with --location so Attio receives "
                 "the complete primary_location value. Use an ISO-3166-1 "
-                "alpha-2 code such as US or GB.",
+                "alpha-2 code such as US or GB."
             )
+            raise ValueError(msg)
         if self.country_code is not None and not re.fullmatch(
             r"[A-Za-z]{2}",
             self.country_code,
         ):
-            raise ValueError(
-                "country_code must be a two-letter ISO-3166-1 alpha-2 code",
-            )
+            msg = "country_code must be a two-letter ISO-3166-1 alpha-2 code"
+            raise ValueError(msg)
         if self.phone_country_code is not None and not re.fullmatch(
             r"[A-Za-z]{2}",
             self.phone_country_code,
         ):
-            raise ValueError(
-                "phone_country_code must be a two-letter ISO-3166-1 alpha-2 code",
-            )
+            msg = "phone_country_code must be a two-letter ISO-3166-1 alpha-2 code"
+            raise ValueError(msg)
         if not self.email:
-            raise ValueError("email must not be empty")
+            msg = "email must not be empty"
+            raise ValueError(msg)
         return self
 
 
@@ -72,11 +72,11 @@ class CompanyPayload(BaseModel):
     @model_validator(mode="after")
     def validate_domain(self) -> CompanyPayload:
         if not self.domain.strip() or "." not in self.domain.strip():
-            raise ValueError("domain must be a fully qualified company domain")
+            msg = "domain must be a fully qualified company domain"
+            raise ValueError(msg)
         if "domains" in self.values:
-            raise ValueError(
-                "values.domains is reserved for the domain identity field",
-            )
+            msg = "values.domains is reserved for the domain identity field"
+            raise ValueError(msg)
         return self
 
 
@@ -116,5 +116,6 @@ class NoteUpdatePayload(BaseModel):
     @model_validator(mode="after")
     def require_update_fields(self) -> NoteUpdatePayload:
         if self.title is None and self.content is None and self.format is None:
-            raise ValueError("at least one of title, content, or format is required")
+            msg = "at least one of title, content, or format is required"
+            raise ValueError(msg)
         return self

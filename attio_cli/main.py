@@ -7,11 +7,13 @@ import json
 import os
 import re
 import sys
-from collections.abc import Sequence
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any, cast
 
 from attio import SDK
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 from attio._version import __version__
 from pydantic import ValidationError
 
@@ -287,7 +289,7 @@ def _input_from_args(args: argparse.Namespace) -> PersonUpsertQuery:
     )
 
 
-def main(argv: Sequence[str] | None = None) -> int:
+def main(argv: "Sequence[str] | None" = None) -> int:
     parser = _parser()
     args = parser.parse_args(argv)
     result: dict[str, Any] | None = None
@@ -340,29 +342,35 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     try:
         if args.resource == "people" and args.operation == "upsert":
-            result = execute_upsert(api_key, payload)
+            result = execute_upsert(api_key, cast("PersonUpsertQuery", payload))
         else:
             with SDK(oauth2=api_key) as client:
                 if args.resource == "people":
                     if args.operation == "search":
                         result = search_people(args.email, client)
                     elif args.operation == "add":
-                        result = add_person(payload, client)
+                        result = add_person(cast("PersonUpsertQuery", payload), client)
                     else:
-                        result = update_person(payload, client)
+                        result = update_person(
+                            cast("PersonUpsertQuery", payload),
+                            client,
+                        )
                 elif args.resource == "companies":
                     if args.operation == "search":
-                        result = search_companies(payload, client)
+                        result = search_companies(
+                            cast("CompanyPayload", payload),
+                            client,
+                        )
                     elif args.operation == "add":
-                        result = add_company(payload, client)
+                        result = add_company(cast("CompanyPayload", payload), client)
                     else:
-                        result = update_company(payload, client)
+                        result = update_company(cast("CompanyPayload", payload), client)
                 elif args.operation == "list":
-                    result = list_notes(payload, client)
+                    result = list_notes(cast("NoteListPayload", payload), client)
                 elif args.operation == "add":
-                    result = add_note(payload, client)
+                    result = add_note(cast("NoteAddPayload", payload), client)
                 else:
-                    result = update_note(payload, client)
+                    result = update_note(cast("NoteUpdatePayload", payload), client)
     except Exception as exc:  # API/SDK failures are represented in the envelope.
         _emit(error_envelope(exc))
         return 1
