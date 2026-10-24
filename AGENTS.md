@@ -123,7 +123,7 @@ This SDK is generated using Speakeasy from an OpenAPI spec.
 6. **Review generated changes**:
    - Check `git diff` for new/modified SDK methods in `generated/src/attio/`
    - Verify new models in `generated/src/attio/models/`
-   - Check for any type errors: `uv run mypy src/ generated/src/`
+   - Check for any type errors: `uv run mypy generated/src/ attio_cli/`
    - Run tests: `uv run pytest -q`
    - Ensure the package still builds: `uv build`
    - Confirm `pyproject.toml`'s dev group still contains `dagger-io`,

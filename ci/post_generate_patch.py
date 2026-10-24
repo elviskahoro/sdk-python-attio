@@ -460,7 +460,7 @@ def ensure_hooks_package_reexport(path: Path) -> bool:
     anchor = "from .types import *"
     if anchor not in text:
         msg = (
-            "the generated generated/src/attio/_hooks/__init__.py no longer has the "
+            "generated/src/attio/_hooks/__init__.py no longer has the "
             "expected `from .types import *` anchor; the post-generation "
             "patch must be updated for the new generated layout."
         )
