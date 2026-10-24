@@ -1,8 +1,81 @@
-[build]
-strict = false
+# Module boundaries, enforced by `tach check` (via Trunk). Keep this strict:
+# every module lists exactly the modules it may import, nothing else.
+#
+# generated/ (the Speakeasy SDK, import name `attio`) is deliberately outside
+# the module graph. Tach is flaky when generated/src and the repo root are both
+# source roots, so `attio` is treated as a third-party package here and its
+# isolation from hand-written code is enforced by
+# tests/test_generated_isolation.py instead.
+source_roots = ["."]
+exclude = [
+  "generated/**",
+  "tests/fixtures/**",
+  ".venv/**",
+  ".trunk/**",
+  ".speakeasy/**",
+  "openapi/**",
+  "tmp/**",
+]
 
+forbid_circular_dependencies = true
+# Fail when depends_on lists declare imports the code does not make.
+exact = true
+# Every file under source_roots must belong to a configured module.
+root_module = "forbid"
+# Enforce TYPE_CHECKING imports too.
+ignore_type_checking_imports = false
+# Treat importlib-style string imports as real dependencies.
+include_string_imports = true
+# Layers do not imply free depends_on: every edge must be explicit.
+layers_explicit_depends_on = true
+layers = ["tests", "edge", "tooling"]
+
+[rules]
+unused_ignore_directives = "error"
+require_ignore_directive_reasons = "error"
+unused_external_dependencies = "error"
+
+[cache]
+file_dependencies = ["tests/**", "pyproject.toml", "uv.lock", "tach.toml"]
+
+[external]
+# Third-party imports tach cannot map to [project].dependencies:
+# - attio is this project's own generated SDK (outside the module graph)
+# - dev-only tooling lives in [dependency-groups].dev, which tach does not read
+# - httpcore is pinned in [project].dependencies as a floor for httpx but is
+#   never imported directly
+# - _attio_cli_helpers is a local test helper module
+exclude = [
+  "attio",
+  "pytest",
+  "yaml",
+  "pyyaml",
+  "dagger",
+  "httpcore",
+  "_attio_cli_helpers",
+]
+
+# Hand-written CLI. Uses the SDK (`attio`, external to the graph).
 [[modules]]
-path = "src/attio_cli"
+path = "attio_cli"
+layer = "edge"
+visibility = ["tests"]
+depends_on = []
 
+# Release and generation tooling. Standalone.
 [[modules]]
 path = "ci"
+layer = "tooling"
+visibility = ["tests"]
+depends_on = []
+
+# Test suite: may reach the CLI, nothing reaches it.
+[[modules]]
+path = "tests"
+layer = "tests"
+visibility = []
+depends_on = ["attio_cli"]
+
+[[interfaces]]
+from = ['attio_cli']
+expose = ["(main|people|query|workflows)(\\..*)?"]

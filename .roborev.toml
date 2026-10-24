@@ -7,11 +7,11 @@
 agent = "claude-code"
 
 review_guidelines = """
-- src/attio/ is FULLY GENERATED code (Speakeasy). Do not raise findings against
+- generated/src/attio/ is FULLY GENERATED code (Speakeasy). Do not raise findings against
   its style, patterns, or duplication — manual edits there are overwritten on
   the next regeneration. If generated output is actually wrong, the actionable
   fix belongs upstream: in overlay.yaml, .speakeasy/gen.yaml, or
-  ci/post_generate_patch.py. Review those source files; treat src/attio/ diff
+  ci/post_generate_patch.py. Review those source files; treat generated/src/attio/ diff
   hunks as regeneration output, not hand-written code to critique.
 
 - overlay.yaml intentionally strips `format: date` from ISO8601 timestamp
@@ -31,6 +31,6 @@ review_guidelines = """
   not a one-off manual pyproject edit.
 
 - The patch version in .speakeasy/gen.yaml (python.version), pyproject.toml,
-  and src/attio/_version.py is auto-bumped by speakeasy on regenerations that
+  and generated/src/attio/_version.py is auto-bumped by speakeasy on regenerations that
   produce changes. Do not flag version-bump-only hunks as suspicious.
 """

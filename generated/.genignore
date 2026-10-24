@@ -9,3 +9,11 @@
 # ci/post_generate_patch.py additionally restores the wrappers after every
 # generation in case this ignore file ever stops being honored.
 scripts/
+
+# With the target rooted at generated/, Speakeasy also emits project scaffolding
+# next to src/. The real pyproject.toml, README.md, CONTRIBUTING.md and .gitignore
+# are hand-maintained at the repo root, so never write them here.
+pyproject.toml
+README.md
+CONTRIBUTING.md
+.gitignore

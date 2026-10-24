@@ -9,7 +9,7 @@ strips from the GET /v2/self ``anyOf``. These tests pin three properties:
 * fail-fast errors when the generated layout no longer matches the anchors.
 
 ``tests/fixtures/get_v2_selfop_unpatched.txt`` is a verbatim snapshot of the
-generated ``src/attio/models/get_v2_selfop.py`` immediately after a
+generated ``generated/src/attio/models/get_v2_selfop.py`` immediately after a
 ``speakeasy run`` against the 2026-10-03 spec (which added the required
 ``token_level`` field), before the patch is applied. Refresh it whenever the
 generated model changes: copy the committed file, strip the two
@@ -30,7 +30,7 @@ import pytest
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 PATCH_SCRIPT = REPO_ROOT / "ci" / "post_generate_patch.py"
-COMMITTED_MODEL = REPO_ROOT / "src" / "attio" / "models" / "get_v2_selfop.py"
+COMMITTED_MODEL = REPO_ROOT / "generated" / "src" / "attio" / "models" / "get_v2_selfop.py"
 FIXTURE_UNPATCHED = REPO_ROOT / "tests" / "fixtures" / "get_v2_selfop_unpatched.txt"
 
 ACTIVE_PAYLOAD = {
@@ -365,7 +365,7 @@ def test_restore_script_wrappers_fails_when_implementation_missing(
 def test_committed_script_wrappers_are_canonical() -> None:
     """The repo's ``scripts/*.sh`` must stay byte-identical to the canonical
     wrapper template, regardless of which generation path last ran — the
-    Dagger path exports only ``src/``, so this catches any drift the
+    Dagger path exports only ``generated/``, so this catches any drift the
     post-generation restoration never gets a chance to fix."""
     for wrapper, impl in (
         (REPO_ROOT / "scripts" / "publish.sh", "ci/publish.sh"),

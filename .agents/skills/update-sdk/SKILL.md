@@ -56,16 +56,16 @@ If Attio added new endpoints or changed schema indices (e.g. the `oneOf[16]` pos
 speakeasy run
 ```
 
-This applies the overlay to the spec and regenerates all SDK code under `src/attio/`.
+This applies the overlay to the spec and regenerates all SDK code under `generated/src/attio/`.
 
-`speakeasy run` rewrites `src/` from scratch, so it drops the manual patches
+`speakeasy run` rewrites `generated/` from scratch, so it drops the manual patches
 that `overlay.yaml` cannot express, e.g. the GET /v2/self `active` value
 discriminators on `AttioCom` and `ResponseBody` in
-`src/attio/models/get_v2_selfop.py`, the `scripts/publish.sh` and
+`generated/src/attio/models/get_v2_selfop.py`, the `scripts/publish.sh` and
 `scripts/release.sh` wrappers, the standalone CLI entry point/docs in
 `pyproject.toml` and `README.md`, and the SDKHooks `init_hooks` wiring and
-hooks-package re-export in `src/attio/_hooks/sdkhooks.py` and
-`src/attio/_hooks/__init__.py`. Re-apply them right after regenerating so the
+hooks-package re-export in `generated/src/attio/_hooks/sdkhooks.py` and
+`generated/src/attio/_hooks/__init__.py`. Re-apply them right after regenerating so the
 tree the tests run against carries the invariant:
 
 ```bash
@@ -82,7 +82,7 @@ layout drifts, so a regeneration can no longer silently drop the invariant.
 Check what changed in the generated code:
 
 ```bash
-git diff src/attio/
+git diff generated/src/attio/
 git diff docs/
 ```
 

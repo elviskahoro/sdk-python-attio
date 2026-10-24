@@ -111,19 +111,19 @@ This SDK is generated using Speakeasy from an OpenAPI spec.
    workflow's path; pinned Dagger container otherwise), then re-applies
    `ci/post_generate_patch.py` (manual patches `overlay.yaml` cannot
    express, e.g. the GET /v2/self `active` value discriminators in
-   `src/attio/models/get_v2_selfop.py`, the `scripts/publish.sh` and
+   `generated/src/attio/models/get_v2_selfop.py`, the `scripts/publish.sh` and
    `scripts/release.sh` wrappers, the standalone CLI entry point/docs in
    `pyproject.toml` and `README.md`, and SDKHooks `init_hooks` wiring plus
-   the hooks-package re-export in `src/attio/_hooks/sdkhooks.py` and
-   `src/attio/_hooks/__init__.py`). Drop `--no-fetch` to also
-   adopt a freshly fetched spec. Note the Dagger path exports only `src/`
+   the hooks-package re-export in `generated/src/attio/_hooks/sdkhooks.py` and
+   `generated/src/attio/_hooks/__init__.py`). Drop `--no-fetch` to also
+   adopt a freshly fetched spec. Note the Dagger path exports only `generated/`
    back to the host — docs/, README, pyproject and USAGE refresh on the
    host-CLI path (the default) — and it logs that when chosen.
 
 6. **Review generated changes**:
-   - Check `git diff` for new/modified SDK methods in `src/attio/`
-   - Verify new models in `src/attio/models/`
-   - Check for any type errors: `uv run mypy src/`
+   - Check `git diff` for new/modified SDK methods in `generated/src/attio/`
+   - Verify new models in `generated/src/attio/models/`
+   - Check for any type errors: `uv run mypy generated/src/ attio_cli/`
    - Run tests: `uv run pytest -q`
    - Ensure the package still builds: `uv build`
    - Confirm `pyproject.toml`'s dev group still contains `dagger-io`,
@@ -133,12 +133,12 @@ This SDK is generated using Speakeasy from an OpenAPI spec.
      restore them and run `uv lock && uv sync`.
 
 7. **Verify the version** in `.speakeasy/gen.yaml` (`python.version`) matches
-   `pyproject.toml` and `src/attio/_version.py` (speakeasy auto-bumps the
+   `pyproject.toml` and `generated/src/attio/_version.py` (speakeasy auto-bumps the
    patch version on each regeneration with changes).
 
 ### Important Notes
 
-- The SDK is fully generated code — manual edits to `src/attio/` will be overwritten on next generation.
+- The SDK is fully generated code — manual edits to `generated/src/attio/` will be overwritten on next generation.
 - The overlay exists because Speakeasy infers `date` type from ISO8601 timestamp strings, but Attio returns timestamps as strings that should stay as `str` in Python.
 - The `list` → `list_id` renames avoid shadowing Python's built-in `list`.
 - Description-only spec changes (marketing copy) are reported by `check-openapi` but do not count as structural drift, so they do not trigger the automated workflow.

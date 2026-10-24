@@ -1,0 +1,5 @@
+# Trunk symlinks this into the pyrefly sandbox. The generated SDK (import name
+# `attio`) lives under generated/src. The plugin passes its own --search-path
+# (the repo root), which overrides `search-path` here, so list it as a
+# site-package path instead.
+site-package-path = ["generated/src"]
