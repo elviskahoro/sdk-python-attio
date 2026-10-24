@@ -18,8 +18,12 @@ OPTIONAL_FIELD_WARNING_CODES = {
     "notes": "attio_notes_field_unavailable",
     "primary_location": "attio_location_field_unavailable",
 }
-OPTIONAL_FIELD_ALIASES = {"associated_company": "company", "company": "associated_company"}
+OPTIONAL_FIELD_ALIASES = {
+    "associated_company": "company",
+    "company": "associated_company",
+}
 RECORD_QUERY_LIMIT = 50
+HTTP_NOT_FOUND = 404
 PARTIAL_WARNING_CODES = {
     "upsert_multi_match_selected_record",
     "upsert_multi_match_result_limit_reached",
@@ -27,7 +31,8 @@ PARTIAL_WARNING_CODES = {
 
 _DOMAIN_LABEL_RE = re.compile(r"^(?=.{1,63}$)[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?$")
 _LINKEDIN_PROFILE_RE = re.compile(
-    r"^https?://(?:www\.)?linkedin\.com/in/([^/?#]+)", re.IGNORECASE
+    r"^https?://(?:www\.)?linkedin\.com/in/([^/?#]+)",
+    re.IGNORECASE,
 )
 _LINKEDIN_HANDLE_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]*$")
 
@@ -56,7 +61,10 @@ def normalize_emails(candidates: Sequence[str | None]) -> list[str]:
     return result
 
 
-def _format_name(first_name: str | None, last_name: str | None) -> list[dict[str, str]] | None:
+def _format_name(
+    first_name: str | None,
+    last_name: str | None,
+) -> list[dict[str, str]] | None:
     if not first_name and not last_name:
         return None
     parts = [part for part in (first_name, last_name) if part]
@@ -65,12 +73,13 @@ def _format_name(first_name: str | None, last_name: str | None) -> list[dict[str
             "first_name": first_name or "",
             "last_name": last_name or "",
             "full_name": " ".join(parts),
-        }
+        },
     ]
 
 
 def _format_phone(
-    phone: str | None, country_code: str | None
+    phone: str | None,
+    country_code: str | None,
 ) -> list[dict[str, str]] | None:
     if not phone:
         return None
@@ -90,7 +99,11 @@ def _format_linkedin(value: str | None) -> list[str] | None:
     match = _LINKEDIN_PROFILE_RE.match(candidate)
     if match:
         return [f"https://www.linkedin.com/in/{match.group(1).rstrip('/')}"]
-    if "://" in candidate or "/" in candidate or not _LINKEDIN_HANDLE_RE.fullmatch(candidate):
+    if (
+        "://" in candidate
+        or "/" in candidate
+        or not _LINKEDIN_HANDLE_RE.fullmatch(candidate)
+    ):
         return None
     return [f"https://www.linkedin.com/in/{candidate.rstrip('/')}"]
 
@@ -147,7 +160,7 @@ def _build_optional_values(query: PersonUpsertQuery) -> dict[str, Any]:
     domain = _format_domain(query.company_domain)
     if domain:
         values["associated_company"] = [
-            {"target_object": "companies", "domains": [{"domain": domain}]}
+            {"target_object": "companies", "domains": [{"domain": domain}]},
         ]
     if query.location and query.country_code:
         parts = query.location.split(",")
@@ -171,7 +184,7 @@ def _build_optional_values(query: PersonUpsertQuery) -> dict[str, Any]:
                 "country_code": query.country_code.upper(),
                 "latitude": None,
                 "longitude": None,
-            }
+            },
         ]
     if query.notes:
         values["notes"] = [query.notes]
@@ -184,24 +197,34 @@ def _validation_warnings(
     invalid: list[tuple[str, str]] = []
     if query.linkedin is not None and _format_linkedin(query.linkedin) is None:
         invalid.append(("linkedin", "LinkedIn value must be a profile URL or handle."))
-    if query.company_domain is not None and _format_domain(query.company_domain) is None:
+    if (
+        query.company_domain is not None
+        and _format_domain(query.company_domain) is None
+    ):
         invalid.append(("company_domain", "Company value must be a valid domain."))
     if query.country_code is not None and not query.location:
         invalid.append(("country_code", "country_code is only used with --location."))
     if query.phone is not None and not query.phone.strip():
         invalid.append(("phone", "Phone number must not be empty."))
-    elif query.phone and not query.phone.strip().startswith("+") and not query.phone_country_code:
+    elif (
+        query.phone
+        and not query.phone.strip().startswith("+")
+        and not query.phone_country_code
+    ):
         invalid.append(
             (
                 "phone",
                 "A local phone number requires --phone-country-code; use +country format otherwise.",
-            )
+            ),
         )
     if query.phone_country_code is not None and (
         not query.phone or query.phone.strip().startswith("+")
     ):
         invalid.append(
-            ("phone_country_code", "phone_country_code is only used with local phone numbers.")
+            (
+                "phone_country_code",
+                "phone_country_code is only used with local phone numbers.",
+            ),
         )
 
     warnings: list[dict[str, Any]] = []
@@ -215,7 +238,7 @@ def _validation_warnings(
                 "message": f"Skipped invalid value for '{field}': {message}",
                 "field": field,
                 "retryable": False,
-            }
+            },
         )
         skipped.append({"field": field, "reason": "invalid_value"})
     return warnings, skipped
@@ -250,7 +273,7 @@ def _detect_optional_field(exc: BaseException) -> str | None:
     if status_code is None:
         status_code = payload.get("status_code")
     if (
-        status_code != 404
+        status_code != HTTP_NOT_FOUND
         or payload.get("type") != "invalid_request_error"
         or payload.get("code") != "not_found"
         or not isinstance(payload.get("message"), str)
@@ -268,7 +291,9 @@ def _detect_optional_field(exc: BaseException) -> str | None:
             rf"(?:\s+with\s+slug/id)?\s+['\"]?{re.escape(field)}['\"]?(?=\s|[.!]|$)"
         )
         if re.search(not_found_pattern, message, flags=re.IGNORECASE) or re.search(
-            cannot_find_pattern, message, flags=re.IGNORECASE
+            cannot_find_pattern,
+            message,
+            flags=re.IGNORECASE,
         ):
             return field
     return None
@@ -282,7 +307,10 @@ def _is_uniqueness_conflict(exc: BaseException) -> bool:
     return isinstance(payload, Mapping) and payload.get("code") == "uniqueness_conflict"
 
 
-def _uniqueness_conflict_error(exc: BaseException, query: PersonUpsertQuery) -> CLIError:
+def _uniqueness_conflict_error(
+    exc: BaseException,
+    query: PersonUpsertQuery,
+) -> CLIError:
     candidates = normalize_emails([query.email, *query.additional_emails])
     body = _error_body(exc).casefold()
     conflicting = next(
@@ -346,7 +374,7 @@ def _write_with_optional_fallback(
                     "message": f"Skipped optional field '{field}' due to schema mismatch.",
                     "field": field,
                     "retryable": False,
-                }
+                },
             )
             skipped.append({"field": field, "reason": "schema_mismatch"})
         else:
@@ -396,7 +424,10 @@ def _result_envelope(
         "warnings": warnings,
         "skipped_fields": skipped,
         "errors": [],
-        "meta": {"output_schema_version": "v1", "person": _person_meta(record, created=created)},
+        "meta": {
+            "output_schema_version": "v1",
+            "person": _person_meta(record, created=created),
+        },
     }
 
 
@@ -444,7 +475,10 @@ def upsert_person(query: PersonUpsertQuery, client: Any) -> dict[str, Any]:
 
         try:
             written, write_warnings, write_skipped = _write_with_optional_fallback(
-                create, core, optional, strict=query.strict
+                create,
+                core,
+                optional,
+                strict=query.strict,
             )
             skipped.extend(write_skipped)
         except Exception as exc:
@@ -468,7 +502,7 @@ def upsert_person(query: PersonUpsertQuery, client: Any) -> dict[str, Any]:
                     ),
                     "field": "record_id",
                     "retryable": False,
-                }
+                },
             )
             if len(matches) == RECORD_QUERY_LIMIT:
                 warnings.append(
@@ -481,13 +515,14 @@ def upsert_person(query: PersonUpsertQuery, client: Any) -> dict[str, Any]:
                         ),
                         "field": "record_id",
                         "retryable": False,
-                    }
+                    },
                 )
         else:
             selected = matches[0]
         record_id = _record_id(selected)
         existing = client.records.get_v2_objects_object_records_record_id_(
-            object="people", record_id=record_id
+            object="people",
+            record_id=record_id,
         )
         existing_emails = _emails_from_record(existing.data)
         email_write: list[str] | None = None
@@ -502,11 +537,11 @@ def upsert_person(query: PersonUpsertQuery, client: Any) -> dict[str, Any]:
                         "message": "Email addresses updated (--replace-emails).",
                         "field": "email_addresses",
                         "retryable": False,
-                    }
+                    },
                 )
         elif query.additional_emails:
             email_write = normalize_emails(
-                [*existing_emails, query.email, *query.additional_emails]
+                [*existing_emails, query.email, *query.additional_emails],
             )
             new = {email.casefold() for email in email_write} - {
                 email.casefold() for email in existing_emails
@@ -518,7 +553,7 @@ def upsert_person(query: PersonUpsertQuery, client: Any) -> dict[str, Any]:
                         "message": "New email address(es) merged onto existing person.",
                         "field": "email_addresses",
                         "retryable": False,
-                    }
+                    },
                 )
 
         action = "updated"
@@ -526,7 +561,9 @@ def upsert_person(query: PersonUpsertQuery, client: Any) -> dict[str, Any]:
         if query.first_name is not None or query.last_name is not None:
             existing_first_name, existing_last_name = _record_name_parts(existing.data)
             first_name = (
-                query.first_name if query.first_name is not None else existing_first_name
+                query.first_name
+                if query.first_name is not None
+                else existing_first_name
             )
             last_name = (
                 query.last_name if query.last_name is not None else existing_last_name
@@ -545,7 +582,10 @@ def upsert_person(query: PersonUpsertQuery, client: Any) -> dict[str, Any]:
 
         try:
             written, write_warnings, write_skipped = _write_with_optional_fallback(
-                update, core, optional, strict=query.strict
+                update,
+                core,
+                optional,
+                strict=query.strict,
             )
             skipped.extend(write_skipped)
         except Exception as exc:
