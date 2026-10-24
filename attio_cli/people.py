@@ -23,6 +23,7 @@ OPTIONAL_FIELD_ALIASES = {
     "company": "associated_company",
 }
 RECORD_QUERY_LIMIT = 50
+HTTP_NOT_FOUND = 404
 PARTIAL_WARNING_CODES = {
     "upsert_multi_match_selected_record",
     "upsert_multi_match_result_limit_reached",
@@ -272,7 +273,7 @@ def _detect_optional_field(exc: BaseException) -> str | None:
     if status_code is None:
         status_code = payload.get("status_code")
     if (
-        status_code != 404
+        status_code != HTTP_NOT_FOUND
         or payload.get("type") != "invalid_request_error"
         or payload.get("code") != "not_found"
         or not isinstance(payload.get("message"), str)

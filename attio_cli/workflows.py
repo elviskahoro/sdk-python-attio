@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from .people import (
     RECORD_QUERY_LIMIT,
@@ -22,13 +22,15 @@ from .people import (
     _write_with_optional_fallback,
     normalize_emails,
 )
-from .query import (
-    CompanyPayload,
-    NoteAddPayload,
-    NoteListPayload,
-    NoteUpdatePayload,
-    PersonUpsertQuery,
-)
+
+if TYPE_CHECKING:
+    from .query import (
+        CompanyPayload,
+        NoteAddPayload,
+        NoteListPayload,
+        NoteUpdatePayload,
+        PersonUpsertQuery,
+    )
 
 
 def _success_envelope(
@@ -107,7 +109,7 @@ def search_people(email: str, client: Any) -> dict[str, Any]:
     return result
 
 
-def add_person(query: PersonUpsertQuery, client: Any) -> dict[str, Any]:
+def add_person(query: "PersonUpsertQuery", client: Any) -> dict[str, Any]:
     email = query.email.strip()
     normalized = _normalized_email(email)
     query = query.model_copy(update={"email": email})
@@ -153,7 +155,7 @@ def add_person(query: PersonUpsertQuery, client: Any) -> dict[str, Any]:
     )
 
 
-def update_person(query: PersonUpsertQuery, client: Any) -> dict[str, Any]:
+def update_person(query: "PersonUpsertQuery", client: Any) -> dict[str, Any]:
     email = query.email.strip()
     normalized = _normalized_email(email)
     query = query.model_copy(update={"email": email})
@@ -263,13 +265,13 @@ def _company_domain(value: str) -> str:
     return normalized
 
 
-def _company_values(payload: CompanyPayload, domain: str) -> dict[str, list[Any]]:
+def _company_values(payload: "CompanyPayload", domain: str) -> dict[str, list[Any]]:
     values = {key: list(value) for key, value in payload.values.items()}
     values["domains"] = [{"domain": domain}]
     return values
 
 
-def search_companies(payload: CompanyPayload, client: Any) -> dict[str, Any]:
+def search_companies(payload: "CompanyPayload", client: Any) -> dict[str, Any]:
     domain = _company_domain(payload.domain)
     matches = _query_records(client, "companies", {"domains": domain})
     result = _success_envelope("searched", results=matches, identity={"domain": domain})
@@ -286,7 +288,7 @@ def search_companies(payload: CompanyPayload, client: Any) -> dict[str, Any]:
     return result
 
 
-def add_company(payload: CompanyPayload, client: Any) -> dict[str, Any]:
+def add_company(payload: "CompanyPayload", client: Any) -> dict[str, Any]:
     domain = _company_domain(payload.domain)
     matches = _query_records(client, "companies", {"domains": domain})
     if matches:
@@ -317,7 +319,7 @@ def add_company(payload: CompanyPayload, client: Any) -> dict[str, Any]:
     )
 
 
-def update_company(payload: CompanyPayload, client: Any) -> dict[str, Any]:
+def update_company(payload: "CompanyPayload", client: Any) -> dict[str, Any]:
     domain = _company_domain(payload.domain)
     if not payload.values:
         raise CLIError(
@@ -356,7 +358,7 @@ def update_company(payload: CompanyPayload, client: Any) -> dict[str, Any]:
     )
 
 
-def list_notes(payload: NoteListPayload, client: Any) -> dict[str, Any]:
+def list_notes(payload: "NoteListPayload", client: Any) -> dict[str, Any]:
     response = client.notes.get_v2_notes(
         parent_object=payload.parent_object,
         parent_record_id=payload.parent_record_id,
@@ -375,7 +377,7 @@ def list_notes(payload: NoteListPayload, client: Any) -> dict[str, Any]:
     )
 
 
-def add_note(payload: NoteAddPayload, client: Any) -> dict[str, Any]:
+def add_note(payload: "NoteAddPayload", client: Any) -> dict[str, Any]:
     response = client.notes.post_v2_notes(
         data={
             "parent_object": payload.parent_object,
@@ -395,7 +397,7 @@ def add_note(payload: NoteAddPayload, client: Any) -> dict[str, Any]:
     )
 
 
-def update_note(payload: NoteUpdatePayload, client: Any) -> dict[str, Any]:
+def update_note(payload: "NoteUpdatePayload", client: Any) -> dict[str, Any]:
     data = payload.model_dump(exclude={"note_id"}, exclude_none=True, by_alias=True)
     response = client.notes.patch_v2_notes_note_id_(note_id=payload.note_id, data=data)
     note = response.data
