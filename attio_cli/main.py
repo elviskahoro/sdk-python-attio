@@ -299,9 +299,10 @@ def _input_from_args(args: argparse.Namespace) -> PersonUpsertQuery:
     if args.json_payload is not None:
         return PersonUpsertQuery.model_validate_json(args.json_payload)
     if not args.email:
+        msg = "email is required unless --json supplies an email field."
         raise CLIError(
             "missing_email",
-            "email is required unless --json supplies an email field.",
+            msg,
             field="email",
         )
     return PersonUpsertQuery.model_validate(

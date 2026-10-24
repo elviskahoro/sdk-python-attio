@@ -80,9 +80,10 @@ def _query_records(client: Any, object_name: str, filter_: dict[str, Any]) -> li
 def _normalized_email(email: str) -> str:
     normalized = email.strip().casefold()
     if not normalized or "@" not in normalized:
+        msg = "email must be a non-empty email address"
         raise CLIError(
             "validation_error",
-            "email must be a non-empty email address",
+            msg,
             field="email",
         )
     return normalized
@@ -179,9 +180,10 @@ def update_person(query: "PersonUpsertQuery", client: Any) -> dict[str, Any]:
         or query.replace_emails
     )
     if not has_changes:
+        msg = "provide at least one field to update in addition to the email identity."
         raise CLIError(
             "validation_error",
-            "provide at least one field to update in addition to the email identity.",
+            msg,
         )
     warnings, skipped = _validation_warnings(query)
     matches = _query_records(client, "people", {"email_addresses": normalized})
@@ -223,9 +225,10 @@ def update_person(query: "PersonUpsertQuery", client: Any) -> dict[str, Any]:
             core["name"] = name
     optional = _build_optional_values(query)
     if not core and not optional:
+        msg = "No valid person fields were supplied for the update."
         raise CLIError(
             "validation_error",
-            "No valid person fields were supplied for the update.",
+            msg,
         )
 
     def update(values: dict[str, Any]) -> Any:
@@ -257,9 +260,10 @@ def update_person(query: "PersonUpsertQuery", client: Any) -> dict[str, Any]:
 def _company_domain(value: str) -> str:
     normalized = _format_domain(value)
     if normalized is None:
+        msg = "domain must be a valid fully qualified company domain."
         raise CLIError(
             "validation_error",
-            "domain must be a valid fully qualified company domain.",
+            msg,
             field="domain",
         )
     return normalized
@@ -322,22 +326,25 @@ def add_company(payload: "CompanyPayload", client: Any) -> dict[str, Any]:
 def update_company(payload: "CompanyPayload", client: Any) -> dict[str, Any]:
     domain = _company_domain(payload.domain)
     if not payload.values:
+        msg = "provide at least one company attribute in values to update."
         raise CLIError(
             "validation_error",
-            "provide at least one company attribute in values to update.",
+            msg,
             field="values",
         )
     matches = _query_records(client, "companies", {"domains": domain})
     if not matches:
+        msg = f"No company matches domain '{domain}'."
         raise CLIError(
             "record_not_found",
-            f"No company matches domain '{domain}'.",
+            msg,
             field="domain",
         )
     if len(matches) != 1:
+        msg = f"{len(matches)} companies match domain '{domain}'; update was not applied."
         raise CLIError(
             "multiple_matches",
-            f"{len(matches)} companies match domain '{domain}'; update was not applied.",
+            msg,
             field="domain",
         )
     record_id = _record_id(matches[0])
