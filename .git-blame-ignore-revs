@@ -2,7 +2,7 @@
 # Format: one commit hash per line, optionally with a comment
 
 # e3f1ab1 - Apply trunk fmt and autofix linting issues
-e3f1ab1
+e3f1ab1d6420fcbf7f554bbbcd55c5ccbb57e7ba
 
 # 66401778c70dbb68609943cf6468444462206f8f - Fix trunk check linting issues
 # Formatting and code style fixes that don't affect logic
