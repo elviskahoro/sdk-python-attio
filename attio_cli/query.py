@@ -40,17 +40,21 @@ class PersonUpsertQuery(BaseModel):
             raise ValueError(
                 "--country-code is required with --location so Attio receives "
                 "the complete primary_location value. Use an ISO-3166-1 "
-                "alpha-2 code such as US or GB."
+                "alpha-2 code such as US or GB.",
             )
         if self.country_code is not None and not re.fullmatch(
-            r"[A-Za-z]{2}", self.country_code
-        ):
-            raise ValueError("country_code must be a two-letter ISO-3166-1 alpha-2 code")
-        if self.phone_country_code is not None and not re.fullmatch(
-            r"[A-Za-z]{2}", self.phone_country_code
+            r"[A-Za-z]{2}",
+            self.country_code,
         ):
             raise ValueError(
-                "phone_country_code must be a two-letter ISO-3166-1 alpha-2 code"
+                "country_code must be a two-letter ISO-3166-1 alpha-2 code",
+            )
+        if self.phone_country_code is not None and not re.fullmatch(
+            r"[A-Za-z]{2}",
+            self.phone_country_code,
+        ):
+            raise ValueError(
+                "phone_country_code must be a two-letter ISO-3166-1 alpha-2 code",
             )
         if not self.email:
             raise ValueError("email must not be empty")
@@ -71,7 +75,7 @@ class CompanyPayload(BaseModel):
             raise ValueError("domain must be a fully qualified company domain")
         if "domains" in self.values:
             raise ValueError(
-                "values.domains is reserved for the domain identity field"
+                "values.domains is reserved for the domain identity field",
             )
         return self
 

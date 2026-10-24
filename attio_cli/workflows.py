@@ -6,8 +6,8 @@ from collections.abc import Mapping
 from typing import Any
 
 from .people import (
-    CLIError,
     RECORD_QUERY_LIMIT,
+    CLIError,
     _build_core_values,
     _build_optional_values,
     _emails_from_record,
@@ -78,14 +78,22 @@ def _query_records(client: Any, object_name: str, filter_: dict[str, Any]) -> li
 def _normalized_email(email: str) -> str:
     normalized = email.strip().casefold()
     if not normalized or "@" not in normalized:
-        raise CLIError("validation_error", "email must be a non-empty email address", field="email")
+        raise CLIError(
+            "validation_error",
+            "email must be a non-empty email address",
+            field="email",
+        )
     return normalized
 
 
 def search_people(email: str, client: Any) -> dict[str, Any]:
     normalized = _normalized_email(email)
     matches = _query_records(client, "people", {"email_addresses": normalized})
-    result = _success_envelope("searched", results=matches, identity={"email": normalized})
+    result = _success_envelope(
+        "searched",
+        results=matches,
+        identity={"email": normalized},
+    )
     if len(matches) == RECORD_QUERY_LIMIT:
         result["partial_success"] = True
         result["warnings"].append(
@@ -94,7 +102,7 @@ def search_people(email: str, client: Any) -> dict[str, Any]:
                 "message": f"The search returned its {RECORD_QUERY_LIMIT}-record limit; additional matches may exist.",
                 "field": "email",
                 "retryable": False,
-            }
+            },
         )
     return result
 
@@ -117,18 +125,24 @@ def add_person(query: PersonUpsertQuery, client: Any) -> dict[str, Any]:
 
     def create(values: dict[str, Any]) -> Any:
         return client.records.post_v2_objects_object_records(
-            object="people", data={"values": values}
+            object="people",
+            data={"values": values},
         )
 
     try:
         response, write_warnings, write_skipped = _write_with_optional_fallback(
-            create, core, optional, strict=query.strict
+            create,
+            core,
+            optional,
+            strict=query.strict,
         )
     except Exception as exc:
         if _is_uniqueness_conflict(exc):
             conflict = _uniqueness_conflict_error(exc, query)
             raise CLIError(
-                "duplicate_identity", str(conflict), field="email"
+                "duplicate_identity",
+                str(conflict),
+                field="email",
             ) from None
         raise
     return _result_envelope(
@@ -143,21 +157,25 @@ def update_person(query: PersonUpsertQuery, client: Any) -> dict[str, Any]:
     email = query.email.strip()
     normalized = _normalized_email(email)
     query = query.model_copy(update={"email": email})
-    has_changes = any(
-        value is not None
-        for value in (
-            query.first_name,
-            query.last_name,
-            query.job_title,
-            query.phone,
-            query.phone_country_code,
-            query.linkedin,
-            query.location,
-            query.country_code,
-            query.company_domain,
-            query.notes,
+    has_changes = (
+        any(
+            value is not None
+            for value in (
+                query.first_name,
+                query.last_name,
+                query.job_title,
+                query.phone,
+                query.phone_country_code,
+                query.linkedin,
+                query.location,
+                query.country_code,
+                query.company_domain,
+                query.notes,
+            )
         )
-    ) or bool(query.additional_emails) or query.replace_emails
+        or bool(query.additional_emails)
+        or query.replace_emails
+    )
     if not has_changes:
         raise CLIError(
             "validation_error",
@@ -166,7 +184,11 @@ def update_person(query: PersonUpsertQuery, client: Any) -> dict[str, Any]:
     warnings, skipped = _validation_warnings(query)
     matches = _query_records(client, "people", {"email_addresses": normalized})
     if not matches:
-        raise CLIError("record_not_found", f"No person matches email '{normalized}'.", field="email")
+        raise CLIError(
+            "record_not_found",
+            f"No person matches email '{normalized}'.",
+            field="email",
+        )
     if len(matches) != 1:
         raise CLIError(
             "multiple_matches",
@@ -176,7 +198,8 @@ def update_person(query: PersonUpsertQuery, client: Any) -> dict[str, Any]:
 
     record_id = _record_id(matches[0])
     existing = client.records.get_v2_objects_object_records_record_id_(
-        object="people", record_id=record_id
+        object="people",
+        record_id=record_id,
     ).data
 
     email_write: list[str] | None = None
@@ -184,7 +207,7 @@ def update_person(query: PersonUpsertQuery, client: Any) -> dict[str, Any]:
         email_write = normalize_emails([email, *query.additional_emails])
     elif query.additional_emails:
         email_write = normalize_emails(
-            [*_emails_from_record(existing), email, *query.additional_emails]
+            [*_emails_from_record(existing), email, *query.additional_emails],
         )
 
     core = _build_core_values(query, partial=True, email_addresses=email_write)
@@ -205,12 +228,17 @@ def update_person(query: PersonUpsertQuery, client: Any) -> dict[str, Any]:
 
     def update(values: dict[str, Any]) -> Any:
         return client.records.put_v2_objects_object_records_record_id_(
-            object="people", record_id=record_id, data={"values": values}
+            object="people",
+            record_id=record_id,
+            data={"values": values},
         )
 
     try:
         response, write_warnings, write_skipped = _write_with_optional_fallback(
-            update, core, optional, strict=query.strict
+            update,
+            core,
+            optional,
+            strict=query.strict,
         )
     except Exception as exc:
         if _is_uniqueness_conflict(exc):
@@ -253,7 +281,7 @@ def search_companies(payload: CompanyPayload, client: Any) -> dict[str, Any]:
                 "message": f"The search returned its {RECORD_QUERY_LIMIT}-record limit; additional matches may exist.",
                 "field": "domain",
                 "retryable": False,
-            }
+            },
         )
     return result
 
@@ -269,7 +297,8 @@ def add_company(payload: CompanyPayload, client: Any) -> dict[str, Any]:
         )
     try:
         response = client.records.post_v2_objects_object_records(
-            object="companies", data={"values": _company_values(payload, domain)}
+            object="companies",
+            data={"values": _company_values(payload, domain)},
         )
     except Exception as exc:
         if _is_uniqueness_conflict(exc):
@@ -281,7 +310,10 @@ def add_company(payload: CompanyPayload, client: Any) -> dict[str, Any]:
         raise
     record = response.data
     return _success_envelope(
-        "created", record_id=_record_id(record), company=_jsonable(record), domain=domain
+        "created",
+        record_id=_record_id(record),
+        company=_jsonable(record),
+        domain=domain,
     )
 
 
@@ -295,7 +327,11 @@ def update_company(payload: CompanyPayload, client: Any) -> dict[str, Any]:
         )
     matches = _query_records(client, "companies", {"domains": domain})
     if not matches:
-        raise CLIError("record_not_found", f"No company matches domain '{domain}'.", field="domain")
+        raise CLIError(
+            "record_not_found",
+            f"No company matches domain '{domain}'.",
+            field="domain",
+        )
     if len(matches) != 1:
         raise CLIError(
             "multiple_matches",
@@ -313,7 +349,10 @@ def update_company(payload: CompanyPayload, client: Any) -> dict[str, Any]:
     )
     record = response.data
     return _success_envelope(
-        "updated", record_id=_record_id(record), company=_jsonable(record), domain=domain
+        "updated",
+        record_id=_record_id(record),
+        company=_jsonable(record),
+        domain=domain,
     )
 
 
@@ -344,12 +383,15 @@ def add_note(payload: NoteAddPayload, client: Any) -> dict[str, Any]:
             "title": payload.title,
             "content": payload.content,
             "format_": payload.format,
-        }
+        },
     )
     note = response.data
     note_id = note.id.note_id
     return _success_envelope(
-        "created", record_id=note_id, note_id=note_id, note=_jsonable(note)
+        "created",
+        record_id=note_id,
+        note_id=note_id,
+        note=_jsonable(note),
     )
 
 
@@ -359,5 +401,8 @@ def update_note(payload: NoteUpdatePayload, client: Any) -> dict[str, Any]:
     note = response.data
     note_id = note.id.note_id
     return _success_envelope(
-        "updated", record_id=note_id, note_id=note_id, note=_jsonable(note)
+        "updated",
+        record_id=note_id,
+        note_id=note_id,
+        note=_jsonable(note),
     )

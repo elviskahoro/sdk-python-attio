@@ -7,13 +7,13 @@ import json
 import os
 import re
 import sys
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Any, Sequence
-
-from pydantic import ValidationError
+from typing import Any
 
 from attio import SDK
 from attio._version import __version__
+from pydantic import ValidationError
 
 from .people import CLIError, error_envelope, execute_upsert
 from .query import (
@@ -45,13 +45,19 @@ def _parser() -> argparse.ArgumentParser:
             "then .env.local and .env in the current working directory."
         ),
     )
-    parser.add_argument("--version", action="version", version=f"gtm-attio {__version__}")
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=f"gtm-attio {__version__}",
+    )
     groups = parser.add_subparsers(dest="resource", required=True)
     people = groups.add_parser("people", help="Manage people records")
     people_commands = people.add_subparsers(dest="operation", required=True)
 
     search = people_commands.add_parser(
-        "search", help="Find people by exact email", description="Read-only search by email."
+        "search",
+        help="Find people by exact email",
+        description="Read-only search by email.",
     )
     search.add_argument("email", help="Email address to find")
 
@@ -86,20 +92,37 @@ def _parser() -> argparse.ArgumentParser:
         command.add_argument("--first-name", help="First name")
         command.add_argument("--last-name", help="Last name")
         command.add_argument("--job-title", help="Job title")
-        command.add_argument("--phone", help="Phone number; use +country prefix or --phone-country-code")
-        command.add_argument("--phone-country-code", help="ISO-3166-1 alpha-2 code for a local phone number")
+        command.add_argument(
+            "--phone",
+            help="Phone number; use +country prefix or --phone-country-code",
+        )
+        command.add_argument(
+            "--phone-country-code",
+            help="ISO-3166-1 alpha-2 code for a local phone number",
+        )
         command.add_argument("--linkedin", help="LinkedIn profile URL or handle")
         command.add_argument("--location", help="Primary location")
-        command.add_argument("--country-code", help="ISO-3166-1 alpha-2 code required with --location")
+        command.add_argument(
+            "--country-code",
+            help="ISO-3166-1 alpha-2 code required with --location",
+        )
         command.add_argument("--company", dest="company_domain", help="Company domain")
         command.add_argument("--notes", help="Notes to store on the person")
-        command.add_argument("--strict", action="store_true", help="Fail on invalid values or unavailable optional attributes")
         command.add_argument(
-            "--location-mode", choices=("city", "raw"), default="city",
+            "--strict",
+            action="store_true",
+            help="Fail on invalid values or unavailable optional attributes",
+        )
+        command.add_argument(
+            "--location-mode",
+            choices=("city", "raw"),
+            default="city",
             help="Map --location as locality/region (city) or street/locality/region (raw)",
         )
         command.add_argument(
-            "--json", dest="json_payload", metavar="PAYLOAD",
+            "--json",
+            dest="json_payload",
+            metavar="PAYLOAD",
             help="Validated JSON input object; when provided it overrides all flags",
         )
 
@@ -115,7 +138,12 @@ def _parser() -> argparse.ArgumentParser:
             help=summary,
             description=f"{summary}. JSON input is validated; writes are applied immediately.",
         )
-        command.add_argument("--json", dest="json_payload", required=True, metavar="PAYLOAD")
+        command.add_argument(
+            "--json",
+            dest="json_payload",
+            required=True,
+            metavar="PAYLOAD",
+        )
 
     notes = groups.add_parser("notes", help="Manage notes on records")
     note_commands = notes.add_subparsers(dest="operation", required=True)
@@ -129,7 +157,12 @@ def _parser() -> argparse.ArgumentParser:
             help=summary,
             description=f"{summary}. JSON input is validated; writes are applied immediately.",
         )
-        command.add_argument("--json", dest="json_payload", required=True, metavar="PAYLOAD")
+        command.add_argument(
+            "--json",
+            dest="json_payload",
+            required=True,
+            metavar="PAYLOAD",
+        )
     return parser
 
 
@@ -155,7 +188,11 @@ def _dotenv_api_key(path: Path) -> str | None:
         ) from None
     for line_number, line in enumerate(lines, start=1):
         candidate = line.strip()
-        if candidate.startswith("export") and len(candidate) > 6 and candidate[6].isspace():
+        if (
+            candidate.startswith("export")
+            and len(candidate) > 6
+            and candidate[6].isspace()
+        ):
             candidate = candidate[6:].lstrip()
         name, separator, raw_value = candidate.partition("=")
         if not separator or name.strip() != "ATTIO_API_KEY":
@@ -246,7 +283,7 @@ def _input_from_args(args: argparse.Namespace) -> PersonUpsertQuery:
             "notes": args.notes,
             "strict": args.strict,
             "location_mode": args.location_mode,
-        }
+        },
     )
 
 
@@ -261,7 +298,9 @@ def main(argv: Sequence[str] | None = None) -> int:
                 payload = PersonUpsertQuery(email=args.email)
             else:
                 if args.json_payload is None and not args.email:
-                    parser.error("email is required unless --json supplies an email field")
+                    parser.error(
+                        "email is required unless --json supplies an email field",
+                    )
                 payload = _input_from_args(args)
         elif args.resource == "companies":
             payload = CompanyPayload.model_validate_json(args.json_payload)
@@ -294,8 +333,8 @@ def main(argv: Sequence[str] | None = None) -> int:
                 CLIError(
                     "missing_api_key",
                     "ATTIO_API_KEY is not set. Export it or add it to .env.local or .env in the current directory.",
-                )
-            )
+                ),
+            ),
         )
         return 1
 
