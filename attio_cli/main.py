@@ -11,9 +11,6 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, cast
 
 from attio import SDK
-
-if TYPE_CHECKING:
-    from collections.abc import Sequence
 from attio._version import __version__
 from pydantic import ValidationError
 
@@ -36,6 +33,11 @@ from .workflows import (
     update_note,
     update_person,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
+EXPORT_KEYWORD_LENGTH = 6
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -177,6 +179,47 @@ def _validation_message(exc: ValidationError) -> str:
     return "; ".join(messages)
 
 
+def _parse_quoted_dotenv_value(
+    value: str,
+    path: Path,
+    line_number: int,
+) -> str:
+    """Parse a quoted string from a dotenv file, handling escape sequences."""
+    quote = value[0]
+    end = 1
+    escaped = False
+    while end < len(value):
+        char = value[end]
+        if char == quote and not escaped:
+            break
+        escaped = char == "\\" and not escaped
+        end += 1
+    if end == len(value):
+        raise CLIError(
+            "invalid_dotenv",
+            f"{path.name}:{line_number} has an unterminated ATTIO_API_KEY value.",
+            field="ATTIO_API_KEY",
+        )
+    trailing = value[end + 1 :].strip()
+    if trailing and not trailing.startswith("#"):
+        raise CLIError(
+            "invalid_dotenv",
+            f"{path.name}:{line_number} has unexpected text after ATTIO_API_KEY.",
+            field="ATTIO_API_KEY",
+        )
+    parsed = value[1:end]
+    if quote == '"':
+        escapes = {"\\": "\\", '"': '"', "n": "\n", "r": "\r", "t": "\t"}
+        parsed = re.sub(
+            r'\\([\\"nrt])',
+            lambda match, escape_map=escapes: escape_map[match.group(1)],
+            parsed,
+        )
+    else:
+        parsed = parsed.replace("\\'", "'").replace("\\\\", "\\")
+    return parsed
+
+
 def _dotenv_api_key(path: Path) -> str | None:
     """Read only ATTIO_API_KEY from a dotenv file without changing the environment."""
     try:
@@ -192,48 +235,16 @@ def _dotenv_api_key(path: Path) -> str | None:
         candidate = line.strip()
         if (
             candidate.startswith("export")
-            and len(candidate) > 6
-            and candidate[6].isspace()
+            and len(candidate) > EXPORT_KEYWORD_LENGTH
+            and candidate[EXPORT_KEYWORD_LENGTH].isspace()
         ):
-            candidate = candidate[6:].lstrip()
+            candidate = candidate[EXPORT_KEYWORD_LENGTH:].lstrip()
         name, separator, raw_value = candidate.partition("=")
         if not separator or name.strip() != "ATTIO_API_KEY":
             continue
         value = raw_value.lstrip()
         if value.startswith(("'", '"')):
-            quote = value[0]
-            end = 1
-            escaped = False
-            while end < len(value):
-                char = value[end]
-                if char == quote and not escaped:
-                    break
-                escaped = char == "\\" and not escaped
-                end += 1
-            if end == len(value):
-                raise CLIError(
-                    "invalid_dotenv",
-                    f"{path.name}:{line_number} has an unterminated ATTIO_API_KEY value.",
-                    field="ATTIO_API_KEY",
-                )
-            trailing = value[end + 1 :].strip()
-            if trailing and not trailing.startswith("#"):
-                raise CLIError(
-                    "invalid_dotenv",
-                    f"{path.name}:{line_number} has unexpected text after ATTIO_API_KEY.",
-                    field="ATTIO_API_KEY",
-                )
-            parsed = value[1:end]
-            if quote == '"':
-                escapes = {"\\": "\\", '"': '"', "n": "\n", "r": "\r", "t": "\t"}
-                parsed = re.sub(
-                    r'\\([\\"nrt])',
-                    lambda match, escape_map=escapes: escape_map[match.group(1)],
-                    parsed,
-                )
-            else:
-                parsed = parsed.replace("\\'", "'").replace("\\\\", "\\")
-            return parsed
+            return _parse_quoted_dotenv_value(value, path, line_number)
         comment = re.search(r"(?:^|\s)#", value)
         if comment:
             value = value[: comment.start()]
@@ -257,6 +268,31 @@ def _load_credentials() -> str | None:
 
 def _emit(envelope: dict[str, object]) -> None:
     print(json.dumps(envelope, ensure_ascii=False, indent=2))
+
+
+def _dispatch_command(
+    args: argparse.Namespace,
+    payload: Any,
+    client: Any,
+) -> dict[str, Any] | None:
+    """Dispatch command to appropriate handler based on resource and operation."""
+    if args.resource == "people":
+        if args.operation == "search":
+            return search_people(args.email, client)
+        if args.operation == "add":
+            return add_person(cast("PersonUpsertQuery", payload), client)
+        return update_person(cast("PersonUpsertQuery", payload), client)
+    if args.resource == "companies":
+        if args.operation == "search":
+            return search_companies(cast("CompanyPayload", payload), client)
+        if args.operation == "add":
+            return add_company(cast("CompanyPayload", payload), client)
+        return update_company(cast("CompanyPayload", payload), client)
+    if args.operation == "list":
+        return list_notes(cast("NoteListPayload", payload), client)
+    if args.operation == "add":
+        return add_note(cast("NoteAddPayload", payload), client)
+    return update_note(cast("NoteUpdatePayload", payload), client)
 
 
 def _input_from_args(args: argparse.Namespace) -> PersonUpsertQuery:
@@ -345,32 +381,12 @@ def main(argv: "Sequence[str] | None" = None) -> int:
             result = execute_upsert(api_key, cast("PersonUpsertQuery", payload))
         else:
             with SDK(oauth2=api_key) as client:
-                if args.resource == "people":
-                    if args.operation == "search":
-                        result = search_people(args.email, client)
-                    elif args.operation == "add":
-                        result = add_person(cast("PersonUpsertQuery", payload), client)
-                    else:
-                        result = update_person(
-                            cast("PersonUpsertQuery", payload),
-                            client,
-                        )
-                elif args.resource == "companies":
-                    if args.operation == "search":
-                        result = search_companies(
-                            cast("CompanyPayload", payload),
-                            client,
-                        )
-                    elif args.operation == "add":
-                        result = add_company(cast("CompanyPayload", payload), client)
-                    else:
-                        result = update_company(cast("CompanyPayload", payload), client)
-                elif args.operation == "list":
-                    result = list_notes(cast("NoteListPayload", payload), client)
-                elif args.operation == "add":
-                    result = add_note(cast("NoteAddPayload", payload), client)
-                else:
-                    result = update_note(cast("NoteUpdatePayload", payload), client)
+                result = _dispatch_command(args, payload, client)
+    except (
+        KeyboardInterrupt,
+        SystemExit,
+    ):  # pragma: no cover
+        raise
     except Exception as exc:  # API/SDK failures are represented in the envelope.
         _emit(error_envelope(exc))
         return 1
