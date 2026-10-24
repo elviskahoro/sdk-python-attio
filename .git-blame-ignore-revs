@@ -24,8 +24,7 @@ ab7fe53368bb95f5115f014d9150082b7528b430
 # Pure path moves; ignoring it keeps blame pointing at the original authors.
 301bd81d914a6d14a84850ca9544ee714a531be0
 
-# Formatting and lint fixes from PR #63 (squash merged)
-# TODO: After squash merge of PR #63, replace this comment with the actual merged commit hash
-# that includes: c2237bb, 9a85847, 249a7fe, c0f5b34, 3cbdb05 changes
-# TEMPORARY: keeping c2237bb placeholder until merge is complete
-c2237bb48694a2ca9007ca47aa38de723981599b
+# 4b87877 - Fix trunk check --all: ignore generated files and fix pyrefly issues (#63)
+# Squash merge of: formatting (c2237bb), type errors (9a85847), lint improvements (249a7fe),
+# TC001/PLR2004 fixes (c0f5b34), and EM101 fixes (3cbdb05)
+4b87877c11c64e7a5e3cdce37e6e3dd6b6d5f45a
