@@ -6,7 +6,7 @@ import ipaddress
 import json
 import re
 from collections.abc import Callable, Mapping, Sequence
-from typing import Any, Literal
+from typing import Any, Literal, Protocol
 
 from attio import SDK
 
@@ -18,8 +18,12 @@ OPTIONAL_FIELD_WARNING_CODES = {
     "notes": "attio_notes_field_unavailable",
     "primary_location": "attio_location_field_unavailable",
 }
-OPTIONAL_FIELD_ALIASES = {"associated_company": "company", "company": "associated_company"}
+OPTIONAL_FIELD_ALIASES = {
+    "associated_company": "company",
+    "company": "associated_company",
+}
 RECORD_QUERY_LIMIT = 50
+HTTP_NOT_FOUND = 404
 PARTIAL_WARNING_CODES = {
     "upsert_multi_match_selected_record",
     "upsert_multi_match_result_limit_reached",
@@ -27,7 +31,8 @@ PARTIAL_WARNING_CODES = {
 
 _DOMAIN_LABEL_RE = re.compile(r"^(?=.{1,63}$)[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?$")
 _LINKEDIN_PROFILE_RE = re.compile(
-    r"^https?://(?:www\.)?linkedin\.com/in/([^/?#]+)", re.IGNORECASE
+    r"^https?://(?:www\.)?linkedin\.com/in/([^/?#]+)",
+    re.IGNORECASE,
 )
 _LINKEDIN_HANDLE_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]*$")
 
@@ -56,7 +61,10 @@ def normalize_emails(candidates: Sequence[str | None]) -> list[str]:
     return result
 
 
-def _format_name(first_name: str | None, last_name: str | None) -> list[dict[str, str]] | None:
+def _format_name(
+    first_name: str | None,
+    last_name: str | None,
+) -> list[dict[str, str]] | None:
     if not first_name and not last_name:
         return None
     parts = [part for part in (first_name, last_name) if part]
@@ -65,12 +73,13 @@ def _format_name(first_name: str | None, last_name: str | None) -> list[dict[str
             "first_name": first_name or "",
             "last_name": last_name or "",
             "full_name": " ".join(parts),
-        }
+        },
     ]
 
 
 def _format_phone(
-    phone: str | None, country_code: str | None
+    phone: str | None,
+    country_code: str | None,
 ) -> list[dict[str, str]] | None:
     if not phone:
         return None
@@ -90,7 +99,11 @@ def _format_linkedin(value: str | None) -> list[str] | None:
     match = _LINKEDIN_PROFILE_RE.match(candidate)
     if match:
         return [f"https://www.linkedin.com/in/{match.group(1).rstrip('/')}"]
-    if "://" in candidate or "/" in candidate or not _LINKEDIN_HANDLE_RE.fullmatch(candidate):
+    if (
+        "://" in candidate
+        or "/" in candidate
+        or not _LINKEDIN_HANDLE_RE.fullmatch(candidate)
+    ):
         return None
     return [f"https://www.linkedin.com/in/{candidate.rstrip('/')}"]
 
@@ -147,7 +160,7 @@ def _build_optional_values(query: PersonUpsertQuery) -> dict[str, Any]:
     domain = _format_domain(query.company_domain)
     if domain:
         values["associated_company"] = [
-            {"target_object": "companies", "domains": [{"domain": domain}]}
+            {"target_object": "companies", "domains": [{"domain": domain}]},
         ]
     if query.location and query.country_code:
         parts = query.location.split(",")
@@ -171,7 +184,7 @@ def _build_optional_values(query: PersonUpsertQuery) -> dict[str, Any]:
                 "country_code": query.country_code.upper(),
                 "latitude": None,
                 "longitude": None,
-            }
+            },
         ]
     if query.notes:
         values["notes"] = [query.notes]
@@ -184,24 +197,34 @@ def _validation_warnings(
     invalid: list[tuple[str, str]] = []
     if query.linkedin is not None and _format_linkedin(query.linkedin) is None:
         invalid.append(("linkedin", "LinkedIn value must be a profile URL or handle."))
-    if query.company_domain is not None and _format_domain(query.company_domain) is None:
+    if (
+        query.company_domain is not None
+        and _format_domain(query.company_domain) is None
+    ):
         invalid.append(("company_domain", "Company value must be a valid domain."))
     if query.country_code is not None and not query.location:
         invalid.append(("country_code", "country_code is only used with --location."))
     if query.phone is not None and not query.phone.strip():
         invalid.append(("phone", "Phone number must not be empty."))
-    elif query.phone and not query.phone.strip().startswith("+") and not query.phone_country_code:
+    elif (
+        query.phone
+        and not query.phone.strip().startswith("+")
+        and not query.phone_country_code
+    ):
         invalid.append(
             (
                 "phone",
                 "A local phone number requires --phone-country-code; use +country format otherwise.",
-            )
+            ),
         )
     if query.phone_country_code is not None and (
         not query.phone or query.phone.strip().startswith("+")
     ):
         invalid.append(
-            ("phone_country_code", "phone_country_code is only used with local phone numbers.")
+            (
+                "phone_country_code",
+                "phone_country_code is only used with local phone numbers.",
+            ),
         )
 
     warnings: list[dict[str, Any]] = []
@@ -215,7 +238,7 @@ def _validation_warnings(
                 "message": f"Skipped invalid value for '{field}': {message}",
                 "field": field,
                 "retryable": False,
-            }
+            },
         )
         skipped.append({"field": field, "reason": "invalid_value"})
     return warnings, skipped
@@ -250,7 +273,7 @@ def _detect_optional_field(exc: BaseException) -> str | None:
     if status_code is None:
         status_code = payload.get("status_code")
     if (
-        status_code != 404
+        status_code != HTTP_NOT_FOUND
         or payload.get("type") != "invalid_request_error"
         or payload.get("code") != "not_found"
         or not isinstance(payload.get("message"), str)
@@ -268,7 +291,9 @@ def _detect_optional_field(exc: BaseException) -> str | None:
             rf"(?:\s+with\s+slug/id)?\s+['\"]?{re.escape(field)}['\"]?(?=\s|[.!]|$)"
         )
         if re.search(not_found_pattern, message, flags=re.IGNORECASE) or re.search(
-            cannot_find_pattern, message, flags=re.IGNORECASE
+            cannot_find_pattern,
+            message,
+            flags=re.IGNORECASE,
         ):
             return field
     return None
@@ -282,7 +307,10 @@ def _is_uniqueness_conflict(exc: BaseException) -> bool:
     return isinstance(payload, Mapping) and payload.get("code") == "uniqueness_conflict"
 
 
-def _uniqueness_conflict_error(exc: BaseException, query: PersonUpsertQuery) -> CLIError:
+def _uniqueness_conflict_error(
+    exc: BaseException,
+    query: PersonUpsertQuery,
+) -> CLIError:
     candidates = normalize_emails([query.email, *query.additional_emails])
     body = _error_body(exc).casefold()
     conflicting = next(
@@ -303,13 +331,70 @@ def _uniqueness_conflict_error(exc: BaseException, query: PersonUpsertQuery) -> 
     return CLIError("uniqueness_conflict", message)
 
 
+class RecordIdLike(Protocol):
+    """Structural view of an Attio record identifier."""
+
+    @property
+    def record_id(self) -> str: ...
+
+
+class RecordLike(Protocol):
+    """Structural view of an Attio record (SDK models and test doubles)."""
+
+    @property
+    def id(self) -> RecordIdLike: ...
+
+
+class RecordResponseLike(Protocol):
+    """Structural view of a single-record write response."""
+
+    @property
+    def data(self) -> RecordLike: ...
+
+
+def _try_swap_optional_field(
+    field: str,
+    active: dict[str, Any],
+    attempted_aliases: set[frozenset[str]],
+) -> tuple[str, bool]:
+    """Move an optional value to its alias key once; return (field, swapped)."""
+    alias = OPTIONAL_FIELD_ALIASES.get(field)
+    if field not in active and alias in active:
+        field, alias = alias, field
+    if alias and field in active and alias not in active:
+        pair = frozenset((field, alias))
+        if pair not in attempted_aliases:
+            attempted_aliases.add(pair)
+            active[alias] = active.pop(field)
+            return field, True
+    return field, False
+
+
+def _skip_optional_field(
+    field: str,
+    active: dict[str, Any],
+    warnings: list[dict[str, Any]],
+    skipped: list[dict[str, str]],
+) -> None:
+    del active[field]
+    warnings.append(
+        {
+            "code": OPTIONAL_FIELD_WARNING_CODES[field],
+            "message": f"Skipped optional field '{field}' due to schema mismatch.",
+            "field": field,
+            "retryable": False,
+        },
+    )
+    skipped.append({"field": field, "reason": "schema_mismatch"})
+
+
 def _write_with_optional_fallback(
-    write: Callable[[dict[str, Any]], Any],
+    write: Callable[[dict[str, Any]], RecordResponseLike],
     core_values: dict[str, Any],
     optional_values: dict[str, Any],
     *,
     strict: bool,
-) -> tuple[Any, list[dict[str, Any]], list[dict[str, str]]]:
+) -> tuple[RecordResponseLike, list[dict[str, Any]], list[dict[str, str]]]:
     active = dict(optional_values)
     attempted_aliases: set[frozenset[str]] = set()
     warnings: list[dict[str, Any]] = []
@@ -327,33 +412,17 @@ def _write_with_optional_fallback(
                     f"Optional field unavailable in this Attio workspace: {field}",
                     field=field,
                 ) from exc
-
-            alias = OPTIONAL_FIELD_ALIASES.get(field)
-            if field not in active and alias in active:
-                field, alias = alias, field
-            if alias and field in active and alias not in active:
-                pair = frozenset((field, alias))
-                if pair not in attempted_aliases:
-                    attempted_aliases.add(pair)
-                    active[alias] = active.pop(field)
-                    continue
+            field, swapped = _try_swap_optional_field(field, active, attempted_aliases)
+            if swapped:
+                continue
             if field not in active:
                 raise
-            del active[field]
-            warnings.append(
-                {
-                    "code": OPTIONAL_FIELD_WARNING_CODES[field],
-                    "message": f"Skipped optional field '{field}' due to schema mismatch.",
-                    "field": field,
-                    "retryable": False,
-                }
-            )
-            skipped.append({"field": field, "reason": "schema_mismatch"})
+            _skip_optional_field(field, active, warnings, skipped)
         else:
             return response, warnings, skipped
 
 
-def _emails_from_record(record: Any) -> list[str]:
+def _emails_from_record(record: RecordLike) -> list[str]:
     emails: list[str] = []
     for value in getattr(record, "values", {}).get("email_addresses", []):
         email = getattr(value, "email_address", None)
@@ -362,7 +431,7 @@ def _emails_from_record(record: Any) -> list[str]:
     return emails
 
 
-def _person_meta(record: Any, *, created: bool) -> dict[str, Any]:
+def _person_meta(record: RecordLike, *, created: bool) -> dict[str, Any]:
     record_id = record.id.record_id
     values = getattr(record, "values", {})
     name = None
@@ -382,7 +451,7 @@ def _person_meta(record: Any, *, created: bool) -> dict[str, Any]:
 def _result_envelope(
     *,
     action: Literal["created", "updated"],
-    record: Any,
+    record: RecordLike,
     warnings: list[dict[str, Any]],
     skipped: list[dict[str, str]],
 ) -> dict[str, Any]:
@@ -396,15 +465,18 @@ def _result_envelope(
         "warnings": warnings,
         "skipped_fields": skipped,
         "errors": [],
-        "meta": {"output_schema_version": "v1", "person": _person_meta(record, created=created)},
+        "meta": {
+            "output_schema_version": "v1",
+            "person": _person_meta(record, created=created),
+        },
     }
 
 
-def _record_id(item: Any) -> str:
+def _record_id(item: RecordLike) -> str:
     return str(item.id.record_id)
 
 
-def _record_name_parts(record: Any) -> tuple[str | None, str | None]:
+def _record_name_parts(record: RecordLike) -> tuple[str | None, str | None]:
     values = getattr(record, "values", {})
     name = next(iter(values.get("name", [])), None)
     if isinstance(name, Mapping):
@@ -422,7 +494,160 @@ def _record_name_parts(record: Any) -> tuple[str | None, str | None]:
     return first_name, last_name
 
 
-def upsert_person(query: PersonUpsertQuery, client: Any) -> dict[str, Any]:
+def _select_match(
+    matches: list[Any],
+    query: PersonUpsertQuery,
+    warnings: list[dict[str, Any]],
+) -> RecordLike:
+    if len(matches) == 1:
+        return matches[0]
+    if query.strict:
+        code = "multiple_matches"
+        message = (
+            f"Multiple people matched email {query.email}; "
+            "strict mode rejects ambiguity."
+        )
+        raise CLIError(code, message)
+    warnings.append(
+        {
+            "code": "upsert_multi_match_selected_record",
+            "message": (
+                "Multiple records matched; wrote to the lexicographically smallest "
+                "record_id. Other duplicates were left in place for manual review."
+            ),
+            "field": "record_id",
+            "retryable": False,
+        },
+    )
+    if len(matches) == RECORD_QUERY_LIMIT:
+        warnings.append(
+            {
+                "code": "upsert_multi_match_result_limit_reached",
+                "message": (
+                    f"The email search reached its {RECORD_QUERY_LIMIT}-record limit; "
+                    "the selected record is the smallest ID in the returned results, "
+                    "and additional matches may exist."
+                ),
+                "field": "record_id",
+                "retryable": False,
+            },
+        )
+    return sorted(matches, key=_record_id)[0]
+
+
+def _resolve_email_write(
+    query: PersonUpsertQuery,
+    existing_emails: list[str],
+    warnings: list[dict[str, Any]],
+) -> list[str] | None:
+    existing_folded = {email.casefold() for email in existing_emails}
+    if query.replace_emails:
+        email_write = normalize_emails([query.email, *query.additional_emails])
+        changed = {email.casefold() for email in email_write} != existing_folded
+        message = "Email addresses updated (--replace-emails)."
+    elif query.additional_emails:
+        email_write = normalize_emails(
+            [*existing_emails, query.email, *query.additional_emails],
+        )
+        changed = bool({email.casefold() for email in email_write} - existing_folded)
+        message = "New email address(es) merged onto existing person."
+    else:
+        return None
+    if changed:
+        warnings.append(
+            {
+                "code": "multiple_emails_added",
+                "message": message,
+                "field": "email_addresses",
+                "retryable": False,
+            },
+        )
+    return email_write
+
+
+def _merged_name(
+    query: PersonUpsertQuery,
+    existing: RecordLike,
+) -> list[dict[str, str]] | None:
+    if query.first_name is None and query.last_name is None:
+        return None
+    existing_first_name, existing_last_name = _record_name_parts(existing)
+    first_name = (
+        query.first_name if query.first_name is not None else existing_first_name
+    )
+    last_name = query.last_name if query.last_name is not None else existing_last_name
+    return _format_name(first_name, last_name)
+
+
+def _write_person(
+    write: Callable[[dict[str, Any]], RecordResponseLike],
+    core: dict[str, Any],
+    optional: dict[str, Any],
+    query: PersonUpsertQuery,
+) -> tuple[RecordResponseLike, list[dict[str, Any]], list[dict[str, str]]]:
+    try:
+        return _write_with_optional_fallback(
+            write,
+            core,
+            optional,
+            strict=query.strict,
+        )
+    except Exception as exc:
+        if _is_uniqueness_conflict(exc):
+            raise _uniqueness_conflict_error(exc, query) from None
+        raise
+
+
+def _create_person(
+    query: PersonUpsertQuery,
+    client: SDK,
+) -> tuple[RecordResponseLike, list[dict[str, Any]], list[dict[str, str]]]:
+    def create(values: dict[str, Any]) -> RecordResponseLike:
+        return client.records.post_v2_objects_object_records(
+            object="people",
+            data={"values": values},
+        )
+
+    return _write_person(
+        create,
+        _build_core_values(query),
+        _build_optional_values(query),
+        query,
+    )
+
+
+def _update_person(
+    query: PersonUpsertQuery,
+    client: SDK,
+    selected: RecordLike,
+    warnings: list[dict[str, Any]],
+) -> tuple[RecordResponseLike, list[dict[str, Any]], list[dict[str, str]]]:
+    record_id = _record_id(selected)
+    existing = client.records.get_v2_objects_object_records_record_id_(
+        object="people",
+        record_id=record_id,
+    )
+    email_write = _resolve_email_write(
+        query,
+        _emails_from_record(existing.data),
+        warnings,
+    )
+    core = _build_core_values(query, partial=True, email_addresses=email_write)
+    merged_name = _merged_name(query, existing.data)
+    if merged_name:
+        core["name"] = merged_name
+
+    def update(values: dict[str, Any]) -> RecordResponseLike:
+        return client.records.put_v2_objects_object_records_record_id_(
+            object="people",
+            record_id=record_id,
+            data={"values": values},
+        )
+
+    return _write_person(update, core, _build_optional_values(query), query)
+
+
+def upsert_person(query: PersonUpsertQuery, client: SDK) -> dict[str, Any]:
     """Search by email, then create/update with upstream reliability semantics."""
     warnings, skipped = _validation_warnings(query)
     response = client.records.post_v2_objects_object_records_query(
@@ -431,128 +656,20 @@ def upsert_person(query: PersonUpsertQuery, client: Any) -> dict[str, Any]:
         limit=RECORD_QUERY_LIMIT,
     )
     matches = list(response.data)
-    if len(matches) == 0:
-        action: Literal["created", "updated"] = "created"
-        core = _build_core_values(query)
-        optional = _build_optional_values(query)
-
-        def create(values: dict[str, Any]) -> Any:
-            return client.records.post_v2_objects_object_records(
-                object="people",
-                data={"values": values},
-            )
-
-        try:
-            written, write_warnings, write_skipped = _write_with_optional_fallback(
-                create, core, optional, strict=query.strict
-            )
-            skipped.extend(write_skipped)
-        except Exception as exc:
-            if _is_uniqueness_conflict(exc):
-                raise _uniqueness_conflict_error(exc, query) from None
-            raise
-    else:
-        if len(matches) > 1:
-            if query.strict:
-                raise CLIError(
-                    "multiple_matches",
-                    f"Multiple people matched email {query.email}; strict mode rejects ambiguity.",
-                )
-            selected = sorted(matches, key=_record_id)[0]
-            warnings.append(
-                {
-                    "code": "upsert_multi_match_selected_record",
-                    "message": (
-                        "Multiple records matched; wrote to the lexicographically smallest "
-                        "record_id. Other duplicates were left in place for manual review."
-                    ),
-                    "field": "record_id",
-                    "retryable": False,
-                }
-            )
-            if len(matches) == RECORD_QUERY_LIMIT:
-                warnings.append(
-                    {
-                        "code": "upsert_multi_match_result_limit_reached",
-                        "message": (
-                            f"The email search reached its {RECORD_QUERY_LIMIT}-record limit; "
-                            "the selected record is the smallest ID in the returned results, "
-                            "and additional matches may exist."
-                        ),
-                        "field": "record_id",
-                        "retryable": False,
-                    }
-                )
-        else:
-            selected = matches[0]
-        record_id = _record_id(selected)
-        existing = client.records.get_v2_objects_object_records_record_id_(
-            object="people", record_id=record_id
-        )
-        existing_emails = _emails_from_record(existing.data)
-        email_write: list[str] | None = None
-        if query.replace_emails:
-            email_write = normalize_emails([query.email, *query.additional_emails])
-            if {email.casefold() for email in email_write} != {
-                email.casefold() for email in existing_emails
-            }:
-                warnings.append(
-                    {
-                        "code": "multiple_emails_added",
-                        "message": "Email addresses updated (--replace-emails).",
-                        "field": "email_addresses",
-                        "retryable": False,
-                    }
-                )
-        elif query.additional_emails:
-            email_write = normalize_emails(
-                [*existing_emails, query.email, *query.additional_emails]
-            )
-            new = {email.casefold() for email in email_write} - {
-                email.casefold() for email in existing_emails
-            }
-            if new:
-                warnings.append(
-                    {
-                        "code": "multiple_emails_added",
-                        "message": "New email address(es) merged onto existing person.",
-                        "field": "email_addresses",
-                        "retryable": False,
-                    }
-                )
-
+    action: Literal["created", "updated"]
+    if matches:
+        selected = _select_match(matches, query, warnings)
         action = "updated"
-        core = _build_core_values(query, partial=True, email_addresses=email_write)
-        if query.first_name is not None or query.last_name is not None:
-            existing_first_name, existing_last_name = _record_name_parts(existing.data)
-            first_name = (
-                query.first_name if query.first_name is not None else existing_first_name
-            )
-            last_name = (
-                query.last_name if query.last_name is not None else existing_last_name
-            )
-            merged_name = _format_name(first_name, last_name)
-            if merged_name:
-                core["name"] = merged_name
-        optional = _build_optional_values(query)
-
-        def update(values: dict[str, Any]) -> Any:
-            return client.records.put_v2_objects_object_records_record_id_(
-                object="people",
-                record_id=record_id,
-                data={"values": values},
-            )
-
-        try:
-            written, write_warnings, write_skipped = _write_with_optional_fallback(
-                update, core, optional, strict=query.strict
-            )
-            skipped.extend(write_skipped)
-        except Exception as exc:
-            if _is_uniqueness_conflict(exc):
-                raise _uniqueness_conflict_error(exc, query) from None
-            raise
-
+        written, write_warnings, write_skipped = _update_person(
+            query,
+            client,
+            selected,
+            warnings,
+        )
+    else:
+        action = "created"
+        written, write_warnings, write_skipped = _create_person(query, client)
+    skipped.extend(write_skipped)
     warnings.extend(write_warnings)
     return _result_envelope(
         action=action,

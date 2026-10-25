@@ -23,3 +23,12 @@ ab7fe53368bb95f5115f014d9150082b7528b430
 # 301bd81d914a6d14a84850ca9544ee714a531be0 - Move generated SDK to generated/ and CLI to top-level attio_cli/ (#60)
 # Pure path moves; ignoring it keeps blame pointing at the original authors.
 301bd81d914a6d14a84850ca9544ee714a531be0
+
+# 4b87877 - Fix trunk check --all: ignore generated files and fix pyrefly issues (#63)
+# Squash merge of: formatting (c2237bb), type errors (9a85847), lint improvements (249a7fe),
+# TC001/PLR2004 fixes (c0f5b34), and EM101 fixes (3cbdb05)
+4b87877c11c64e7a5e3cdce37e6e3dd6b6d5f45a
+
+# b0c40c1 - Add squashed PR #63 commit to .git-blame-ignore-revs
+# Metadata-only commit that documents the formatting/lint fixes
+b0c40c1319a6a3ca9cefc49b1e50c62ad56dc9ce

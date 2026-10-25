@@ -154,7 +154,7 @@ def _load_overlay_actions(overlay_path: str | Path = OVERLAY_YAML) -> list[dict]
     text = Path(overlay_path).read_text(encoding="utf-8")
     try:
         doc = yaml.safe_load(text) or {}
-    except yaml.YAMLError as err:
+    except yaml.YAMLError as err:  # type: ignore[attr-defined]
         msg = f"{overlay_path} is not valid YAML: {err}"
         raise RuntimeError(msg) from err
     actions = doc.get("actions") or []

@@ -53,6 +53,13 @@ downloads:
 # This is the section where you manage your linters. (https://docs.trunk.io/check/configuration)
 lint:
   definitions:
+    # The plugin's pyrefly command can't see the editable `attio` install (setuptools
+    # finder, not a path .pth) and generated/ is outside Trunk's sandbox, so point
+    # pyrefly at the generated SDK source explicitly.
+    - name: pyrefly
+      commands:
+        - name: lint
+          run: pyrefly check --python-interpreter-path ${workspace}/.venv/bin/python --search-path ${workspace} --site-package-path ${workspace}/generated/src --output-format=min-text --summary=none ${target}
     - name: ruff
       commands:
         - name: format
@@ -191,15 +198,14 @@ lint:
     - linters: [bandit]
       paths:
         - generated/**
-        # attio_cli/ is the hand-written CLI -- previously nested under
-        # src/** so this ignore was implicit. Moving it to the repo root
-        # exposed it; carry the exclusion forward so we can land the
-        # directory move first and address the new findings separately.
-        - attio_cli/**
     - linters: [checkov]
       paths:
         - openapi/**
         - .speakeasy/out.openapi.yaml
+        - .github/workflows/pullfrog.yml
+    - linters: [yamllint]
+      paths:
+        - .speakeasy/gen.yaml
     - linters: [markdown-link-check, markdownlint-cli2, trufflehog]
       paths:
         - generated/docs/**
@@ -211,19 +217,15 @@ lint:
     # (newly adopted from gtm-sdk) join pyright and ruff off generated/** and
     # tests/** -- generated/ is speakeasy-generated (regenerated wholesale, so
     # linting it just reds every regeneration PR) and tests/ already shares
-    # that exclusion. Handwritten Python (ci/) keeps full coverage; attio_cli/
-    # is excluded because the new-found findings there are tracked separately
-    # (see the attio_cli/** note on the bandit block above).
+    # that exclusion. Both ci/ and attio_cli/ keep full coverage.
     - linters: [pyright, pyrefly, ruff, add-trailing-comma]
       paths:
         - generated/**
         - tests/**
-        - attio_cli/**
     - linters: [semgrep]
       paths:
         - "**/*.md"
         - generated/**
-        - attio_cli/**
         - openapi/api-*.json
         - openapi/api-*-overlay.json
     - linters: [semgrep]
@@ -233,7 +235,6 @@ lint:
       paths:
         - generated/**
         - tests/**
-        - attio_cli/**
   exported_configs:
     - plugin_id: oss-linter-trunk
       configs:
