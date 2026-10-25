@@ -111,7 +111,6 @@ tasks:
       CHECK_FAILED: ${{ tasks.check.values.check-failed }}
       RUN_DATE: ${{ tasks.check.values.run-date }}
       SPEAKEASY_API_KEY: ${{ secrets.SPEAKEASY_API_KEY }}
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       SPEAKEASY_USE_HOST_CLI: "1"
     run: |
       echo skipped > "$RWX_VALUES/result"
@@ -163,7 +162,6 @@ tasks:
         jq -r -f ci/spec_check/pr-body.jq tmp/spec-check/report.json
       } > tmp/pr-body.md
 
-      push_url="https://x-access-token:${GH_TOKEN}@github.com/elviskahoro/sdk-python-attio.git"
       branch="agent/spec-update-${RUN_DATE}-r$(date -u +%H%M%S)"
       git config user.name "rwx[bot]"
       git config user.email "rwx[bot]@users.noreply.github.com"
@@ -180,13 +178,33 @@ tasks:
         exit 1
       fi
       git commit -m "Regenerate from latest Attio API spec" -m "Automated by the spec-update-check workflow: latest OpenAPI spec + workflow.yaml update, Speakeasy regeneration of src/ and docs/, post-generation patches (ci/post_generate_patch.py)."
-      git push "$push_url" "$branch"
+      echo "$branch" > "$RWX_VALUES/branch"
+      echo success > "$RWX_VALUES/result"
+
+  # Only this task holds the write token, so Speakeasy, uv, and pytest in
+  # `regenerate` never see it. Always runs; propagates regenerate's result.
+  - key: open-pr
+    use: regenerate
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      REGEN_RESULT: ${{ tasks.regenerate.values.result }}
+      BRANCH: ${{ tasks.regenerate.values.branch }}
+    run: |
+      echo "$REGEN_RESULT" > "$RWX_VALUES/result"
+      echo "" > "$RWX_VALUES/pr-url"
+      if [ "$REGEN_RESULT" != "success" ]; then
+        exit 0
+      fi
+      trap 'status=$?; if [ $status -ne 0 ]; then echo failure > "$RWX_VALUES/result"; fi; exit 0' EXIT
+
+      push_url="https://x-access-token:${GH_TOKEN}@github.com/elviskahoro/sdk-python-attio.git"
+      git push "$push_url" "$BRANCH"
 
       # If PR creation fails (e.g. the token lacks scope), delete the
       # just-pushed branch so nothing is orphaned.
-      if ! pr_url=$(gh pr create --base main --head "$branch" \
-          --title "Automated spec update ${RUN_DATE}" --body-file tmp/pr-body.md); then
-        git push "$push_url" --delete "$branch" || true
+      if ! pr_url=$(gh pr create --base main --head "$BRANCH" \
+          --title "Automated spec update $(date -u +%Y-%m-%d)" --body-file tmp/pr-body.md); then
+        git push "$push_url" --delete "$BRANCH" || true
         exit 1
       fi
       echo "$pr_url" > "$RWX_VALUES/pr-url"
@@ -200,7 +218,6 @@ tasks:
           gh pr close "$pr" --comment "Superseded by a newer automated spec update."
         fi
       done
-      echo success > "$RWX_VALUES/result"
 
   - key: notify
     use: [check]
@@ -210,8 +227,8 @@ tasks:
       OVERLAY_OK: ${{ tasks.check.values.overlay-ok }}
       HAS_KEY: ${{ tasks.check.values.has-key }}
       CHECK_FAILED: ${{ tasks.check.values.check-failed }}
-      REGEN_RESULT: ${{ tasks.regenerate.values.result }}
-      PR_URL: ${{ tasks.regenerate.values.pr-url }}
+      REGEN_RESULT: ${{ tasks.open-pr.values.result }}
+      PR_URL: ${{ tasks.open-pr.values.pr-url }}
     run: |
       run_date=$(date -u +%Y-%m-%d)
       if [ "$REGEN_RESULT" = "failure" ]; then
@@ -296,7 +313,7 @@ tasks:
     after: [notify]
     env:
       CHECK_FAILED: ${{ tasks.check.values.check-failed }}
-      REGEN_RESULT: ${{ tasks.regenerate.values.result }}
+      REGEN_RESULT: ${{ tasks.open-pr.values.result }}
     run: |
       if [ "$CHECK_FAILED" = "true" ] || [ "$REGEN_RESULT" = "failure" ]; then
         echo "spec check or regeneration failed; see notify task and issue" >&2

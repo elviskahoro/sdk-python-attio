@@ -1,10 +1,15 @@
 # Publish to PyPI on version tags (v*). Replaces the GitHub Actions pypi.yml.
+# `start: manually` replaces the old `pypi` environment's required-reviewer
+# gate: a tag push creates the run in a waiting state and a human starts it
+# from the RWX UI. Also restrict the PYPI_TOKEN vault to refs/tags/v* and
+# enable vault approvals (see `rwx vaults update`).
 # ci/pipeline.py runs its test/build steps through Dagger, which needs a
 # container runtime and the dagger CLI, hence `docker: true`.
 on:
   github:
     push:
       - if: ${{ event.git.tag != '' && starts-with(event.git.tag, 'v') }}
+        start: manually
         init:
           commit-sha: ${{ event.git.sha }}
           tag: ${{ event.git.tag }}

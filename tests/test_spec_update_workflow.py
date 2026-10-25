@@ -33,14 +33,14 @@ def test_regenerate_failure_does_not_fail_the_task(tasks: dict[str, dict]) -> No
     """notify reads regenerate's values, so a failed regenerate task would
     skip it. The task must record `failure` and still exit 0."""
     run = tasks["regenerate"]["run"]
-    assert "echo failure > \"$RWX_VALUES/result\"" in run
+    assert 'echo failure > "$RWX_VALUES/result"' in run
     assert re.search(r"trap '.*exit 0' EXIT", run), "regenerate must exit 0 on failure"
 
 
 def test_notify_reads_both_upstream_tasks(tasks: dict[str, dict]) -> None:
     env = tasks["notify"]["env"]
     assert "tasks.check.values.check-failed" in env["CHECK_FAILED"]
-    assert "tasks.regenerate.values.result" in env["REGEN_RESULT"]
+    assert "tasks.open-pr.values.result" in env["REGEN_RESULT"]
 
 
 def test_verdict_fails_the_run_after_notify(tasks: dict[str, dict]) -> None:
@@ -49,6 +49,22 @@ def test_verdict_fails_the_run_after_notify(tasks: dict[str, dict]) -> None:
     assert "exit 1" in verdict["run"]
     assert 'REGEN_RESULT" = "failure"' in verdict["run"]
     assert 'CHECK_FAILED" = "true"' in verdict["run"]
+
+
+def test_write_token_is_scoped_to_repo_operations(tasks: dict[str, dict]) -> None:
+    """Speakeasy, uv, and pytest run in `check`/`regenerate`; neither may
+    see the repo-write token. Only open-pr and notify (issues) hold it."""
+    holders = {
+        key for key, task in tasks.items() if "secrets.GITHUB_TOKEN" in str(task.get("env", {}))
+    }
+    assert holders == {"open-pr", "notify"}
+
+
+def test_publish_requires_manual_start() -> None:
+    doc = yaml.safe_load((REPO_ROOT / ".rwx" / "publish.yml").read_text(encoding="utf-8"))
+    # PyYAML parses the bare `on` key as boolean True.
+    tag_triggers = doc[True]["github"]["push"]
+    assert all(t.get("start") == "manually" for t in tag_triggers)
 
 
 def test_regenerate_only_runs_when_automation_can_handle_it(tasks: dict[str, dict]) -> None:
