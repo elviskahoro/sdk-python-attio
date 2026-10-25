@@ -352,6 +352,42 @@ class RecordResponseLike(Protocol):
     def data(self) -> RecordLike: ...
 
 
+def _try_swap_optional_field(
+    field: str,
+    active: dict[str, Any],
+    attempted_aliases: set[frozenset[str]],
+) -> tuple[str, bool]:
+    """Move an optional value to its alias key once; return (field, swapped)."""
+    alias = OPTIONAL_FIELD_ALIASES.get(field)
+    if field not in active and alias in active:
+        field, alias = alias, field
+    if alias and field in active and alias not in active:
+        pair = frozenset((field, alias))
+        if pair not in attempted_aliases:
+            attempted_aliases.add(pair)
+            active[alias] = active.pop(field)
+            return field, True
+    return field, False
+
+
+def _skip_optional_field(
+    field: str,
+    active: dict[str, Any],
+    warnings: list[dict[str, Any]],
+    skipped: list[dict[str, str]],
+) -> None:
+    del active[field]
+    warnings.append(
+        {
+            "code": OPTIONAL_FIELD_WARNING_CODES[field],
+            "message": f"Skipped optional field '{field}' due to schema mismatch.",
+            "field": field,
+            "retryable": False,
+        },
+    )
+    skipped.append({"field": field, "reason": "schema_mismatch"})
+
+
 def _write_with_optional_fallback(
     write: Callable[[dict[str, Any]], RecordResponseLike],
     core_values: dict[str, Any],
@@ -376,28 +412,12 @@ def _write_with_optional_fallback(
                     f"Optional field unavailable in this Attio workspace: {field}",
                     field=field,
                 ) from exc
-
-            alias = OPTIONAL_FIELD_ALIASES.get(field)
-            if field not in active and alias in active:
-                field, alias = alias, field
-            if alias and field in active and alias not in active:
-                pair = frozenset((field, alias))
-                if pair not in attempted_aliases:
-                    attempted_aliases.add(pair)
-                    active[alias] = active.pop(field)
-                    continue
+            field, swapped = _try_swap_optional_field(field, active, attempted_aliases)
+            if swapped:
+                continue
             if field not in active:
                 raise
-            del active[field]
-            warnings.append(
-                {
-                    "code": OPTIONAL_FIELD_WARNING_CODES[field],
-                    "message": f"Skipped optional field '{field}' due to schema mismatch.",
-                    "field": field,
-                    "retryable": False,
-                },
-            )
-            skipped.append({"field": field, "reason": "schema_mismatch"})
+            _skip_optional_field(field, active, warnings, skipped)
         else:
             return response, warnings, skipped
 
