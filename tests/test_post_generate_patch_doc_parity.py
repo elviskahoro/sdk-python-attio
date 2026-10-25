@@ -11,7 +11,7 @@ PATCH_SCRIPT = REPO_ROOT / "ci" / "post_generate_patch.py"
 DOCUMENTATION_FILES = (
     REPO_ROOT / "AGENTS.md",
     REPO_ROOT / ".agents" / "skills" / "update-sdk" / "SKILL.md",
-    REPO_ROOT / ".github" / "workflows" / "spec-update-check.yml",
+    REPO_ROOT / ".rwx" / "spec-update-check.yml",
 )
 
 

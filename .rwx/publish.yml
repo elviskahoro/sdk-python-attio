@@ -1,0 +1,116 @@
+# Publish to PyPI on version tags (v*). Replaces the GitHub Actions pypi.yml.
+# `start: manually` replaces the old `pypi` environment's required-reviewer
+# gate: a tag push creates the run in a waiting state and a human starts it
+# from the RWX UI. Also restrict the PYPI_TOKEN vault to refs/tags/v* and
+# enable vault approvals (see `rwx vaults update`).
+# ci/pipeline.py runs its test/build steps through Dagger, which needs a
+# container runtime and the dagger CLI, hence `docker: true`.
+on:
+  github:
+    push:
+      - if: ${{ event.git.tag != '' && starts-with(event.git.tag, 'v') }}
+        start: manually
+        init:
+          commit-sha: ${{ event.git.sha }}
+          tag: ${{ event.git.tag }}
+  cli:
+    init:
+      commit-sha: ${{ event.git.sha }}
+      tag: ""
+
+base:
+  image: ubuntu:24.04
+  config: rwx/base 1.2.0
+
+tasks:
+  - key: code
+    call: git/clone 2.2.0
+    with:
+      repository: https://github.com/elviskahoro/sdk-python-attio.git
+      ref: ${{ init.commit-sha }}
+
+  - key: python
+    call: python/install 2.0.1
+    with:
+      python-version: "3.13"
+
+  - key: uv
+    use: python
+    run: pip install uv
+
+  - key: dagger-cli
+    use: uv
+    run: |
+      # Fixed release, SHA-256 verified before it can build publishable
+      # artifacts; keep the version in step with dagger-io in uv.lock.
+      curl -fsSL -o /tmp/dagger.tgz https://dl.dagger.io/dagger/releases/0.21.10/dagger_v0.21.10_linux_amd64.tar.gz
+      echo "f9ee083767dd12cdac583f9db3fedbebbbb3064f69152998be1f121d1a6cc103  /tmp/dagger.tgz" | sha256sum -c -
+      mkdir -p "$HOME/.local/bin"
+      tar -xzf /tmp/dagger.tgz -C "$HOME/.local/bin" dagger
+      echo "$HOME/.local/bin" >> "$RWX_ENV/PATH"
+
+  - key: sync
+    use: [code, dagger-cli]
+    run: uv sync
+    filter:
+      - pyproject.toml
+      - uv.lock
+
+  - key: verify-version
+    use: sync
+    if: ${{ init.tag != '' }}
+    timeout: 30m
+    env:
+      TAG: ${{ init.tag }}
+      DAGGER_PROGRESS: plain
+      OTEL_SDK_DISABLED: "true"
+    docker: true
+    run: uv run python ci/pipeline.py verify-version "${TAG#v}"
+
+  - key: test
+    use: sync
+    # A CLI run skips verify-version; a skipped task is not `succeeded`, so
+    # accept either or the skip would cascade through test/build.
+    after: ${{ verify-version.succeeded || verify-version.skipped }}
+    timeout: 30m
+    docker: true
+    env:
+      DAGGER_PROGRESS: plain
+      OTEL_SDK_DISABLED: "true"
+    run: uv run python ci/pipeline.py test
+
+  - key: build
+    use: sync
+    after: [test]
+    timeout: 30m
+    docker: true
+    env:
+      DAGGER_PROGRESS: plain
+      OTEL_SDK_DISABLED: "true"
+    run: uv run python ci/pipeline.py build
+
+  # Resolved before the token exists: the upload task only runs the
+  # already-installed, version-pinned twine.
+  - key: twine
+    use: build
+    if: ${{ init.tag != '' }}
+    run: |
+      uv tool install twine==6.2.0
+      echo "$HOME/.local/bin" >> "$RWX_ENV/PATH"
+
+  # CLI runs carry no tag, so they stop after test/build; only the manually
+  # started tag run uploads.
+  - key: publish
+    use: twine
+    if: ${{ init.tag != '' }}
+    # Uncached: twine upload is an external effect; a cache hit on a
+    # re-triggered run for an already-published tag would skip the upload.
+    cache: false
+    env:
+      PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
+    run: |
+      if [ -z "${PYPI_TOKEN}" ]; then
+        echo "PYPI_TOKEN secret is empty or unset. Set it with: rwx vaults secrets set PYPI_TOKEN=..." >&2
+        exit 1
+      fi
+      TWINE_USERNAME=__token__ TWINE_PASSWORD="${PYPI_TOKEN}" twine upload dist/*
