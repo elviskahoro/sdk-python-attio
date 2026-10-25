@@ -271,6 +271,24 @@ tasks:
         fi
       done
 
+  # open-pr's own cleanup only covers command failures. A timeout or
+  # cancellation kills it mid-way, so this task deletes the pushed branch when
+  # no PR was opened for it. Only the write token holders may do this.
+  - key: cleanup
+    use: regenerate
+    after: ${{ open-pr.succeeded || open-pr.failed }}
+    cache: false
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      BRANCH: ${{ tasks.regenerate.values.branch }}
+    run: |
+      [ -n "$BRANCH" ] || exit 0
+      prs=$(gh pr list --head "$BRANCH" --state all --json number --jq length)
+      if [ "$prs" = "0" ]; then
+        git push "https://x-access-token:${GH_TOKEN}@github.com/elviskahoro/sdk-python-attio.git" \
+          --delete "$BRANCH" || true
+      fi
+
   - key: notify
     use: [check]
     cache: false

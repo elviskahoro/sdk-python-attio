@@ -94,7 +94,9 @@ tasks:
   - key: twine
     use: build
     if: ${{ init.tag != '' }}
-    run: uv tool install twine==6.2.0
+    run: |
+      uv tool install twine==6.2.0
+      echo "$HOME/.local/bin" >> "$RWX_ENV/PATH"
 
   # CLI runs carry no tag, so they stop after test/build; only the manually
   # started tag run uploads.

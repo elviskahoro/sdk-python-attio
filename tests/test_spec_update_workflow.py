@@ -80,11 +80,11 @@ def test_verdict_fails_the_run_after_notify(tasks: dict[str, dict]) -> None:
 
 def test_write_token_is_scoped_to_repo_operations(tasks: dict[str, dict]) -> None:
     """Speakeasy, uv, and pytest run in `check`/`regenerate`; neither may
-    see the repo-write token. Only open-pr and notify (issues) hold it."""
+    see the repo-write token. Only open-pr, cleanup, and notify (issues) hold it."""
     holders = {
         key for key, task in tasks.items() if "secrets.GITHUB_TOKEN" in str(task.get("env", {}))
     }
-    assert holders == {"open-pr", "notify"}
+    assert holders == {"open-pr", "notify", "cleanup"}
 
 
 def test_publish_requires_manual_start() -> None:
@@ -296,3 +296,31 @@ def test_publish_dagger_is_pinned_and_verified_and_upload_uncached() -> None:
     assert re.search(r"[0-9a-f]{64}  /tmp/dagger.tgz", run)
     assert "sha256sum -c -" in run
     assert by_key["publish"]["cache"] is False
+
+
+def test_open_pr_initializes_every_value_downstream_tasks_read(
+    tasks: dict[str, dict],
+) -> None:
+    """notify and verdict resolve open-pr's values; one missing on an early
+    exit path leaves them unable to start."""
+    run = tasks["open-pr"]["run"]
+    first_exit = run.index("exit 0")
+    names = set()
+    for key in ("notify", "verdict"):
+        names |= set(re.findall(r"tasks\.open-pr\.values\.([\w-]+)", str(tasks[key]["env"])))
+    assert names
+    for name in names:
+        assert f'> "$RWX_VALUES/{name}"' in run[:first_exit], name
+
+
+def test_twine_is_on_path_for_publish() -> None:
+    doc = yaml.safe_load((REPO_ROOT / ".rwx" / "publish.yml").read_text(encoding="utf-8"))
+    twine = next(t for t in doc["tasks"] if t["key"] == "twine")
+    assert '.local/bin" >> "$RWX_ENV/PATH"' in twine["run"]
+
+
+def test_cleanup_deletes_only_branches_without_a_pr(tasks: dict[str, dict]) -> None:
+    cleanup = tasks["cleanup"]
+    assert "open-pr.failed" in cleanup["after"]
+    assert "gh pr list --head" in cleanup["run"]
+    assert "--delete" in cleanup["run"]
