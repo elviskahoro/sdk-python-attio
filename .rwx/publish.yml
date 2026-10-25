@@ -54,6 +54,7 @@ tasks:
   - key: verify-version
     use: sync
     if: ${{ init.tag != '' }}
+    timeout: 30m
     env:
       TAG: ${{ init.tag }}
       DAGGER_PROGRESS: plain
@@ -63,7 +64,10 @@ tasks:
 
   - key: test
     use: sync
-    after: [verify-version]
+    # A CLI run skips verify-version; a skipped task is not `succeeded`, so
+    # accept either or the skip would cascade through test/build.
+    after: ${{ verify-version.succeeded || verify-version.skipped }}
+    timeout: 30m
     docker: true
     env:
       DAGGER_PROGRESS: plain
@@ -73,6 +77,7 @@ tasks:
   - key: build
     use: sync
     after: [test]
+    timeout: 30m
     docker: true
     env:
       DAGGER_PROGRESS: plain

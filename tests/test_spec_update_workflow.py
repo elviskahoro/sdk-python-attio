@@ -103,6 +103,22 @@ def test_publish_uploads_only_for_tag_runs() -> None:
     assert doc[True]["cli"]["init"]["tag"] == ""
 
 
+def test_publish_chain_survives_skipped_version_check() -> None:
+    """CLI runs skip verify-version; test must still run, and the long
+    Dagger tasks need an explicit timeout above RWX's 10m default."""
+    doc = yaml.safe_load((REPO_ROOT / ".rwx" / "publish.yml").read_text(encoding="utf-8"))
+    by_key = {t["key"]: t for t in doc["tasks"]}
+    assert "verify-version.skipped" in by_key["test"]["after"]
+    for key in ("verify-version", "test", "build"):
+        assert by_key[key]["timeout"] == "30m", key
+
+
+def test_regenerate_has_explicit_timeout(tasks: dict[str, dict]) -> None:
+    """A timeout SIGKILLs the task past its EXIT trap, so the 10m default
+    must not apply to the full regeneration."""
+    assert tasks["regenerate"]["timeout"] == "60m"
+
+
 def test_regenerate_only_runs_when_automation_can_handle_it(tasks: dict[str, dict]) -> None:
     run = tasks["regenerate"]["run"]
     skip_guard = next(line for line in run.splitlines() if "CHECK_FAILED" in line and "exit" not in line)

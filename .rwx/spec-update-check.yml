@@ -116,6 +116,8 @@ tasks:
   - key: regenerate
     use: check
     docker: true
+    # Default is 10m and a timeout SIGKILLs the task past its EXIT trap.
+    timeout: 60m
     env:
       CHANGED: ${{ tasks.check.values.changed }}
       OVERLAY_OK: ${{ tasks.check.values.overlay-ok }}
