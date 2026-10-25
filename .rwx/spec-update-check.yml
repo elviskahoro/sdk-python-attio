@@ -113,7 +113,12 @@ tasks:
       echo "$check_failed" > "$RWX_VALUES/check-failed"
       date -u +%Y-%m-%d > "$RWX_VALUES/run-date"
 
-  - key: regenerate
+  # regenerate is split in three so SPEAKEASY_API_KEY reaches only the
+  # `generate` task: the installer, spec fetch, uv, and pytest never see it.
+  # Each stage records `result` and `ready` before any early exit; a failure is
+  # recorded as `failure` and the task still exits 0 (notify reads these
+  # values, so a failed task would skip it). verdict fails the run afterwards.
+  - key: fetch-spec
     use: check
     docker: true
     # Default is 10m and a timeout SIGKILLs the task past its EXIT trap.
@@ -123,21 +128,13 @@ tasks:
       OVERLAY_OK: ${{ tasks.check.values.overlay-ok }}
       HAS_KEY: ${{ tasks.check.values.has-key }}
       CHECK_FAILED: ${{ tasks.check.values.check-failed }}
-      RUN_DATE: ${{ tasks.check.values.run-date }}
-      SPEAKEASY_API_KEY: ${{ secrets.SPEAKEASY_API_KEY }}
-      SPEAKEASY_USE_HOST_CLI: "1"
     run: |
-      # open-pr resolves every value below; write them all before any early
-      # exit so a skipped or failed regenerate still propagates its result.
       echo skipped > "$RWX_VALUES/result"
-      echo "" > "$RWX_VALUES/branch"
+      echo false > "$RWX_VALUES/ready"
       if [ "$CHECK_FAILED" = "true" ] || [ "$CHANGED" != "true" ] || [ "$OVERLAY_OK" != "true" ] || [ "$HAS_KEY" != "true" ]; then
         echo "Regeneration not needed or not possible; skipping."
         exit 0
       fi
-      # A failure below is recorded as `failure` and the task still exits 0:
-      # notify reads this task's values, so a failed task would skip it.
-      # verdict fails the run afterwards.
       trap 'status=$?; if [ $status -ne 0 ]; then echo failure > "$RWX_VALUES/result"; fi; exit 0' EXIT
 
       # Pinned supply chain: installer fetched at a fixed commit, SHA-256
@@ -152,6 +149,25 @@ tasks:
       # Re-verify the overlay against the adopted spec in case Attio
       # published between check and fetch.
       uv run python ci/spec_diff.py check-overlay
+      echo true > "$RWX_VALUES/ready"
+
+  - key: generate
+    use: fetch-spec
+    docker: true
+    timeout: 60m
+    env:
+      READY: ${{ tasks.fetch-spec.values.ready }}
+      PRIOR_RESULT: ${{ tasks.fetch-spec.values.result }}
+      SPEAKEASY_API_KEY: ${{ secrets.SPEAKEASY_API_KEY }}
+      SPEAKEASY_USE_HOST_CLI: "1"
+    run: |
+      echo "$PRIOR_RESULT" > "$RWX_VALUES/result"
+      echo false > "$RWX_VALUES/ready"
+      if [ "$READY" != "true" ]; then
+        exit 0
+      fi
+      trap 'status=$?; if [ $status -ne 0 ]; then echo failure > "$RWX_VALUES/result"; fi; exit 0' EXIT
+
       # The pipeline prefers the host Speakeasy CLI when SPEAKEASY_USE_HOST_CLI
       # is set alongside SPEAKEASY_API_KEY. It logs the CLI version (pinned
       # above) and re-applies ci/post_generate_patch.py after generation
@@ -162,6 +178,26 @@ tasks:
       # generated/src/attio/_hooks/sdkhooks.py and
       # generated/src/attio/_hooks/__init__.py).
       uv run python ci/pipeline.py generate --no-fetch
+      echo true > "$RWX_VALUES/ready"
+
+  - key: regenerate
+    use: generate
+    docker: true
+    timeout: 60m
+    env:
+      READY: ${{ tasks.generate.values.ready }}
+      PRIOR_RESULT: ${{ tasks.generate.values.result }}
+      RUN_DATE: ${{ tasks.check.values.run-date }}
+    run: |
+      # open-pr resolves every value below; write them all before any early
+      # exit so a skipped or failed regenerate still propagates its result.
+      echo "$PRIOR_RESULT" > "$RWX_VALUES/result"
+      echo "" > "$RWX_VALUES/branch"
+      if [ "$READY" != "true" ]; then
+        exit 0
+      fi
+      trap 'status=$?; if [ $status -ne 0 ]; then echo failure > "$RWX_VALUES/result"; fi; exit 0' EXIT
+
       uv lock
       uv sync
       uv run pytest -q

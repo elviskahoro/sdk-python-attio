@@ -113,14 +113,43 @@ def test_publish_chain_survives_skipped_version_check() -> None:
         assert by_key[key]["timeout"] == "30m", key
 
 
-def test_regenerate_has_explicit_timeout(tasks: dict[str, dict]) -> None:
+@pytest.mark.parametrize("key", ["fetch-spec", "generate", "regenerate"])
+def test_regeneration_stages_have_explicit_timeout(tasks: dict[str, dict], key: str) -> None:
     """A timeout SIGKILLs the task past its EXIT trap, so the 10m default
-    must not apply to the full regeneration."""
-    assert tasks["regenerate"]["timeout"] == "60m"
+    must not apply to the regeneration stages."""
+    assert tasks[key]["timeout"] == "60m"
+
+
+def test_speakeasy_key_reaches_only_the_generate_task(tasks: dict[str, dict]) -> None:
+    """The installer, spec fetch, uv, and pytest must not see the key."""
+    holders = {k for k, t in tasks.items() if "SPEAKEASY_API_KEY" in t.get("env", {})}
+    assert holders == {"check", "generate"}
+    assert "ci/pipeline.py generate" in tasks["generate"]["run"]
+    for key in ("fetch-spec", "regenerate"):
+        assert "ci/pipeline.py generate" not in tasks[key]["run"], key
+
+
+@pytest.mark.parametrize("key", ["fetch-spec", "generate", "regenerate"])
+def test_regeneration_stages_record_failure_and_skip_cleanly(
+    tasks: dict[str, dict], key: str
+) -> None:
+    run = tasks[key]["run"]
+    assert 'echo failure > "$RWX_VALUES/result"' in run
+    assert re.search(r"trap '.*exit 0' EXIT", run)
+    assert run.index('> "$RWX_VALUES/result"') < run.index("exit 0")
+
+
+def test_publish_installs_pinned_twine_before_the_token() -> None:
+    doc = yaml.safe_load((REPO_ROOT / ".rwx" / "publish.yml").read_text(encoding="utf-8"))
+    by_key = {t["key"]: t for t in doc["tasks"]}
+    assert re.search(r"twine==\d", by_key["twine"]["run"])
+    assert "secrets" not in str(by_key["twine"])
+    assert by_key["publish"]["use"] == "twine"
+    assert "uvx" not in by_key["publish"]["run"]
 
 
 def test_regenerate_only_runs_when_automation_can_handle_it(tasks: dict[str, dict]) -> None:
-    run = tasks["regenerate"]["run"]
+    run = tasks["fetch-spec"]["run"]
     skip_guard = next(line for line in run.splitlines() if "CHECK_FAILED" in line and "exit" not in line)
     for clause in (
         '"$CHECK_FAILED" = "true"',
@@ -181,7 +210,7 @@ def test_commit_guard_ignores_staged_entries_and_flags_leftovers(
 def test_speakeasy_installer_is_pinned(tasks: dict[str, dict]) -> None:
     import importlib.util
 
-    script = tasks["regenerate"]["run"]
+    script = tasks["fetch-spec"]["run"]
     assert "raw.githubusercontent.com/speakeasy-api/speakeasy/" in script
     assert "/install.sh" in script
     # The URL pins a commit SHA, the checksum verifies the script before it

@@ -84,10 +84,17 @@ tasks:
       OTEL_SDK_DISABLED: "true"
     run: uv run python ci/pipeline.py build
 
+  # Resolved before the token exists: the upload task only runs the
+  # already-installed, version-pinned twine.
+  - key: twine
+    use: build
+    if: ${{ init.tag != '' }}
+    run: uv tool install twine==6.2.0
+
   # CLI runs carry no tag, so they stop after test/build; only the manually
   # started tag run uploads.
   - key: publish
-    use: build
+    use: twine
     if: ${{ init.tag != '' }}
     env:
       PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
@@ -96,4 +103,4 @@ tasks:
         echo "PYPI_TOKEN secret is empty or unset. Set it with: rwx vaults secrets set PYPI_TOKEN=..." >&2
         exit 1
       fi
-      TWINE_USERNAME=__token__ TWINE_PASSWORD="${PYPI_TOKEN}" uvx twine upload dist/*
+      TWINE_USERNAME=__token__ TWINE_PASSWORD="${PYPI_TOKEN}" twine upload dist/*
