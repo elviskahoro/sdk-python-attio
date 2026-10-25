@@ -53,6 +53,13 @@ downloads:
 # This is the section where you manage your linters. (https://docs.trunk.io/check/configuration)
 lint:
   definitions:
+    # The plugin's pyrefly command can't see the editable `attio` install (setuptools
+    # finder, not a path .pth) and generated/ is outside Trunk's sandbox, so point
+    # pyrefly at the generated SDK source explicitly.
+    - name: pyrefly
+      commands:
+        - name: lint
+          run: pyrefly check --python-interpreter-path ${workspace}/.venv/bin/python --search-path ${workspace} --site-package-path ${workspace}/generated/src --output-format=min-text --summary=none ${target}
     - name: ruff
       commands:
         - name: format

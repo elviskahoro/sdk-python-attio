@@ -453,7 +453,7 @@ def _record_name_parts(record: Any) -> tuple[str | None, str | None]:
     return first_name, last_name
 
 
-def upsert_person(query: PersonUpsertQuery, client: Any) -> dict[str, Any]:
+def upsert_person(query: PersonUpsertQuery, client: SDK) -> dict[str, Any]:
     """Search by email, then create/update with upstream reliability semantics."""
     warnings, skipped = _validation_warnings(query)
     response = client.records.post_v2_objects_object_records_query(
