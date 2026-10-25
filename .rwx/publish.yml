@@ -79,8 +79,11 @@ tasks:
       OTEL_SDK_DISABLED: "true"
     run: uv run python ci/pipeline.py build
 
+  # CLI runs carry no tag, so they stop after test/build; only the manually
+  # started tag run uploads.
   - key: publish
     use: build
+    if: ${{ init.tag != '' }}
     env:
       PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
     run: |

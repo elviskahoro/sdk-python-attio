@@ -94,6 +94,15 @@ def test_publish_requires_manual_start() -> None:
     assert all(t.get("start") == "manually" for t in tag_triggers)
 
 
+def test_publish_uploads_only_for_tag_runs() -> None:
+    """`start: manually` gates only the GitHub tag trigger; a CLI run has an
+    empty tag and must not reach the PyPI upload."""
+    doc = yaml.safe_load((REPO_ROOT / ".rwx" / "publish.yml").read_text(encoding="utf-8"))
+    publish = next(t for t in doc["tasks"] if t["key"] == "publish")
+    assert publish["if"] == "${{ init.tag != '' }}"
+    assert doc[True]["cli"]["init"]["tag"] == ""
+
+
 def test_regenerate_only_runs_when_automation_can_handle_it(tasks: dict[str, dict]) -> None:
     run = tasks["regenerate"]["run"]
     skip_guard = next(line for line in run.splitlines() if "CHECK_FAILED" in line and "exit" not in line)
