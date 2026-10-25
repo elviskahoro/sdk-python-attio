@@ -76,7 +76,7 @@ def _jsonable(value: object) -> object:
 
 
 def _query_records(
-    client: "SDK",
+    client: SDK,
     object_name: str,
     filter_: dict[str, Any],
 ) -> list[Any]:
@@ -92,15 +92,16 @@ def _normalized_email(email: str) -> str:
     normalized = email.strip().casefold()
     if not normalized or "@" not in normalized:
         msg = "email must be a non-empty email address"
+        msg_0 = "validation_error"
         raise CLIError(
-            "validation_error",
+            msg_0,
             msg,
             field="email",
         )
     return normalized
 
 
-def search_people(email: str, client: "SDK") -> dict[str, Any]:
+def search_people(email: str, client: SDK) -> dict[str, Any]:
     normalized = _normalized_email(email)
     matches = _query_records(client, "people", {"email_addresses": normalized})
     result = _success_envelope(
@@ -121,14 +122,15 @@ def search_people(email: str, client: "SDK") -> dict[str, Any]:
     return result
 
 
-def add_person(query: "PersonUpsertQuery", client: "SDK") -> dict[str, Any]:
+def add_person(query: PersonUpsertQuery, client: SDK) -> dict[str, Any]:
     email = query.email.strip()
     normalized = _normalized_email(email)
     query = query.model_copy(update={"email": email})
     matches = _query_records(client, "people", {"email_addresses": normalized})
     if matches:
+        msg = "duplicate_identity"
         raise CLIError(
-            "duplicate_identity",
+            msg,
             f"A person already matches email '{normalized}'; use people update or people upsert.",
             field="email",
         )
@@ -153,8 +155,9 @@ def add_person(query: "PersonUpsertQuery", client: "SDK") -> dict[str, Any]:
     except Exception as exc:
         if _is_uniqueness_conflict(exc):
             conflict = _uniqueness_conflict_error(exc, query)
+            msg = "duplicate_identity"
             raise CLIError(
-                "duplicate_identity",
+                msg,
                 str(conflict),
                 field="email",
             ) from None
@@ -167,7 +170,7 @@ def add_person(query: "PersonUpsertQuery", client: "SDK") -> dict[str, Any]:
     )
 
 
-def update_person(query: "PersonUpsertQuery", client: "SDK") -> dict[str, Any]:
+def update_person(query: PersonUpsertQuery, client: SDK) -> dict[str, Any]:
     email = query.email.strip()
     normalized = _normalized_email(email)
     query = query.model_copy(update={"email": email})
@@ -192,21 +195,24 @@ def update_person(query: "PersonUpsertQuery", client: "SDK") -> dict[str, Any]:
     )
     if not has_changes:
         msg = "provide at least one field to update in addition to the email identity."
+        msg_0 = "validation_error"
         raise CLIError(
-            "validation_error",
+            msg_0,
             msg,
         )
     warnings, skipped = _validation_warnings(query)
     matches = _query_records(client, "people", {"email_addresses": normalized})
     if not matches:
+        msg_0 = "record_not_found"
         raise CLIError(
-            "record_not_found",
+            msg_0,
             f"No person matches email '{normalized}'.",
             field="email",
         )
     if len(matches) != 1:
+        msg_0 = "multiple_matches"
         raise CLIError(
-            "multiple_matches",
+            msg_0,
             f"{len(matches)} people match email '{normalized}'; update was not applied.",
             field="email",
         )
@@ -237,8 +243,9 @@ def update_person(query: "PersonUpsertQuery", client: "SDK") -> dict[str, Any]:
     optional = _build_optional_values(query)
     if not core and not optional:
         msg = "No valid person fields were supplied for the update."
+        msg_0 = "validation_error"
         raise CLIError(
-            "validation_error",
+            msg_0,
             msg,
         )
 
@@ -272,21 +279,22 @@ def _company_domain(value: str) -> str:
     normalized = _format_domain(value)
     if normalized is None:
         msg = "domain must be a valid fully qualified company domain."
+        msg_0 = "validation_error"
         raise CLIError(
-            "validation_error",
+            msg_0,
             msg,
             field="domain",
         )
     return normalized
 
 
-def _company_values(payload: "CompanyPayload", domain: str) -> dict[str, list[Any]]:
+def _company_values(payload: CompanyPayload, domain: str) -> dict[str, list[Any]]:
     values = {key: list(value) for key, value in payload.values.items()}
     values["domains"] = [{"domain": domain}]
     return values
 
 
-def search_companies(payload: "CompanyPayload", client: "SDK") -> dict[str, Any]:
+def search_companies(payload: CompanyPayload, client: SDK) -> dict[str, Any]:
     domain = _company_domain(payload.domain)
     matches = _query_records(client, "companies", {"domains": domain})
     result = _success_envelope("searched", results=matches, identity={"domain": domain})
@@ -303,12 +311,13 @@ def search_companies(payload: "CompanyPayload", client: "SDK") -> dict[str, Any]
     return result
 
 
-def add_company(payload: "CompanyPayload", client: "SDK") -> dict[str, Any]:
+def add_company(payload: CompanyPayload, client: SDK) -> dict[str, Any]:
     domain = _company_domain(payload.domain)
     matches = _query_records(client, "companies", {"domains": domain})
     if matches:
+        msg = "duplicate_identity"
         raise CLIError(
-            "duplicate_identity",
+            msg,
             f"A company already matches domain '{domain}'; use companies update.",
             field="domain",
         )
@@ -319,8 +328,9 @@ def add_company(payload: "CompanyPayload", client: "SDK") -> dict[str, Any]:
         )
     except Exception as exc:
         if _is_uniqueness_conflict(exc):
+            msg = "duplicate_identity"
             raise CLIError(
-                "duplicate_identity",
+                msg,
                 f"A company already owns domain '{domain}'; no company was created.",
                 field="domain",
             ) from None
@@ -334,20 +344,22 @@ def add_company(payload: "CompanyPayload", client: "SDK") -> dict[str, Any]:
     )
 
 
-def update_company(payload: "CompanyPayload", client: "SDK") -> dict[str, Any]:
+def update_company(payload: CompanyPayload, client: SDK) -> dict[str, Any]:
     domain = _company_domain(payload.domain)
     if not payload.values:
         msg = "provide at least one company attribute in values to update."
+        msg_0 = "validation_error"
         raise CLIError(
-            "validation_error",
+            msg_0,
             msg,
             field="values",
         )
     matches = _query_records(client, "companies", {"domains": domain})
     if not matches:
         msg = f"No company matches domain '{domain}'."
+        msg_0 = "record_not_found"
         raise CLIError(
-            "record_not_found",
+            msg_0,
             msg,
             field="domain",
         )
@@ -355,8 +367,9 @@ def update_company(payload: "CompanyPayload", client: "SDK") -> dict[str, Any]:
         msg = (
             f"{len(matches)} companies match domain '{domain}'; update was not applied."
         )
+        msg_0 = "multiple_matches"
         raise CLIError(
-            "multiple_matches",
+            msg_0,
             msg,
             field="domain",
         )
@@ -378,7 +391,7 @@ def update_company(payload: "CompanyPayload", client: "SDK") -> dict[str, Any]:
     )
 
 
-def list_notes(payload: "NoteListPayload", client: "SDK") -> dict[str, Any]:
+def list_notes(payload: NoteListPayload, client: SDK) -> dict[str, Any]:
     response = client.notes.get_v2_notes(
         parent_object=payload.parent_object,
         parent_record_id=payload.parent_record_id,
@@ -397,7 +410,7 @@ def list_notes(payload: "NoteListPayload", client: "SDK") -> dict[str, Any]:
     )
 
 
-def add_note(payload: "NoteAddPayload", client: "SDK") -> dict[str, Any]:
+def add_note(payload: NoteAddPayload, client: SDK) -> dict[str, Any]:
     response = client.notes.post_v2_notes(
         data={
             "parent_object": payload.parent_object,
@@ -417,7 +430,7 @@ def add_note(payload: "NoteAddPayload", client: "SDK") -> dict[str, Any]:
     )
 
 
-def update_note(payload: "NoteUpdatePayload", client: "SDK") -> dict[str, Any]:
+def update_note(payload: NoteUpdatePayload, client: SDK) -> dict[str, Any]:
     data = payload.model_dump(exclude={"note_id"}, exclude_none=True, by_alias=True)
     response = client.notes.patch_v2_notes_note_id_(
         note_id=payload.note_id,

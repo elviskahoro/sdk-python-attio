@@ -35,7 +35,7 @@ from .workflows import (
 )
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
+    from collections.abc import Callable, Sequence
 
 EXPORT_KEYWORD_LENGTH = 6
 
@@ -195,15 +195,17 @@ def _parse_quoted_dotenv_value(
         escaped = char == "\\" and not escaped
         end += 1
     if end == len(value):
+        msg = "invalid_dotenv"
         raise CLIError(
-            "invalid_dotenv",
+            msg,
             f"{path.name}:{line_number} has an unterminated ATTIO_API_KEY value.",
             field="ATTIO_API_KEY",
         )
     trailing = value[end + 1 :].strip()
     if trailing and not trailing.startswith("#"):
+        msg = "invalid_dotenv"
         raise CLIError(
-            "invalid_dotenv",
+            msg,
             f"{path.name}:{line_number} has unexpected text after ATTIO_API_KEY.",
             field="ATTIO_API_KEY",
         )
@@ -227,8 +229,9 @@ def _dotenv_api_key(path: Path) -> str | None:
     except FileNotFoundError:
         return None
     except (OSError, UnicodeDecodeError) as exc:
+        msg = "credential_file_error"
         raise CLIError(
-            "credential_file_error",
+            msg,
             f"Could not read {path.name}: {exc.__class__.__name__}.",
         ) from None
     for line_number, line in enumerate(lines, start=1):
@@ -276,23 +279,20 @@ def _dispatch_command(
     client: SDK,
 ) -> dict[str, Any] | None:
     """Dispatch command to appropriate handler based on resource and operation."""
-    if args.resource == "people":
-        if args.operation == "search":
-            return search_people(args.email, client)
-        if args.operation == "add":
-            return add_person(cast("PersonUpsertQuery", payload), client)
-        return update_person(cast("PersonUpsertQuery", payload), client)
-    if args.resource == "companies":
-        if args.operation == "search":
-            return search_companies(cast("CompanyPayload", payload), client)
-        if args.operation == "add":
-            return add_company(cast("CompanyPayload", payload), client)
-        return update_company(cast("CompanyPayload", payload), client)
-    if args.operation == "list":
-        return list_notes(cast("NoteListPayload", payload), client)
-    if args.operation == "add":
-        return add_note(cast("NoteAddPayload", payload), client)
-    return update_note(cast("NoteUpdatePayload", payload), client)
+    if args.resource == "people" and args.operation == "search":
+        return search_people(args.email, client)
+    handlers: dict[tuple[str, str], Callable[[Any, SDK], dict[str, Any]]] = {
+        ("people", "add"): add_person,
+        ("people", "update"): update_person,
+        ("companies", "search"): search_companies,
+        ("companies", "add"): add_company,
+        ("companies", "update"): update_company,
+        ("notes", "list"): list_notes,
+        ("notes", "add"): add_note,
+        ("notes", "update"): update_note,
+    }
+    handler = handlers.get((args.resource, args.operation))
+    return handler(payload, client) if handler else None
 
 
 def _input_from_args(args: argparse.Namespace) -> PersonUpsertQuery:
@@ -300,8 +300,9 @@ def _input_from_args(args: argparse.Namespace) -> PersonUpsertQuery:
         return PersonUpsertQuery.model_validate_json(args.json_payload)
     if not args.email:
         msg = "email is required unless --json supplies an email field."
+        msg_0 = "missing_email"
         raise CLIError(
-            "missing_email",
+            msg_0,
             msg,
             field="email",
         )
@@ -326,55 +327,60 @@ def _input_from_args(args: argparse.Namespace) -> PersonUpsertQuery:
     )
 
 
-def main(argv: "Sequence[str] | None" = None) -> int:
+def _parse_payload(
+    args: argparse.Namespace,
+    parser: argparse.ArgumentParser,
+) -> BaseModel:
+    if args.resource == "people":
+        if args.operation == "search":
+            return PersonUpsertQuery(email=args.email)
+        if args.json_payload is None and not args.email:
+            parser.error("email is required unless --json supplies an email field")
+        return _input_from_args(args)
+    if args.resource == "companies":
+        return CompanyPayload.model_validate_json(args.json_payload)
+    note_payloads: dict[str, type[BaseModel]] = {
+        "list": NoteListPayload,
+        "add": NoteAddPayload,
+    }
+    note_cls = note_payloads.get(args.operation, NoteUpdatePayload)
+    return note_cls.model_validate_json(args.json_payload)
+
+
+def _require_api_key() -> str:
+    api_key = _load_credentials()
+    if not api_key:
+        code = "missing_api_key"
+        msg = "ATTIO_API_KEY is not set. Export it or add it to .env.local or .env in the current directory."
+        raise CLIError(code, msg)
+    return api_key
+
+
+def main(argv: Sequence[str] | None = None) -> int:
     parser = _parser()
     args = parser.parse_args(argv)
     result: dict[str, Any] | None = None
     try:
-        payload: Any
-        if args.resource == "people":
-            if args.operation == "search":
-                payload = PersonUpsertQuery(email=args.email)
-            else:
-                if args.json_payload is None and not args.email:
-                    parser.error(
-                        "email is required unless --json supplies an email field",
-                    )
-                payload = _input_from_args(args)
-        elif args.resource == "companies":
-            payload = CompanyPayload.model_validate_json(args.json_payload)
-        elif args.operation == "list":
-            payload = NoteListPayload.model_validate_json(args.json_payload)
-        elif args.operation == "add":
-            payload = NoteAddPayload.model_validate_json(args.json_payload)
-        else:
-            payload = NoteUpdatePayload.model_validate_json(args.json_payload)
+        payload = _parse_payload(args, parser)
     except ValidationError as exc:
         is_bad_json = any(error.get("type") == "json_invalid" for error in exc.errors())
         code = "invalid_json" if is_bad_json else "validation_error"
         _emit(error_envelope(CLIError(code, _validation_message(exc))))
         return 1
-    except CLIError as exc:
-        _emit(error_envelope(exc))
-        return 1
-    except ValueError as exc:
-        _emit(error_envelope(CLIError("invalid_json", str(exc))))
+    except (CLIError, ValueError) as exc:
+        _emit(
+            error_envelope(
+                exc
+                if isinstance(exc, CLIError)
+                else CLIError("invalid_json", str(exc)),
+            ),
+        )
         return 1
 
     try:
-        api_key = _load_credentials()
+        api_key = _require_api_key()
     except CLIError as exc:
         _emit(error_envelope(exc))
-        return 1
-    if not api_key:
-        _emit(
-            error_envelope(
-                CLIError(
-                    "missing_api_key",
-                    "ATTIO_API_KEY is not set. Export it or add it to .env.local or .env in the current directory.",
-                ),
-            ),
-        )
         return 1
 
     try:
@@ -388,7 +394,7 @@ def main(argv: "Sequence[str] | None" = None) -> int:
         SystemExit,
     ):  # pragma: no cover
         raise
-    except Exception as exc:  # API/SDK failures are represented in the envelope.
+    except Exception as exc:  # noqa: BLE001 - API/SDK failures are represented in the envelope.
         _emit(error_envelope(exc))
         return 1
     if result is None:
