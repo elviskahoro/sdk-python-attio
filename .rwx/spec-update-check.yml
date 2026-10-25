@@ -113,8 +113,10 @@ tasks:
       SPEAKEASY_API_KEY: ${{ secrets.SPEAKEASY_API_KEY }}
       SPEAKEASY_USE_HOST_CLI: "1"
     run: |
+      # open-pr resolves every value below; write them all before any early
+      # exit so a skipped or failed regenerate still propagates its result.
       echo skipped > "$RWX_VALUES/result"
-      echo "" > "$RWX_VALUES/pr-url"
+      echo "" > "$RWX_VALUES/branch"
       if [ "$CHECK_FAILED" = "true" ] || [ "$CHANGED" != "true" ] || [ "$OVERLAY_OK" != "true" ] || [ "$HAS_KEY" != "true" ]; then
         echo "Regeneration not needed or not possible; skipping."
         exit 0

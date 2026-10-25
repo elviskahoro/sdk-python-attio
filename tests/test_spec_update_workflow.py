@@ -37,6 +37,15 @@ def test_regenerate_failure_does_not_fail_the_task(tasks: dict[str, dict]) -> No
     assert re.search(r"trap '.*exit 0' EXIT", run), "regenerate must exit 0 on failure"
 
 
+def test_regenerate_initializes_every_value_open_pr_reads(tasks: dict[str, dict]) -> None:
+    """open-pr resolves regenerate's `result` and `branch`; a value missing on
+    an early-exit path leaves open-pr (and so notify) unable to start."""
+    run = tasks["regenerate"]["run"]
+    first_exit = run.index("exit 0")
+    for name in ("result", "branch"):
+        assert f'> "$RWX_VALUES/{name}"' in run[:first_exit], name
+
+
 def test_notify_reads_both_upstream_tasks(tasks: dict[str, dict]) -> None:
     env = tasks["notify"]["env"]
     assert "tasks.check.values.check-failed" in env["CHECK_FAILED"]
