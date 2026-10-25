@@ -100,44 +100,13 @@ PutV2ActivitiesActivityRecordsForbiddenCodeUnion = TypeAliasType(
 PutV2ActivitiesActivityRecordsBadRequestType = Literal["invalid_request_error",]
 
 
-PutV2ActivitiesActivityRecordsCodeParticleGateViolation = Literal[
-    "particle_gate_violation",
-]
-
-
-PutV2ActivitiesActivityRecordsCodeMultipleMatchResults = Literal[
-    "multiple_match_results",
-]
-
-
-CodeMatchingAttributeDefinitionNotUnique = Literal[
+PutV2ActivitiesActivityRecordsBadRequestCode = Literal[
+    "value_not_found",
     "matching_attribute_definition_not_unique",
+    "multiple_match_results",
+    "particle_gate_violation",
+    "validation_type",
 ]
-
-
-PutV2ActivitiesActivityRecordsCodeValueNotFound = Literal["value_not_found",]
-
-
-PutV2ActivitiesActivityRecordsBadRequestCodeUnionTypedDict = TypeAliasType(
-    "PutV2ActivitiesActivityRecordsBadRequestCodeUnionTypedDict",
-    Union[
-        PutV2ActivitiesActivityRecordsCodeValueNotFound,
-        CodeMatchingAttributeDefinitionNotUnique,
-        PutV2ActivitiesActivityRecordsCodeMultipleMatchResults,
-        PutV2ActivitiesActivityRecordsCodeParticleGateViolation,
-    ],
-)
-
-
-PutV2ActivitiesActivityRecordsBadRequestCodeUnion = TypeAliasType(
-    "PutV2ActivitiesActivityRecordsBadRequestCodeUnion",
-    Union[
-        PutV2ActivitiesActivityRecordsCodeValueNotFound,
-        CodeMatchingAttributeDefinitionNotUnique,
-        PutV2ActivitiesActivityRecordsCodeMultipleMatchResults,
-        PutV2ActivitiesActivityRecordsCodeParticleGateViolation,
-    ],
-)
 
 
 class PutV2ActivitiesActivityRecordsIDTypedDict(TypedDict):
