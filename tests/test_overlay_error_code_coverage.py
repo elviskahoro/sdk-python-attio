@@ -1,15 +1,16 @@
 """End-to-end regression test for ``overlay.yaml`` error-code coverage.
 
-PR81 quietly dropped the overlay action that appends ``validation_type`` to
-the ``POST /v2/lists/{list}/entries`` 400 ``code`` enum. The action still
-applied against the pinned ``openapi/api-202610030405.json`` spec, so
-``check-overlay`` reported 97 healthy targets and CI turned green — but the
-generated SDK ``PostV2ListsListEntriesBadRequestCode`` lost ``validation_type``
-from its ``Literal[…]`` and any real response from the Attio API returning
-``"code": "validation_type"`` on that endpoint would raise
-``ResponseValidationError`` at unmarshal time.
+An early draft of this PR (#81) proposed dropping the overlay action that
+appends ``validation_type`` to the ``POST /v2/lists/{list}/entries`` 400
+``code`` enum. The action was live against the pinned
+``openapi/api-202610030405.json`` spec, so ``check-overlay`` would still
+have reported 97 healthy targets and CI would still have turned green — but
+the generated SDK ``PostV2ListsListEntriesBadRequestCode`` would have lost
+``validation_type`` from its ``Literal[…]`` and any real response from the
+Attio API returning ``"code": "validation_type"`` on that endpoint would
+have raised ``ResponseValidationError`` at unmarshal time.
 
-This test catches that regression in two ways:
+This test catches regressions of that shape in two ways:
 
 1. **Action-present-but-ineffective:** every overlay action that intends
    ``validation_type`` to be accepted by a 400-error code union is parametrized
@@ -22,9 +23,9 @@ This test catches that regression in two ways:
    the (method, REST path) pairs that the overlay must cover. The set of
    endpoints the test parametrizes over is a *strict* subset of that fence
    (the fence asserts everything is included; parametrization runs only on
-   the endpoints the overlay actually advertises). A PR-style removal that
-   drops an action shrinks the parametrized set, and the matching assertion
-   in ``test_overlay_yaml_covers_every_expected_endpoint`` fails loudly with
+   the endpoints the overlay actually advertises). A removal that drops an
+   action shrinks the parametrized set, and the matching assertion
+   in ``test_overlay_yaml_fence_is_bidirectional`` fails loudly with
    the missing (method, path) quoted — so the regression surfaces in CI
    rather than shipping silently with a reduced-but-passing test count.
 
@@ -32,7 +33,8 @@ The companion ``check-overlay`` guard (``ci/spec_diff.py:_check_error_code_sync`
 covers the remaining direction: an overlay whose hardcoded ``replace:`` enum
 drops a value the spec's ``anyOf`` union still carries. Together, these
 three lenses — overlay-side enum coverage, generated-SDK Literal validation,
-and the boundary fence — close the loop on PR81-style regressions.
+and the boundary fence — close the loop on regressions like the draft
+removal above.
 """
 
 from __future__ import annotations
@@ -55,9 +57,9 @@ OVERLAY_YAML = REPO_ROOT / "overlay.yaml"
 # 400 ``code`` schemas plus the cross-checked flatten pairs the overlay
 # maintains. Update this tuple deliberately — a change means the
 # overlay-side set of code-acceptance promises has changed, not just the
-# discovery logic. Any PR81-style removal shrinks the overlay's coverage
-# below this fence and is detected by
-# ``test_overlay_yaml_covers_every_expected_endpoint``.
+# discovery logic. Any removal that drops an action shrinks the overlay's
+# coverage below this fence and is detected by
+# ``test_overlay_yaml_fence_is_bidirectional``.
 EXPECTED_ENDPOINTS: tuple[tuple[str, str], ...] = (
     ("patch", "/v2/{target}/{identifier}/attributes/{attribute}/options/{option}"),
     ("patch", "/v2/{target}/{identifier}/attributes/{attribute}/statuses/{status}"),
@@ -91,7 +93,7 @@ def _overlay_endpoints() -> set[tuple[str, str]]:
     """Return the (method, REST path) set ``overlay.yaml`` actually advertises
     ``validation_type`` for. If the overlay format ever changes so that no
     action matches, this returns an empty set, and the fence in
-    ``test_overlay_yaml_covers_every_expected_endpoint`` fails loudly."""
+    ``test_overlay_yaml_fence_is_bidirectional`` fails loudly."""
     with OVERLAY_YAML.open() as fh:
         doc = yaml.safe_load(fh) or {}
     found: set[tuple[str, str]] = set()
@@ -167,7 +169,7 @@ def _import_class(module_name: str, class_name: str) -> Any:
 
 # ---------------------------------------------------------------------------
 # Fence: overlay.yaml must advertise at least the endpoints we promised.
-# Catch PR81-style removal — if an action is deleted, the parametrized test
+# Catch silent action removal — if an action is deleted, the parametrized test
 # count silently drops. This assertion fails loudly with the missing
 # (method, path) quoted rather than passing with N-1 tests. The symmetric
 # check (advertised ⊆ expected) catches the opposite drift: if a new
@@ -233,7 +235,6 @@ def _parametrize_overlap() -> list[dict[str, Any]]:
             {
                 "method": method,
                 "path": path,
-                "in_fence": True,
             }
         )
     return out
@@ -247,9 +248,9 @@ def _parametrize_overlap() -> list[dict[str, Any]]:
 def test_sdk_accepts_validation_type(endpoint: dict[str, Any]) -> None:
     """The endpoint advertised by overlay.yaml as accepting ``validation_type``
     must round-trip a synthetic 400 response through its generated
-    ``InvalidRequestErrorData`` Pydantic model. PR81 silently regresses here
-    because its overlay removal also walks the generated Literal down to
-    ``[value_not_found]``."""
+    ``InvalidRequestErrorData`` Pydantic model. The draft removal above would
+    have regressed here too: dropping the overlay action also walks the
+    generated Literal down to ``[value_not_found]``."""
     module_name = _errors_module_for(endpoint["method"], endpoint["path"])
     class_name = _bad_request_class_name(endpoint["method"], endpoint["path"])
     model = _import_class(module_name, class_name)
