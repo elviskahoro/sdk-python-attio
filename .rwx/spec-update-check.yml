@@ -11,7 +11,7 @@
 #   verdict     -> fails the run if check or regenerate failed.
 #
 # Required vault secrets: GITHUB_TOKEN (contents+pull-requests+issues write;
-# also used to clone, since `github.token` is unavailable in this RWX org),
+# the repo is public, so cloning needs no token),
 # SPEAKEASY_API_KEY (optional; without it drift only produces an issue).
 # No task pushes to main.
 on:
@@ -46,7 +46,6 @@ tasks:
     with:
       repository: https://github.com/elviskahoro/sdk-python-attio.git
       ref: ${{ init.commit-sha }}
-      github-token: ${{ secrets.GITHUB_TOKEN }}
       preserve-git-dir: true
       fetch-full-depth: true
 
