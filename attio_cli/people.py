@@ -478,14 +478,16 @@ def _select_match(
     matches: list[Any],
     query: PersonUpsertQuery,
     warnings: list[dict[str, Any]],
-) -> Any:
+) -> RecordLike:
     if len(matches) == 1:
         return matches[0]
     if query.strict:
-        raise CLIError(
-            "multiple_matches",
-            f"Multiple people matched email {query.email}; strict mode rejects ambiguity.",
+        code = "multiple_matches"
+        message = (
+            f"Multiple people matched email {query.email}; "
+            "strict mode rejects ambiguity."
         )
+        raise CLIError(code, message)
     warnings.append(
         {
             "code": "upsert_multi_match_selected_record",
@@ -597,7 +599,7 @@ def _create_person(
 def _update_person(
     query: PersonUpsertQuery,
     client: SDK,
-    selected: Any,
+    selected: RecordLike,
     warnings: list[dict[str, Any]],
 ) -> tuple[RecordResponseLike, list[dict[str, Any]], list[dict[str, str]]]:
     record_id = _record_id(selected)
