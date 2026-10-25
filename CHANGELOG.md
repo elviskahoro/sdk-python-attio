@@ -38,6 +38,6 @@ New API surface from the spec: `DELETE`/`PATCH`/`PUT`
 (upsert), plus 409 conflict responses on write endpoints.
 
 Tooling: weekly spec-drift detection (`ci/spec_diff.py`,
-`ci/pipeline.py check-openapi`, `.github/workflows/spec-update-check.yml`)
+`ci/pipeline.py check-openapi`, `.rwx/spec-update-check.yml`)
 with an overlay-health gate on generation; release scripts moved under
 `ci/` behind generator-proof wrappers.

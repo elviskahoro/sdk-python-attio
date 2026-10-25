@@ -1,0 +1,73 @@
+# Test + lint gates for the Trunk Merge Queue (merge.required_statuses in
+# .trunk/trunk.yaml). Not path-filtered: a path-filtered required check does
+# not report on every PR and would deadlock the queue. PR and queue/main
+# pushes share one status-check name so a single required check covers both.
+on:
+  github:
+    pull_request:
+      init:
+        commit-sha: ${{ event.git.sha }}
+        branch: ${{ event.git.branch }}
+      status-checks:
+        name: CI
+    push:
+      - if: ${{ event.git.branch == 'main' || starts-with(event.git.branch, 'trunk-merge/') || starts-with(event.git.branch, 'trunk-merge-beta/') }}
+        init:
+          commit-sha: ${{ event.git.sha }}
+          branch: ${{ event.git.branch }}
+        status-checks:
+          name: CI
+  cli:
+    init:
+      commit-sha: ${{ event.git.sha }}
+      branch: local
+
+base:
+  image: ubuntu:24.04
+  config: rwx/base 1.2.0
+
+tasks:
+  - key: code
+    call: git/clone 2.2.0
+    with:
+      repository: https://github.com/elviskahoro/sdk-python-attio.git
+      ref: ${{ init.commit-sha }}
+      github-token: ${{ github.token }}
+      preserve-git-dir: true
+      fetch-full-depth: true
+
+  - key: python
+    call: python/install 2.0.1
+    with:
+      python-version: "3.13"
+
+  - key: uv
+    use: python
+    run: pip install uv
+
+  - key: sync
+    use: [code, uv]
+    run: uv sync
+    filter:
+      - pyproject.toml
+      - uv.lock
+
+  - key: pytest
+    use: sync
+    run: uv run pytest -q
+
+  - key: lint
+    use: sync
+    env:
+      BRANCH: ${{ init.branch }}
+    run: |
+      curl -fsSL https://get.trunk.io | bash -s -- -y
+      # Lint only the diff, like trunk-action: PR/queue runs against main,
+      # pushes to main against the previous commit.
+      if [ "$BRANCH" = "main" ]; then
+        upstream=HEAD^
+      else
+        git fetch origin main
+        upstream=origin/main
+      fi
+      trunk check --ci --upstream "$upstream"

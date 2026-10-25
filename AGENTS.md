@@ -60,9 +60,9 @@ This SDK is generated using Speakeasy from an OpenAPI spec.
    exit 0. `ci/spec_diff.py` also has standalone `diff OLD NEW` and
    `check-overlay` subcommands.
 
-   The scheduled `.github/workflows/spec-update-check.yml` workflow runs this
+   The scheduled `.rwx/spec-update-check.yml` workflow runs this
    check weekly (Mondays 09:00 UTC). On drift it regenerates, runs pytest,
-   and opens a PR (needs the `SPEAKEASY_API_KEY` repo secret); without the
+   and opens a PR (needs the `SPEAKEASY_API_KEY` and `GH_TOKEN` RWX vault secrets); without the
    secret it opens an issue with the report instead. It replaces the old
    daily `Generate` workflow (sdk_generation.yaml), which fetched and
    regenerated blindly every day regardless of drift — the weekly check is

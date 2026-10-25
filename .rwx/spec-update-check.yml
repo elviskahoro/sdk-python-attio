@@ -1,0 +1,295 @@
+# Weekly drift detection against https://api.attio.com/openapi/api.
+# Replaces the GitHub Actions spec-update-check.yml.
+#
+#   check       -> ci/pipeline.py check-openapi (never fails the task; the
+#                  verdict is written to values so notify can always run)
+#   regenerate  -> when the spec drifted, the overlay is healthy, and
+#                  SPEAKEASY_API_KEY exists: adopt the spec, regenerate, run
+#                  pytest, open a PR from an agent/spec-update-* branch.
+#                  Always runs; writes a `result` value (success|failure|skipped).
+#   notify      -> opens/updates/closes the "needs attention" issue.
+#   verdict     -> fails the run if check or regenerate failed.
+#
+# Required vault secrets: GH_TOKEN (contents+pull-requests+issues write; the
+# clone token is read-only), SPEAKEASY_API_KEY (optional; without it drift
+# only produces an issue). No task pushes to main.
+on:
+  cron:
+    - key: weekly-spec-check
+      schedule: "0 9 * * MON"
+      init:
+        # Cron events carry no commit SHA; the schedule runs on main.
+        commit-sha: main
+  cli:
+    init:
+      commit-sha: ${{ event.git.sha }}
+
+base:
+  image: ubuntu:24.04
+  config: rwx/base 1.2.0
+
+concurrency-pools:
+  - id: elviskahoro/sdk-python-attio:spec-update-check
+    capacity: 1
+    on-overflow: queue
+
+tasks:
+  - key: system-packages
+    run: |
+      sudo apt-get update
+      sudo apt-get install -y jq
+      sudo apt-get clean
+
+  - key: code
+    call: git/clone 2.2.0
+    with:
+      repository: https://github.com/elviskahoro/sdk-python-attio.git
+      ref: ${{ init.commit-sha }}
+      github-token: ${{ github.token }}
+      preserve-git-dir: true
+      fetch-full-depth: true
+
+  - key: python
+    call: python/install 2.0.1
+    with:
+      python-version: "3.13"
+
+  - key: uv
+    use: python
+    run: pip install uv
+
+  - key: gh-cli
+    call: github/install-cli 1.1.0
+
+  - key: sync
+    use: [system-packages, code, uv, gh-cli]
+    run: uv sync
+    filter:
+      - pyproject.toml
+      - uv.lock
+
+  - key: check
+    use: sync
+    env:
+      SPEAKEASY_API_KEY: ${{ secrets.SPEAKEASY_API_KEY }}
+    run: |
+      mkdir -p tmp/spec-check
+      if [ -n "$SPEAKEASY_API_KEY" ]; then has_key=true; else has_key=false; fi
+      # --no-strict keeps the step green; drift and overlay problems are read
+      # from the JSON report. A hard failure (fetch error) is recorded so
+      # notify and verdict can still run.
+      check_failed=false
+      uv run python ci/pipeline.py check-openapi --report tmp/spec-check/report.json --no-strict || check_failed=true
+      changed=false
+      overlay_ok=true
+      if [ -f tmp/spec-check/report.json ]; then
+        changed=$(jq -r '.structural_changes' tmp/spec-check/report.json)
+        overlay_ok=$(jq -r '.overlay.healthy' tmp/spec-check/report.json)
+        {
+          echo "### Attio API spec check"
+          echo
+          echo "Current spec: \`$(jq -r '.current_spec' tmp/spec-check/report.json)\`"
+          echo
+          jq -r -f ci/spec_check/summary.jq tmp/spec-check/report.json
+        } | tee tmp/spec-check/summary.md
+      else
+        check_failed=true
+      fi
+      echo "$changed" > "$RWX_VALUES/changed"
+      echo "$overlay_ok" > "$RWX_VALUES/overlay-ok"
+      echo "$has_key" > "$RWX_VALUES/has-key"
+      echo "$check_failed" > "$RWX_VALUES/check-failed"
+      date -u +%Y-%m-%d > "$RWX_VALUES/run-date"
+
+  - key: regenerate
+    use: check
+    docker: true
+    env:
+      CHANGED: ${{ tasks.check.values.changed }}
+      OVERLAY_OK: ${{ tasks.check.values.overlay-ok }}
+      HAS_KEY: ${{ tasks.check.values.has-key }}
+      CHECK_FAILED: ${{ tasks.check.values.check-failed }}
+      RUN_DATE: ${{ tasks.check.values.run-date }}
+      SPEAKEASY_API_KEY: ${{ secrets.SPEAKEASY_API_KEY }}
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      SPEAKEASY_USE_HOST_CLI: "1"
+    run: |
+      echo skipped > "$RWX_VALUES/result"
+      echo "" > "$RWX_VALUES/pr-url"
+      if [ "$CHECK_FAILED" = "true" ] || [ "$CHANGED" != "true" ] || [ "$OVERLAY_OK" != "true" ] || [ "$HAS_KEY" != "true" ]; then
+        echo "Regeneration not needed or not possible; skipping."
+        exit 0
+      fi
+      # A failure below is recorded as `failure` and the task still exits 0:
+      # notify reads this task's values, so a failed task would skip it.
+      # verdict fails the run afterwards.
+      trap 'status=$?; if [ $status -ne 0 ]; then echo failure > "$RWX_VALUES/result"; fi; exit 0' EXIT
+
+      # Pinned supply chain: installer fetched at a fixed commit, SHA-256
+      # verified before execution, CLI version fixed through VERSION.
+      curl -fsSL -o /tmp/speakeasy-install.sh \
+        https://raw.githubusercontent.com/speakeasy-api/speakeasy/89688fa0cfc3c959f4ac370329325d1b274db551/install.sh
+      echo "9e2c4f1054e214d05352597cfd9ed1ab117a089e9442f532dd4a0d168665d757  /tmp/speakeasy-install.sh" \
+        | sha256sum -c -
+      VERSION=1.800.1 sh /tmp/speakeasy-install.sh
+
+      uv run python ci/pipeline.py fetch-openapi
+      # Re-verify the overlay against the adopted spec in case Attio
+      # published between check and fetch.
+      uv run python ci/spec_diff.py check-overlay
+      uv run python ci/pipeline.py generate --no-fetch
+      uv lock
+      uv sync
+      uv run pytest -q
+
+      adopted=$(grep -oE 'location: openapi/api-[0-9]+\.json' .speakeasy/workflow.yaml \
+        | head -1 | cut -d' ' -f2)
+      {
+        echo "Automated spec update from the scheduled spec-update-check workflow."
+        echo
+        echo "Run date: ${RUN_DATE}"
+        echo
+        echo "Adopted spec: \`${adopted}\`"
+        echo
+        jq -r -f ci/spec_check/pr-body.jq tmp/spec-check/report.json
+      } > tmp/pr-body.md
+
+      push_url="https://x-access-token:${GH_TOKEN}@github.com/elviskahoro/sdk-python-attio.git"
+      branch="agent/spec-update-${RUN_DATE}-r$(date -u +%H%M%S)"
+      git config user.name "rwx[bot]"
+      git config user.email "rwx[bot]@users.noreply.github.com"
+      git checkout -b "$branch"
+      # Stage only what regeneration may touch; anything else means a step
+      # leaked output and must fail loudly rather than ride into the PR.
+      for p in generated openapi .speakeasy pyproject.toml uv.lock README.md; do
+        [ -e "$p" ] && git add "$p"
+      done
+      leftovers=$(git status --porcelain | grep -v '^[MARD] ' | grep -v '^?? tmp/' || true)
+      if [ -n "$leftovers" ]; then
+        echo "Unexpected changes outside the regeneration allowlist:" >&2
+        echo "$leftovers" >&2
+        exit 1
+      fi
+      git commit -m "Regenerate from latest Attio API spec" -m "Automated by the spec-update-check workflow: latest OpenAPI spec + workflow.yaml update, Speakeasy regeneration of src/ and docs/, post-generation patches (ci/post_generate_patch.py)."
+      git push "$push_url" "$branch"
+
+      # If PR creation fails (e.g. the token lacks scope), delete the
+      # just-pushed branch so nothing is orphaned.
+      if ! pr_url=$(gh pr create --base main --head "$branch" \
+          --title "Automated spec update ${RUN_DATE}" --body-file tmp/pr-body.md); then
+        git push "$push_url" --delete "$branch" || true
+        exit 1
+      fi
+      echo "$pr_url" > "$RWX_VALUES/pr-url"
+
+      # Close superseded automated PRs only after the new PR exists. The
+      # branch is kept so human fixes pushed onto it survive.
+      keep="${pr_url##*/}"
+      for pr in $(gh pr list --state open --limit 200 --json number,headRefName \
+            --jq '.[] | select(.headRefName | startswith("agent/spec-update-")) | .number'); do
+        if [ "$pr" != "$keep" ]; then
+          gh pr close "$pr" --comment "Superseded by a newer automated spec update."
+        fi
+      done
+      echo success > "$RWX_VALUES/result"
+
+  - key: notify
+    use: [check]
+    env:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      CHANGED: ${{ tasks.check.values.changed }}
+      OVERLAY_OK: ${{ tasks.check.values.overlay-ok }}
+      HAS_KEY: ${{ tasks.check.values.has-key }}
+      CHECK_FAILED: ${{ tasks.check.values.check-failed }}
+      REGEN_RESULT: ${{ tasks.regenerate.values.result }}
+      PR_URL: ${{ tasks.regenerate.values.pr-url }}
+    run: |
+      run_date=$(date -u +%Y-%m-%d)
+      if [ "$REGEN_RESULT" = "failure" ]; then
+        intro="The scheduled spec-update-check found drift on ${run_date}, but automated regeneration failed."
+        note="The regenerate task (generation, tests, overlay re-verification, or PR creation) failed — see the run logs. Regenerate locally with \`uv run python ci/pipeline.py generate\` if the failure looks environmental."
+      elif [ "$CHECK_FAILED" = "true" ]; then
+        intro="The scheduled spec-update-check could not complete on ${run_date} (spec fetch or overlay parse error — see the run logs)."
+        note="The check step failed before producing a verdict. If Attio's spec endpoint changed shape or \`overlay.yaml\` is malformed, fix that first; otherwise this may be a transient outage and the next scheduled run will retry."
+      elif [ "$CHANGED" = "true" ]; then
+        intro="The scheduled spec-update-check found upstream spec drift on ${run_date}."
+        if [ "$OVERLAY_OK" = "false" ]; then
+          note="Automatic regeneration was skipped because \`overlay.yaml\` is unhealthy — a regeneration cannot fix the overlay. Fix it first (see the report below), then regenerate with \`uv run python ci/pipeline.py generate\`."
+        elif [ "$HAS_KEY" = "false" ]; then
+          note="Automatic regeneration did not run: the \`SPEAKEASY_API_KEY\` RWX vault secret is not configured. Add it to enable automated regeneration PRs, or run \`uv run python ci/pipeline.py generate\` locally."
+        else
+          note="See the report below."
+        fi
+      else
+        intro="The scheduled spec-update-check found overlay problems on ${run_date} (the upstream spec itself is structurally unchanged)."
+        note="Automatic regeneration was skipped because \`overlay.yaml\` is unhealthy — a regeneration cannot fix the overlay. Fix it first (see the report below), then regenerate with \`uv run python ci/pipeline.py generate\`."
+      fi
+      {
+        echo "$intro"
+        echo
+        echo "$note"
+        echo
+        if [ -s tmp/spec-check/report.json ]; then
+          echo '<details><summary>Full report</summary>'
+          echo
+          echo '```json'
+          cat tmp/spec-check/report.json
+          echo '```'
+          echo
+          echo '</details>'
+        fi
+      } > tmp/issue-body.md
+
+      TITLE="Attio SDK spec check needs attention"
+      # Exact-title match: search is fuzzy, and commenting on — or closing —
+      # a human's similarly titled issue would be hostile.
+      existing=$(gh issue list --state open --search "in:title \"$TITLE\"" \
+        --json number,title \
+        --jq ".[] | select(.title == \"$TITLE\") | .number" | head -1)
+
+      if [ "$REGEN_RESULT" = "success" ]; then
+        if [ -n "$existing" ]; then
+          gh issue close "$existing" --comment "Resolved: automated regeneration opened ${PR_URL}."
+        fi
+        exit 0
+      fi
+
+      if [ "$CHECK_FAILED" != "true" ] && [ "$CHANGED" = "false" ] && [ "$OVERLAY_OK" = "true" ]; then
+        if [ -n "$existing" ]; then
+          gh issue close "$existing" \
+            --comment "Resolved: the ${run_date} check found no drift and a healthy overlay."
+        fi
+        exit 0
+      fi
+
+      # The body embeds a digest of the report (minus the volatile
+      # checked_at) so repeat runs with an unchanged report do not pile
+      # identical comments onto the same issue.
+      if [ -s tmp/spec-check/report.json ]; then
+        digest=$(jq -S 'del(.checked_at)' tmp/spec-check/report.json | sha256sum | cut -d' ' -f1)
+        printf '\nreport-digest: %s\n' "$digest" >> tmp/issue-body.md
+      else
+        digest=""
+      fi
+      if [ -n "$existing" ]; then
+        prior_text=$(gh issue view "$existing" --json body,comments \
+          --jq '.body, (.comments[-1].body // "")')
+        if [ -n "$digest" ] && printf '%s' "$prior_text" | grep -qF "report-digest: $digest"; then
+          echo "Report unchanged since the last update on #$existing; not re-commenting."
+        else
+          gh issue comment "$existing" --body-file tmp/issue-body.md
+        fi
+      else
+        gh issue create --title "$TITLE" --body-file tmp/issue-body.md
+      fi
+
+  - key: verdict
+    after: [notify]
+    env:
+      CHECK_FAILED: ${{ tasks.check.values.check-failed }}
+      REGEN_RESULT: ${{ tasks.regenerate.values.result }}
+    run: |
+      if [ "$CHECK_FAILED" = "true" ] || [ "$REGEN_RESULT" = "failure" ]; then
+        echo "spec check or regeneration failed; see notify task and issue" >&2
+        exit 1
+      fi

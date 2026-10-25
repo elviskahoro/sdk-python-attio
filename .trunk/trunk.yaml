@@ -227,6 +227,8 @@ lint:
         - "**/*.md"
         - generated/**
         - openapi/api-*.json
+        # RWX run definitions, not GitHub Actions: the gha-* rules misfire on task-level env.
+        - .rwx/**
         - openapi/api-*-overlay.json
     - linters: [semgrep]
       paths:
@@ -284,13 +286,11 @@ merge:
   # Re-verify after any pipeline rename:
   #   gh pr checks <pr-number> --json name --jq '.[].name'
   #
-  # "Lint with Trunk" and "pytest" are the GitHub Actions job check runs from
-  # .github/workflows/trunk-check.yml and .github/workflows/tests.yml --
-  # verified live on the setup PR: GitHub posts Actions job check runs under
-  # the bare job name, NOT "<workflow name> / <job name>". The same names
-  # post when the queue tests a PR: both workflows trigger on the queue's
-  # draft test PRs (Draft PR mode, the queue default) and on pushes to
-  # trunk-merge/** (Push-Triggered mode).
+  # "RWX: CI" is the single RWX status check from .rwx/ci.yml (pytest +
+  # trunk lint tasks). RWX names it "RWX: <status-checks.name>"; both the
+  # pull_request and push triggers set the same name so one required check
+  # covers PRs and the merge queue's trunk-merge/** pushes. Re-verify with
+  # the command above after the first run on a PR.
   #
   # "pullfrog-approval" is NOT an Actions job: the Pullfrog GitHub App posts
   # it directly on the PR head once its agent review of that exact commit
@@ -310,18 +310,14 @@ merge:
   #
   # Do NOT add path-filtered workflows here -- they do not report on every PR
   # and would deadlock the queue. Same for workflow_run-triggered workflows,
-  # the tag-only "Publish to PyPI" workflow, the "Trunk Check" annotation
-  # run (a side-channel posted by the trunk CLI, not the job result), and
-  # the scheduled "Spec update check" (which never runs on PRs at all).
+  # the tag-only .rwx/publish.yml, and the scheduled .rwx/spec-update-check.yml
+  # (which never runs on PRs at all).
   #
   # Known gap: Pullfrog skips bot-opened PRs by default, so the weekly
-  # spec-update PR (opened by github-actions[bot] with GITHUB_TOKEN, which
-  # also fails to trigger the two workflow gates) reports none of these
-  # statuses. That PR already cannot pass the queue today for the workflow
-  # reason; the durable fix is the #43 follow-up to open it with a PAT or
-  # GitHub App token. Until then it needs a human poke (push to its branch,
-  # @pullfrog mention) before it can merge.
+  # spec-update PR reports no pullfrog-approval status. It is now opened by
+  # the RWX workflow with the GH_TOKEN vault secret, so RWX CI does run on
+  # it; until Pullfrog reviews bot PRs it needs a human poke (push to its
+  # branch, @pullfrog mention) before it can merge.
   required_statuses:
-    - "Lint with Trunk"
-    - "pytest"
+    - "RWX: CI"
     - "pullfrog-approval"
