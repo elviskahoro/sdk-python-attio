@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Any, cast
 from .people import (
     RECORD_QUERY_LIMIT,
     CLIError,
+    RecordResponseLike,
     _build_core_values,
     _build_optional_values,
     _emails_from_record,
@@ -43,7 +44,7 @@ def _success_envelope(
     *,
     record_id: str | None = None,
     results: list[Any] | None = None,
-    **meta: Any,
+    **meta: object,
 ) -> dict[str, Any]:
     metadata: dict[str, Any] = {"output_schema_version": "v1", **meta}
     if results is not None:
@@ -60,10 +61,11 @@ def _success_envelope(
     }
 
 
-def _jsonable(value: Any) -> Any:
+def _jsonable(value: object) -> object:
     """Convert SDK models and test doubles to JSON-compatible structures."""
-    if hasattr(value, "model_dump"):
-        return value.model_dump(mode="json", by_alias=True)
+    model_dump = getattr(value, "model_dump", None)
+    if callable(model_dump):
+        return model_dump(mode="json", by_alias=True)
     if isinstance(value, Mapping):
         return {str(key): _jsonable(item) for key, item in value.items()}
     if isinstance(value, (list, tuple)):
@@ -135,7 +137,7 @@ def add_person(query: "PersonUpsertQuery", client: "SDK") -> dict[str, Any]:
     core = _build_core_values(query)
     optional = _build_optional_values(query)
 
-    def create(values: dict[str, Any]) -> Any:
+    def create(values: dict[str, Any]) -> RecordResponseLike:
         return client.records.post_v2_objects_object_records(
             object="people",
             data={"values": values},
@@ -240,7 +242,7 @@ def update_person(query: "PersonUpsertQuery", client: "SDK") -> dict[str, Any]:
             msg,
         )
 
-    def update(values: dict[str, Any]) -> Any:
+    def update(values: dict[str, Any]) -> RecordResponseLike:
         return client.records.put_v2_objects_object_records_record_id_(
             object="people",
             record_id=record_id,

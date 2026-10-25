@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING, Any, cast
 
 from attio import SDK
 from attio._version import __version__
-from pydantic import ValidationError
+from pydantic import BaseModel, ValidationError
 
 from .people import CLIError, error_envelope, execute_upsert
 from .query import (
@@ -272,8 +272,8 @@ def _emit(envelope: dict[str, object]) -> None:
 
 def _dispatch_command(
     args: argparse.Namespace,
-    payload: Any,
-    client: Any,
+    payload: BaseModel,
+    client: SDK,
 ) -> dict[str, Any] | None:
     """Dispatch command to appropriate handler based on resource and operation."""
     if args.resource == "people":
