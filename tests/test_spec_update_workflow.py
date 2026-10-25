@@ -285,3 +285,14 @@ def test_every_jq_program_runs_clean_against_a_sample_report() -> None:
         )
         assert proc.returncode == 0, f"jq program failed: {program}\n{proc.stderr}"
         assert proc.stdout.strip(), f"jq program rendered nothing: {program}"
+
+
+def test_publish_dagger_is_pinned_and_verified_and_upload_uncached() -> None:
+    doc = yaml.safe_load((REPO_ROOT / ".rwx" / "publish.yml").read_text(encoding="utf-8"))
+    by_key = {t["key"]: t for t in doc["tasks"]}
+    run = by_key["dagger-cli"]["run"]
+    assert "install.sh" not in run
+    assert re.search(r"releases/\d+\.\d+\.\d+/", run)
+    assert re.search(r"[0-9a-f]{64}  /tmp/dagger.tgz", run)
+    assert "sha256sum -c -" in run
+    assert by_key["publish"]["cache"] is False

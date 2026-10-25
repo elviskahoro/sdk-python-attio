@@ -41,7 +41,12 @@ tasks:
   - key: dagger-cli
     use: uv
     run: |
-      curl -fsSL https://dl.dagger.io/dagger/install.sh | BIN_DIR="$HOME/.local/bin" sh
+      # Fixed release, SHA-256 verified before it can build publishable
+      # artifacts; keep the version in step with dagger-io in uv.lock.
+      curl -fsSL -o /tmp/dagger.tgz https://dl.dagger.io/dagger/releases/0.21.10/dagger_v0.21.10_linux_amd64.tar.gz
+      echo "f9ee083767dd12cdac583f9db3fedbebbbb3064f69152998be1f121d1a6cc103  /tmp/dagger.tgz" | sha256sum -c -
+      mkdir -p "$HOME/.local/bin"
+      tar -xzf /tmp/dagger.tgz -C "$HOME/.local/bin" dagger
       echo "$HOME/.local/bin" >> "$RWX_ENV/PATH"
 
   - key: sync
@@ -96,6 +101,9 @@ tasks:
   - key: publish
     use: twine
     if: ${{ init.tag != '' }}
+    # Uncached: twine upload is an external effect; a cache hit on a
+    # re-triggered run for an already-published tag would skip the upload.
+    cache: false
     env:
       PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
     run: |
