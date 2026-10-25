@@ -10,9 +10,10 @@
 #   notify      -> opens/updates/closes the "needs attention" issue.
 #   verdict     -> fails the run if check or regenerate failed.
 #
-# Required vault secrets: GH_TOKEN (contents+pull-requests+issues write; the
-# clone token is read-only), SPEAKEASY_API_KEY (optional; without it drift
-# only produces an issue). No task pushes to main.
+# Required vault secrets: GITHUB_TOKEN (contents+pull-requests+issues write;
+# also used to clone, since `github.token` is unavailable in this RWX org),
+# SPEAKEASY_API_KEY (optional; without it drift only produces an issue).
+# No task pushes to main.
 on:
   cron:
     - key: weekly-spec-check
@@ -45,7 +46,7 @@ tasks:
     with:
       repository: https://github.com/elviskahoro/sdk-python-attio.git
       ref: ${{ init.commit-sha }}
-      github-token: ${{ github.token }}
+      github-token: ${{ secrets.GITHUB_TOKEN }}
       preserve-git-dir: true
       fetch-full-depth: true
 
@@ -111,7 +112,7 @@ tasks:
       CHECK_FAILED: ${{ tasks.check.values.check-failed }}
       RUN_DATE: ${{ tasks.check.values.run-date }}
       SPEAKEASY_API_KEY: ${{ secrets.SPEAKEASY_API_KEY }}
-      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       SPEAKEASY_USE_HOST_CLI: "1"
     run: |
       echo skipped > "$RWX_VALUES/result"
@@ -196,7 +197,7 @@ tasks:
   - key: notify
     use: [check]
     env:
-      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       CHANGED: ${{ tasks.check.values.changed }}
       OVERLAY_OK: ${{ tasks.check.values.overlay-ok }}
       HAS_KEY: ${{ tasks.check.values.has-key }}

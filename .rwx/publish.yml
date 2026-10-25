@@ -23,7 +23,7 @@ tasks:
     with:
       repository: https://github.com/elviskahoro/sdk-python-attio.git
       ref: ${{ init.commit-sha }}
-      github-token: ${{ github.token }}
+      github-token: ${{ secrets.GITHUB_TOKEN }}
 
   - key: python
     call: python/install 2.0.1

@@ -315,7 +315,7 @@ merge:
   #
   # Known gap: Pullfrog skips bot-opened PRs by default, so the weekly
   # spec-update PR reports no pullfrog-approval status. It is now opened by
-  # the RWX workflow with the GH_TOKEN vault secret, so RWX CI does run on
+  # the RWX workflow with the GITHUB_TOKEN vault secret, so RWX CI does run on
   # it; until Pullfrog reviews bot PRs it needs a human poke (push to its
   # branch, @pullfrog mention) before it can merge.
   required_statuses:
