@@ -443,6 +443,11 @@ actions:
     update:
       - "validation_type"
 
+  - target: "$.paths['/v2/lists/{list}/entries'].post.responses['400'].content['application/json'].schema.properties.code.enum"
+    description: "Allow validation_type code in POST /v2/lists/{list}/entries"
+    update:
+      - "validation_type"
+
   - target: "$.paths['/v2/comments'].post.responses['400'].content['application/json'].schema.properties.code.enum"
     description: "Allow validation_type code in POST /v2/comments"
     update:
