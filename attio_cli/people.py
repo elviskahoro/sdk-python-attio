@@ -6,11 +6,12 @@ import ipaddress
 import json
 import re
 from collections.abc import Callable, Mapping, Sequence
-from typing import Any, Literal, Protocol
+from typing import TYPE_CHECKING, Any, Literal, Protocol
 
 from attio import SDK
 
-from .query import PersonUpsertQuery
+if TYPE_CHECKING:
+    from .query import PersonUpsertQuery
 
 OPTIONAL_FIELD_WARNING_CODES = {
     "associated_company": "attio_associated_company_field_unavailable",
@@ -24,6 +25,8 @@ OPTIONAL_FIELD_ALIASES = {
 }
 RECORD_QUERY_LIMIT = 50
 HTTP_NOT_FOUND = 404
+MAX_DOMAIN_LENGTH = 253
+LOCATION_REGION_PARTS = 2
 PARTIAL_WARNING_CODES = {
     "upsert_multi_match_selected_record",
     "upsert_multi_match_result_limit_reached",
@@ -41,6 +44,7 @@ class CLIError(Exception):
     """A safe, user-facing CLI error with a stable envelope code."""
 
     def __init__(self, code: str, message: str, *, field: str | None = None) -> None:
+        """Store the envelope code and optional offending field."""
         super().__init__(message)
         self.code = code
         self.field = field
@@ -112,7 +116,7 @@ def _format_domain(domain: str | None) -> str | None:
     if not domain:
         return None
     normalized = domain.strip().lower()
-    if not normalized or len(normalized) > 253 or "." not in normalized:
+    if not normalized or len(normalized) > MAX_DOMAIN_LENGTH or "." not in normalized:
         return None
     try:
         ipaddress.IPv4Address(normalized)
@@ -167,7 +171,7 @@ def _build_optional_values(query: PersonUpsertQuery) -> dict[str, Any]:
         if query.location_mode == "raw":
             line_1 = parts[0].strip() if parts else None
             locality = parts[1].strip() if len(parts) > 1 else None
-            region = parts[2].strip() if len(parts) > 2 else None
+            region = parts[2].strip() if len(parts) > LOCATION_REGION_PARTS else None
         else:
             line_1 = None
             locality = parts[0].strip() if parts else None
@@ -231,7 +235,8 @@ def _validation_warnings(
     skipped: list[dict[str, str]] = []
     for field, message in invalid:
         if query.strict:
-            raise CLIError("invalid_value", message, field=field)
+            msg = "invalid_value"
+            raise CLIError(msg, message, field=field)
         warnings.append(
             {
                 "code": "invalid_value",
@@ -407,8 +412,9 @@ def _write_with_optional_fallback(
             if field is None:
                 raise
             if strict:
+                msg = "schema_mismatch"
                 raise CLIError(
-                    "schema_mismatch",
+                    msg,
                     f"Optional field unavailable in this Attio workspace: {field}",
                     field=field,
                 ) from exc
@@ -532,7 +538,7 @@ def _select_match(
                 "retryable": False,
             },
         )
-    return sorted(matches, key=_record_id)[0]
+    return min(matches, key=_record_id)
 
 
 def _resolve_email_write(
