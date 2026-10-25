@@ -68,13 +68,25 @@ tasks:
       - pyproject.toml
       - uv.lock
 
+  # Uncached: RWX keys the cache on content only, so a repeat run at the same
+  # main SHA would replay last week's verdict instead of re-fetching the spec.
   - key: check
     use: sync
+    cache: false
     env:
       SPEAKEASY_API_KEY: ${{ secrets.SPEAKEASY_API_KEY }}
     run: |
-      mkdir -p tmp/spec-check
+      # Every value is written up front and an EXIT trap records any hard
+      # failure (jq, tee, mkdir) as check-failed, so downstream tasks still
+      # start and notify can open the attention issue.
       if [ -n "$SPEAKEASY_API_KEY" ]; then has_key=true; else has_key=false; fi
+      echo false > "$RWX_VALUES/changed"
+      echo true > "$RWX_VALUES/overlay-ok"
+      echo "$has_key" > "$RWX_VALUES/has-key"
+      echo true > "$RWX_VALUES/check-failed"
+      date -u +%Y-%m-%d > "$RWX_VALUES/run-date"
+      trap 'status=$?; if [ $status -ne 0 ]; then echo true > "$RWX_VALUES/check-failed"; fi; exit 0' EXIT
+      mkdir -p tmp/spec-check
       # --no-strict keeps the step green; drift and overlay problems are read
       # from the JSON report. A hard failure (fetch error) is recorded so
       # notify and verdict can still run.
@@ -223,6 +235,7 @@ tasks:
 
   - key: notify
     use: [check]
+    cache: false
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       CHANGED: ${{ tasks.check.values.changed }}
@@ -313,6 +326,7 @@ tasks:
 
   - key: verdict
     after: [notify]
+    cache: false
     env:
       CHECK_FAILED: ${{ tasks.check.values.check-failed }}
       REGEN_RESULT: ${{ tasks.open-pr.values.result }}

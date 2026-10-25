@@ -42,8 +42,26 @@ def test_regenerate_initializes_every_value_open_pr_reads(tasks: dict[str, dict]
     an early-exit path leaves open-pr (and so notify) unable to start."""
     run = tasks["regenerate"]["run"]
     first_exit = run.index("exit 0")
-    for name in ("result", "branch"):
+    names = re.findall(r"tasks\.regenerate\.values\.([\w-]+)", str(tasks["open-pr"]["env"]))
+    assert names
+    for name in names:
         assert f'> "$RWX_VALUES/{name}"' in run[:first_exit], name
+
+
+def test_check_records_hard_failures_instead_of_failing(tasks: dict[str, dict]) -> None:
+    """A failing check task skips regenerate/open-pr/notify/verdict, so no
+    attention issue would open. Values are written before any fallible
+    command and an EXIT trap records the failure."""
+    run = tasks["check"]["run"]
+    assert re.search(r"trap '.*check-failed.*exit 0' EXIT", run)
+    assert run.index('echo true > "$RWX_VALUES/check-failed"') < run.index("mkdir -p")
+
+
+@pytest.mark.parametrize("key", ["check", "notify", "verdict"])
+def test_live_tasks_are_uncached(tasks: dict[str, dict], key: str) -> None:
+    """RWX caches on content only; at an unchanged main SHA a cached task
+    would replay last week's verdict without contacting Attio."""
+    assert tasks[key]["cache"] is False
 
 
 def test_notify_reads_both_upstream_tasks(tasks: dict[str, dict]) -> None:
