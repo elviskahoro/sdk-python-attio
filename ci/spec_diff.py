@@ -104,7 +104,7 @@ def _assert_openapi_document(doc: Any) -> None:  # noqa: ANN401 - arbitrary JSON
 
 def fetch_latest_spec(dest: Path) -> Path:
     """Download the latest spec from Attio into ``dest`` and return it."""
-    import httpx
+    import httpx2 as httpx
 
     dest.parent.mkdir(parents=True, exist_ok=True)
     # httpx (a main dependency, also used by ci/pipeline.py's fetch) rather
@@ -997,7 +997,7 @@ def cmd_check_overlay(args: argparse.Namespace) -> int:
 
 
 def cmd_check(args: argparse.Namespace) -> int:
-    import httpx
+    import httpx2 as httpx
 
     current: Path | None = None
     timestamp = datetime.now(tz=timezone.utc).strftime("%Y%m%d%H%M%S")

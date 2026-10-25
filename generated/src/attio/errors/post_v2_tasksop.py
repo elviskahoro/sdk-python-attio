@@ -5,7 +5,7 @@ from attio.errors import SDKError
 from attio.models import post_v2_tasksop as models_post_v2_tasksop
 from attio.types import BaseModel
 from dataclasses import dataclass, field
-import httpx
+import httpx2 as httpx
 from typing import Optional
 
 

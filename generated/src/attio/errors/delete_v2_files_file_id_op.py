@@ -5,7 +5,7 @@ from attio.errors import SDKError
 from attio.models import delete_v2_files_file_id_op as models_delete_v2_files_file_id_op
 from attio.types import BaseModel
 from dataclasses import dataclass, field
-import httpx
+import httpx2 as httpx
 from typing import Optional
 
 

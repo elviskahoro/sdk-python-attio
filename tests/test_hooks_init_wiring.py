@@ -26,7 +26,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-import httpx
+import httpx2 as httpx
 import pytest
 
 from attio import SDK
@@ -112,6 +112,7 @@ def test_init_hooks_wiring_applies_to_unpatched_and_matches_committed(
     target.write_text(_unpatched_sdkhooks())
 
     assert PGP.ensure_init_hooks_wiring(target) is True
+    PGP.ensure_httpx2_imports(tmp_path)
     assert target.read_text() == COMMITTED_SDKHOOKS.read_text()
 
 

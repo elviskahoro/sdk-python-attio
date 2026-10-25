@@ -8,7 +8,7 @@ from .utils.retries import RetryConfig
 from attio import models, utils
 from attio._hooks import SDKHooks
 from attio.types import OptionalNullable, UNSET
-import httpx
+import httpx2 as httpx
 import importlib
 import sys
 from typing import Any, Callable, Dict, Optional, TYPE_CHECKING, Union, cast

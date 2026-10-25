@@ -69,6 +69,7 @@ Patch: ``generated/src/attio/_hooks/sdkhooks.py`` and ``generated/src/attio/_hoo
 
 from __future__ import annotations
 
+import re
 import sys
 from pathlib import Path
 
@@ -506,6 +507,21 @@ def restore_script_wrappers() -> list[Path]:
     return restored
 
 
+def ensure_httpx2_imports(root: Path) -> list[Path]:
+    """Point generated ``import httpx`` at httpx2 (Speakeasy only emits httpx)."""
+    changed: list[Path] = []
+    for path in sorted(root.rglob("*.py")):
+        text = path.read_text()
+        new = re.sub(
+            r"^(\s*)import httpx$", r"\1import httpx2 as httpx", text, flags=re.M,
+        )
+        new = re.sub(r"^(\s*)from httpx import ", r"\1from httpx2 import ", new, flags=re.M)
+        if new != text:
+            path.write_text(new)
+            changed.append(path)
+    return changed
+
+
 def main() -> int:
     messages: list[str] = []
 
@@ -548,6 +564,11 @@ def main() -> int:
         messages.append(f"post_generate_patch: patched {rel}")
     else:
         messages.append(f"post_generate_patch: unchanged {rel}")
+
+    # Last: the hook-wiring anchors above match the generator's `import httpx`.
+    swapped = ensure_httpx2_imports(REPO_ROOT / "generated" / "src")
+    if swapped:
+        messages.append(f"post_generate_patch: httpx2 imports in {len(swapped)} files")
 
     print("\n".join(messages))
     return 0

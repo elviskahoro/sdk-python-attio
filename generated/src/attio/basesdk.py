@@ -14,7 +14,7 @@ from attio.utils import (
     get_body_content,
     run_sync_in_thread,
 )
-import httpx
+import httpx2 as httpx
 from typing import Callable, List, Mapping, Optional, Tuple
 from urllib.parse import parse_qs, urlparse
 

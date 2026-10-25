@@ -194,7 +194,7 @@ def _sync_update_workflow(overlay_path: str, spec_path: str) -> None:
 
 async def fetch_latest_spec() -> str:
     """Fetch the latest OpenAPI spec and update workflow.yaml locally."""
-    import httpx
+    import httpx2 as httpx
 
     spec_url = "https://api.attio.com/openapi/api"
     from datetime import timezone

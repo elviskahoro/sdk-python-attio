@@ -1,4 +1,4 @@
-import httpx
+import httpx2 as httpx
 
 from attio.utils.retries import _is_transport_error
 

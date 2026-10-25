@@ -4,7 +4,7 @@ import json
 import os
 from types import SimpleNamespace as NS
 
-import httpx
+import httpx2 as httpx
 import pytest
 from pydantic import ValidationError
 

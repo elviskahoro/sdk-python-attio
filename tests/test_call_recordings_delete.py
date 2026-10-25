@@ -21,7 +21,7 @@ model). These tests guard against a future ``speakeasy run`` reintroducing a
 body-expecting success branch.
 """
 
-import httpx
+import httpx2 as httpx
 import pytest
 
 from attio import SDK

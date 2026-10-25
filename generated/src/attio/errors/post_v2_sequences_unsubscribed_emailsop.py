@@ -7,7 +7,7 @@ from attio.models import (
 )
 from attio.types import BaseModel
 from dataclasses import dataclass, field
-import httpx
+import httpx2 as httpx
 import pydantic
 from typing import Optional
 from typing_extensions import Annotated

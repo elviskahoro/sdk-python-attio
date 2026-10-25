@@ -2,7 +2,7 @@
 
 from abc import ABC, abstractmethod
 from attio.sdkconfiguration import SDKConfiguration
-import httpx
+import httpx2 as httpx
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 

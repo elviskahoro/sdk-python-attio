@@ -5,7 +5,7 @@ from attio.errors import SDKError
 from attio.models import post_v2_commentsop as models_post_v2_commentsop
 from attio.types import BaseModel
 from dataclasses import dataclass, field
-import httpx
+import httpx2 as httpx
 import pydantic
 from typing import Optional
 from typing_extensions import Annotated
