@@ -3,11 +3,12 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 
 from .people import (
     RECORD_QUERY_LIMIT,
     CLIError,
+    RecordResponseLike,
     _build_core_values,
     _build_optional_values,
     _emails_from_record,
@@ -24,6 +25,11 @@ from .people import (
 )
 
 if TYPE_CHECKING:
+    from attio import SDK
+    from attio.models import (
+        PatchV2NotesNoteIDDataTypedDict,
+    )
+
     from .query import (
         CompanyPayload,
         NoteAddPayload,
@@ -38,7 +44,7 @@ def _success_envelope(
     *,
     record_id: str | None = None,
     results: list[Any] | None = None,
-    **meta: Any,
+    **meta: object,
 ) -> dict[str, Any]:
     metadata: dict[str, Any] = {"output_schema_version": "v1", **meta}
     if results is not None:
@@ -55,10 +61,11 @@ def _success_envelope(
     }
 
 
-def _jsonable(value: Any) -> Any:
+def _jsonable(value: object) -> object:
     """Convert SDK models and test doubles to JSON-compatible structures."""
-    if hasattr(value, "model_dump"):
-        return value.model_dump(mode="json", by_alias=True)
+    model_dump = getattr(value, "model_dump", None)
+    if callable(model_dump):
+        return model_dump(mode="json", by_alias=True)
     if isinstance(value, Mapping):
         return {str(key): _jsonable(item) for key, item in value.items()}
     if isinstance(value, (list, tuple)):
@@ -68,7 +75,11 @@ def _jsonable(value: Any) -> Any:
     return value
 
 
-def _query_records(client: Any, object_name: str, filter_: dict[str, Any]) -> list[Any]:
+def _query_records(
+    client: "SDK",
+    object_name: str,
+    filter_: dict[str, Any],
+) -> list[Any]:
     response = client.records.post_v2_objects_object_records_query(
         object=object_name,
         filter_=filter_,
@@ -89,7 +100,7 @@ def _normalized_email(email: str) -> str:
     return normalized
 
 
-def search_people(email: str, client: Any) -> dict[str, Any]:
+def search_people(email: str, client: "SDK") -> dict[str, Any]:
     normalized = _normalized_email(email)
     matches = _query_records(client, "people", {"email_addresses": normalized})
     result = _success_envelope(
@@ -110,7 +121,7 @@ def search_people(email: str, client: Any) -> dict[str, Any]:
     return result
 
 
-def add_person(query: "PersonUpsertQuery", client: Any) -> dict[str, Any]:
+def add_person(query: "PersonUpsertQuery", client: "SDK") -> dict[str, Any]:
     email = query.email.strip()
     normalized = _normalized_email(email)
     query = query.model_copy(update={"email": email})
@@ -126,7 +137,7 @@ def add_person(query: "PersonUpsertQuery", client: Any) -> dict[str, Any]:
     core = _build_core_values(query)
     optional = _build_optional_values(query)
 
-    def create(values: dict[str, Any]) -> Any:
+    def create(values: dict[str, Any]) -> RecordResponseLike:
         return client.records.post_v2_objects_object_records(
             object="people",
             data={"values": values},
@@ -156,7 +167,7 @@ def add_person(query: "PersonUpsertQuery", client: Any) -> dict[str, Any]:
     )
 
 
-def update_person(query: "PersonUpsertQuery", client: Any) -> dict[str, Any]:
+def update_person(query: "PersonUpsertQuery", client: "SDK") -> dict[str, Any]:
     email = query.email.strip()
     normalized = _normalized_email(email)
     query = query.model_copy(update={"email": email})
@@ -231,7 +242,7 @@ def update_person(query: "PersonUpsertQuery", client: Any) -> dict[str, Any]:
             msg,
         )
 
-    def update(values: dict[str, Any]) -> Any:
+    def update(values: dict[str, Any]) -> RecordResponseLike:
         return client.records.put_v2_objects_object_records_record_id_(
             object="people",
             record_id=record_id,
@@ -275,7 +286,7 @@ def _company_values(payload: "CompanyPayload", domain: str) -> dict[str, list[An
     return values
 
 
-def search_companies(payload: "CompanyPayload", client: Any) -> dict[str, Any]:
+def search_companies(payload: "CompanyPayload", client: "SDK") -> dict[str, Any]:
     domain = _company_domain(payload.domain)
     matches = _query_records(client, "companies", {"domains": domain})
     result = _success_envelope("searched", results=matches, identity={"domain": domain})
@@ -292,7 +303,7 @@ def search_companies(payload: "CompanyPayload", client: Any) -> dict[str, Any]:
     return result
 
 
-def add_company(payload: "CompanyPayload", client: Any) -> dict[str, Any]:
+def add_company(payload: "CompanyPayload", client: "SDK") -> dict[str, Any]:
     domain = _company_domain(payload.domain)
     matches = _query_records(client, "companies", {"domains": domain})
     if matches:
@@ -323,7 +334,7 @@ def add_company(payload: "CompanyPayload", client: Any) -> dict[str, Any]:
     )
 
 
-def update_company(payload: "CompanyPayload", client: Any) -> dict[str, Any]:
+def update_company(payload: "CompanyPayload", client: "SDK") -> dict[str, Any]:
     domain = _company_domain(payload.domain)
     if not payload.values:
         msg = "provide at least one company attribute in values to update."
@@ -341,7 +352,9 @@ def update_company(payload: "CompanyPayload", client: Any) -> dict[str, Any]:
             field="domain",
         )
     if len(matches) != 1:
-        msg = f"{len(matches)} companies match domain '{domain}'; update was not applied."
+        msg = (
+            f"{len(matches)} companies match domain '{domain}'; update was not applied."
+        )
         raise CLIError(
             "multiple_matches",
             msg,
@@ -365,7 +378,7 @@ def update_company(payload: "CompanyPayload", client: Any) -> dict[str, Any]:
     )
 
 
-def list_notes(payload: "NoteListPayload", client: Any) -> dict[str, Any]:
+def list_notes(payload: "NoteListPayload", client: "SDK") -> dict[str, Any]:
     response = client.notes.get_v2_notes(
         parent_object=payload.parent_object,
         parent_record_id=payload.parent_record_id,
@@ -384,7 +397,7 @@ def list_notes(payload: "NoteListPayload", client: Any) -> dict[str, Any]:
     )
 
 
-def add_note(payload: "NoteAddPayload", client: Any) -> dict[str, Any]:
+def add_note(payload: "NoteAddPayload", client: "SDK") -> dict[str, Any]:
     response = client.notes.post_v2_notes(
         data={
             "parent_object": payload.parent_object,
@@ -404,9 +417,12 @@ def add_note(payload: "NoteAddPayload", client: Any) -> dict[str, Any]:
     )
 
 
-def update_note(payload: "NoteUpdatePayload", client: Any) -> dict[str, Any]:
+def update_note(payload: "NoteUpdatePayload", client: "SDK") -> dict[str, Any]:
     data = payload.model_dump(exclude={"note_id"}, exclude_none=True, by_alias=True)
-    response = client.notes.patch_v2_notes_note_id_(note_id=payload.note_id, data=data)
+    response = client.notes.patch_v2_notes_note_id_(
+        note_id=payload.note_id,
+        data=cast("PatchV2NotesNoteIDDataTypedDict", data),
+    )
     note = response.data
     note_id = note.id.note_id
     return _success_envelope(

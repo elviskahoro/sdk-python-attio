@@ -6,7 +6,7 @@ import ipaddress
 import json
 import re
 from collections.abc import Callable, Mapping, Sequence
-from typing import Any, Literal
+from typing import Any, Literal, Protocol
 
 from attio import SDK
 
@@ -331,13 +331,34 @@ def _uniqueness_conflict_error(
     return CLIError("uniqueness_conflict", message)
 
 
+class RecordIdLike(Protocol):
+    """Structural view of an Attio record identifier."""
+
+    @property
+    def record_id(self) -> str: ...
+
+
+class RecordLike(Protocol):
+    """Structural view of an Attio record (SDK models and test doubles)."""
+
+    @property
+    def id(self) -> RecordIdLike: ...
+
+
+class RecordResponseLike(Protocol):
+    """Structural view of a single-record write response."""
+
+    @property
+    def data(self) -> RecordLike: ...
+
+
 def _write_with_optional_fallback(
-    write: Callable[[dict[str, Any]], Any],
+    write: Callable[[dict[str, Any]], RecordResponseLike],
     core_values: dict[str, Any],
     optional_values: dict[str, Any],
     *,
     strict: bool,
-) -> tuple[Any, list[dict[str, Any]], list[dict[str, str]]]:
+) -> tuple[RecordResponseLike, list[dict[str, Any]], list[dict[str, str]]]:
     active = dict(optional_values)
     attempted_aliases: set[frozenset[str]] = set()
     warnings: list[dict[str, Any]] = []
@@ -381,7 +402,7 @@ def _write_with_optional_fallback(
             return response, warnings, skipped
 
 
-def _emails_from_record(record: Any) -> list[str]:
+def _emails_from_record(record: RecordLike) -> list[str]:
     emails: list[str] = []
     for value in getattr(record, "values", {}).get("email_addresses", []):
         email = getattr(value, "email_address", None)
@@ -390,7 +411,7 @@ def _emails_from_record(record: Any) -> list[str]:
     return emails
 
 
-def _person_meta(record: Any, *, created: bool) -> dict[str, Any]:
+def _person_meta(record: RecordLike, *, created: bool) -> dict[str, Any]:
     record_id = record.id.record_id
     values = getattr(record, "values", {})
     name = None
@@ -410,7 +431,7 @@ def _person_meta(record: Any, *, created: bool) -> dict[str, Any]:
 def _result_envelope(
     *,
     action: Literal["created", "updated"],
-    record: Any,
+    record: RecordLike,
     warnings: list[dict[str, Any]],
     skipped: list[dict[str, str]],
 ) -> dict[str, Any]:
@@ -431,11 +452,11 @@ def _result_envelope(
     }
 
 
-def _record_id(item: Any) -> str:
+def _record_id(item: RecordLike) -> str:
     return str(item.id.record_id)
 
 
-def _record_name_parts(record: Any) -> tuple[str | None, str | None]:
+def _record_name_parts(record: RecordLike) -> tuple[str | None, str | None]:
     values = getattr(record, "values", {})
     name = next(iter(values.get("name", [])), None)
     if isinstance(name, Mapping):
@@ -453,7 +474,7 @@ def _record_name_parts(record: Any) -> tuple[str | None, str | None]:
     return first_name, last_name
 
 
-def upsert_person(query: PersonUpsertQuery, client: Any) -> dict[str, Any]:
+def upsert_person(query: PersonUpsertQuery, client: SDK) -> dict[str, Any]:
     """Search by email, then create/update with upstream reliability semantics."""
     warnings, skipped = _validation_warnings(query)
     response = client.records.post_v2_objects_object_records_query(
@@ -467,7 +488,7 @@ def upsert_person(query: PersonUpsertQuery, client: Any) -> dict[str, Any]:
         core = _build_core_values(query)
         optional = _build_optional_values(query)
 
-        def create(values: dict[str, Any]) -> Any:
+        def create(values: dict[str, Any]) -> RecordResponseLike:
             return client.records.post_v2_objects_object_records(
                 object="people",
                 data={"values": values},
@@ -573,7 +594,7 @@ def upsert_person(query: PersonUpsertQuery, client: Any) -> dict[str, Any]:
                 core["name"] = merged_name
         optional = _build_optional_values(query)
 
-        def update(values: dict[str, Any]) -> Any:
+        def update(values: dict[str, Any]) -> RecordResponseLike:
             return client.records.put_v2_objects_object_records_record_id_(
                 object="people",
                 record_id=record_id,
