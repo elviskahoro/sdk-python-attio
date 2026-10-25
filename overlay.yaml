@@ -406,6 +406,9 @@ actions:
       enum:
         - "value_not_found"
         - "particle_gate_violation"
+        - "duplicate_values"
+        - "limit_reached"
+        - "multiple_match_results"
         - "validation_type"
 
   - target: "$.paths['/v2/objects/{object}/records'].put.responses['400'].content['application/json'].schema.properties.code.anyOf"
@@ -420,6 +423,9 @@ actions:
         - "value_not_found"
         - "merge_in_progress"
         - "particle_gate_violation"
+        - "duplicate_values"
+        - "limit_reached"
+        - "multiple_match_results"
         - "validation_type"
 
   # The activity-record write endpoints mirror the objects-records write

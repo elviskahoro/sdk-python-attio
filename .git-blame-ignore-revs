@@ -32,3 +32,6 @@ ab7fe53368bb95f5115f014d9150082b7528b430
 # b0c40c1 - Add squashed PR #63 commit to .git-blame-ignore-revs
 # Metadata-only commit that documents the formatting/lint fixes
 b0c40c1319a6a3ca9cefc49b1e50c62ad56dc9ce
+
+# 2069e06 - Clear remaining trunk lint findings in attio_cli (#80)
+2069e068427db7848c1a35510335adad2a209664
