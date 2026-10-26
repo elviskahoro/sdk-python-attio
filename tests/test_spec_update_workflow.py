@@ -76,6 +76,16 @@ def test_verdict_fails_the_run_after_notify(tasks: dict[str, dict]) -> None:
     assert "exit 1" in verdict["run"]
     assert 'REGEN_RESULT" = "failure"' in verdict["run"]
     assert 'CHECK_FAILED" = "true"' in verdict["run"]
+    assert 'OVERLAY_OK" = "false"' in verdict["run"]
+
+
+def test_check_fails_fast_on_skip_overlay_check(tasks: dict[str, dict]) -> None:
+    """The escape hatch must never ride the weekly automation, and the
+    guard's exit 1 deliberately precedes the value writes: a forbidden
+    configuration fails the run outright instead of opening an issue."""
+    run = tasks["check"]["run"]
+    assert 'case "${SKIP_OVERLAY_CHECK:-}" in' in run
+    assert run.index('case "${SKIP_OVERLAY_CHECK:-}"') < run.index('> "$RWX_VALUES/')
 
 
 def test_write_token_is_scoped_to_repo_operations(tasks: dict[str, dict]) -> None:

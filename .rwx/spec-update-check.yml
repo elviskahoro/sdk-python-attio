@@ -76,7 +76,10 @@ tasks:
     env:
       SPEAKEASY_API_KEY: ${{ secrets.SPEAKEASY_API_KEY }}
     run: |
-      # The overlay gate must never be bypassed in automation.
+      # The overlay gate must never be bypassed in automation. The exit 1
+      # below deliberately fires before the value writes and the EXIT trap:
+      # a forbidden configuration fails the run itself — notify and the
+      # attention issue are for operational failures, not blocked ones.
       case "${SKIP_OVERLAY_CHECK:-}" in
         ""|0|false|False|FALSE|no|No|NO) ;;
         *) echo "SKIP_OVERLAY_CHECK is forbidden in this workflow" >&2; exit 1 ;;
