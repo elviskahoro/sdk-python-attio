@@ -17,6 +17,11 @@ on:
   dispatch:
     - key: regenerate
       title: Regenerate SDK
+      params:
+        - key: fetch
+          description: Adopt the latest upstream spec before generating.
+          default: "false"
+          values: ["false", "true"]
       init:
         commit-sha: ${{ event.git.sha }}
         fetch: ${{ event.dispatch.params.fetch }}
