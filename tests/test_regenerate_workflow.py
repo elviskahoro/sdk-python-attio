@@ -13,7 +13,7 @@ import yaml
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 WORKFLOW = REPO_ROOT / ".rwx" / "regenerate.yml"
-SECRET_REF = "vaults.sdk-python-attio.secrets.SPEAKEASY_API_KEY"
+VAULT_KEY_REFERENCE = "vaults.sdk-python-attio.secrets.SPEAKEASY_API_KEY"
 
 
 @pytest.fixture(scope="module")
@@ -34,7 +34,7 @@ def test_speakeasy_key_reaches_only_generate() -> None:
     holders = [
         task["key"]
         for task in doc["tasks"]
-        if SECRET_REF in str(task.get("env", {}))
+        if VAULT_KEY_REFERENCE in str(task.get("env", {}))
     ]
     assert holders == ["generate"]
 
