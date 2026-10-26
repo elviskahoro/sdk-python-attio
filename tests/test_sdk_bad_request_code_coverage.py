@@ -1,20 +1,26 @@
 """SDK-side guard: every generated ``*BadRequestCode`` Literal must accept
-each 400 ``code`` value the pinned spec lists for its endpoint.
+each 400 ``code`` value the pinned spec lists for its endpoint, plus every
+extra ``overlay.yaml`` advertises for it (``validation_type`` arrives via
+both overlay shapes: appends on flat enums and anyOf flatten-replaces).
 
 Complements ``test_overlay_error_code_coverage.py`` and ``check-overlay``
 (overlay side): this catches overlay/generator regressions that only show up
-in the generated models, e.g. a dropped ``validation_type`` that would make a
-real 400 response raise ``ResponseValidationError``.
+in the generated models, e.g. a dropped ``validation_type`` overlay action
+(the PR #81 shape) leaving a Literal that makes a real 400 response raise
+``ResponseValidationError``.
 """
 
 from __future__ import annotations
 
 import ast
+import functools
 import importlib.util
+import re
 from pathlib import Path
 from typing import Any
 
 import pytest
+import yaml
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 MODELS_DIR = REPO_ROOT / "generated" / "src" / "attio" / "models"
@@ -58,6 +64,7 @@ def _spec_codes(spec_diff: Any, node: Any) -> set[str]:
     return set()
 
 
+@functools.cache
 def _spec_codes_by_stem() -> dict[str, set[str]]:
     spec_diff = _load_spec_diff()
     spec = spec_diff.load_spec(spec_diff.current_spec_path())
@@ -79,6 +86,44 @@ def _spec_codes_by_stem() -> dict[str, set[str]]:
                 code = (variant.get("properties") or {}).get("code")
                 codes |= _spec_codes(spec_diff, code)
             out[_class_stem(method, path)] = codes
+    return out
+
+
+_OVERLAY_400_CODE_TARGET_RE = re.compile(
+    r"\$(?:\.paths)?(?:\[)?'?(?P<path>/v2/[^']+)'?\]?\."
+    r"(?P<method>post|put|patch|delete|get)"
+    r"\.responses\['400'\]"
+    r"\.content\['application/json'\]\.schema\.properties\.code(?:\.enum)?$"
+)
+
+
+@functools.cache
+def _overlay_codes_by_stem() -> dict[str, set[str]]:
+    """400 ``code`` values ``overlay.yaml`` advertises, keyed by class stem.
+
+    Both action shapes count: an ``update: [values]`` list appends to a flat
+    ``.code.enum``, and an ``update: {enum: [...]}`` mapping replaces an
+    anyOf union's values outright (its paired ``remove`` deletes the union
+    first). The replace shape carries the full enum, so unioning these
+    values with the spec's is correct for both shapes.
+    """
+    with (REPO_ROOT / "overlay.yaml").open() as fh:
+        doc = yaml.safe_load(fh) or {}
+    out: dict[str, set[str]] = {}
+    for action in doc.get("actions") or []:
+        match = _OVERLAY_400_CODE_TARGET_RE.search(action.get("target") or "")
+        if not match:
+            continue
+        update = action.get("update")
+        if isinstance(update, list):
+            codes = {v for v in update if isinstance(v, str)}
+        elif isinstance(update, dict) and isinstance(update.get("enum"), list):
+            codes = {str(v) for v in update["enum"]}
+        else:
+            continue
+        if codes:
+            stem = _class_stem(match.group("method"), match.group("path"))
+            out[stem] = out.get(stem, set()) | codes
     return out
 
 
@@ -119,9 +164,11 @@ def test_literal_covers_spec_codes(name: str) -> None:
         f"{name} ({file_name}) matches no spec operation; Speakeasy naming "
         "changed or the endpoint was removed - update _class_stem."
     )
-    dropped = sorted(spec_codes - sdk_codes)
+    expected = spec_codes | _overlay_codes_by_stem().get(stem, set())
+    dropped = sorted(expected - sdk_codes)
     assert not dropped, (
         f"{name} ({file_name}) drops code(s) {', '.join(dropped)} that the "
-        f"pinned spec lists for this endpoint; SDK has {sorted(sdk_codes)}. "
-        "A real 400 response with that code would raise ResponseValidationError."
+        "pinned spec or overlay.yaml advertises for this endpoint; SDK has "
+        f"{sorted(sdk_codes)}. A real 400 response with that code would "
+        "raise ResponseValidationError."
     )
