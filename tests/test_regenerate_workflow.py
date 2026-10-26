@@ -6,6 +6,7 @@ the next manual ``rwx run .rwx/regenerate.yml``.
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 import pytest
@@ -49,3 +50,17 @@ def test_long_tasks_have_explicit_timeouts(tasks: dict[str, dict], key: str) -> 
 def test_no_github_write_token() -> None:
     """The pipeline only exports a patch; it never pushes or opens a PR."""
     assert "GITHUB_TOKEN" not in WORKFLOW.read_text(encoding="utf-8")
+
+
+def test_dispatch_params_referenced_in_init_are_declared() -> None:
+    """An undeclared dispatch param aborts the run at initialization, so every
+    ``event.dispatch.params.<key>`` used in ``init`` needs a ``params`` entry."""
+    doc = yaml.safe_load(WORKFLOW.read_text(encoding="utf-8"))
+    triggers = doc[True]["dispatch"]  # YAML 1.1 parses `on` as True
+    assert triggers
+    for trigger in triggers:
+        declared = {param["key"] for param in trigger.get("params", [])}
+        referenced = set(
+            re.findall(r"event\.dispatch\.params\.([\w-]+)", str(trigger["init"]))
+        )
+        assert referenced <= declared, trigger["key"]
