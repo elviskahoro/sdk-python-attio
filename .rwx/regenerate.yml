@@ -88,6 +88,9 @@ tasks:
 
   - key: verify
     use: generate
+    # A timeout SIGKILLs the task and skips patch, so no artifact is produced;
+    # the 10m default is too short for mypy plus the full test suite.
+    timeout: 60m
     run: |
       uv lock
       uv sync
