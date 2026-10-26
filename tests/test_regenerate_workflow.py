@@ -48,4 +48,4 @@ def test_long_tasks_have_explicit_timeouts(tasks: dict[str, dict], key: str) -> 
 
 def test_no_github_write_token() -> None:
     """The pipeline only exports a patch; it never pushes or opens a PR."""
-    assert "GITHUB_TOKEN" not in WORKFLOW.read_text(encoding="utf-8").split("tasks:")[1]
+    assert "GITHUB_TOKEN" not in WORKFLOW.read_text(encoding="utf-8")
