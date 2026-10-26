@@ -65,6 +65,8 @@ EXPECTED_ENDPOINTS: tuple[tuple[str, str], ...] = (
     ("patch", "/v2/{target}/{identifier}/attributes/{attribute}/statuses/{status}"),
     ("post", "/v2/objects/{object}/records"),
     ("put", "/v2/objects/{object}/records"),
+    ("post", "/v2/activities/{activity}/records"),
+    ("put", "/v2/activities/{activity}/records"),
     ("post", "/v2/objects/records/search"),
     ("post", "/v2/lists"),
     ("patch", "/v2/lists/{list}"),
@@ -210,6 +212,21 @@ def test_overlay_yaml_fence_is_bidirectional() -> None:
         )
     if problems:
         pytest.fail("\n\n---\n\n".join(problems))
+
+
+# ---------------------------------------------------------------------------
+# RFC 9535 opt-in: overlay.yaml must keep the x-speakeasy-jsonpath extension
+# that switches Speakeasy's target parsing to the strict RFC 9535
+# interpreter. Nothing else asserts its presence — ci/spec_diff.py only reads
+# `actions` — so dropping it would resurrect the deprecated-parser WARNs with
+# no local signal, and generation would hard-fail once Speakeasy removes the
+# deprecated interpreter.
+# ---------------------------------------------------------------------------
+
+
+def test_overlay_opts_into_rfc9535_jsonpath() -> None:
+    doc = yaml.safe_load(OVERLAY_YAML.read_text()) or {}
+    assert doc.get("x-speakeasy-jsonpath") == "rfc9535"
 
 
 # ---------------------------------------------------------------------------
