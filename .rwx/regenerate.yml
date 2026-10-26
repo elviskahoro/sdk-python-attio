@@ -11,6 +11,15 @@ on:
     init:
       commit-sha: ${{ event.git.sha }}
       fetch: "false"
+  # `rwx dispatch regenerate --ref main` runs from main, the only ref the
+  # sdk-python-attio vault releases SPEAKEASY_API_KEY to. Pass
+  # `--param fetch=true` to adopt the latest upstream spec.
+  dispatch:
+    - key: regenerate
+      title: Regenerate SDK
+      init:
+        commit-sha: ${{ event.git.sha }}
+        fetch: ${{ event.dispatch.params.fetch }}
 
 base:
   image: ubuntu:24.04
