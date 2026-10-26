@@ -17,3 +17,7 @@ pyproject.toml
 README.md
 CONTRIBUTING.md
 .gitignore
+
+# Speakeasy's compile step runs mypy with cwd=generated/, where the root
+# pyproject.toml mypy config is not read; this file stands in for it.
+mypy.ini
