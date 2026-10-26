@@ -43,6 +43,22 @@ INVALID_REQUEST_MODELS = [
         "attio.errors.put_v2_activities_activity_recordsop",
         "PutV2ActivitiesActivityRecordsInvalidRequestErrorData",
     ),
+    (
+        "attio.errors.patch_v2_objects_object_records_record_id_op",
+        "PatchV2ObjectsObjectRecordsRecordIDInvalidRequestErrorData",
+    ),
+    (
+        "attio.errors.put_v2_objects_object_records_record_id_op",
+        "PutV2ObjectsObjectRecordsRecordIDInvalidRequestErrorData",
+    ),
+    (
+        "attio.errors.patch_v2_activities_activity_records_record_id_op",
+        "PatchV2ActivitiesActivityRecordsRecordIDInvalidRequestErrorData",
+    ),
+    (
+        "attio.errors.put_v2_activities_activity_records_record_id_op",
+        "PutV2ActivitiesActivityRecordsRecordIDInvalidRequestErrorData",
+    ),
 ]
 
 
@@ -293,3 +309,96 @@ def test_post_records_invalid_request_rejects_unknown_code() -> None:
 
     with pytest.raises(errors.ResponseValidationError):
         unmarshal_json_response(PostV2ObjectsObjectRecordsInvalidRequestErrorData, http_res)
+
+
+# 400 codes the 2026-10-26 upstream spec added to the record and entry write
+# endpoints. The overlay flattens the four create/upsert endpoints to single
+# enums, while the {record_id} PATCH/PUT and entries PUT/PATCH endpoints carry
+# the new codes natively via their anyOf unions. Pinned alongside the
+# hand-applied regeneration of generated/src/attio/ so a regression that walks
+# any of these Literals back fails loudly.
+NEW_UPSTREAM_400_CODES = [
+    (
+        "attio.errors.post_v2_objects_object_recordsop",
+        "PostV2ObjectsObjectRecordsInvalidRequestErrorData",
+        ("duplicate_values", "limit_reached", "multiple_match_results"),
+    ),
+    (
+        "attio.errors.put_v2_objects_object_recordsop",
+        "PutV2ObjectsObjectRecordsInvalidRequestErrorData",
+        ("duplicate_values", "limit_reached", "multiple_match_results"),
+    ),
+    (
+        "attio.errors.post_v2_activities_activity_recordsop",
+        "PostV2ActivitiesActivityRecordsInvalidRequestErrorData",
+        ("duplicate_values", "limit_reached", "multiple_match_results"),
+    ),
+    (
+        "attio.errors.put_v2_activities_activity_recordsop",
+        "PutV2ActivitiesActivityRecordsInvalidRequestErrorData",
+        ("duplicate_values", "limit_reached"),
+    ),
+    (
+        "attio.errors.patch_v2_objects_object_records_record_id_op",
+        "PatchV2ObjectsObjectRecordsRecordIDInvalidRequestErrorData",
+        ("duplicate_values", "limit_reached", "multiple_match_results"),
+    ),
+    (
+        "attio.errors.put_v2_objects_object_records_record_id_op",
+        "PutV2ObjectsObjectRecordsRecordIDInvalidRequestErrorData",
+        ("duplicate_values", "limit_reached", "multiple_match_results"),
+    ),
+    (
+        "attio.errors.patch_v2_activities_activity_records_record_id_op",
+        "PatchV2ActivitiesActivityRecordsRecordIDInvalidRequestErrorData",
+        ("duplicate_values", "limit_reached", "multiple_match_results"),
+    ),
+    (
+        "attio.errors.put_v2_activities_activity_records_record_id_op",
+        "PutV2ActivitiesActivityRecordsRecordIDInvalidRequestErrorData",
+        ("duplicate_values", "limit_reached", "multiple_match_results"),
+    ),
+    (
+        "attio.errors.put_v2_lists_list_entriesop",
+        "PutV2ListsListEntriesInvalidRequestErrorData",
+        ("validation_type",),
+    ),
+    (
+        "attio.errors.patch_v2_lists_list_entries_entry_id_op",
+        "PatchV2ListsListEntriesEntryIDInvalidRequestErrorData",
+        ("validation_type",),
+    ),
+    (
+        "attio.errors.put_v2_lists_list_entries_entry_id_op",
+        "PutV2ListsListEntriesEntryIDInvalidRequestErrorData",
+        ("validation_type",),
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    "module_name,class_name,codes",
+    NEW_UPSTREAM_400_CODES,
+    ids=[module.split(".")[-1] for module, _, _ in NEW_UPSTREAM_400_CODES],
+)
+def test_invalid_request_error_models_accept_new_upstream_codes(
+    module_name: str, class_name: str, codes: tuple[str, ...]
+) -> None:
+    module = importlib.import_module(module_name)
+    model_cls = getattr(module, class_name)
+
+    for code in codes:
+        body = json.dumps(
+            {
+                "status_code": 400,
+                "type": "invalid_request_error",
+                "code": code,
+                "message": f"message for {code}",
+            }
+        )
+        http_res = _mock_http_response(body)
+
+        parsed = unmarshal_json_response(model_cls, http_res)
+
+        assert parsed.type == "invalid_request_error"
+        assert parsed.code == code
