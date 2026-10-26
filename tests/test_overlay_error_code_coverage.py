@@ -65,6 +65,9 @@ EXPECTED_ENDPOINTS: tuple[tuple[str, str], ...] = (
     ("patch", "/v2/{target}/{identifier}/attributes/{attribute}/statuses/{status}"),
     ("post", "/v2/objects/{object}/records"),
     ("put", "/v2/objects/{object}/records"),
+    # Activity-record write endpoints — flatten pairs added in #33.
+    ("post", "/v2/activities/{activity}/records"),
+    ("put", "/v2/activities/{activity}/records"),
     ("post", "/v2/objects/records/search"),
     ("post", "/v2/lists"),
     ("patch", "/v2/lists/{list}"),
