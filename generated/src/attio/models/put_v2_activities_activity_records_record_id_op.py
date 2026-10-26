@@ -78,6 +78,23 @@ PutV2ActivitiesActivityRecordsRecordIDCodeUnauthorized = Literal["unauthorized",
 PutV2ActivitiesActivityRecordsRecordIDBadRequestType = Literal["invalid_request_error",]
 
 
+PutV2ActivitiesActivityRecordsRecordIDCodeMultipleMatchResults = Literal[
+    "multiple_match_results",
+]
+
+
+PutV2ActivitiesActivityRecordsRecordIDCodeLimitReached = Literal["limit_reached",]
+
+
+PutV2ActivitiesActivityRecordsRecordIDCodeDuplicateValues = Literal["duplicate_values",]
+
+
+PutV2ActivitiesActivityRecordsRecordIDCodeValidationType = Literal["validation_type",]
+
+
+PutV2ActivitiesActivityRecordsRecordIDCodeValueNotFound = Literal["value_not_found",]
+
+
 PutV2ActivitiesActivityRecordsRecordIDCodeParticleGateViolation = Literal[
     "particle_gate_violation",
 ]
@@ -91,6 +108,11 @@ PutV2ActivitiesActivityRecordsRecordIDCodeUnionTypedDict = TypeAliasType(
     Union[
         PutV2ActivitiesActivityRecordsRecordIDCodeMissingValue,
         PutV2ActivitiesActivityRecordsRecordIDCodeParticleGateViolation,
+        PutV2ActivitiesActivityRecordsRecordIDCodeValueNotFound,
+        PutV2ActivitiesActivityRecordsRecordIDCodeValidationType,
+        PutV2ActivitiesActivityRecordsRecordIDCodeDuplicateValues,
+        PutV2ActivitiesActivityRecordsRecordIDCodeLimitReached,
+        PutV2ActivitiesActivityRecordsRecordIDCodeMultipleMatchResults,
     ],
 )
 
@@ -100,6 +122,11 @@ PutV2ActivitiesActivityRecordsRecordIDCodeUnion = TypeAliasType(
     Union[
         PutV2ActivitiesActivityRecordsRecordIDCodeMissingValue,
         PutV2ActivitiesActivityRecordsRecordIDCodeParticleGateViolation,
+        PutV2ActivitiesActivityRecordsRecordIDCodeValueNotFound,
+        PutV2ActivitiesActivityRecordsRecordIDCodeValidationType,
+        PutV2ActivitiesActivityRecordsRecordIDCodeDuplicateValues,
+        PutV2ActivitiesActivityRecordsRecordIDCodeLimitReached,
+        PutV2ActivitiesActivityRecordsRecordIDCodeMultipleMatchResults,
     ],
 )
 

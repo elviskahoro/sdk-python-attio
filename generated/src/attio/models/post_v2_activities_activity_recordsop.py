@@ -107,6 +107,9 @@ PostV2ActivitiesActivityRecordsBadRequestType = Literal["invalid_request_error",
 PostV2ActivitiesActivityRecordsBadRequestCode = Literal[
     "value_not_found",
     "particle_gate_violation",
+    "duplicate_values",
+    "limit_reached",
+    "multiple_match_results",
     "validation_type",
 ]
 

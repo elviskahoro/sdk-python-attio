@@ -15,3 +15,33 @@ value: models.PatchV2ActivitiesActivityRecordsRecordIDCodeMissingValue = /* valu
 value: models.PatchV2ActivitiesActivityRecordsRecordIDCodeParticleGateViolation = /* values here */
 ```
 
+### `models.PatchV2ActivitiesActivityRecordsRecordIDCodeValueNotFound`
+
+```python
+value: models.PatchV2ActivitiesActivityRecordsRecordIDCodeValueNotFound = /* values here */
+```
+
+### `models.PatchV2ActivitiesActivityRecordsRecordIDCodeValidationType`
+
+```python
+value: models.PatchV2ActivitiesActivityRecordsRecordIDCodeValidationType = /* values here */
+```
+
+### `models.PatchV2ActivitiesActivityRecordsRecordIDCodeDuplicateValues`
+
+```python
+value: models.PatchV2ActivitiesActivityRecordsRecordIDCodeDuplicateValues = /* values here */
+```
+
+### `models.PatchV2ActivitiesActivityRecordsRecordIDCodeLimitReached`
+
+```python
+value: models.PatchV2ActivitiesActivityRecordsRecordIDCodeLimitReached = /* values here */
+```
+
+### `models.PatchV2ActivitiesActivityRecordsRecordIDCodeMultipleMatchResults`
+
+```python
+value: models.PatchV2ActivitiesActivityRecordsRecordIDCodeMultipleMatchResults = /* values here */
+```
+

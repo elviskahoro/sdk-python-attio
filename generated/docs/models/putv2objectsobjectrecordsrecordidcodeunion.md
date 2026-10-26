@@ -21,3 +21,33 @@ value: models.PutV2ObjectsObjectRecordsRecordIDCodeMergeInProgress = /* values h
 value: models.PutV2ObjectsObjectRecordsRecordIDCodeParticleGateViolation = /* values here */
 ```
 
+### `models.PutV2ObjectsObjectRecordsRecordIDCodeValueNotFound`
+
+```python
+value: models.PutV2ObjectsObjectRecordsRecordIDCodeValueNotFound = /* values here */
+```
+
+### `models.PutV2ObjectsObjectRecordsRecordIDCodeValidationType`
+
+```python
+value: models.PutV2ObjectsObjectRecordsRecordIDCodeValidationType = /* values here */
+```
+
+### `models.PutV2ObjectsObjectRecordsRecordIDCodeDuplicateValues`
+
+```python
+value: models.PutV2ObjectsObjectRecordsRecordIDCodeDuplicateValues = /* values here */
+```
+
+### `models.PutV2ObjectsObjectRecordsRecordIDCodeLimitReached`
+
+```python
+value: models.PutV2ObjectsObjectRecordsRecordIDCodeLimitReached = /* values here */
+```
+
+### `models.PutV2ObjectsObjectRecordsRecordIDCodeMultipleMatchResults`
+
+```python
+value: models.PutV2ObjectsObjectRecordsRecordIDCodeMultipleMatchResults = /* values here */
+```
+

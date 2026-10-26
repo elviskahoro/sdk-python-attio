@@ -133,6 +133,153 @@ def test_put_activities_activity_records_invalid_request_accepts_upsert_codes(
     assert parsed.code == code
 
 
+@pytest.mark.parametrize(
+    "code",
+    ["duplicate_values", "limit_reached", "multiple_match_results"],
+)
+@pytest.mark.parametrize(
+    "module_name,class_name",
+    [
+        (
+            "attio.errors.post_v2_objects_object_recordsop",
+            "PostV2ObjectsObjectRecordsInvalidRequestErrorData",
+        ),
+        (
+            "attio.errors.put_v2_objects_object_recordsop",
+            "PutV2ObjectsObjectRecordsInvalidRequestErrorData",
+        ),
+        (
+            "attio.errors.post_v2_activities_activity_recordsop",
+            "PostV2ActivitiesActivityRecordsInvalidRequestErrorData",
+        ),
+        (
+            "attio.errors.put_v2_activities_activity_recordsop",
+            "PutV2ActivitiesActivityRecordsInvalidRequestErrorData",
+        ),
+    ],
+)
+def test_records_create_upsert_invalid_request_accepts_new_spec_codes(
+    module_name: str, class_name: str, code: str
+) -> None:
+    module = importlib.import_module(module_name)
+    model_cls = getattr(module, class_name)
+
+    body = json.dumps(
+        {
+            "status_code": 400,
+            "type": "invalid_request_error",
+            "code": code,
+            "message": f"message for {code}",
+        }
+    )
+    http_res = _mock_http_response(body)
+
+    parsed = unmarshal_json_response(model_cls, http_res)
+
+    assert parsed.type == "invalid_request_error"
+    assert parsed.code == code
+
+
+# The record_id PUT/PATCH and entries PUT/PATCH endpoints carry their 400
+# code unions natively in the spec (no overlay action), so their generated
+# CodeUnions must accept every member the pinned spec's anyOf carries.
+UNION_CODE_MODELS = [
+    (
+        "attio.errors.put_v2_objects_object_records_record_id_op",
+        "PutV2ObjectsObjectRecordsRecordIDInvalidRequestErrorData",
+        [
+            "missing_value",
+            "merge_in_progress",
+            "particle_gate_violation",
+            "value_not_found",
+            "validation_type",
+            "duplicate_values",
+            "limit_reached",
+            "multiple_match_results",
+        ],
+    ),
+    (
+        "attio.errors.patch_v2_objects_object_records_record_id_op",
+        "PatchV2ObjectsObjectRecordsRecordIDInvalidRequestErrorData",
+        [
+            "missing_value",
+            "merge_in_progress",
+            "particle_gate_violation",
+            "value_not_found",
+            "validation_type",
+            "duplicate_values",
+            "limit_reached",
+            "multiple_match_results",
+        ],
+    ),
+    (
+        "attio.errors.put_v2_activities_activity_records_record_id_op",
+        "PutV2ActivitiesActivityRecordsRecordIDInvalidRequestErrorData",
+        [
+            "missing_value",
+            "particle_gate_violation",
+            "value_not_found",
+            "validation_type",
+            "duplicate_values",
+            "limit_reached",
+            "multiple_match_results",
+        ],
+    ),
+    (
+        "attio.errors.patch_v2_activities_activity_records_record_id_op",
+        "PatchV2ActivitiesActivityRecordsRecordIDInvalidRequestErrorData",
+        [
+            "missing_value",
+            "particle_gate_violation",
+            "value_not_found",
+            "validation_type",
+            "duplicate_values",
+            "limit_reached",
+            "multiple_match_results",
+        ],
+    ),
+    (
+        "attio.errors.put_v2_lists_list_entriesop",
+        "PutV2ListsListEntriesInvalidRequestErrorData",
+        ["multiple_match_results", "merge_in_progress", "validation_type"],
+    ),
+    (
+        "attio.errors.put_v2_lists_list_entries_entry_id_op",
+        "PutV2ListsListEntriesEntryIDInvalidRequestErrorData",
+        ["immutable_value", "merge_in_progress", "validation_type"],
+    ),
+    (
+        "attio.errors.patch_v2_lists_list_entries_entry_id_op",
+        "PatchV2ListsListEntriesEntryIDInvalidRequestErrorData",
+        ["immutable_value", "merge_in_progress", "validation_type"],
+    ),
+]
+
+
+@pytest.mark.parametrize("module_name,class_name,codes", UNION_CODE_MODELS)
+def test_record_id_and_entries_invalid_request_accepts_spec_union_codes(
+    module_name: str, class_name: str, codes: list[str]
+) -> None:
+    module = importlib.import_module(module_name)
+    model_cls = getattr(module, class_name)
+
+    for code in codes:
+        body = json.dumps(
+            {
+                "status_code": 400,
+                "type": "invalid_request_error",
+                "code": code,
+                "message": f"message for {code}",
+            }
+        )
+        http_res = _mock_http_response(body)
+
+        parsed = unmarshal_json_response(model_cls, http_res)
+
+        assert parsed.type == "invalid_request_error"
+        assert parsed.code == code
+
+
 def test_post_records_invalid_request_rejects_unknown_code() -> None:
     body = json.dumps(
         {

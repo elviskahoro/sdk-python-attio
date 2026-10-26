@@ -78,6 +78,23 @@ PutV2ObjectsObjectRecordsRecordIDCodeUnauthorized = Literal["unauthorized",]
 PutV2ObjectsObjectRecordsRecordIDBadRequestType = Literal["invalid_request_error",]
 
 
+PutV2ObjectsObjectRecordsRecordIDCodeMultipleMatchResults = Literal[
+    "multiple_match_results",
+]
+
+
+PutV2ObjectsObjectRecordsRecordIDCodeLimitReached = Literal["limit_reached",]
+
+
+PutV2ObjectsObjectRecordsRecordIDCodeDuplicateValues = Literal["duplicate_values",]
+
+
+PutV2ObjectsObjectRecordsRecordIDCodeValidationType = Literal["validation_type",]
+
+
+PutV2ObjectsObjectRecordsRecordIDCodeValueNotFound = Literal["value_not_found",]
+
+
 PutV2ObjectsObjectRecordsRecordIDCodeParticleGateViolation = Literal[
     "particle_gate_violation",
 ]
@@ -95,6 +112,11 @@ PutV2ObjectsObjectRecordsRecordIDCodeUnionTypedDict = TypeAliasType(
         PutV2ObjectsObjectRecordsRecordIDCodeMissingValue,
         PutV2ObjectsObjectRecordsRecordIDCodeMergeInProgress,
         PutV2ObjectsObjectRecordsRecordIDCodeParticleGateViolation,
+        PutV2ObjectsObjectRecordsRecordIDCodeValueNotFound,
+        PutV2ObjectsObjectRecordsRecordIDCodeValidationType,
+        PutV2ObjectsObjectRecordsRecordIDCodeDuplicateValues,
+        PutV2ObjectsObjectRecordsRecordIDCodeLimitReached,
+        PutV2ObjectsObjectRecordsRecordIDCodeMultipleMatchResults,
     ],
 )
 
@@ -105,6 +127,11 @@ PutV2ObjectsObjectRecordsRecordIDCodeUnion = TypeAliasType(
         PutV2ObjectsObjectRecordsRecordIDCodeMissingValue,
         PutV2ObjectsObjectRecordsRecordIDCodeMergeInProgress,
         PutV2ObjectsObjectRecordsRecordIDCodeParticleGateViolation,
+        PutV2ObjectsObjectRecordsRecordIDCodeValueNotFound,
+        PutV2ObjectsObjectRecordsRecordIDCodeValidationType,
+        PutV2ObjectsObjectRecordsRecordIDCodeDuplicateValues,
+        PutV2ObjectsObjectRecordsRecordIDCodeLimitReached,
+        PutV2ObjectsObjectRecordsRecordIDCodeMultipleMatchResults,
     ],
 )
 

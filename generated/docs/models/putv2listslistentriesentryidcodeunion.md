@@ -15,3 +15,9 @@ value: models.PutV2ListsListEntriesEntryIDCodeImmutableValue = /* values here */
 value: models.PutV2ListsListEntriesEntryIDCodeMergeInProgress = /* values here */
 ```
 
+### `models.PutV2ListsListEntriesEntryIDCodeValidationType`
+
+```python
+value: models.PutV2ListsListEntriesEntryIDCodeValidationType = /* values here */
+```
+
