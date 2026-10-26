@@ -136,6 +136,37 @@ This SDK is generated using Speakeasy from an OpenAPI spec.
    `pyproject.toml` and `generated/src/attio/_version.py` (speakeasy auto-bumps the
    patch version on each regeneration with changes).
 
+### Regenerating on RWX (`.rwx/regenerate.yml`)
+
+Use this when you have no Speakeasy CLI or container runtime locally. It
+regenerates, verifies, and exports the diff as an artifact; it never commits,
+pushes, or opens a PR.
+
+```bash
+rwx run .rwx/regenerate.yml --wait            # add --init fetch=true to adopt the latest upstream spec
+rwx artifacts download <run-id> --task patch regenerate-patch --auto-extract
+git apply .rwx/downloads/<dir>/regenerate.patch
+```
+
+- Tasks: `generate` (host Speakeasy CLI, `ci/pipeline.py generate --no-fetch`,
+  compile step on) -> `verify` (`check-overlay`, `mypy generated/src`,
+  `pytest -q`) -> `patch` (allowlist check, then `regenerate.patch`). The
+  patch is diffed against a pre-generation snapshot, so local edits that
+  `rwx run` uploads are not included.
+- Secret: `SPEAKEASY_API_KEY` lives in the RWX vault `sdk-python-attio`
+  (referenced as `vaults.sdk-python-attio.secrets.SPEAKEASY_API_KEY`), not the
+  `default` vault. `spec-update-check.yml` still reads the default vault, so
+  its regeneration step is skipped until it is pointed at the new vault. The
+  vault is currently unlocked; lock it to `main` once testing is done.
+- `generated/mypy.ini` is required: Speakeasy's compile step runs mypy with
+  `generated/` as cwd, where the root `pyproject.toml` `[tool.mypy]` is not
+  read, which otherwise fails with ~565 `import-not-found` errors. It is
+  listed in `generated/.genignore` so regeneration keeps it.
+- The CLI is pinned to 1.800.1 but Speakeasy may self-upgrade (seen: 1.803.2);
+  the pipeline only warns on the mismatch.
+- `tests/test_overlay_error_code_coverage.py::EXPECTED_ENDPOINTS` must list
+  every endpoint `overlay.yaml` adds `validation_type` to.
+
 ### Important Notes
 
 - The SDK is fully generated code — manual edits to `generated/src/attio/` will be overwritten on next generation.

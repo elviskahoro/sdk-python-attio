@@ -70,6 +70,8 @@ EXPECTED_ENDPOINTS: tuple[tuple[str, str], ...] = (
     ("patch", "/v2/lists/{list}"),
     ("post", "/v2/lists/{list}/entries"),
     ("post", "/v2/comments"),
+    ("post", "/v2/activities/{activity}/records"),
+    ("put", "/v2/activities/{activity}/records"),
 )
 
 # Endpoints whose overlay.yaml action widens the 400 ``code`` field by adding

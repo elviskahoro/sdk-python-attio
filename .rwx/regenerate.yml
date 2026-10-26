@@ -1,0 +1,127 @@
+# On-demand SDK regeneration (rwx run .rwx/regenerate.yml). Unlike
+# spec-update-check.yml there is no drift check or issue handling: it
+# regenerates from the spec already committed (or, with --init fetch=true,
+# the latest upstream spec), runs mypy and pytest, and emits a
+# patch artifact. It never commits, pushes, or opens a PR. Use it for
+# regeneration work such as #57.
+#
+# Required secret: SPEAKEASY_API_KEY in the sdk-python-attio vault. No GitHub write token is used.
+on:
+  cli:
+    init:
+      commit-sha: ${{ event.git.sha }}
+      fetch: "false"
+
+base:
+  image: ubuntu:24.04
+  config: rwx/base 1.2.0
+
+concurrency-pools:
+  - id: elviskahoro/sdk-python-attio:regenerate
+    capacity: 1
+    on-overflow: queue
+
+tasks:
+  - key: code
+    call: git/clone 2.2.0
+    with:
+      repository: https://github.com/elviskahoro/sdk-python-attio.git
+      ref: ${{ init.commit-sha }}
+      preserve-git-dir: true
+      fetch-full-depth: true
+
+  - key: python
+    call: python/install 2.0.1
+    with:
+      python-version: "3.13"
+
+  - key: uv
+    use: python
+    run: pip install uv
+
+  - key: sync
+    use: [code, uv]
+    run: uv sync
+    filter:
+      - pyproject.toml
+      - uv.lock
+
+  # Snapshot the tree before generation. The patch is diffed against this
+  # snapshot, so local changes `rwx run` uploads on top of the commit are
+  # not mistaken for generation output.
+  - key: baseline
+    use: sync
+    run: |
+      git add -A
+      git write-tree > .git/regen-base-tree
+
+  # Same pinned, checksum-verified installer as spec-update-check.yml. This
+  # task never sees SPEAKEASY_API_KEY.
+  - key: speakeasy-cli
+    use: baseline
+    run: |
+      curl -fsSL -o /tmp/speakeasy-install.sh \
+        https://raw.githubusercontent.com/speakeasy-api/speakeasy/89688fa0cfc3c959f4ac370329325d1b274db551/install.sh
+      echo "9e2c4f1054e214d05352597cfd9ed1ab117a089e9442f532dd4a0d168665d757  /tmp/speakeasy-install.sh" \
+        | sha256sum -c -
+      VERSION=1.800.1 sh /tmp/speakeasy-install.sh
+
+  # Uncached: the output depends on the Speakeasy service and the key, not
+  # only on repo content.
+  - key: generate
+    use: speakeasy-cli
+    cache: false
+    timeout: 60m
+    env:
+      SPEAKEASY_API_KEY: ${{ vaults.sdk-python-attio.secrets.SPEAKEASY_API_KEY }}
+      SPEAKEASY_USE_HOST_CLI: "1"
+      FETCH: ${{ init.fetch }}
+    run: |
+      # --no-fetch regenerates from the committed spec; fetch=true adopts the
+      # latest upstream spec first. generate refuses to run on an unhealthy
+      # overlay (_verify_overlay_health); do not bypass it.
+      if [ "$FETCH" = "true" ]; then
+        uv run python ci/pipeline.py generate
+      else
+        uv run python ci/pipeline.py generate --no-fetch
+      fi
+
+  - key: verify
+    use: generate
+    # A timeout SIGKILLs the task and skips patch, so no artifact is produced;
+    # the 10m default is too short for mypy plus the full test suite.
+    timeout: 60m
+    run: |
+      uv lock
+      uv sync
+      uv run python ci/spec_diff.py check-overlay
+      uv run mypy generated/src
+      uv run pytest -q
+
+  # Regeneration only produces a patch; nothing is committed or pushed. Apply
+  # it locally:
+  #   rwx artifacts download <run-id> --task patch regenerate-patch --auto-extract
+  #   git apply .rwx/downloads/<dir>/regenerate.patch
+  - key: patch
+    use: verify
+    run: |
+      base=$(cat .git/regen-base-tree)
+      allow="generated openapi .speakeasy pyproject.toml uv.lock README.md"
+      # Anything generation changed outside the allowlist means a step leaked.
+      leftovers=$({ git diff --name-only "$base"; git ls-files -o --exclude-standard; } \
+        | grep -v '^tmp/' \
+        | grep -vE '^(generated|openapi|\.speakeasy)/|^(pyproject\.toml|uv\.lock|README\.md)$' || true)
+      if [ -n "$leftovers" ]; then
+        echo "Unexpected changes outside the regeneration allowlist ($allow):" >&2
+        echo "$leftovers" >&2
+        exit 1
+      fi
+      # -N records new files in the diff.
+      git add -N $allow
+      git diff --binary "$base" -- $allow > regenerate.patch
+      [ -s regenerate.patch ] || echo "Regeneration produced no changes."
+      git diff --stat "$base" -- $allow
+    outputs:
+      artifacts:
+        - key: regenerate-patch
+          path: regenerate.patch
