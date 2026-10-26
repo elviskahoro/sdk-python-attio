@@ -498,6 +498,9 @@ actions:
       enum:
         - "value_not_found"
         - "particle_gate_violation"
+        - "duplicate_values"
+        - "limit_reached"
+        - "multiple_match_results"
         - "validation_type"
 
   - target: "$.paths['/v2/activities/{activity}/records'].put.responses['400'].content['application/json'].schema.properties.code.anyOf"
@@ -513,6 +516,8 @@ actions:
         - "matching_attribute_definition_not_unique"
         - "multiple_match_results"
         - "particle_gate_violation"
+        - "duplicate_values"
+        - "limit_reached"
         - "validation_type"
 
   - target: "$.paths['/v2/objects/records/search'].post.responses['400'].content['application/json'].schema.properties.code.enum"
@@ -530,10 +535,17 @@ actions:
     update:
       - "validation_type"
 
-  - target: "$.paths['/v2/lists/{list}/entries'].post.responses['400'].content['application/json'].schema.properties.code.enum"
+  - target: "$.paths['/v2/lists/{list}/entries'].post.responses['400'].content['application/json'].schema.properties.code.anyOf"
+    description: "Flatten anyOf error-code union in POST /v2/lists/{list}/entries so code generates as one enum"
+    remove: true
+
+  - target: "$.paths['/v2/lists/{list}/entries'].post.responses['400'].content['application/json'].schema.properties.code"
     description: "Allow validation_type code in POST /v2/lists/{list}/entries"
     update:
-      - "validation_type"
+      type: string
+      enum:
+        - "value_not_found"
+        - "validation_type"
 
   - target: "$.paths['/v2/comments'].post.responses['400'].content['application/json'].schema.properties.code.enum"
     description: "Allow validation_type code in POST /v2/comments"
