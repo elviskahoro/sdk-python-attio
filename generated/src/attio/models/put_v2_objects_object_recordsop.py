@@ -83,6 +83,9 @@ PutV2ObjectsObjectRecordsBadRequestCode = Literal[
     "value_not_found",
     "merge_in_progress",
     "particle_gate_violation",
+    "duplicate_values",
+    "limit_reached",
+    "multiple_match_results",
     "validation_type",
 ]
 

@@ -81,24 +81,18 @@ PutV2ListsListEntriesBadRequestType = Literal["invalid_request_error",]
 PutV2ListsListEntriesCodeMergeInProgress = Literal["merge_in_progress",]
 
 
-PutV2ListsListEntriesCodeMultipleMatchResults = Literal["multiple_match_results",]
+CodeMultipleMatchResults = Literal["multiple_match_results",]
 
 
 PutV2ListsListEntriesCodeUnionTypedDict = TypeAliasType(
     "PutV2ListsListEntriesCodeUnionTypedDict",
-    Union[
-        PutV2ListsListEntriesCodeMultipleMatchResults,
-        PutV2ListsListEntriesCodeMergeInProgress,
-    ],
+    Union[CodeMultipleMatchResults, PutV2ListsListEntriesCodeMergeInProgress],
 )
 
 
 PutV2ListsListEntriesCodeUnion = TypeAliasType(
     "PutV2ListsListEntriesCodeUnion",
-    Union[
-        PutV2ListsListEntriesCodeMultipleMatchResults,
-        PutV2ListsListEntriesCodeMergeInProgress,
-    ],
+    Union[CodeMultipleMatchResults, PutV2ListsListEntriesCodeMergeInProgress],
 )
 
 

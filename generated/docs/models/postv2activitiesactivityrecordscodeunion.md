@@ -1,4 +1,4 @@
-# PostV2ActivitiesActivityRecordsForbiddenCodeUnion
+# PostV2ActivitiesActivityRecordsCodeUnion
 
 
 ## Supported Types

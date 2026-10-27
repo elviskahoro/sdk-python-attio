@@ -1,4 +1,4 @@
-speakeasyVersion: 1.800.1
+speakeasyVersion: 1.803.2
 sources:
     Attio API:
         sourceNamespace: attio-api
@@ -35,3 +35,4 @@ workflow:
         attio:
             target: python
             source: attio
+            output: generated
