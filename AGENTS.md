@@ -167,6 +167,39 @@ git apply .rwx/downloads/<dir>/regenerate.patch
 - `tests/test_overlay_error_code_coverage.py::EXPECTED_ENDPOINTS` must list
   every endpoint `overlay.yaml` adds `validation_type` to.
 
+### Regenerating locally: Dagger first, host CLI as fallback
+
+`ci/pipeline.py generate` uses the pinned Speakeasy container via Dagger
+whenever `SPEAKEASY_API_KEY` is set and `SPEAKEASY_USE_HOST_CLI` is not
+(`_local_speakeasy_usable`). Try that first:
+
+```bash
+uv run python ci/pipeline.py generate --no-fetch
+```
+
+If the workspace cannot run Dagger (no Docker/container runtime, e.g. cloud
+sandboxes; the run dies with an engine error), fall back to the host CLI by
+setting `SPEAKEASY_USE_HOST_CLI=1`. This needs the `speakeasy` CLI on `PATH`
+and `SPEAKEASY_API_KEY` set; no vault or RWX is needed. The flag errors out
+if the CLI is missing, rather than falling back to Dagger.
+
+```bash
+ci/regenerate_host.sh            # add --fetch to adopt the latest upstream spec
+```
+
+The script installs the pinned, checksum-verified CLI if missing, runs
+generation with `SPEAKEASY_USE_HOST_CLI=1`, then `uv lock`, `check-overlay`,
+`mypy generated/src` and `pytest -q`. It never commits. Keep its CLI
+pin/checksum in sync with `.rwx/regenerate.yml`.
+
+- Run it on a branch cut from current `main`. An older branch may lack
+  `generated/mypy.ini`, and the compile step then fails with ~565 mypy
+  `import-not-found` errors.
+- Use Python 3.13 (what RWX uses); put it first on `PATH` if the system
+  Python differs (`uv python install 3.13`).
+- Commit only `generated/`, `openapi/`, `.speakeasy/`, `pyproject.toml`,
+  `uv.lock`, `README.md`, as the RWX patch allowlist does.
+
 ### Important Notes
 
 - The SDK is fully generated code — manual edits to `generated/src/attio/` will be overwritten on next generation.
