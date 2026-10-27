@@ -22,6 +22,12 @@ Regenerates the SDK (0.26.3) against the unchanged spec — a content-empty
 bump that keeps `pyproject.toml`, `uv.lock`, and the Speakeasy-side version
 files in lockstep.
 
+Regenerates the SDK (0.26.4) against the unchanged spec. No model or
+API-surface changes — the generator bump (Speakeasy 1.804.0, template
+2.952.5) lands the upstream empty-string early-return for security-scheme
+values in `generated/src/attio/utils/security.py`, and `pyproject.toml`,
+`uv.lock`, and the Speakeasy-side version files stay in lockstep.
+
 ## 0.25.1 — 2026-10-03
 
 Adopts Attio's 2026-10-03 OpenAPI spec and repairs the Speakeasy overlay.
