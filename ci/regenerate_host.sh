@@ -17,22 +17,25 @@ INSTALLER_SHA256=9e2c4f1054e214d05352597cfd9ed1ab117a089e9442f532dd4a0d168665d75
 
 generate_args=(--no-fetch)
 case "${1:-}" in
-  "") ;;
-  --fetch) generate_args=() ;;
-  *) echo "usage: $0 [--fetch]" >&2; exit 2 ;;
+"") ;;
+--fetch) generate_args=() ;;
+*)
+	echo "usage: $0 [--fetch]" >&2
+	exit 2
+	;;
 esac
 
-if [ -z "${SPEAKEASY_API_KEY:-}" ]; then
-  echo "SPEAKEASY_API_KEY is not set" >&2
-  exit 1
+if [[ -z ${SPEAKEASY_API_KEY:-} ]]; then
+	echo "SPEAKEASY_API_KEY is not set" >&2
+	exit 1
 fi
 
 if ! command -v speakeasy >/dev/null 2>&1; then
-  installer="$(mktemp)"
-  trap 'rm -f "$installer"' EXIT
-  curl -fsSL -o "$installer" "$INSTALLER_URL"
-  echo "$INSTALLER_SHA256  $installer" | sha256sum -c -
-  VERSION="$SPEAKEASY_VERSION" sh "$installer"
+	installer="$(mktemp)"
+	trap 'rm -f "$installer"' EXIT
+	curl -fsSL -o "${installer}" "${INSTALLER_URL}"
+	echo "${INSTALLER_SHA256}  ${installer}" | sha256sum -c -
+	VERSION="${SPEAKEASY_VERSION}" sh "${installer}"
 fi
 
 uv sync
