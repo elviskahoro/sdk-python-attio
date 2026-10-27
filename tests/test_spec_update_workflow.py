@@ -88,6 +88,22 @@ def test_check_fails_fast_on_skip_overlay_check(tasks: dict[str, dict]) -> None:
     assert run.index('case "${SKIP_OVERLAY_CHECK:-}"') < run.index('> "$RWX_VALUES/')
 
 
+def test_skip_overlay_guard_rejects_every_truthy_spelling(
+    tasks: dict[str, dict],
+) -> None:
+    """Only genuinely-false values may fall through the guard's allow arm;
+    anything ci/pipeline.py::_env_flag treats as enabled must be rejected."""
+    run = tasks["check"]["run"]
+    arm = next(
+        line.strip().removesuffix(") ;;")
+        for line in run.splitlines()
+        if line.strip().startswith('""|')
+    )
+    allowed = {value.lower() for value in arm.split("|")}
+    assert allowed == {'""', "0", "false", "no"}
+    assert not allowed & {"1", "true", "yes"}
+
+
 def test_write_token_is_scoped_to_repo_operations(tasks: dict[str, dict]) -> None:
     """Speakeasy, uv, and pytest run in `check`/`regenerate`; neither may
     see the repo-write token. Only open-pr, cleanup, and notify (issues) hold it."""
