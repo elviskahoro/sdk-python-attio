@@ -176,7 +176,9 @@ tasks:
       # and scripts/release.sh wrappers; CLI entry point/docs in
       # pyproject.toml and README.md; SDKHooks wiring and hooks re-export in
       # generated/src/attio/_hooks/sdkhooks.py and
-      # generated/src/attio/_hooks/__init__.py).
+      # generated/src/attio/_hooks/__init__.py; 0.26.1 model rename aliases
+      # in generated/src/attio/models/__init__.py and the renamed
+      # activity/list operation modules).
       uv run python ci/pipeline.py generate --no-fetch
       echo true > "$RWX_VALUES/ready"
 

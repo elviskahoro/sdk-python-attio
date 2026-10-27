@@ -1,4 +1,4 @@
-# PutV2ActivitiesActivityRecordsForbiddenCodeUnion
+# PutV2ActivitiesActivityRecordsCodeUnion
 
 
 ## Supported Types

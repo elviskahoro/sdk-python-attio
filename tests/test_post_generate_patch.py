@@ -16,6 +16,11 @@ generated model changes: copy the committed file, strip the two
 ``_validate_active`` blocks and the injected blank line after each, and
 revert the ``model_serializer, model_validator`` import to plain
 ``model_serializer``.
+
+The 0.26.1 model rename aliases (``MODEL_RENAME_ALIASES``) are pinned the
+same way: presence in the committed tree, byte-identical restoration from
+the stripped (freshly generated) form, and fail-fast errors when the
+generated layout drifts.
 """
 
 from __future__ import annotations
@@ -373,3 +378,170 @@ def test_committed_script_wrappers_are_canonical() -> None:
     ):
         expected = PGP._WRAPPER_TEMPLATE.format(impl=impl)
         assert wrapper.read_text() == expected, wrapper
+
+
+# ---------------------------------------------------------------------------
+# 0.26.1 model rename aliases
+# ---------------------------------------------------------------------------
+
+MODELS_DIR = REPO_ROOT / "generated" / "src" / "attio" / "models"
+
+
+def _strip_module_aliases(text: str, module: str) -> str:
+    """Reverse ``ensure_module_aliases``: drop each alias statement and the
+    two blank lines injected before it, yielding the freshly generated
+    (unpatched) form of an operation module."""
+    lines = text.splitlines(keepends=False)
+    out: list[str] = []
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        is_alias = any(
+            line == f"{old} = (" or line == f"{old} = {new}"
+            for old, new in PGP.MODEL_RENAME_ALIASES[module].items()
+        )
+        if not is_alias:
+            out.append(line)
+            i += 1
+            continue
+        del out[-2:]
+        if line.endswith("("):
+            i += 1
+            while lines[i] != ")":
+                i += 1
+        i += 1
+    return "\n".join(out) + "\n"
+
+
+def _strip_init_aliases(text: str) -> str:
+    """Reverse ``ensure_models_init_aliases``: drop the old-name entries from
+    the three export structures in ``models/__init__.py``."""
+    drop: set[str] = set()
+    for module, aliases in PGP.MODEL_RENAME_ALIASES.items():
+        for old in aliases:
+            drop.add(f"        {old},")
+            drop.add(f'    "{old}",')
+            drop.add(f'    "{old}": ".{module}",')
+    return "\n".join(line for line in text.splitlines() if line not in drop) + "\n"
+
+
+def test_committed_operation_modules_carry_rename_aliases() -> None:
+    for module, aliases in PGP.MODEL_RENAME_ALIASES.items():
+        text = (MODELS_DIR / f"{module}.py").read_text()
+        for old in aliases:
+            assert any(
+                line.startswith(f"{old} = ") for line in text.splitlines()
+            ), f"{module} lost the 0.26.1 alias `{old}`"
+
+
+def test_committed_models_init_exports_rename_aliases() -> None:
+    text = (MODELS_DIR / "__init__.py").read_text()
+    for module, aliases in PGP.MODEL_RENAME_ALIASES.items():
+        for old in aliases:
+            assert f"        {old}," in text
+            assert f'    "{old}",' in text
+            assert f'    "{old}": ".{module}",' in text
+
+
+def test_rename_aliases_resolve_to_the_new_symbols() -> None:
+    import attio.models
+
+    for module, aliases in PGP.MODEL_RENAME_ALIASES.items():
+        op_module = importlib.import_module(f"attio.models.{module}")
+        for old, new in aliases.items():
+            assert old in attio.models.__all__
+            assert getattr(attio.models, old) is getattr(attio.models, new)
+            assert getattr(op_module, old) is getattr(op_module, new)
+
+
+def test_module_aliases_restore_the_committed_state_byte_identically(
+    tmp_path: Path,
+) -> None:
+    for module in PGP.MODEL_RENAME_ALIASES:
+        committed = (MODELS_DIR / f"{module}.py").read_text()
+        target = tmp_path / f"{module}.py"
+        target.write_text(_strip_module_aliases(committed, module))
+
+        assert PGP.ensure_module_aliases(target, module) is True
+        assert target.read_text() == committed
+        assert PGP.ensure_module_aliases(target, module) is False
+
+
+def test_models_init_aliases_restore_the_committed_state_byte_identically(
+    tmp_path: Path,
+) -> None:
+    committed = (MODELS_DIR / "__init__.py").read_text()
+    target = tmp_path / "__init__.py"
+    target.write_text(_strip_init_aliases(committed))
+
+    assert PGP.ensure_models_init_aliases(target) is True
+    assert target.read_text() == committed
+    assert PGP.ensure_models_init_aliases(target) is False
+
+
+def test_init_entry_helpers_insert_at_sorted_positions() -> None:
+    lines = [
+        "from typing import TYPE_CHECKING",
+        "",
+        "if TYPE_CHECKING:",
+        "    from .put_v2_lists_list_entriesop import (",
+        "        PutV2ListsListEntriesCodeMergeInProgress,",
+        "        PutV2ListsListEntriesCodeUnauthorized,",
+        "    )",
+        "",
+        "__all__ = [",
+        '    "PutV2ListsListEntriesCodeMergeInProgress",',
+        '    "PutV2ListsListEntriesCodeUnauthorized",',
+        "]",
+        "",
+        "_dynamic_imports: dict[str, str] = {",
+        '    "PutV2ListsListEntriesCodeMergeInProgress": ".put_v2_lists_list_entriesop",',
+        '    "PutV2ListsListEntriesCodeUnauthorized": ".put_v2_lists_list_entriesop",',
+        "}",
+    ]
+    module = "put_v2_lists_list_entriesop"
+    old = "PutV2ListsListEntriesCodeMultipleMatchResults"
+
+    PGP._ensure_init_import_entry(lines, module, old)
+    PGP._ensure_init_all_entry(lines, old)
+    PGP._ensure_init_dynamic_entry(lines, module, old)
+
+    text = "\n".join(lines)
+    assert (
+        "        PutV2ListsListEntriesCodeMergeInProgress,\n"
+        "        PutV2ListsListEntriesCodeMultipleMatchResults,\n"
+        "        PutV2ListsListEntriesCodeUnauthorized,"
+    ) in text
+    assert (
+        '    "PutV2ListsListEntriesCodeMergeInProgress",\n'
+        '    "PutV2ListsListEntriesCodeMultipleMatchResults",\n'
+        '    "PutV2ListsListEntriesCodeUnauthorized",'
+    ) in text
+    assert (
+        '    "PutV2ListsListEntriesCodeMergeInProgress": '
+        '".put_v2_lists_list_entriesop",\n'
+        '    "PutV2ListsListEntriesCodeMultipleMatchResults": '
+        '".put_v2_lists_list_entriesop",\n'
+        '    "PutV2ListsListEntriesCodeUnauthorized": '
+        '".put_v2_lists_list_entriesop",'
+    ) in text
+
+
+def test_module_alias_raises_when_rename_target_missing(tmp_path: Path) -> None:
+    target = tmp_path / "post_v2_activities_activity_recordsop.py"
+    target.write_text('X = Literal["unauthorized",]\n')
+
+    with pytest.raises(RuntimeError, match="no longer defines"):
+        PGP.ensure_module_aliases(target, "post_v2_activities_activity_recordsop")
+
+
+def test_models_init_alias_raises_when_import_block_missing(tmp_path: Path) -> None:
+    target = tmp_path / "__init__.py"
+    target.write_text(
+        "from typing import TYPE_CHECKING\n\n"
+        "__all__ = [\n]\n\n"
+        "_dynamic_imports: dict[str, str] = {\n}\n"
+    )
+
+    with pytest.raises(RuntimeError, match="no longer imports from"):
+        PGP.ensure_models_init_aliases(target)

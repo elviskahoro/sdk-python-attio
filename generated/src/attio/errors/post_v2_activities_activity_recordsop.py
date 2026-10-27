@@ -66,7 +66,7 @@ class PostV2ActivitiesActivityRecordsNotFoundError(SDKError):
 class PostV2ActivitiesActivityRecordsAuthErrorData(BaseModel):
     status_code: float
     type: models_post_v2_activities_activity_recordsop.PostV2ActivitiesActivityRecordsForbiddenType
-    code: models_post_v2_activities_activity_recordsop.PostV2ActivitiesActivityRecordsForbiddenCodeUnion
+    code: models_post_v2_activities_activity_recordsop.PostV2ActivitiesActivityRecordsCodeUnion
     message: str
 
 

@@ -63,9 +63,11 @@ that `overlay.yaml` cannot express, e.g. the GET /v2/self `active` value
 discriminators on `AttioCom` and `ResponseBody` in
 `generated/src/attio/models/get_v2_selfop.py`, the `scripts/publish.sh` and
 `scripts/release.sh` wrappers, the standalone CLI entry point/docs in
-`pyproject.toml` and `README.md`, and the SDKHooks `init_hooks` wiring and
+`pyproject.toml` and `README.md`, the SDKHooks `init_hooks` wiring and
 hooks-package re-export in `generated/src/attio/_hooks/sdkhooks.py` and
-`generated/src/attio/_hooks/__init__.py`. Re-apply them right after regenerating so the
+`generated/src/attio/_hooks/__init__.py`, and the 0.26.1 model rename aliases
+in `generated/src/attio/models/__init__.py` and the renamed activity/list
+operation modules. Re-apply them right after regenerating so the
 tree the tests run against carries the invariant:
 
 ```bash

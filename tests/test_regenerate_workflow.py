@@ -64,3 +64,26 @@ def test_dispatch_params_referenced_in_init_are_declared() -> None:
             re.findall(r"event\.dispatch\.params\.([\w-]+)", str(trigger["init"]))
         )
         assert referenced <= declared, trigger["key"]
+
+
+def test_host_script_pin_matches_workflow_and_pipeline() -> None:
+    """ci/regenerate_host.sh is a third copy of the CLI pin and installer
+    checksum; drift from the workflow or the pipeline would install a
+    different generator than CI uses."""
+    import importlib.util
+
+    script = (REPO_ROOT / "ci" / "regenerate_host.sh").read_text(encoding="utf-8")
+    workflow = WORKFLOW.read_text(encoding="utf-8")
+
+    version = re.search(r"^SPEAKEASY_VERSION=(\S+)$", script, re.MULTILINE).group(1)
+    url = re.search(r"^INSTALLER_URL=(\S+)$", script, re.MULTILINE).group(1)
+    sha = re.search(r"^INSTALLER_SHA256=(\S+)$", script, re.MULTILINE).group(1)
+    assert f"VERSION={version} " in workflow
+    assert url in workflow
+    assert sha in workflow
+
+    pipeline_path = REPO_ROOT / "ci" / "pipeline.py"
+    spec = importlib.util.spec_from_file_location("attio_test_pipeline_pin", pipeline_path)
+    pipeline = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(pipeline)
+    assert version == pipeline._SPEAKEASY_CLI_PIN

@@ -73,8 +73,8 @@ PostV2ActivitiesActivityRecordsCodeBillingError = Literal["billing_error",]
 PostV2ActivitiesActivityRecordsCodeUnauthorized = Literal["unauthorized",]
 
 
-PostV2ActivitiesActivityRecordsForbiddenCodeUnionTypedDict = TypeAliasType(
-    "PostV2ActivitiesActivityRecordsForbiddenCodeUnionTypedDict",
+PostV2ActivitiesActivityRecordsCodeUnionTypedDict = TypeAliasType(
+    "PostV2ActivitiesActivityRecordsCodeUnionTypedDict",
     Union[
         PostV2ActivitiesActivityRecordsCodeUnauthorized,
         PostV2ActivitiesActivityRecordsCodeBillingError,
@@ -82,12 +82,22 @@ PostV2ActivitiesActivityRecordsForbiddenCodeUnionTypedDict = TypeAliasType(
 )
 
 
-PostV2ActivitiesActivityRecordsForbiddenCodeUnion = TypeAliasType(
-    "PostV2ActivitiesActivityRecordsForbiddenCodeUnion",
+PostV2ActivitiesActivityRecordsForbiddenCodeUnionTypedDict = (
+    PostV2ActivitiesActivityRecordsCodeUnionTypedDict
+)
+
+
+PostV2ActivitiesActivityRecordsCodeUnion = TypeAliasType(
+    "PostV2ActivitiesActivityRecordsCodeUnion",
     Union[
         PostV2ActivitiesActivityRecordsCodeUnauthorized,
         PostV2ActivitiesActivityRecordsCodeBillingError,
     ],
+)
+
+
+PostV2ActivitiesActivityRecordsForbiddenCodeUnion = (
+    PostV2ActivitiesActivityRecordsCodeUnion
 )
 
 

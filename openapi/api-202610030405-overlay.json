@@ -11040,19 +11040,11 @@
                       ]
                     },
                     "code": {
-                      "anyOf": [
-                        {
-                          "type": "string",
-                          "enum": [
-                            "value_not_found"
-                          ]
-                        },
-                        {
-                          "type": "string",
-                          "enum": [
-                            "particle_gate_violation"
-                          ]
-                        }
+                      "type": "string",
+                      "enum": [
+                        "value_not_found",
+                        "particle_gate_violation",
+                        "validation_type"
                       ]
                     },
                     "message": {
@@ -13271,31 +13263,13 @@
                       ]
                     },
                     "code": {
-                      "anyOf": [
-                        {
-                          "type": "string",
-                          "enum": [
-                            "value_not_found"
-                          ]
-                        },
-                        {
-                          "type": "string",
-                          "enum": [
-                            "matching_attribute_definition_not_unique"
-                          ]
-                        },
-                        {
-                          "type": "string",
-                          "enum": [
-                            "multiple_match_results"
-                          ]
-                        },
-                        {
-                          "type": "string",
-                          "enum": [
-                            "particle_gate_violation"
-                          ]
-                        }
+                      "type": "string",
+                      "enum": [
+                        "value_not_found",
+                        "matching_attribute_definition_not_unique",
+                        "multiple_match_results",
+                        "particle_gate_violation",
+                        "validation_type"
                       ]
                     },
                     "message": {
@@ -26901,6 +26875,9 @@
                       "enum": [
                         "value_not_found",
                         "particle_gate_violation",
+                        "duplicate_values",
+                        "limit_reached",
+                        "multiple_match_results",
                         "validation_type"
                       ]
                     },
@@ -29114,6 +29091,9 @@
                         "value_not_found",
                         "merge_in_progress",
                         "particle_gate_violation",
+                        "duplicate_values",
+                        "limit_reached",
+                        "multiple_match_results",
                         "validation_type"
                       ]
                     },

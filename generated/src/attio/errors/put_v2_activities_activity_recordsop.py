@@ -66,7 +66,7 @@ class PutV2ActivitiesActivityRecordsNotFoundError(SDKError):
 class PutV2ActivitiesActivityRecordsAuthErrorData(BaseModel):
     status_code: float
     type: models_put_v2_activities_activity_recordsop.PutV2ActivitiesActivityRecordsForbiddenType
-    code: models_put_v2_activities_activity_recordsop.PutV2ActivitiesActivityRecordsForbiddenCodeUnion
+    code: models_put_v2_activities_activity_recordsop.PutV2ActivitiesActivityRecordsCodeUnion
     message: str
 
 

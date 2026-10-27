@@ -7,6 +7,17 @@ company search/add/update, and note list/add/update commands. Mutations write
 immediately, validate JSON inputs, and return the versioned reliability
 envelope; search and list results are returned in `meta.results`.
 
+Regenerates the SDK (0.26.2) from the committed spec and overlay. Three
+public model names are renamed by the error-code union flattening, and the old
+names are kept as aliases (`ci/post_generate_patch.py`, `MODEL_RENAME_ALIASES`)
+so existing imports keep working; prefer the new names:
+
+- `PostV2ActivitiesActivityRecordsForbiddenCodeUnion` (+ `TypedDict`) →
+  `PostV2ActivitiesActivityRecordsCodeUnion` (+ `TypedDict`)
+- `PutV2ActivitiesActivityRecordsForbiddenCodeUnion` (+ `TypedDict`) →
+  `PutV2ActivitiesActivityRecordsCodeUnion` (+ `TypedDict`)
+- `PutV2ListsListEntriesCodeMultipleMatchResults` → `CodeMultipleMatchResults`
+
 ## 0.25.1 — 2026-10-03
 
 Adopts Attio's 2026-10-03 OpenAPI spec and repairs the Speakeasy overlay.

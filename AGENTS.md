@@ -113,9 +113,11 @@ This SDK is generated using Speakeasy from an OpenAPI spec.
    express, e.g. the GET /v2/self `active` value discriminators in
    `generated/src/attio/models/get_v2_selfop.py`, the `scripts/publish.sh` and
    `scripts/release.sh` wrappers, the standalone CLI entry point/docs in
-   `pyproject.toml` and `README.md`, and SDKHooks `init_hooks` wiring plus
+   `pyproject.toml` and `README.md`, SDKHooks `init_hooks` wiring plus
    the hooks-package re-export in `generated/src/attio/_hooks/sdkhooks.py` and
-   `generated/src/attio/_hooks/__init__.py`). Drop `--no-fetch` to also
+   `generated/src/attio/_hooks/__init__.py`, and the 0.26.1 model rename
+   aliases in `generated/src/attio/models/__init__.py` and the renamed
+   activity/list operation modules). Drop `--no-fetch` to also
    adopt a freshly fetched spec. Note the Dagger path exports only `generated/`
    back to the host — docs/, README, pyproject and USAGE refresh on the
    host-CLI path (the default) — and it logs that when chosen.
@@ -167,11 +169,45 @@ git apply .rwx/downloads/<dir>/regenerate.patch
 - `tests/test_overlay_error_code_coverage.py::EXPECTED_ENDPOINTS` must list
   every endpoint `overlay.yaml` adds `validation_type` to.
 
+### Regenerating locally: Dagger first, host CLI as fallback
+
+`ci/pipeline.py generate` uses the pinned Speakeasy container via Dagger
+whenever `SPEAKEASY_API_KEY` is set and `SPEAKEASY_USE_HOST_CLI` is not
+(`_local_speakeasy_usable`). Try that first:
+
+```bash
+uv run python ci/pipeline.py generate --no-fetch
+```
+
+If the workspace cannot run Dagger (no Docker/container runtime, e.g. cloud
+sandboxes; the run dies with an engine error), fall back to the host CLI by
+setting `SPEAKEASY_USE_HOST_CLI=1`. This needs the `speakeasy` CLI on `PATH`
+and `SPEAKEASY_API_KEY` set; no vault or RWX is needed. The flag errors out
+if the CLI is missing, rather than falling back to Dagger.
+
+```bash
+ci/regenerate_host.sh            # add --fetch to adopt the latest upstream spec
+```
+
+The script installs the pinned, checksum-verified CLI if missing, runs
+generation with `SPEAKEASY_USE_HOST_CLI=1`, then `uv lock`, `check-overlay`,
+`mypy generated/src` and `pytest -q`. It never commits. Keep its CLI
+pin/checksum in sync with `.rwx/regenerate.yml`.
+
+- Run it on a branch cut from current `main`. An older branch may lack
+  `generated/mypy.ini`, and the compile step then fails with ~565 mypy
+  `import-not-found` errors.
+- Use Python 3.13 (what RWX uses); put it first on `PATH` if the system
+  Python differs (`uv python install 3.13`).
+- Commit only `generated/`, `openapi/`, `.speakeasy/`, `pyproject.toml`,
+  `uv.lock`, `README.md`, as the RWX patch allowlist does.
+
 ### Important Notes
 
 - The SDK is fully generated code — manual edits to `generated/src/attio/` will be overwritten on next generation.
 - The overlay exists because Speakeasy infers `date` type from ISO8601 timestamp strings, but Attio returns timestamps as strings that should stay as `str` in Python.
 - The `list` → `list_id` renames avoid shadowing Python's built-in `list`.
+- A regeneration that renames a public model symbol which already shipped must keep the old name importable: add it to `MODEL_RENAME_ALIASES` in `ci/post_generate_patch.py` (0.26.1 precedent: the activity-record `ForbiddenCodeUnion` names became `CodeUnion`, and `PutV2ListsListEntriesCodeMultipleMatchResults` became `CodeMultipleMatchResults`) so a patch release never breaks `from attio.models import <old>` or the per-module import; retire the aliases only in a major release.
 - Description-only spec changes (marketing copy) are reported by `check-openapi` but do not count as structural drift, so they do not trigger the automated workflow.
 
 <!-- entire-agent:begin -->
