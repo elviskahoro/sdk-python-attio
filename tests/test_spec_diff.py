@@ -327,7 +327,7 @@ def test_verify_overlay_flags_misdirected_format_action(
     health = SD.verify_overlay(spec, real_targets, {})
     assert health["healthy"] is False
     assert any(
-        "oneOf[16].properties.value.format" in t for t in health["misdirected_targets"]
+        "oneOf[16].properties['value'].format" in t for t in health["misdirected_targets"]
     ), health["misdirected_targets"]
 
 

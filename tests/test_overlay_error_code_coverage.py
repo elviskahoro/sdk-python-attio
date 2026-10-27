@@ -213,6 +213,21 @@ def test_overlay_yaml_fence_is_bidirectional() -> None:
 
 
 # ---------------------------------------------------------------------------
+# RFC 9535 opt-in: overlay.yaml must keep the x-speakeasy-jsonpath extension
+# that switches Speakeasy's target parsing to the strict RFC 9535
+# interpreter. Nothing else asserts its presence — ci/spec_diff.py only reads
+# `actions` — so dropping it would resurrect the deprecated-parser WARNs with
+# no local signal, and generation would hard-fail once Speakeasy removes the
+# deprecated interpreter.
+# ---------------------------------------------------------------------------
+
+
+def test_overlay_opts_into_rfc9535_jsonpath() -> None:
+    doc = yaml.safe_load(OVERLAY_YAML.read_text()) or {}
+    assert doc.get("x-speakeasy-jsonpath") == "rfc9535"
+
+
+# ---------------------------------------------------------------------------
 # SDK-side acceptance: every endpoint currently advertised by overlay.yaml
 # as accepting ``validation_type`` must round-trip a synthetic 400 response
 # through its generated ``InvalidRequestErrorData`` Pydantic model.
