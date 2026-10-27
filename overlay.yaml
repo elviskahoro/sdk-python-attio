@@ -1,3 +1,52 @@
+# Action semantics (read before adding or editing an action)
+#
+# 1. `update:` on a flat enum list APPENDS to the existing array. Used by the
+#    `.code.enum` actions to widen a spec enum with `validation_type`.
+#    `update:` with a mapping on an object MERGES keys into it: keys the
+#    mapping sets are overwritten in place and every other sibling key
+#    survives (the `x-speakeasy-name-override` parameter renames work this
+#    way). Such a merge does NOT swap an enum array already on the node —
+#    the overlay spec replaces a primitive-valued array only as a whole, so
+#    replacing an existing enum means `remove:`-ing it first and setting the
+#    new one on the parent (the flatten pair in 2 is exactly that).
+# 2. Flatten pair, for `.code` fields that are an `anyOf` of single-value
+#    enums: a `remove: true` on `.code.anyOf` MUST be followed by an `update:`
+#    on `.code` that sets `type: string` and a single full `enum` (a plain
+#    `update:` merge — this file never uses the overlay spec's `replace:`
+#    action). Never add one half without the other. The new enum must list
+#    every spec value; `ci/spec_diff.py check-overlay` flags dropped codes.
+#    Check whether the parent is a flat enum or an `anyOf` before choosing
+#    a pattern.
+# 3. Filter expressions like `[?(@.name=='list')]` fire once per match (see
+#    the `x-speakeasy-name-override` parameter renames). Speakeasy silently
+#    skips an action whose filter or path matches nothing; `check-overlay`
+#    reports that as a dead target.
+# 4. `remove: true` deletes the targeted node. In this file it is used only
+#    for single-leaf cleanup (e.g. `format: 'date'`, the bodyless-204
+#    `content` block) and for deleting a whole union node as half of a
+#    flatten pair (see 2). Never remove a single indexed union member
+#    (`oneOf[N]` / `anyOf[N]`): deletion shifts every later index in that
+#    union and silently re-aims the positional targets in this file — a
+#    re-aimed target usually still resolves, so `check-overlay` stays green
+#    (its misdirection check covers only the timestamp `.format` removals).
+#    If a field is gone from the spec, delete the action instead.
+#
+# Templates
+#   Append to a flat enum:
+#     - target: "$.paths[...].responses['400'].content['application/json'].schema.properties.code.enum"
+#       description: "Allow validation_type code in ..."
+#       update:
+#         - "validation_type"
+#   Flatten an anyOf-of-enums (both actions, in this order):
+#     - target: "<...>.properties.code.anyOf"
+#       description: "Flatten anyOf error-code union in ..."
+#       remove: true
+#     - target: "<...>.properties.code"
+#       description: "Allow validation_type code in ..."
+#       update:
+#         type: string
+#         enum: ["<every spec value>", "validation_type"]
+#
 overlay: 1.0.0
 info:
   title: Fix timestamp value field format to generate as string type
