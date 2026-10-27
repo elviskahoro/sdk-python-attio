@@ -196,7 +196,7 @@ and command-line usage errors exit 2.
 <!-- End Standalone CLI [cli] -->"""
 
 # Public model symbols renamed after they shipped, as ``{module: {old: new}}``.
-# Empty: the 0.26.1 aliases were retired in the breaking 2026-10-26 spec drift
+# Empty: the 0.26.1 aliases were retired in the breaking 0.27.0 spec-drift
 # release (error classes were renamed too, without aliases).
 # ``ensure_module_aliases`` / ``ensure_models_init_aliases`` re-inject the old
 # names as aliases of the new ones after every generation so the patch

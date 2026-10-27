@@ -315,8 +315,8 @@ def test_post_records_invalid_request_rejects_unknown_code() -> None:
 # endpoints. The overlay flattens the four create/upsert endpoints to single
 # enums, while the {record_id} PATCH/PUT and entries PUT/PATCH endpoints carry
 # the new codes natively via their anyOf unions. Pinned alongside the
-# hand-applied regeneration of generated/src/attio/ so a regression that walks
-# any of these Literals back fails loudly.
+# Speakeasy regeneration of generated/src/attio/ against that spec so a
+# regression that walks any of these Literals back fails loudly.
 NEW_UPSTREAM_400_CODES = [
     (
         "attio.errors.post_v2_objects_object_recordsop",
