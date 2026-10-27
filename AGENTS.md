@@ -44,6 +44,14 @@ This SDK is generated using Speakeasy from an OpenAPI spec.
 - **Workflow config**: `.speakeasy/workflow.yaml` defines the generation pipeline
 - **Generation config**: `.speakeasy/gen.yaml` has Speakeasy settings (Python target, async mode, package name, etc.)
 
+### Overlay gate escape hatch
+
+`--skip-overlay-check` / `SKIP_OVERLAY_CHECK=1` bypasses the overlay health
+gate in `ci/pipeline.py`. It is for incidents only: **ask before using it**,
+never set it in CI or automation, and fix the overlay afterwards.
+`tests/test_no_skip_overlay_check.py` fails if any `.rwx/` or
+`.github/workflows/` file references it.
+
 ### Update Steps
 
 1. **Check for updates first** — this fetches the latest spec, diffs it
