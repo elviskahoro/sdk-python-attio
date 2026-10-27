@@ -13,18 +13,10 @@ TypeStruct = Literal["struct",]
 r"""The type of the parameter."""
 
 
-class PostV2SQLValueTypedDict(TypedDict):
-    pass
-
-
-class PostV2SQLValue(BaseModel):
-    pass
-
-
 class ParametersStructTypedDict(TypedDict):
     type: TypeStruct
     r"""The type of the parameter."""
-    value: Dict[str, PostV2SQLValueTypedDict]
+    value: Dict[str, Any]
     r"""A map of field names to parameter objects, with at least one and a maximum of 25 fields. Names must start with a letter or underscore, only contain letters, digits and underscores, and be at most 64 characters long. Structs can contain other structs, up to 2 levels of structs in total."""
 
 
@@ -32,7 +24,7 @@ class ParametersStruct(BaseModel):
     type: TypeStruct
     r"""The type of the parameter."""
 
-    value: Dict[str, PostV2SQLValue]
+    value: Dict[str, Any]
     r"""A map of field names to parameter objects, with at least one and a maximum of 25 fields. Names must start with a letter or underscore, only contain letters, digits and underscores, and be at most 64 characters long. Structs can contain other structs, up to 2 levels of structs in total."""
 
 

@@ -41793,9 +41793,7 @@
                             "value": {
                               "type": "object",
                               "description": "A map of field names to parameter objects, with at least one and a maximum of 25 fields. Names must start with a letter or underscore, only contain letters, digits and underscores, and be at most 64 characters long. Structs can contain other structs, up to 2 levels of structs in total.",
-                              "additionalProperties": {
-                                "type": "object"
-                              },
+                              "additionalProperties": {},
                               "minProperties": 1,
                               "maxProperties": 25,
                               "example": {
