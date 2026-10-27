@@ -65,6 +65,8 @@ EXPECTED_ENDPOINTS: tuple[tuple[str, str], ...] = (
     ("patch", "/v2/{target}/{identifier}/attributes/{attribute}/statuses/{status}"),
     ("post", "/v2/objects/{object}/records"),
     ("put", "/v2/objects/{object}/records"),
+    ("post", "/v2/activities/{activity}/records"),
+    ("put", "/v2/activities/{activity}/records"),
     ("post", "/v2/objects/records/search"),
     ("post", "/v2/lists"),
     ("patch", "/v2/lists/{list}"),
@@ -135,6 +137,16 @@ def _errors_module_for(method: str, path: str) -> str:
     return f"attio.errors.{method.lower()}_" + "_".join(parts) + suffix
 
 
+# Endpoints whose 400 and 409 schemas both use ``invalid_request_error``, so
+# Speakeasy prefixes the 400 class with ``BadRequest``.
+BAD_REQUEST_DISAMBIGUATED = {
+    ("POST", "/v2/objects/{object}/records"),
+    ("PUT", "/v2/objects/{object}/records"),
+    ("POST", "/v2/activities/{activity}/records"),
+    ("PUT", "/v2/activities/{activity}/records"),
+}
+
+
 def _bad_request_class_name(method: str, path: str) -> str:
     """Map (method, REST path) to ``*InvalidRequestErrorData`` (the Pydantic class).
 
@@ -146,7 +158,12 @@ def _bad_request_class_name(method: str, path: str) -> str:
     for seg in path.strip("/").split("/"):
         cleaned = seg.strip("{}") if seg.startswith("{") else seg
         parts.append("".join(tok.capitalize() for tok in cleaned.split("_") if tok))
-    return method.title() + "".join(parts) + "InvalidRequestErrorData"
+    suffix = (
+        "BadRequestInvalidRequestErrorData"
+        if (method.upper(), path) in BAD_REQUEST_DISAMBIGUATED
+        else "InvalidRequestErrorData"
+    )
+    return method.title() + "".join(parts) + suffix
 
 
 SYNTHETIC_400 = {

@@ -498,6 +498,9 @@ actions:
       enum:
         - "value_not_found"
         - "particle_gate_violation"
+        - "duplicate_values"
+        - "limit_reached"
+        - "multiple_match_results"
         - "validation_type"
 
   - target: "$.paths['/v2/activities/{activity}/records'].put.responses['400'].content['application/json'].schema.properties.code.anyOf"
@@ -513,6 +516,8 @@ actions:
         - "matching_attribute_definition_not_unique"
         - "multiple_match_results"
         - "particle_gate_violation"
+        - "duplicate_values"
+        - "limit_reached"
         - "validation_type"
 
   - target: "$.paths['/v2/objects/records/search'].post.responses['400'].content['application/json'].schema.properties.code.enum"
@@ -530,10 +535,17 @@ actions:
     update:
       - "validation_type"
 
-  - target: "$.paths['/v2/lists/{list}/entries'].post.responses['400'].content['application/json'].schema.properties.code.enum"
+  - target: "$.paths['/v2/lists/{list}/entries'].post.responses['400'].content['application/json'].schema.properties.code.anyOf"
+    description: "Flatten anyOf error-code union in POST /v2/lists/{list}/entries so code generates as one enum"
+    remove: true
+
+  - target: "$.paths['/v2/lists/{list}/entries'].post.responses['400'].content['application/json'].schema.properties.code"
     description: "Allow validation_type code in POST /v2/lists/{list}/entries"
     update:
-      - "validation_type"
+      type: string
+      enum:
+        - "value_not_found"
+        - "validation_type"
 
   - target: "$.paths['/v2/comments'].post.responses['400'].content['application/json'].schema.properties.code.enum"
     description: "Allow validation_type code in POST /v2/comments"
@@ -696,4 +708,12 @@ actions:
   # (Tracked as attio-khf.)
   - target: "$.paths['/v2/meetings/{meeting_id}/call_recordings/{call_recording_id}'].delete.responses['204'].content"
     description: "Remove the 204 response body for DELETE call-recording so Speakeasy generates a bodyless-204 handler instead of unmarshaling an empty body"
+    remove: true
+
+  # The upstream spec types each struct-parameter field as a bare
+  # `{type: object}`, which Speakeasy generates as the fieldless model
+  # `PostV2SQLValue`; Pydantic then drops the nested `type`/`value` keys and
+  # serializes `"name": {}`. Removing the `type` makes the field free-form.
+  - target: "$.paths['/v2/sql'].post.requestBody.content['application/json'].schema.properties.parameters.additionalProperties.oneOf[9].properties['value'].additionalProperties.type"
+    description: "Make SQL struct parameter fields free-form so nested type/value survive serialization"
     remove: true

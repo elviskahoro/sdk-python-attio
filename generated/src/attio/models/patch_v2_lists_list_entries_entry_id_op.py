@@ -73,6 +73,9 @@ PatchV2ListsListEntriesEntryIDCodeUnauthorized = Literal["unauthorized",]
 PatchV2ListsListEntriesEntryIDBadRequestType = Literal["invalid_request_error",]
 
 
+PatchV2ListsListEntriesEntryIDCodeValidationType = Literal["validation_type",]
+
+
 PatchV2ListsListEntriesEntryIDCodeMergeInProgress = Literal["merge_in_progress",]
 
 
@@ -84,6 +87,7 @@ PatchV2ListsListEntriesEntryIDCodeUnionTypedDict = TypeAliasType(
     Union[
         PatchV2ListsListEntriesEntryIDCodeImmutableValue,
         PatchV2ListsListEntriesEntryIDCodeMergeInProgress,
+        PatchV2ListsListEntriesEntryIDCodeValidationType,
     ],
 )
 
@@ -93,6 +97,7 @@ PatchV2ListsListEntriesEntryIDCodeUnion = TypeAliasType(
     Union[
         PatchV2ListsListEntriesEntryIDCodeImmutableValue,
         PatchV2ListsListEntriesEntryIDCodeMergeInProgress,
+        PatchV2ListsListEntriesEntryIDCodeValidationType,
     ],
 )
 

@@ -73,6 +73,9 @@ PutV2ListsListEntriesEntryIDCodeUnauthorized = Literal["unauthorized",]
 PutV2ListsListEntriesEntryIDBadRequestType = Literal["invalid_request_error",]
 
 
+PutV2ListsListEntriesEntryIDCodeValidationType = Literal["validation_type",]
+
+
 PutV2ListsListEntriesEntryIDCodeMergeInProgress = Literal["merge_in_progress",]
 
 
@@ -84,6 +87,7 @@ PutV2ListsListEntriesEntryIDCodeUnionTypedDict = TypeAliasType(
     Union[
         PutV2ListsListEntriesEntryIDCodeImmutableValue,
         PutV2ListsListEntriesEntryIDCodeMergeInProgress,
+        PutV2ListsListEntriesEntryIDCodeValidationType,
     ],
 )
 
@@ -93,6 +97,7 @@ PutV2ListsListEntriesEntryIDCodeUnion = TypeAliasType(
     Union[
         PutV2ListsListEntriesEntryIDCodeImmutableValue,
         PutV2ListsListEntriesEntryIDCodeMergeInProgress,
+        PutV2ListsListEntriesEntryIDCodeValidationType,
     ],
 )
 

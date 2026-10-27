@@ -3,15 +3,21 @@
 
 ## Supported Types
 
-### `models.CodeMultipleMatchResults`
+### `models.PutV2ListsListEntriesCodeMultipleMatchResults`
 
 ```python
-value: models.CodeMultipleMatchResults = /* values here */
+value: models.PutV2ListsListEntriesCodeMultipleMatchResults = /* values here */
 ```
 
 ### `models.PutV2ListsListEntriesCodeMergeInProgress`
 
 ```python
 value: models.PutV2ListsListEntriesCodeMergeInProgress = /* values here */
+```
+
+### `models.PutV2ListsListEntriesCodeValidationType`
+
+```python
+value: models.PutV2ListsListEntriesCodeValidationType = /* values here */
 ```
 

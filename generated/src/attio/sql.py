@@ -5,7 +5,7 @@ from attio import errors, models, utils
 from attio._hooks import HookContext
 from attio.types import OptionalNullable, UNSET
 from attio.utils.unmarshal_json_response import unmarshal_json_response
-from typing import Any, Mapping, Optional
+from typing import Any, Dict, Mapping, Optional, Union
 
 
 class SQL(BaseSDK):
@@ -15,6 +15,12 @@ class SQL(BaseSDK):
         self,
         *,
         sql: str,
+        parameters: Optional[
+            Union[
+                Mapping[str, models.Parameters],
+                Mapping[str, models.ParametersTypedDict],
+            ]
+        ] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -32,7 +38,8 @@ class SQL(BaseSDK):
 
         Supported token levels: `workspace`, `user`.
 
-        :param sql: The SQL query to be executed.
+        :param sql: The SQL query to be executed. Use `$name` placeholders to reference values from `parameters` instead of inlining them into the query.
+        :param parameters: Named parameters referenced in the query using `$name` syntax. A maximum of 25 parameters can be provided. Each parameter must declare its type explicitly. Names must start with a letter or underscore, only contain letters, digits and underscores, and be at most 64 characters long. Compare against a list parameter with `= ANY($name)`, not `IN ($name)`, which does not type check. Read a field of a struct parameter with `get_field($name, 'field')`.
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -50,6 +57,9 @@ class SQL(BaseSDK):
 
         request = models.PostV2SQLRequest(
             sql=sql,
+            parameters=utils.get_pydantic_model(
+                parameters, Optional[Dict[str, models.Parameters]]
+            ),
         )
 
         req = self._build_request(
@@ -116,6 +126,12 @@ class SQL(BaseSDK):
         self,
         *,
         sql: str,
+        parameters: Optional[
+            Union[
+                Mapping[str, models.Parameters],
+                Mapping[str, models.ParametersTypedDict],
+            ]
+        ] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -133,7 +149,8 @@ class SQL(BaseSDK):
 
         Supported token levels: `workspace`, `user`.
 
-        :param sql: The SQL query to be executed.
+        :param sql: The SQL query to be executed. Use `$name` placeholders to reference values from `parameters` instead of inlining them into the query.
+        :param parameters: Named parameters referenced in the query using `$name` syntax. A maximum of 25 parameters can be provided. Each parameter must declare its type explicitly. Names must start with a letter or underscore, only contain letters, digits and underscores, and be at most 64 characters long. Compare against a list parameter with `= ANY($name)`, not `IN ($name)`, which does not type check. Read a field of a struct parameter with `get_field($name, 'field')`.
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -151,6 +168,9 @@ class SQL(BaseSDK):
 
         request = models.PostV2SQLRequest(
             sql=sql,
+            parameters=utils.get_pydantic_model(
+                parameters, Optional[Dict[str, models.Parameters]]
+            ),
         )
 
         req = self._build_request_async(

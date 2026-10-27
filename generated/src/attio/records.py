@@ -386,9 +386,10 @@ class Records(BaseSDK):
             )
         if utils.match_response(http_res, "400", "application/json"):
             response_data = unmarshal_json_response(
-                errors.PostV2ObjectsObjectRecordsInvalidRequestErrorData, http_res
+                errors.PostV2ObjectsObjectRecordsBadRequestInvalidRequestErrorData,
+                http_res,
             )
-            raise errors.PostV2ObjectsObjectRecordsInvalidRequestError(
+            raise errors.PostV2ObjectsObjectRecordsBadRequestInvalidRequestError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "403", "application/json"):
@@ -407,10 +408,10 @@ class Records(BaseSDK):
             )
         if utils.match_response(http_res, "409", "application/json"):
             response_data = unmarshal_json_response(
-                errors.PostV2ObjectsObjectRecordsConcurrentWriteConflictErrorData,
+                errors.PostV2ObjectsObjectRecordsConflictInvalidRequestErrorData,
                 http_res,
             )
-            raise errors.PostV2ObjectsObjectRecordsConcurrentWriteConflictError(
+            raise errors.PostV2ObjectsObjectRecordsConflictInvalidRequestError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "4XX", "*"):
@@ -523,9 +524,10 @@ class Records(BaseSDK):
             )
         if utils.match_response(http_res, "400", "application/json"):
             response_data = unmarshal_json_response(
-                errors.PostV2ObjectsObjectRecordsInvalidRequestErrorData, http_res
+                errors.PostV2ObjectsObjectRecordsBadRequestInvalidRequestErrorData,
+                http_res,
             )
-            raise errors.PostV2ObjectsObjectRecordsInvalidRequestError(
+            raise errors.PostV2ObjectsObjectRecordsBadRequestInvalidRequestError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "403", "application/json"):
@@ -544,10 +546,10 @@ class Records(BaseSDK):
             )
         if utils.match_response(http_res, "409", "application/json"):
             response_data = unmarshal_json_response(
-                errors.PostV2ObjectsObjectRecordsConcurrentWriteConflictErrorData,
+                errors.PostV2ObjectsObjectRecordsConflictInvalidRequestErrorData,
                 http_res,
             )
-            raise errors.PostV2ObjectsObjectRecordsConcurrentWriteConflictError(
+            raise errors.PostV2ObjectsObjectRecordsConflictInvalidRequestError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "4XX", "*"):
@@ -665,9 +667,10 @@ class Records(BaseSDK):
             )
         if utils.match_response(http_res, "400", "application/json"):
             response_data = unmarshal_json_response(
-                errors.PutV2ObjectsObjectRecordsInvalidRequestErrorData, http_res
+                errors.PutV2ObjectsObjectRecordsBadRequestInvalidRequestErrorData,
+                http_res,
             )
-            raise errors.PutV2ObjectsObjectRecordsInvalidRequestError(
+            raise errors.PutV2ObjectsObjectRecordsBadRequestInvalidRequestError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "403", "application/json"):
@@ -684,10 +687,10 @@ class Records(BaseSDK):
             raise errors.PutV2ObjectsObjectRecordsNotFoundError(response_data, http_res)
         if utils.match_response(http_res, "409", "application/json"):
             response_data = unmarshal_json_response(
-                errors.PutV2ObjectsObjectRecordsConcurrentWriteConflictErrorData,
+                errors.PutV2ObjectsObjectRecordsConflictInvalidRequestErrorData,
                 http_res,
             )
-            raise errors.PutV2ObjectsObjectRecordsConcurrentWriteConflictError(
+            raise errors.PutV2ObjectsObjectRecordsConflictInvalidRequestError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "4XX", "*"):
@@ -805,9 +808,10 @@ class Records(BaseSDK):
             )
         if utils.match_response(http_res, "400", "application/json"):
             response_data = unmarshal_json_response(
-                errors.PutV2ObjectsObjectRecordsInvalidRequestErrorData, http_res
+                errors.PutV2ObjectsObjectRecordsBadRequestInvalidRequestErrorData,
+                http_res,
             )
-            raise errors.PutV2ObjectsObjectRecordsInvalidRequestError(
+            raise errors.PutV2ObjectsObjectRecordsBadRequestInvalidRequestError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "403", "application/json"):
@@ -824,10 +828,10 @@ class Records(BaseSDK):
             raise errors.PutV2ObjectsObjectRecordsNotFoundError(response_data, http_res)
         if utils.match_response(http_res, "409", "application/json"):
             response_data = unmarshal_json_response(
-                errors.PutV2ObjectsObjectRecordsConcurrentWriteConflictErrorData,
+                errors.PutV2ObjectsObjectRecordsConflictInvalidRequestErrorData,
                 http_res,
             )
-            raise errors.PutV2ObjectsObjectRecordsConcurrentWriteConflictError(
+            raise errors.PutV2ObjectsObjectRecordsConflictInvalidRequestError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "4XX", "*"):
@@ -1147,10 +1151,10 @@ class Records(BaseSDK):
             )
         if utils.match_response(http_res, "400", "application/json"):
             response_data = unmarshal_json_response(
-                errors.PatchV2ObjectsObjectRecordsRecordIDInvalidRequestErrorData,
+                errors.PatchV2ObjectsObjectRecordsRecordIDBadRequestInvalidRequestErrorData,
                 http_res,
             )
-            raise errors.PatchV2ObjectsObjectRecordsRecordIDInvalidRequestError(
+            raise errors.PatchV2ObjectsObjectRecordsRecordIDBadRequestInvalidRequestError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "403", "application/json"):
@@ -1170,10 +1174,10 @@ class Records(BaseSDK):
             )
         if utils.match_response(http_res, "409", "application/json"):
             response_data = unmarshal_json_response(
-                errors.PatchV2ObjectsObjectRecordsRecordIDConcurrentWriteConflictErrorData,
+                errors.PatchV2ObjectsObjectRecordsRecordIDConflictInvalidRequestErrorData,
                 http_res,
             )
-            raise errors.PatchV2ObjectsObjectRecordsRecordIDConcurrentWriteConflictError(
+            raise errors.PatchV2ObjectsObjectRecordsRecordIDConflictInvalidRequestError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "4XX", "*"):
@@ -1289,10 +1293,10 @@ class Records(BaseSDK):
             )
         if utils.match_response(http_res, "400", "application/json"):
             response_data = unmarshal_json_response(
-                errors.PatchV2ObjectsObjectRecordsRecordIDInvalidRequestErrorData,
+                errors.PatchV2ObjectsObjectRecordsRecordIDBadRequestInvalidRequestErrorData,
                 http_res,
             )
-            raise errors.PatchV2ObjectsObjectRecordsRecordIDInvalidRequestError(
+            raise errors.PatchV2ObjectsObjectRecordsRecordIDBadRequestInvalidRequestError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "403", "application/json"):
@@ -1312,10 +1316,10 @@ class Records(BaseSDK):
             )
         if utils.match_response(http_res, "409", "application/json"):
             response_data = unmarshal_json_response(
-                errors.PatchV2ObjectsObjectRecordsRecordIDConcurrentWriteConflictErrorData,
+                errors.PatchV2ObjectsObjectRecordsRecordIDConflictInvalidRequestErrorData,
                 http_res,
             )
-            raise errors.PatchV2ObjectsObjectRecordsRecordIDConcurrentWriteConflictError(
+            raise errors.PatchV2ObjectsObjectRecordsRecordIDConflictInvalidRequestError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "4XX", "*"):
@@ -1431,10 +1435,10 @@ class Records(BaseSDK):
             )
         if utils.match_response(http_res, "400", "application/json"):
             response_data = unmarshal_json_response(
-                errors.PutV2ObjectsObjectRecordsRecordIDInvalidRequestErrorData,
+                errors.PutV2ObjectsObjectRecordsRecordIDBadRequestInvalidRequestErrorData,
                 http_res,
             )
-            raise errors.PutV2ObjectsObjectRecordsRecordIDInvalidRequestError(
+            raise errors.PutV2ObjectsObjectRecordsRecordIDBadRequestInvalidRequestError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "403", "application/json"):
@@ -1453,10 +1457,10 @@ class Records(BaseSDK):
             )
         if utils.match_response(http_res, "409", "application/json"):
             response_data = unmarshal_json_response(
-                errors.PutV2ObjectsObjectRecordsRecordIDConcurrentWriteConflictErrorData,
+                errors.PutV2ObjectsObjectRecordsRecordIDConflictInvalidRequestErrorData,
                 http_res,
             )
-            raise errors.PutV2ObjectsObjectRecordsRecordIDConcurrentWriteConflictError(
+            raise errors.PutV2ObjectsObjectRecordsRecordIDConflictInvalidRequestError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "4XX", "*"):
@@ -1572,10 +1576,10 @@ class Records(BaseSDK):
             )
         if utils.match_response(http_res, "400", "application/json"):
             response_data = unmarshal_json_response(
-                errors.PutV2ObjectsObjectRecordsRecordIDInvalidRequestErrorData,
+                errors.PutV2ObjectsObjectRecordsRecordIDBadRequestInvalidRequestErrorData,
                 http_res,
             )
-            raise errors.PutV2ObjectsObjectRecordsRecordIDInvalidRequestError(
+            raise errors.PutV2ObjectsObjectRecordsRecordIDBadRequestInvalidRequestError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "403", "application/json"):
@@ -1594,10 +1598,10 @@ class Records(BaseSDK):
             )
         if utils.match_response(http_res, "409", "application/json"):
             response_data = unmarshal_json_response(
-                errors.PutV2ObjectsObjectRecordsRecordIDConcurrentWriteConflictErrorData,
+                errors.PutV2ObjectsObjectRecordsRecordIDConflictInvalidRequestErrorData,
                 http_res,
             )
-            raise errors.PutV2ObjectsObjectRecordsRecordIDConcurrentWriteConflictError(
+            raise errors.PutV2ObjectsObjectRecordsRecordIDConflictInvalidRequestError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "4XX", "*"):

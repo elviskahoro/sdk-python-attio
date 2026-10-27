@@ -59,9 +59,37 @@ class PutV2ActivitiesActivityRecordsRequest(BaseModel):
 PutV2ActivitiesActivityRecordsConflictType = Literal["invalid_request_error",]
 
 
+PutV2ActivitiesActivityRecordsCodeUniquenessConflict = Literal["uniqueness_conflict",]
+
+
+PutV2ActivitiesActivityRecordsCodeMultipleMatchResults = Literal[
+    "multiple_match_results",
+]
+
+
 PutV2ActivitiesActivityRecordsCodeConcurrentWriteConflict = Literal[
     "concurrent_write_conflict",
 ]
+
+
+PutV2ActivitiesActivityRecordsConflictCodeUnionTypedDict = TypeAliasType(
+    "PutV2ActivitiesActivityRecordsConflictCodeUnionTypedDict",
+    Union[
+        PutV2ActivitiesActivityRecordsCodeConcurrentWriteConflict,
+        PutV2ActivitiesActivityRecordsCodeMultipleMatchResults,
+        PutV2ActivitiesActivityRecordsCodeUniquenessConflict,
+    ],
+)
+
+
+PutV2ActivitiesActivityRecordsConflictCodeUnion = TypeAliasType(
+    "PutV2ActivitiesActivityRecordsConflictCodeUnion",
+    Union[
+        PutV2ActivitiesActivityRecordsCodeConcurrentWriteConflict,
+        PutV2ActivitiesActivityRecordsCodeMultipleMatchResults,
+        PutV2ActivitiesActivityRecordsCodeUniquenessConflict,
+    ],
+)
 
 
 PutV2ActivitiesActivityRecordsNotFoundType = Literal["invalid_request_error",]
@@ -79,8 +107,8 @@ PutV2ActivitiesActivityRecordsCodeBillingError = Literal["billing_error",]
 PutV2ActivitiesActivityRecordsCodeUnauthorized = Literal["unauthorized",]
 
 
-PutV2ActivitiesActivityRecordsCodeUnionTypedDict = TypeAliasType(
-    "PutV2ActivitiesActivityRecordsCodeUnionTypedDict",
+PutV2ActivitiesActivityRecordsForbiddenCodeUnionTypedDict = TypeAliasType(
+    "PutV2ActivitiesActivityRecordsForbiddenCodeUnionTypedDict",
     Union[
         PutV2ActivitiesActivityRecordsCodeUnauthorized,
         PutV2ActivitiesActivityRecordsCodeBillingError,
@@ -88,22 +116,12 @@ PutV2ActivitiesActivityRecordsCodeUnionTypedDict = TypeAliasType(
 )
 
 
-PutV2ActivitiesActivityRecordsForbiddenCodeUnionTypedDict = (
-    PutV2ActivitiesActivityRecordsCodeUnionTypedDict
-)
-
-
-PutV2ActivitiesActivityRecordsCodeUnion = TypeAliasType(
-    "PutV2ActivitiesActivityRecordsCodeUnion",
+PutV2ActivitiesActivityRecordsForbiddenCodeUnion = TypeAliasType(
+    "PutV2ActivitiesActivityRecordsForbiddenCodeUnion",
     Union[
         PutV2ActivitiesActivityRecordsCodeUnauthorized,
         PutV2ActivitiesActivityRecordsCodeBillingError,
     ],
-)
-
-
-PutV2ActivitiesActivityRecordsForbiddenCodeUnion = (
-    PutV2ActivitiesActivityRecordsCodeUnion
 )
 
 
@@ -115,6 +133,8 @@ PutV2ActivitiesActivityRecordsBadRequestCode = Literal[
     "matching_attribute_definition_not_unique",
     "multiple_match_results",
     "particle_gate_violation",
+    "duplicate_values",
+    "limit_reached",
     "validation_type",
 ]
 

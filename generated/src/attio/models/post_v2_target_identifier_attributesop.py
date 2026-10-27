@@ -18,8 +18,9 @@ from typing_extensions import Annotated, NotRequired, TypeAliasType, TypedDict
 PostV2TargetIdentifierAttributesTarget = Literal[
     "objects",
     "lists",
+    "activities",
 ]
-r"""Whether the attribute is to be created on an object or a list."""
+r"""Whether the attribute is to be created on an object, a list or an activity."""
 
 
 PostV2TargetIdentifierAttributesTypeRequest = Literal[
@@ -344,7 +345,7 @@ class PostV2TargetIdentifierAttributesRequestBody(BaseModel):
 
 class PostV2TargetIdentifierAttributesRequestTypedDict(TypedDict):
     target: PostV2TargetIdentifierAttributesTarget
-    r"""Whether the attribute is to be created on an object or a list."""
+    r"""Whether the attribute is to be created on an object, a list or an activity."""
     identifier: str
     request_body: PostV2TargetIdentifierAttributesRequestBodyTypedDict
 
@@ -354,7 +355,7 @@ class PostV2TargetIdentifierAttributesRequest(BaseModel):
         PostV2TargetIdentifierAttributesTarget,
         FieldMetadata(path=PathParamMetadata(style="simple", explode=False)),
     ]
-    r"""Whether the attribute is to be created on an object or a list."""
+    r"""Whether the attribute is to be created on an object, a list or an activity."""
 
     identifier: Annotated[
         str, FieldMetadata(path=PathParamMetadata(style="simple", explode=False))

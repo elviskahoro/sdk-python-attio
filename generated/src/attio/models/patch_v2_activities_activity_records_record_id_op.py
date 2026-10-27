@@ -58,9 +58,39 @@ class PatchV2ActivitiesActivityRecordsRecordIDRequest(BaseModel):
 PatchV2ActivitiesActivityRecordsRecordIDConflictType = Literal["invalid_request_error",]
 
 
+PatchV2ActivitiesActivityRecordsRecordIDCodeUniquenessConflict = Literal[
+    "uniqueness_conflict",
+]
+
+
+PatchV2ActivitiesActivityRecordsRecordIDCodeConflictMultipleMatchResults = Literal[
+    "multiple_match_results",
+]
+
+
 PatchV2ActivitiesActivityRecordsRecordIDCodeConcurrentWriteConflict = Literal[
     "concurrent_write_conflict",
 ]
+
+
+PatchV2ActivitiesActivityRecordsRecordIDConflictCodeUnionTypedDict = TypeAliasType(
+    "PatchV2ActivitiesActivityRecordsRecordIDConflictCodeUnionTypedDict",
+    Union[
+        PatchV2ActivitiesActivityRecordsRecordIDCodeConcurrentWriteConflict,
+        PatchV2ActivitiesActivityRecordsRecordIDCodeConflictMultipleMatchResults,
+        PatchV2ActivitiesActivityRecordsRecordIDCodeUniquenessConflict,
+    ],
+)
+
+
+PatchV2ActivitiesActivityRecordsRecordIDConflictCodeUnion = TypeAliasType(
+    "PatchV2ActivitiesActivityRecordsRecordIDConflictCodeUnion",
+    Union[
+        PatchV2ActivitiesActivityRecordsRecordIDCodeConcurrentWriteConflict,
+        PatchV2ActivitiesActivityRecordsRecordIDCodeConflictMultipleMatchResults,
+        PatchV2ActivitiesActivityRecordsRecordIDCodeUniquenessConflict,
+    ],
+)
 
 
 PatchV2ActivitiesActivityRecordsRecordIDNotFoundType = Literal["invalid_request_error",]
@@ -80,6 +110,25 @@ PatchV2ActivitiesActivityRecordsRecordIDBadRequestType = Literal[
 ]
 
 
+PatchV2ActivitiesActivityRecordsRecordIDCodeBadRequestMultipleMatchResults = Literal[
+    "multiple_match_results",
+]
+
+
+PatchV2ActivitiesActivityRecordsRecordIDCodeLimitReached = Literal["limit_reached",]
+
+
+PatchV2ActivitiesActivityRecordsRecordIDCodeDuplicateValues = Literal[
+    "duplicate_values",
+]
+
+
+PatchV2ActivitiesActivityRecordsRecordIDCodeValidationType = Literal["validation_type",]
+
+
+PatchV2ActivitiesActivityRecordsRecordIDCodeValueNotFound = Literal["value_not_found",]
+
+
 PatchV2ActivitiesActivityRecordsRecordIDCodeParticleGateViolation = Literal[
     "particle_gate_violation",
 ]
@@ -88,20 +137,30 @@ PatchV2ActivitiesActivityRecordsRecordIDCodeParticleGateViolation = Literal[
 PatchV2ActivitiesActivityRecordsRecordIDCodeMissingValue = Literal["missing_value",]
 
 
-PatchV2ActivitiesActivityRecordsRecordIDCodeUnionTypedDict = TypeAliasType(
-    "PatchV2ActivitiesActivityRecordsRecordIDCodeUnionTypedDict",
+PatchV2ActivitiesActivityRecordsRecordIDBadRequestCodeUnionTypedDict = TypeAliasType(
+    "PatchV2ActivitiesActivityRecordsRecordIDBadRequestCodeUnionTypedDict",
     Union[
         PatchV2ActivitiesActivityRecordsRecordIDCodeMissingValue,
         PatchV2ActivitiesActivityRecordsRecordIDCodeParticleGateViolation,
+        PatchV2ActivitiesActivityRecordsRecordIDCodeValueNotFound,
+        PatchV2ActivitiesActivityRecordsRecordIDCodeValidationType,
+        PatchV2ActivitiesActivityRecordsRecordIDCodeDuplicateValues,
+        PatchV2ActivitiesActivityRecordsRecordIDCodeLimitReached,
+        PatchV2ActivitiesActivityRecordsRecordIDCodeBadRequestMultipleMatchResults,
     ],
 )
 
 
-PatchV2ActivitiesActivityRecordsRecordIDCodeUnion = TypeAliasType(
-    "PatchV2ActivitiesActivityRecordsRecordIDCodeUnion",
+PatchV2ActivitiesActivityRecordsRecordIDBadRequestCodeUnion = TypeAliasType(
+    "PatchV2ActivitiesActivityRecordsRecordIDBadRequestCodeUnion",
     Union[
         PatchV2ActivitiesActivityRecordsRecordIDCodeMissingValue,
         PatchV2ActivitiesActivityRecordsRecordIDCodeParticleGateViolation,
+        PatchV2ActivitiesActivityRecordsRecordIDCodeValueNotFound,
+        PatchV2ActivitiesActivityRecordsRecordIDCodeValidationType,
+        PatchV2ActivitiesActivityRecordsRecordIDCodeDuplicateValues,
+        PatchV2ActivitiesActivityRecordsRecordIDCodeLimitReached,
+        PatchV2ActivitiesActivityRecordsRecordIDCodeBadRequestMultipleMatchResults,
     ],
 )
 

@@ -195,33 +195,14 @@ Successful and partial-success operations exit 0, runtime failures exit 1,
 and command-line usage errors exit 2.
 <!-- End Standalone CLI [cli] -->"""
 
-# Public model symbols the 2026-10-03 regeneration renamed after they had
-# already shipped in the 0.26.1 patch release, as ``{module: {old: new}}``.
+# Public model symbols renamed after they shipped, as ``{module: {old: new}}``.
+# Empty: the 0.26.1 aliases were retired in the breaking 0.27.0 spec-drift
+# release (error classes were renamed too, without aliases).
 # ``ensure_module_aliases`` / ``ensure_models_init_aliases`` re-inject the old
 # names as aliases of the new ones after every generation so the patch
 # release keeps ``from attio.models import <old>`` (and the per-module
 # import) working.
-MODEL_RENAME_ALIASES: dict[str, dict[str, str]] = {
-    "post_v2_activities_activity_recordsop": {
-        "PostV2ActivitiesActivityRecordsForbiddenCodeUnionTypedDict": (
-            "PostV2ActivitiesActivityRecordsCodeUnionTypedDict"
-        ),
-        "PostV2ActivitiesActivityRecordsForbiddenCodeUnion": (
-            "PostV2ActivitiesActivityRecordsCodeUnion"
-        ),
-    },
-    "put_v2_activities_activity_recordsop": {
-        "PutV2ActivitiesActivityRecordsForbiddenCodeUnionTypedDict": (
-            "PutV2ActivitiesActivityRecordsCodeUnionTypedDict"
-        ),
-        "PutV2ActivitiesActivityRecordsForbiddenCodeUnion": (
-            "PutV2ActivitiesActivityRecordsCodeUnion"
-        ),
-    },
-    "put_v2_lists_list_entriesop": {
-        "PutV2ListsListEntriesCodeMultipleMatchResults": "CodeMultipleMatchResults",
-    },
-}
+MODEL_RENAME_ALIASES: dict[str, dict[str, str]] = {}
 
 
 def ensure_project_script(path: Path) -> bool:

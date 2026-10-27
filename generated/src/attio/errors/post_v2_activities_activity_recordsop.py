@@ -11,24 +11,24 @@ import httpx
 from typing import Optional
 
 
-class PostV2ActivitiesActivityRecordsConcurrentWriteConflictErrorData(BaseModel):
+class PostV2ActivitiesActivityRecordsConflictInvalidRequestErrorData(BaseModel):
     status_code: float
     type: models_post_v2_activities_activity_recordsop.PostV2ActivitiesActivityRecordsConflictType
-    code: models_post_v2_activities_activity_recordsop.PostV2ActivitiesActivityRecordsCodeConcurrentWriteConflict
+    code: models_post_v2_activities_activity_recordsop.PostV2ActivitiesActivityRecordsConflictCodeUnion
     message: str
 
 
 @dataclass(unsafe_hash=True)
-class PostV2ActivitiesActivityRecordsConcurrentWriteConflictError(SDKError):
+class PostV2ActivitiesActivityRecordsConflictInvalidRequestError(SDKError):
     r"""Conflict"""
 
-    data: PostV2ActivitiesActivityRecordsConcurrentWriteConflictErrorData = field(
+    data: PostV2ActivitiesActivityRecordsConflictInvalidRequestErrorData = field(
         hash=False
     )
 
     def __init__(
         self,
-        data: PostV2ActivitiesActivityRecordsConcurrentWriteConflictErrorData,
+        data: PostV2ActivitiesActivityRecordsConflictInvalidRequestErrorData,
         raw_response: httpx.Response,
         body: Optional[str] = None,
     ):
@@ -66,7 +66,7 @@ class PostV2ActivitiesActivityRecordsNotFoundError(SDKError):
 class PostV2ActivitiesActivityRecordsAuthErrorData(BaseModel):
     status_code: float
     type: models_post_v2_activities_activity_recordsop.PostV2ActivitiesActivityRecordsForbiddenType
-    code: models_post_v2_activities_activity_recordsop.PostV2ActivitiesActivityRecordsCodeUnion
+    code: models_post_v2_activities_activity_recordsop.PostV2ActivitiesActivityRecordsForbiddenCodeUnion
     message: str
 
 
@@ -88,7 +88,7 @@ class PostV2ActivitiesActivityRecordsAuthError(SDKError):
         object.__setattr__(self, "data", data)
 
 
-class PostV2ActivitiesActivityRecordsInvalidRequestErrorData(BaseModel):
+class PostV2ActivitiesActivityRecordsBadRequestInvalidRequestErrorData(BaseModel):
     status_code: float
     type: models_post_v2_activities_activity_recordsop.PostV2ActivitiesActivityRecordsBadRequestType
     code: models_post_v2_activities_activity_recordsop.PostV2ActivitiesActivityRecordsBadRequestCode
@@ -96,14 +96,16 @@ class PostV2ActivitiesActivityRecordsInvalidRequestErrorData(BaseModel):
 
 
 @dataclass(unsafe_hash=True)
-class PostV2ActivitiesActivityRecordsInvalidRequestError(SDKError):
+class PostV2ActivitiesActivityRecordsBadRequestInvalidRequestError(SDKError):
     r"""Bad Request"""
 
-    data: PostV2ActivitiesActivityRecordsInvalidRequestErrorData = field(hash=False)
+    data: PostV2ActivitiesActivityRecordsBadRequestInvalidRequestErrorData = field(
+        hash=False
+    )
 
     def __init__(
         self,
-        data: PostV2ActivitiesActivityRecordsInvalidRequestErrorData,
+        data: PostV2ActivitiesActivityRecordsBadRequestInvalidRequestErrorData,
         raw_response: httpx.Response,
         body: Optional[str] = None,
     ):

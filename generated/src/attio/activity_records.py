@@ -9,6 +9,8 @@ from typing import Any, Dict, Iterable, List, Mapping, Optional, Union
 
 
 class ActivityRecords(BaseSDK):
+    r"""Activity records are individual instances of activities, for example one specific phone call."""
+
     def post_v2_activities_activity_records_query(
         self,
         *,
@@ -31,7 +33,7 @@ class ActivityRecords(BaseSDK):
 
         Lists activity records, with the option to filter and sort results.
 
-        This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+        This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
         Required scopes: `activity_record:read`, `activity_configuration:read`, `object_configuration:read`, `record_permission:read`.
 
@@ -112,7 +114,7 @@ class ActivityRecords(BaseSDK):
                 oauth2_scopes=None,
                 security_source=self.sdk_configuration.security,
                 tags=["Activity records"],
-                extensions={"x-hidden": True, "x-mint": {"metadata": {"tag": "ALPHA"}}},
+                extensions={"x-mint": {"metadata": {"tag": "BETA"}}},
             ),
             request=req,
             is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
@@ -169,7 +171,7 @@ class ActivityRecords(BaseSDK):
 
         Lists activity records, with the option to filter and sort results.
 
-        This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+        This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
         Required scopes: `activity_record:read`, `activity_configuration:read`, `object_configuration:read`, `record_permission:read`.
 
@@ -250,7 +252,7 @@ class ActivityRecords(BaseSDK):
                 oauth2_scopes=None,
                 security_source=self.sdk_configuration.security,
                 tags=["Activity records"],
-                extensions={"x-hidden": True, "x-mint": {"metadata": {"tag": "ALPHA"}}},
+                extensions={"x-mint": {"metadata": {"tag": "BETA"}}},
             ),
             request=req,
             is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
@@ -302,7 +304,7 @@ class ActivityRecords(BaseSDK):
 
         Creates a new activity record, for example one specific phone call.
 
-        This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+        This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
         Required scopes: `activity_record:read-write`, `activity_configuration:read`, `object_configuration:read`, `record_permission:read`.
 
@@ -374,7 +376,7 @@ class ActivityRecords(BaseSDK):
                 oauth2_scopes=None,
                 security_source=self.sdk_configuration.security,
                 tags=["Activity records"],
-                extensions={"x-hidden": True, "x-mint": {"metadata": {"tag": "ALPHA"}}},
+                extensions={"x-mint": {"metadata": {"tag": "BETA"}}},
             ),
             request=req,
             is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
@@ -388,9 +390,10 @@ class ActivityRecords(BaseSDK):
             )
         if utils.match_response(http_res, "400", "application/json"):
             response_data = unmarshal_json_response(
-                errors.PostV2ActivitiesActivityRecordsInvalidRequestErrorData, http_res
+                errors.PostV2ActivitiesActivityRecordsBadRequestInvalidRequestErrorData,
+                http_res,
             )
-            raise errors.PostV2ActivitiesActivityRecordsInvalidRequestError(
+            raise errors.PostV2ActivitiesActivityRecordsBadRequestInvalidRequestError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "403", "application/json"):
@@ -409,10 +412,10 @@ class ActivityRecords(BaseSDK):
             )
         if utils.match_response(http_res, "409", "application/json"):
             response_data = unmarshal_json_response(
-                errors.PostV2ActivitiesActivityRecordsConcurrentWriteConflictErrorData,
+                errors.PostV2ActivitiesActivityRecordsConflictInvalidRequestErrorData,
                 http_res,
             )
-            raise errors.PostV2ActivitiesActivityRecordsConcurrentWriteConflictError(
+            raise errors.PostV2ActivitiesActivityRecordsConflictInvalidRequestError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "4XX", "*"):
@@ -441,7 +444,7 @@ class ActivityRecords(BaseSDK):
 
         Creates a new activity record, for example one specific phone call.
 
-        This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+        This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
         Required scopes: `activity_record:read-write`, `activity_configuration:read`, `object_configuration:read`, `record_permission:read`.
 
@@ -513,7 +516,7 @@ class ActivityRecords(BaseSDK):
                 oauth2_scopes=None,
                 security_source=self.sdk_configuration.security,
                 tags=["Activity records"],
-                extensions={"x-hidden": True, "x-mint": {"metadata": {"tag": "ALPHA"}}},
+                extensions={"x-mint": {"metadata": {"tag": "BETA"}}},
             ),
             request=req,
             is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
@@ -527,9 +530,10 @@ class ActivityRecords(BaseSDK):
             )
         if utils.match_response(http_res, "400", "application/json"):
             response_data = unmarshal_json_response(
-                errors.PostV2ActivitiesActivityRecordsInvalidRequestErrorData, http_res
+                errors.PostV2ActivitiesActivityRecordsBadRequestInvalidRequestErrorData,
+                http_res,
             )
-            raise errors.PostV2ActivitiesActivityRecordsInvalidRequestError(
+            raise errors.PostV2ActivitiesActivityRecordsBadRequestInvalidRequestError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "403", "application/json"):
@@ -548,10 +552,10 @@ class ActivityRecords(BaseSDK):
             )
         if utils.match_response(http_res, "409", "application/json"):
             response_data = unmarshal_json_response(
-                errors.PostV2ActivitiesActivityRecordsConcurrentWriteConflictErrorData,
+                errors.PostV2ActivitiesActivityRecordsConflictInvalidRequestErrorData,
                 http_res,
             )
-            raise errors.PostV2ActivitiesActivityRecordsConcurrentWriteConflictError(
+            raise errors.PostV2ActivitiesActivityRecordsConflictInvalidRequestError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "4XX", "*"):
@@ -579,11 +583,11 @@ class ActivityRecords(BaseSDK):
     ) -> models.PutV2ActivitiesActivityRecordsResponse:
         r"""Upsert an activity record
 
-        Use this endpoint to create or update an activity record. A matching attribute is used to search for existing activity records. If a record is found with the same value for the matching attribute, that record will be updated. If no record with the same value for the matching attribute is found, a new record will be created instead. If you would like to avoid matching, please use the create activity record endpoint.
+        Use this endpoint to create or update an activity record. A matching attribute is used to search for existing activity records. If a record is found with the same value for the matching attribute, that record will be updated. If no record with the same value for the matching attribute is found, a new record will be created instead. If you would like to avoid matching, please use the [Create activity record endpoint](/rest-api/endpoint-reference/activity-records/create-an-activity-record).
 
         If the matching attribute is a multiselect attribute, new values will be added and existing values will not be deleted. For any other multiselect attribute, all values will be either created or deleted as necessary to match the list of supplied values.
 
-        This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+        This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
         Required scopes: `activity_record:read-write`, `activity_configuration:read`, `object_configuration:read`, `record_permission:read`.
 
@@ -657,7 +661,7 @@ class ActivityRecords(BaseSDK):
                 oauth2_scopes=None,
                 security_source=self.sdk_configuration.security,
                 tags=["Activity records"],
-                extensions={"x-hidden": True, "x-mint": {"metadata": {"tag": "ALPHA"}}},
+                extensions={"x-mint": {"metadata": {"tag": "BETA"}}},
             ),
             request=req,
             is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
@@ -671,9 +675,10 @@ class ActivityRecords(BaseSDK):
             )
         if utils.match_response(http_res, "400", "application/json"):
             response_data = unmarshal_json_response(
-                errors.PutV2ActivitiesActivityRecordsInvalidRequestErrorData, http_res
+                errors.PutV2ActivitiesActivityRecordsBadRequestInvalidRequestErrorData,
+                http_res,
             )
-            raise errors.PutV2ActivitiesActivityRecordsInvalidRequestError(
+            raise errors.PutV2ActivitiesActivityRecordsBadRequestInvalidRequestError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "403", "application/json"):
@@ -692,10 +697,10 @@ class ActivityRecords(BaseSDK):
             )
         if utils.match_response(http_res, "409", "application/json"):
             response_data = unmarshal_json_response(
-                errors.PutV2ActivitiesActivityRecordsConcurrentWriteConflictErrorData,
+                errors.PutV2ActivitiesActivityRecordsConflictInvalidRequestErrorData,
                 http_res,
             )
-            raise errors.PutV2ActivitiesActivityRecordsConcurrentWriteConflictError(
+            raise errors.PutV2ActivitiesActivityRecordsConflictInvalidRequestError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "4XX", "*"):
@@ -723,11 +728,11 @@ class ActivityRecords(BaseSDK):
     ) -> models.PutV2ActivitiesActivityRecordsResponse:
         r"""Upsert an activity record
 
-        Use this endpoint to create or update an activity record. A matching attribute is used to search for existing activity records. If a record is found with the same value for the matching attribute, that record will be updated. If no record with the same value for the matching attribute is found, a new record will be created instead. If you would like to avoid matching, please use the create activity record endpoint.
+        Use this endpoint to create or update an activity record. A matching attribute is used to search for existing activity records. If a record is found with the same value for the matching attribute, that record will be updated. If no record with the same value for the matching attribute is found, a new record will be created instead. If you would like to avoid matching, please use the [Create activity record endpoint](/rest-api/endpoint-reference/activity-records/create-an-activity-record).
 
         If the matching attribute is a multiselect attribute, new values will be added and existing values will not be deleted. For any other multiselect attribute, all values will be either created or deleted as necessary to match the list of supplied values.
 
-        This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+        This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
         Required scopes: `activity_record:read-write`, `activity_configuration:read`, `object_configuration:read`, `record_permission:read`.
 
@@ -801,7 +806,7 @@ class ActivityRecords(BaseSDK):
                 oauth2_scopes=None,
                 security_source=self.sdk_configuration.security,
                 tags=["Activity records"],
-                extensions={"x-hidden": True, "x-mint": {"metadata": {"tag": "ALPHA"}}},
+                extensions={"x-mint": {"metadata": {"tag": "BETA"}}},
             ),
             request=req,
             is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
@@ -815,9 +820,10 @@ class ActivityRecords(BaseSDK):
             )
         if utils.match_response(http_res, "400", "application/json"):
             response_data = unmarshal_json_response(
-                errors.PutV2ActivitiesActivityRecordsInvalidRequestErrorData, http_res
+                errors.PutV2ActivitiesActivityRecordsBadRequestInvalidRequestErrorData,
+                http_res,
             )
-            raise errors.PutV2ActivitiesActivityRecordsInvalidRequestError(
+            raise errors.PutV2ActivitiesActivityRecordsBadRequestInvalidRequestError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "403", "application/json"):
@@ -836,10 +842,10 @@ class ActivityRecords(BaseSDK):
             )
         if utils.match_response(http_res, "409", "application/json"):
             response_data = unmarshal_json_response(
-                errors.PutV2ActivitiesActivityRecordsConcurrentWriteConflictErrorData,
+                errors.PutV2ActivitiesActivityRecordsConflictInvalidRequestErrorData,
                 http_res,
             )
-            raise errors.PutV2ActivitiesActivityRecordsConcurrentWriteConflictError(
+            raise errors.PutV2ActivitiesActivityRecordsConflictInvalidRequestError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "4XX", "*"):
@@ -865,7 +871,7 @@ class ActivityRecords(BaseSDK):
 
         Gets a single activity record by its `record_id`.
 
-        This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+        This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
         Required scopes: `activity_record:read`, `activity_configuration:read`, `object_configuration:read`, `record_permission:read`.
 
@@ -926,7 +932,7 @@ class ActivityRecords(BaseSDK):
                 oauth2_scopes=None,
                 security_source=self.sdk_configuration.security,
                 tags=["Activity records"],
-                extensions={"x-hidden": True, "x-mint": {"metadata": {"tag": "ALPHA"}}},
+                extensions={"x-mint": {"metadata": {"tag": "BETA"}}},
             ),
             request=req,
             is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
@@ -968,7 +974,7 @@ class ActivityRecords(BaseSDK):
 
         Gets a single activity record by its `record_id`.
 
-        This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+        This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
         Required scopes: `activity_record:read`, `activity_configuration:read`, `object_configuration:read`, `record_permission:read`.
 
@@ -1029,7 +1035,7 @@ class ActivityRecords(BaseSDK):
                 oauth2_scopes=None,
                 security_source=self.sdk_configuration.security,
                 tags=["Activity records"],
-                extensions={"x-hidden": True, "x-mint": {"metadata": {"tag": "ALPHA"}}},
+                extensions={"x-mint": {"metadata": {"tag": "BETA"}}},
             ),
             request=req,
             is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
@@ -1075,7 +1081,7 @@ class ActivityRecords(BaseSDK):
 
         Use this endpoint to update activity records by `record_id`. If the update payload includes multiselect attributes, the values supplied will be created and prepended to the list of values that already exist (if any). Use the `PUT` endpoint to overwrite or remove multiselect attribute values.
 
-        This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+        This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
         Required scopes: `activity_record:read-write`, `activity_configuration:read`, `object_configuration:read`, `record_permission:read`.
 
@@ -1149,7 +1155,7 @@ class ActivityRecords(BaseSDK):
                 oauth2_scopes=None,
                 security_source=self.sdk_configuration.security,
                 tags=["Activity records"],
-                extensions={"x-hidden": True, "x-mint": {"metadata": {"tag": "ALPHA"}}},
+                extensions={"x-mint": {"metadata": {"tag": "BETA"}}},
             ),
             request=req,
             is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
@@ -1163,10 +1169,10 @@ class ActivityRecords(BaseSDK):
             )
         if utils.match_response(http_res, "400", "application/json"):
             response_data = unmarshal_json_response(
-                errors.PatchV2ActivitiesActivityRecordsRecordIDInvalidRequestErrorData,
+                errors.PatchV2ActivitiesActivityRecordsRecordIDBadRequestInvalidRequestErrorData,
                 http_res,
             )
-            raise errors.PatchV2ActivitiesActivityRecordsRecordIDInvalidRequestError(
+            raise errors.PatchV2ActivitiesActivityRecordsRecordIDBadRequestInvalidRequestError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "403", "application/json"):
@@ -1187,10 +1193,10 @@ class ActivityRecords(BaseSDK):
             )
         if utils.match_response(http_res, "409", "application/json"):
             response_data = unmarshal_json_response(
-                errors.PatchV2ActivitiesActivityRecordsRecordIDConcurrentWriteConflictErrorData,
+                errors.PatchV2ActivitiesActivityRecordsRecordIDConflictInvalidRequestErrorData,
                 http_res,
             )
-            raise errors.PatchV2ActivitiesActivityRecordsRecordIDConcurrentWriteConflictError(
+            raise errors.PatchV2ActivitiesActivityRecordsRecordIDConflictInvalidRequestError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "4XX", "*"):
@@ -1220,7 +1226,7 @@ class ActivityRecords(BaseSDK):
 
         Use this endpoint to update activity records by `record_id`. If the update payload includes multiselect attributes, the values supplied will be created and prepended to the list of values that already exist (if any). Use the `PUT` endpoint to overwrite or remove multiselect attribute values.
 
-        This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+        This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
         Required scopes: `activity_record:read-write`, `activity_configuration:read`, `object_configuration:read`, `record_permission:read`.
 
@@ -1294,7 +1300,7 @@ class ActivityRecords(BaseSDK):
                 oauth2_scopes=None,
                 security_source=self.sdk_configuration.security,
                 tags=["Activity records"],
-                extensions={"x-hidden": True, "x-mint": {"metadata": {"tag": "ALPHA"}}},
+                extensions={"x-mint": {"metadata": {"tag": "BETA"}}},
             ),
             request=req,
             is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
@@ -1308,10 +1314,10 @@ class ActivityRecords(BaseSDK):
             )
         if utils.match_response(http_res, "400", "application/json"):
             response_data = unmarshal_json_response(
-                errors.PatchV2ActivitiesActivityRecordsRecordIDInvalidRequestErrorData,
+                errors.PatchV2ActivitiesActivityRecordsRecordIDBadRequestInvalidRequestErrorData,
                 http_res,
             )
-            raise errors.PatchV2ActivitiesActivityRecordsRecordIDInvalidRequestError(
+            raise errors.PatchV2ActivitiesActivityRecordsRecordIDBadRequestInvalidRequestError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "403", "application/json"):
@@ -1332,10 +1338,10 @@ class ActivityRecords(BaseSDK):
             )
         if utils.match_response(http_res, "409", "application/json"):
             response_data = unmarshal_json_response(
-                errors.PatchV2ActivitiesActivityRecordsRecordIDConcurrentWriteConflictErrorData,
+                errors.PatchV2ActivitiesActivityRecordsRecordIDConflictInvalidRequestErrorData,
                 http_res,
             )
-            raise errors.PatchV2ActivitiesActivityRecordsRecordIDConcurrentWriteConflictError(
+            raise errors.PatchV2ActivitiesActivityRecordsRecordIDConflictInvalidRequestError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "4XX", "*"):
@@ -1365,7 +1371,7 @@ class ActivityRecords(BaseSDK):
 
         Use this endpoint to update activity records by `record_id`. If the update payload includes multiselect attributes, the values supplied will overwrite/remove the list of values that already exist (if any). Use the `PATCH` endpoint to append multiselect values without removing those that already exist.
 
-        This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+        This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
         Required scopes: `activity_record:read-write`, `activity_configuration:read`, `object_configuration:read`, `record_permission:read`.
 
@@ -1439,7 +1445,7 @@ class ActivityRecords(BaseSDK):
                 oauth2_scopes=None,
                 security_source=self.sdk_configuration.security,
                 tags=["Activity records"],
-                extensions={"x-hidden": True, "x-mint": {"metadata": {"tag": "ALPHA"}}},
+                extensions={"x-mint": {"metadata": {"tag": "BETA"}}},
             ),
             request=req,
             is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
@@ -1453,10 +1459,10 @@ class ActivityRecords(BaseSDK):
             )
         if utils.match_response(http_res, "400", "application/json"):
             response_data = unmarshal_json_response(
-                errors.PutV2ActivitiesActivityRecordsRecordIDInvalidRequestErrorData,
+                errors.PutV2ActivitiesActivityRecordsRecordIDBadRequestInvalidRequestErrorData,
                 http_res,
             )
-            raise errors.PutV2ActivitiesActivityRecordsRecordIDInvalidRequestError(
+            raise errors.PutV2ActivitiesActivityRecordsRecordIDBadRequestInvalidRequestError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "403", "application/json"):
@@ -1476,10 +1482,10 @@ class ActivityRecords(BaseSDK):
             )
         if utils.match_response(http_res, "409", "application/json"):
             response_data = unmarshal_json_response(
-                errors.PutV2ActivitiesActivityRecordsRecordIDConcurrentWriteConflictErrorData,
+                errors.PutV2ActivitiesActivityRecordsRecordIDConflictInvalidRequestErrorData,
                 http_res,
             )
-            raise errors.PutV2ActivitiesActivityRecordsRecordIDConcurrentWriteConflictError(
+            raise errors.PutV2ActivitiesActivityRecordsRecordIDConflictInvalidRequestError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "4XX", "*"):
@@ -1509,7 +1515,7 @@ class ActivityRecords(BaseSDK):
 
         Use this endpoint to update activity records by `record_id`. If the update payload includes multiselect attributes, the values supplied will overwrite/remove the list of values that already exist (if any). Use the `PATCH` endpoint to append multiselect values without removing those that already exist.
 
-        This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+        This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
         Required scopes: `activity_record:read-write`, `activity_configuration:read`, `object_configuration:read`, `record_permission:read`.
 
@@ -1583,7 +1589,7 @@ class ActivityRecords(BaseSDK):
                 oauth2_scopes=None,
                 security_source=self.sdk_configuration.security,
                 tags=["Activity records"],
-                extensions={"x-hidden": True, "x-mint": {"metadata": {"tag": "ALPHA"}}},
+                extensions={"x-mint": {"metadata": {"tag": "BETA"}}},
             ),
             request=req,
             is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
@@ -1597,10 +1603,10 @@ class ActivityRecords(BaseSDK):
             )
         if utils.match_response(http_res, "400", "application/json"):
             response_data = unmarshal_json_response(
-                errors.PutV2ActivitiesActivityRecordsRecordIDInvalidRequestErrorData,
+                errors.PutV2ActivitiesActivityRecordsRecordIDBadRequestInvalidRequestErrorData,
                 http_res,
             )
-            raise errors.PutV2ActivitiesActivityRecordsRecordIDInvalidRequestError(
+            raise errors.PutV2ActivitiesActivityRecordsRecordIDBadRequestInvalidRequestError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "403", "application/json"):
@@ -1620,10 +1626,10 @@ class ActivityRecords(BaseSDK):
             )
         if utils.match_response(http_res, "409", "application/json"):
             response_data = unmarshal_json_response(
-                errors.PutV2ActivitiesActivityRecordsRecordIDConcurrentWriteConflictErrorData,
+                errors.PutV2ActivitiesActivityRecordsRecordIDConflictInvalidRequestErrorData,
                 http_res,
             )
-            raise errors.PutV2ActivitiesActivityRecordsRecordIDConcurrentWriteConflictError(
+            raise errors.PutV2ActivitiesActivityRecordsRecordIDConflictInvalidRequestError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "4XX", "*"):
@@ -1649,7 +1655,7 @@ class ActivityRecords(BaseSDK):
 
         Deletes a single activity record by its `record_id`.
 
-        This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+        This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
         Required scopes: `activity_record:read-write`, `activity_configuration:read`, `object_configuration:read`, `record_permission:read`.
 
@@ -1710,7 +1716,7 @@ class ActivityRecords(BaseSDK):
                 oauth2_scopes=None,
                 security_source=self.sdk_configuration.security,
                 tags=["Activity records"],
-                extensions={"x-hidden": True, "x-mint": {"metadata": {"tag": "ALPHA"}}},
+                extensions={"x-mint": {"metadata": {"tag": "BETA"}}},
             ),
             request=req,
             is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
@@ -1761,7 +1767,7 @@ class ActivityRecords(BaseSDK):
 
         Deletes a single activity record by its `record_id`.
 
-        This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+        This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
         Required scopes: `activity_record:read-write`, `activity_configuration:read`, `object_configuration:read`, `record_permission:read`.
 
@@ -1822,7 +1828,7 @@ class ActivityRecords(BaseSDK):
                 oauth2_scopes=None,
                 security_source=self.sdk_configuration.security,
                 tags=["Activity records"],
-                extensions={"x-hidden": True, "x-mint": {"metadata": {"tag": "ALPHA"}}},
+                extensions={"x-mint": {"metadata": {"tag": "BETA"}}},
             ),
             request=req,
             is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),

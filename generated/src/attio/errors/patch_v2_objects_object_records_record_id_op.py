@@ -11,24 +11,24 @@ import httpx
 from typing import Optional
 
 
-class PatchV2ObjectsObjectRecordsRecordIDConcurrentWriteConflictErrorData(BaseModel):
+class PatchV2ObjectsObjectRecordsRecordIDConflictInvalidRequestErrorData(BaseModel):
     status_code: float
     type: models_patch_v2_objects_object_records_record_id_op.PatchV2ObjectsObjectRecordsRecordIDConflictType
-    code: models_patch_v2_objects_object_records_record_id_op.PatchV2ObjectsObjectRecordsRecordIDCodeConcurrentWriteConflict
+    code: models_patch_v2_objects_object_records_record_id_op.PatchV2ObjectsObjectRecordsRecordIDConflictCodeUnion
     message: str
 
 
 @dataclass(unsafe_hash=True)
-class PatchV2ObjectsObjectRecordsRecordIDConcurrentWriteConflictError(SDKError):
+class PatchV2ObjectsObjectRecordsRecordIDConflictInvalidRequestError(SDKError):
     r"""Conflict"""
 
-    data: PatchV2ObjectsObjectRecordsRecordIDConcurrentWriteConflictErrorData = field(
+    data: PatchV2ObjectsObjectRecordsRecordIDConflictInvalidRequestErrorData = field(
         hash=False
     )
 
     def __init__(
         self,
-        data: PatchV2ObjectsObjectRecordsRecordIDConcurrentWriteConflictErrorData,
+        data: PatchV2ObjectsObjectRecordsRecordIDConflictInvalidRequestErrorData,
         raw_response: httpx.Response,
         body: Optional[str] = None,
     ):
@@ -88,22 +88,24 @@ class PatchV2ObjectsObjectRecordsRecordIDUnauthorizedError(SDKError):
         object.__setattr__(self, "data", data)
 
 
-class PatchV2ObjectsObjectRecordsRecordIDInvalidRequestErrorData(BaseModel):
+class PatchV2ObjectsObjectRecordsRecordIDBadRequestInvalidRequestErrorData(BaseModel):
     status_code: float
     type: models_patch_v2_objects_object_records_record_id_op.PatchV2ObjectsObjectRecordsRecordIDBadRequestType
-    code: models_patch_v2_objects_object_records_record_id_op.PatchV2ObjectsObjectRecordsRecordIDCodeUnion
+    code: models_patch_v2_objects_object_records_record_id_op.PatchV2ObjectsObjectRecordsRecordIDBadRequestCodeUnion
     message: str
 
 
 @dataclass(unsafe_hash=True)
-class PatchV2ObjectsObjectRecordsRecordIDInvalidRequestError(SDKError):
+class PatchV2ObjectsObjectRecordsRecordIDBadRequestInvalidRequestError(SDKError):
     r"""Bad Request"""
 
-    data: PatchV2ObjectsObjectRecordsRecordIDInvalidRequestErrorData = field(hash=False)
+    data: PatchV2ObjectsObjectRecordsRecordIDBadRequestInvalidRequestErrorData = field(
+        hash=False
+    )
 
     def __init__(
         self,
-        data: PatchV2ObjectsObjectRecordsRecordIDInvalidRequestErrorData,
+        data: PatchV2ObjectsObjectRecordsRecordIDBadRequestInvalidRequestErrorData,
         raw_response: httpx.Response,
         body: Optional[str] = None,
     ):

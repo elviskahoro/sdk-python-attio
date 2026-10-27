@@ -11,13 +11,14 @@ from typing_extensions import Annotated, TypedDict
 GetV2TargetIdentifierAttributesAttributeTarget = Literal[
     "objects",
     "lists",
+    "activities",
 ]
-r"""Whether the attribute is on an object or a list."""
+r"""Whether the attribute is on an object, a list or an activity."""
 
 
 class GetV2TargetIdentifierAttributesAttributeRequestTypedDict(TypedDict):
     target: GetV2TargetIdentifierAttributesAttributeTarget
-    r"""Whether the attribute is on an object or a list."""
+    r"""Whether the attribute is on an object, a list or an activity."""
     identifier: str
     attribute: str
 
@@ -27,7 +28,7 @@ class GetV2TargetIdentifierAttributesAttributeRequest(BaseModel):
         GetV2TargetIdentifierAttributesAttributeTarget,
         FieldMetadata(path=PathParamMetadata(style="simple", explode=False)),
     ]
-    r"""Whether the attribute is on an object or a list."""
+    r"""Whether the attribute is on an object, a list or an activity."""
 
     identifier: Annotated[
         str, FieldMetadata(path=PathParamMetadata(style="simple", explode=False))

@@ -42,11 +42,13 @@ class SDK(BaseSDK):
     objects: "Objects"
     r"""Objects are the core data models inside of Attio. They contain standard objects, such as [people](/rest-api/endpoint-reference/standard-objects/people/list-person-records), [companies](/rest-api/endpoint-reference/standard-objects/companies/list-company-records) or [deals](/docs/standard-objects-deals), and custom objects that are specific to your use-case. See our [objects and lists guide](/docs/objects-and-lists) for more information."""
     activities: "Activities"
-    activity_records: "ActivityRecords"
+    r"""Activities model event-based data that can be logged against a record, for example a phone call. Each activity extends a schema, which supplies the attributes that every activity of that kind shares."""
     attributes: "Attributes"
-    r"""Attributes model properties of objects and lists. Some attributes, such as the `name` attribute on a person, are system-defined, while others are user-defined. Attributes are one of [many types](/docs/attribute-types) such as text, location or select. See our [objects and lists guide](/docs/objects-and-lists) for more information."""
+    r"""Attributes model properties of objects, lists and activities. Some attributes, such as the `name` attribute on a person, are system-defined, while others are user-defined. Attributes are one of [many types](/docs/attribute-types) such as text, location or select. See our [objects and lists guide](/docs/objects-and-lists) for more information."""
     records: "Records"
     r"""Records are individual instances of objects e.g. a specific [person](/rest-api/endpoint-reference/standard-objects/people/list-person-records) or [company](/rest-api/endpoint-reference/standard-objects/companies/list-company-records). See our [objects and lists guide](/docs/objects-and-lists) for more information."""
+    activity_records: "ActivityRecords"
+    r"""Activity records are individual instances of activities, for example one specific phone call."""
     sql: "SQL"
     r"""Query records and list entries across your workspace using SQL. A single query can reference any object or list in the workspace."""
     lists: "Lists"
@@ -82,9 +84,9 @@ class SDK(BaseSDK):
     _sub_sdk_map = {
         "objects": ("attio.objects", "Objects"),
         "activities": ("attio.activities", "Activities"),
-        "activity_records": ("attio.activity_records", "ActivityRecords"),
         "attributes": ("attio.attributes", "Attributes"),
         "records": ("attio.records", "Records"),
+        "activity_records": ("attio.activity_records", "ActivityRecords"),
         "sql": ("attio.sql", "SQL"),
         "lists": ("attio.lists", "Lists"),
         "entries": ("attio.entries", "Entries"),

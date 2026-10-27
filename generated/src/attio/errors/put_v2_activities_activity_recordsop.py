@@ -11,24 +11,24 @@ import httpx
 from typing import Optional
 
 
-class PutV2ActivitiesActivityRecordsConcurrentWriteConflictErrorData(BaseModel):
+class PutV2ActivitiesActivityRecordsConflictInvalidRequestErrorData(BaseModel):
     status_code: float
     type: models_put_v2_activities_activity_recordsop.PutV2ActivitiesActivityRecordsConflictType
-    code: models_put_v2_activities_activity_recordsop.PutV2ActivitiesActivityRecordsCodeConcurrentWriteConflict
+    code: models_put_v2_activities_activity_recordsop.PutV2ActivitiesActivityRecordsConflictCodeUnion
     message: str
 
 
 @dataclass(unsafe_hash=True)
-class PutV2ActivitiesActivityRecordsConcurrentWriteConflictError(SDKError):
+class PutV2ActivitiesActivityRecordsConflictInvalidRequestError(SDKError):
     r"""Conflict"""
 
-    data: PutV2ActivitiesActivityRecordsConcurrentWriteConflictErrorData = field(
+    data: PutV2ActivitiesActivityRecordsConflictInvalidRequestErrorData = field(
         hash=False
     )
 
     def __init__(
         self,
-        data: PutV2ActivitiesActivityRecordsConcurrentWriteConflictErrorData,
+        data: PutV2ActivitiesActivityRecordsConflictInvalidRequestErrorData,
         raw_response: httpx.Response,
         body: Optional[str] = None,
     ):
@@ -66,7 +66,7 @@ class PutV2ActivitiesActivityRecordsNotFoundError(SDKError):
 class PutV2ActivitiesActivityRecordsAuthErrorData(BaseModel):
     status_code: float
     type: models_put_v2_activities_activity_recordsop.PutV2ActivitiesActivityRecordsForbiddenType
-    code: models_put_v2_activities_activity_recordsop.PutV2ActivitiesActivityRecordsCodeUnion
+    code: models_put_v2_activities_activity_recordsop.PutV2ActivitiesActivityRecordsForbiddenCodeUnion
     message: str
 
 
@@ -88,7 +88,7 @@ class PutV2ActivitiesActivityRecordsAuthError(SDKError):
         object.__setattr__(self, "data", data)
 
 
-class PutV2ActivitiesActivityRecordsInvalidRequestErrorData(BaseModel):
+class PutV2ActivitiesActivityRecordsBadRequestInvalidRequestErrorData(BaseModel):
     status_code: float
     type: models_put_v2_activities_activity_recordsop.PutV2ActivitiesActivityRecordsBadRequestType
     code: models_put_v2_activities_activity_recordsop.PutV2ActivitiesActivityRecordsBadRequestCode
@@ -96,14 +96,16 @@ class PutV2ActivitiesActivityRecordsInvalidRequestErrorData(BaseModel):
 
 
 @dataclass(unsafe_hash=True)
-class PutV2ActivitiesActivityRecordsInvalidRequestError(SDKError):
+class PutV2ActivitiesActivityRecordsBadRequestInvalidRequestError(SDKError):
     r"""Bad Request"""
 
-    data: PutV2ActivitiesActivityRecordsInvalidRequestErrorData = field(hash=False)
+    data: PutV2ActivitiesActivityRecordsBadRequestInvalidRequestErrorData = field(
+        hash=False
+    )
 
     def __init__(
         self,
-        data: PutV2ActivitiesActivityRecordsInvalidRequestErrorData,
+        data: PutV2ActivitiesActivityRecordsBadRequestInvalidRequestErrorData,
         raw_response: httpx.Response,
         body: Optional[str] = None,
     ):

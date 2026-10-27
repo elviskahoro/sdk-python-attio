@@ -28,6 +28,38 @@ API-surface changes — the generator bump (Speakeasy 1.804.0, template
 values in `generated/src/attio/utils/security.py`, and `pyproject.toml`,
 `uv.lock`, and the Speakeasy-side version files stay in lockstep.
 
+Regenerates the SDK (0.26.5) against the unchanged spec — the overlay's
+`value` targets moved to RFC 9535 bracket notation; no model or API-surface
+changes.
+
+Regenerates the SDK (0.27.0) against the pinned 2026-10-26 spec and repairs
+the overlay for upstream error-code drift: the lists-entries POST 400 `code`
+anyOf is flattened and the activity-record POST/PUT 400 enums gain the
+missing codes, so the record and entry write endpoints now accept
+`duplicate_values`, `limit_reached`, and `multiple_match_results` 400 codes.
+**Breaking changes** (the 0.x minor bump is the signal; 0.26.2–0.26.7 were
+never published, so 0.27.0 is the first release after 0.26.1) — 50 exports
+that shipped in 0.26.1 are renamed or removed, without aliases:
+
+- **32 `attio.errors` exports rename** across the eight record write
+  endpoints (`Post`/`Put` `...Records` and `Put`/`Patch`
+  `...Records/{record_id}`, for both objects and activities):
+  `...InvalidRequestError(Data)` → `...BadRequestInvalidRequestError(Data)`
+  (400) and `...ConcurrentWriteConflictError(Data)` →
+  `...ConflictInvalidRequestError(Data)` (409).
+- **8 `attio.models` exports split by status**: `...RecordIDCodeUnion` and
+  `...RecordIDCodeUnionTypedDict` for the four `{record_id}` PUT/PATCH
+  endpoints became `...BadRequestCodeUnion` / `...ConflictCodeUnion` pairs.
+- **9 `attio.models` exports collapse** into the flat `...BadRequestCode`
+  Literals: `Post`/`Put` `V2ActivitiesActivityRecords`
+  `BadRequestCodeUnion` (+ `TypedDict`), `...CodeValueNotFound`,
+  `...CodeParticleGateViolation`, and
+  `CodeMatchingAttributeDefinitionNotUnique`.
+- **`PostV2SQLType` is removed** (SQL request models reshaped) — struct
+  parameter values are now free-form (`Dict[str, Any]`) so nested
+  `type`/`value` pairs survive serialization (#106);
+  `PostV2SQLBadRequestType` is new for 400 responses.
+
 ## 0.25.1 — 2026-10-03
 
 Adopts Attio's 2026-10-03 OpenAPI spec and repairs the Speakeasy overlay.
