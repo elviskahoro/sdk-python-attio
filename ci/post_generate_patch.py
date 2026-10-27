@@ -518,9 +518,12 @@ def ensure_hooks_package_reexport(path: Path) -> bool:
     return True
 
 
+_ALIAS_LINE_LIMIT = 88
+
+
 def _alias_assignment(old: str, new: str) -> list[str]:
     """Return the ``old = new`` alias statement, wrapped at 88 columns."""
-    if len(f"{old} = {new}") <= 88:
+    if len(f"{old} = {new}") <= _ALIAS_LINE_LIMIT:
         return [f"{old} = {new}"]
     return [f"{old} = (", f"    {new}", ")"]
 
@@ -600,7 +603,10 @@ def _find_structure_start(lines: list[str], prefix: str, structure: str) -> int:
 
 
 def _find_structure_end(
-    lines: list[str], start: int, closer: str, structure: str
+    lines: list[str],
+    start: int,
+    closer: str,
+    structure: str,
 ) -> int:
     end = next(
         (i for i in range(start + 1, len(lines)) if lines[i].rstrip() == closer),
