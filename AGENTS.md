@@ -113,9 +113,11 @@ This SDK is generated using Speakeasy from an OpenAPI spec.
    express, e.g. the GET /v2/self `active` value discriminators in
    `generated/src/attio/models/get_v2_selfop.py`, the `scripts/publish.sh` and
    `scripts/release.sh` wrappers, the standalone CLI entry point/docs in
-   `pyproject.toml` and `README.md`, and SDKHooks `init_hooks` wiring plus
+   `pyproject.toml` and `README.md`, SDKHooks `init_hooks` wiring plus
    the hooks-package re-export in `generated/src/attio/_hooks/sdkhooks.py` and
-   `generated/src/attio/_hooks/__init__.py`). Drop `--no-fetch` to also
+   `generated/src/attio/_hooks/__init__.py`, and the 0.26.1 model rename
+   aliases in `generated/src/attio/models/__init__.py` and the renamed
+   activity/list operation modules). Drop `--no-fetch` to also
    adopt a freshly fetched spec. Note the Dagger path exports only `generated/`
    back to the host — docs/, README, pyproject and USAGE refresh on the
    host-CLI path (the default) — and it logs that when chosen.
@@ -205,6 +207,7 @@ pin/checksum in sync with `.rwx/regenerate.yml`.
 - The SDK is fully generated code — manual edits to `generated/src/attio/` will be overwritten on next generation.
 - The overlay exists because Speakeasy infers `date` type from ISO8601 timestamp strings, but Attio returns timestamps as strings that should stay as `str` in Python.
 - The `list` → `list_id` renames avoid shadowing Python's built-in `list`.
+- A regeneration that renames a public model symbol which already shipped must keep the old name importable: add it to `MODEL_RENAME_ALIASES` in `ci/post_generate_patch.py` (0.26.1 precedent: the activity-record `ForbiddenCodeUnion` names became `CodeUnion`, and `PutV2ListsListEntriesCodeMultipleMatchResults` became `CodeMultipleMatchResults`) so a patch release never breaks `from attio.models import <old>` or the per-module import; retire the aliases only in a major release.
 - Description-only spec changes (marketing copy) are reported by `check-openapi` but do not count as structural drift, so they do not trigger the automated workflow.
 
 <!-- entire-agent:begin -->

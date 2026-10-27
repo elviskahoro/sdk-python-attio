@@ -84,6 +84,9 @@ PutV2ListsListEntriesCodeMergeInProgress = Literal["merge_in_progress",]
 CodeMultipleMatchResults = Literal["multiple_match_results",]
 
 
+PutV2ListsListEntriesCodeMultipleMatchResults = CodeMultipleMatchResults
+
+
 PutV2ListsListEntriesCodeUnionTypedDict = TypeAliasType(
     "PutV2ListsListEntriesCodeUnionTypedDict",
     Union[CodeMultipleMatchResults, PutV2ListsListEntriesCodeMergeInProgress],

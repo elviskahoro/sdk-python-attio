@@ -82,12 +82,22 @@ PostV2ActivitiesActivityRecordsCodeUnionTypedDict = TypeAliasType(
 )
 
 
+PostV2ActivitiesActivityRecordsForbiddenCodeUnionTypedDict = (
+    PostV2ActivitiesActivityRecordsCodeUnionTypedDict
+)
+
+
 PostV2ActivitiesActivityRecordsCodeUnion = TypeAliasType(
     "PostV2ActivitiesActivityRecordsCodeUnion",
     Union[
         PostV2ActivitiesActivityRecordsCodeUnauthorized,
         PostV2ActivitiesActivityRecordsCodeBillingError,
     ],
+)
+
+
+PostV2ActivitiesActivityRecordsForbiddenCodeUnion = (
+    PostV2ActivitiesActivityRecordsCodeUnion
 )
 
 

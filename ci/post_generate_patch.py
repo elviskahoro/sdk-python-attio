@@ -65,6 +65,23 @@ Patch: ``generated/src/attio/_hooks/sdkhooks.py`` and ``generated/src/attio/_hoo
     survives; nothing changes for end users because the shipped
     ``init_hooks`` stub is empty (the call is a no-op until a maintainer
     adds hook registrations).
+
+Patch: ``generated/src/attio/models/__init__.py`` 0.26.1 model rename aliases
+
+    The 2026-10-03 regeneration renamed public model symbols that had already
+    shipped in the 0.26.1 patch release: the activity-record
+    ``ForbiddenCodeUnion`` names (POST and PUT, plus their ``TypedDict``
+    twins) became ``CodeUnion`` names, and
+    ``PutV2ListsListEntriesCodeMultipleMatchResults`` became the unprefixed
+    ``CodeMultipleMatchResults``. Dropping public names in a patch release
+    breaks ``from attio.models import ...`` (and the per-module import) with
+    ``ImportError`` for users upgrading from 0.26.1, so after every
+    generation this script re-injects ``OldName = NewName`` module-level
+    aliases into the renamed operation modules and restores the old names in
+    the three export structures of ``models/__init__.py`` (the
+    ``TYPE_CHECKING`` import block, ``__all__``, and ``_dynamic_imports``).
+    Retire the aliases deliberately in a major release by removing the
+    ``MODEL_RENAME_ALIASES`` entries.
 """
 
 from __future__ import annotations
@@ -76,6 +93,8 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 TARGET = REPO_ROOT / "generated" / "src" / "attio" / "models" / "get_v2_selfop.py"
 SDKHOOKS_PATH = REPO_ROOT / "generated" / "src" / "attio" / "_hooks" / "sdkhooks.py"
 HOOKS_INIT_PATH = REPO_ROOT / "generated" / "src" / "attio" / "_hooks" / "__init__.py"
+MODELS_DIR = REPO_ROOT / "generated" / "src" / "attio" / "models"
+MODELS_INIT_PATH = MODELS_DIR / "__init__.py"
 
 # Anchors and lines for the SDKHooks init_hooks wiring patch (see
 # ``ensure_init_hooks_wiring`` / ``ensure_hooks_package_reexport``).
@@ -175,6 +194,34 @@ always fail without modifying a record.
 Successful and partial-success operations exit 0, runtime failures exit 1,
 and command-line usage errors exit 2.
 <!-- End Standalone CLI [cli] -->"""
+
+# Public model symbols the 2026-10-03 regeneration renamed after they had
+# already shipped in the 0.26.1 patch release, as ``{module: {old: new}}``.
+# ``ensure_module_aliases`` / ``ensure_models_init_aliases`` re-inject the old
+# names as aliases of the new ones after every generation so the patch
+# release keeps ``from attio.models import <old>`` (and the per-module
+# import) working.
+MODEL_RENAME_ALIASES: dict[str, dict[str, str]] = {
+    "post_v2_activities_activity_recordsop": {
+        "PostV2ActivitiesActivityRecordsForbiddenCodeUnionTypedDict": (
+            "PostV2ActivitiesActivityRecordsCodeUnionTypedDict"
+        ),
+        "PostV2ActivitiesActivityRecordsForbiddenCodeUnion": (
+            "PostV2ActivitiesActivityRecordsCodeUnion"
+        ),
+    },
+    "put_v2_activities_activity_recordsop": {
+        "PutV2ActivitiesActivityRecordsForbiddenCodeUnionTypedDict": (
+            "PutV2ActivitiesActivityRecordsCodeUnionTypedDict"
+        ),
+        "PutV2ActivitiesActivityRecordsForbiddenCodeUnion": (
+            "PutV2ActivitiesActivityRecordsCodeUnion"
+        ),
+    },
+    "put_v2_lists_list_entriesop": {
+        "PutV2ListsListEntriesCodeMultipleMatchResults": "CodeMultipleMatchResults",
+    },
+}
 
 
 def ensure_project_script(path: Path) -> bool:
@@ -471,6 +518,205 @@ def ensure_hooks_package_reexport(path: Path) -> bool:
     return True
 
 
+def _alias_assignment(old: str, new: str) -> list[str]:
+    """Return the ``old = new`` alias statement, wrapped at 88 columns."""
+    if len(f"{old} = {new}") <= 88:
+        return [f"{old} = {new}"]
+    return [f"{old} = (", f"    {new}", ")"]
+
+
+def _ensure_module_alias(text: str, old: str, new: str) -> str:
+    """Inject ``old = new`` right after the ``new`` symbol's definition.
+
+    The definition statement is anchored on a line starting with
+    ``<new> = ``; a line ending in ``(`` opens a block that closes on a lone
+    ``)`` line, anything else is a single-line statement. Two blank lines
+    separate the alias from the definition, matching the generated layout.
+    """
+    lines = text.splitlines(keepends=False)
+    if any(line.startswith(f"{old} = ") for line in lines):
+        return text
+    start = next(
+        (i for i, line in enumerate(lines) if line.startswith(f"{new} = ")),
+        None,
+    )
+    if start is None:
+        msg = (
+            f"the generated model no longer defines `{new}`, the rename "
+            f"target of the 0.26.1 alias `{old}`; the post-generation patch "
+            "must be updated for the new generated layout."
+        )
+        raise RuntimeError(msg)
+    end = start
+    if lines[start].rstrip().endswith("("):
+        end = next(
+            (i for i in range(start + 1, len(lines)) if lines[i].rstrip() == ")"),
+            None,
+        )
+        if end is None:
+            msg = (
+                f"the definition of `{new}` opens a block with no closing "
+                "`)` line; the post-generation patch must be updated."
+            )
+            raise RuntimeError(msg)
+    lines[end + 1 : end + 1] = ["", "", *_alias_assignment(old, new)]
+    trailing = "\n" if text.endswith("\n") else ""
+    return "\n".join(lines) + trailing
+
+
+def ensure_module_aliases(path: Path, module: str) -> bool:
+    """Re-inject the 0.26.1 rename aliases into a generated operation module.
+
+    Returns ``True`` if ``path`` was modified, ``False`` if it already
+    carries every alias. Raises ``RuntimeError`` when the module no longer
+    defines a rename target, so a regeneration that breaks the anchors
+    fails loudly instead of silently shipping broken imports.
+    """
+    text = path.read_text()
+    original = text
+    for old, new in MODEL_RENAME_ALIASES[module].items():
+        text = _ensure_module_alias(text, old, new)
+    if text == original:
+        return False
+    compile(text, str(path), "exec")
+    path.write_text(text)
+    return True
+
+
+def _find_structure_start(lines: list[str], prefix: str, structure: str) -> int:
+    """Return the index of the first line starting with ``prefix``."""
+    start = next(
+        (i for i, line in enumerate(lines) if line.startswith(prefix)),
+        None,
+    )
+    if start is None:
+        msg = (
+            f"models/__init__.py no longer has the expected `{structure}` "
+            "structure; the post-generation patch must be updated for the "
+            "new generated layout."
+        )
+        raise RuntimeError(msg)
+    return start
+
+
+def _find_structure_end(
+    lines: list[str], start: int, closer: str, structure: str
+) -> int:
+    end = next(
+        (i for i in range(start + 1, len(lines)) if lines[i].rstrip() == closer),
+        None,
+    )
+    if end is None:
+        msg = (
+            f"models/__init__.py has a `{structure}` structure with no "
+            f"closing `{closer}` line; the post-generation patch must be "
+            "updated."
+        )
+        raise RuntimeError(msg)
+    return end
+
+
+def _ensure_init_import_entry(lines: list[str], module: str, old: str) -> None:
+    """Add ``old`` to the module's ``TYPE_CHECKING`` import block, sorted."""
+    entry = f"        {old},"
+    if entry in lines:
+        return
+    header = f"    from .{module} import ("
+    start = next((i for i, line in enumerate(lines) if line == header), None)
+    if start is None:
+        msg = (
+            f"models/__init__.py no longer imports from `.{module}`; the "
+            "post-generation patch must be updated for the new generated "
+            "layout."
+        )
+        raise RuntimeError(msg)
+    end = _find_structure_end(lines, start, "    )", f"from .{module} import")
+    for i in range(start + 1, end):
+        if lines[i].strip().removesuffix(",") > old:
+            lines.insert(i, entry)
+            return
+    lines.insert(end, entry)
+
+
+def _ensure_init_all_entry(lines: list[str], old: str) -> None:
+    """Add ``old`` to ``__all__`` at its sorted position."""
+    entry = f'    "{old}",'
+    if entry in lines:
+        return
+    start = _find_structure_start(lines, "__all__", "__all__")
+    end = _find_structure_end(lines, start, "]", "__all__")
+    for i in range(start + 1, end):
+        if lines[i].strip().removesuffix(",").strip('"') > old:
+            lines.insert(i, entry)
+            return
+    lines.insert(end, entry)
+
+
+def _ensure_init_dynamic_entry(lines: list[str], module: str, old: str) -> None:
+    """Add ``old`` to the module's ``_dynamic_imports`` group, sorted."""
+    entry = f'    "{old}": ".{module}",'
+    if entry in lines:
+        return
+    start = _find_structure_start(lines, "_dynamic_imports", "_dynamic_imports")
+    end = _find_structure_end(lines, start, "}", "_dynamic_imports")
+    group_suffix = f': ".{module}",'
+    group_start = next(
+        (i for i in range(start + 1, end) if lines[i].endswith(group_suffix)),
+        None,
+    )
+    if group_start is None:
+        msg = (
+            f"models/__init__.py has no `_dynamic_imports` group for "
+            f"`.{module}`; the post-generation patch must be updated for "
+            "the new generated layout."
+        )
+        raise RuntimeError(msg)
+    group_end = group_start
+    while group_end < end and lines[group_end].endswith(group_suffix):
+        group_end += 1
+    for i in range(group_start, group_end):
+        if lines[i].split('"')[1] > old:
+            lines.insert(i, entry)
+            return
+    lines.insert(group_end, entry)
+
+
+def ensure_models_init_aliases(path: Path) -> bool:
+    """Restore the 0.26.1 rename aliases to the ``models/__init__.py`` exports.
+
+    Every old name is added to the three export structures (the
+    ``TYPE_CHECKING`` import block, ``__all__``, and ``_dynamic_imports``)
+    at its sorted position so both ``from attio.models import <old>`` and
+    ``dir(attio.models)`` keep working. Idempotent; raises ``RuntimeError``
+    when an anchor structure drifts.
+    """
+    text = path.read_text()
+    lines = text.splitlines(keepends=False)
+    for module, aliases in MODEL_RENAME_ALIASES.items():
+        for old in aliases:
+            _ensure_init_import_entry(lines, module, old)
+            _ensure_init_all_entry(lines, old)
+            _ensure_init_dynamic_entry(lines, module, old)
+    updated = "\n".join(lines) + "\n"
+    if updated == text:
+        return False
+    compile(updated, str(path), "exec")
+    path.write_text(updated)
+    return True
+
+
+def ensure_model_rename_aliases() -> list[str]:
+    """Apply every 0.26.1 rename-alias patch; return the restored files."""
+    restored: list[str] = []
+    for module in MODEL_RENAME_ALIASES:
+        path = MODELS_DIR / f"{module}.py"
+        if ensure_module_aliases(path, module):
+            restored.append(path.name)
+    if ensure_models_init_aliases(MODELS_INIT_PATH):
+        restored.append(MODELS_INIT_PATH.name)
+    return restored
+
+
 def restore_script_wrappers() -> list[Path]:
     """Rewrite the ``scripts/*.sh`` wrappers to their canonical form.
 
@@ -541,6 +787,11 @@ def main() -> int:
     ):
         if ensure(path):
             messages.append(f"post_generate_patch: restored {name}")
+
+    for target in ensure_model_rename_aliases():
+        messages.append(
+            f"post_generate_patch: restored 0.26.1 rename aliases in {target}",
+        )
 
     changed = patch_get_v2_selfop(TARGET)
     rel = TARGET.relative_to(REPO_ROOT)
