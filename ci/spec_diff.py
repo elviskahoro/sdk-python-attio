@@ -317,7 +317,9 @@ def overlay_target_base(target: str) -> str:
     ``.value.description``; the base ``...value`` is what must line up with
     the trail of a ``format: date`` node found in the spec.
     """
-    # RFC 9535 rejects the shorthand `.value`, so overlay.yaml writes `['value']`.
+    # Speakeasy's RFC 9535 interpreter rejects the dotted `.value` shorthand
+    # (`value` collides with the RFC's `value()` function-extension name), so
+    # overlay.yaml writes `['value']`; the RFC grammar itself allows `.value`.
     target = target.replace("['value']", ".value")
     return re.sub(r"\.(format|example|description|enum)$", "", target)
 
