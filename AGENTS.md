@@ -145,7 +145,7 @@ regenerates, verifies, and exports the diff as an artifact; it never commits,
 pushes, or opens a PR.
 
 ```bash
-rwx run .rwx/regenerate.yml --wait            # add --init fetch=true to adopt the latest upstream spec
+rwx dispatch regenerate --ref main            # add --param fetch=true to adopt the latest upstream spec
 rwx artifacts download <run-id> --task patch regenerate-patch --auto-extract
 git apply .rwx/downloads/<dir>/regenerate.patch
 ```
@@ -153,13 +153,13 @@ git apply .rwx/downloads/<dir>/regenerate.patch
 - Tasks: `generate` (host Speakeasy CLI, `ci/pipeline.py generate --no-fetch`,
   compile step on) -> `verify` (`check-overlay`, `mypy generated/src`,
   `pytest -q`) -> `patch` (allowlist check, then `regenerate.patch`). The
-  patch is diffed against a pre-generation snapshot, so local edits that
-  `rwx run` uploads are not included.
+  patch is diffed against a pre-generation snapshot, so only generation
+  output is captured.
 - Secret: `SPEAKEASY_API_KEY` lives in the RWX vault `sdk-python-attio`
   (referenced as `vaults.sdk-python-attio.secrets.SPEAKEASY_API_KEY`), not the
   `default` vault. `spec-update-check.yml` still reads the default vault, so
   its regeneration step is skipped until it is pointed at the new vault. The
-  vault is currently unlocked; lock it to `main` once testing is done.
+  vault is locked to `main`, so local `rwx run` is refused (use the dispatch above).
 - `generated/mypy.ini` is required: Speakeasy's compile step runs mypy with
   `generated/` as cwd, where the root `pyproject.toml` `[tool.mypy]` is not
   read, which otherwise fails with ~565 `import-not-found` errors. It is
