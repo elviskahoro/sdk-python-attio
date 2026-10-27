@@ -18,8 +18,9 @@ from typing_extensions import Annotated, NotRequired, TypeAliasType, TypedDict
 PatchV2TargetIdentifierAttributesAttributeTarget = Literal[
     "objects",
     "lists",
+    "activities",
 ]
-r"""Whether the attribute is on an object or a list."""
+r"""Whether the attribute is on an object, a list or an activity."""
 
 
 PatchV2TargetIdentifierAttributesAttributeTypeStatic = Literal["static",]
@@ -307,7 +308,7 @@ class PatchV2TargetIdentifierAttributesAttributeRequestBody(BaseModel):
 
 class PatchV2TargetIdentifierAttributesAttributeRequestTypedDict(TypedDict):
     target: PatchV2TargetIdentifierAttributesAttributeTarget
-    r"""Whether the attribute is on an object or a list."""
+    r"""Whether the attribute is on an object, a list or an activity."""
     identifier: str
     attribute: str
     request_body: PatchV2TargetIdentifierAttributesAttributeRequestBodyTypedDict
@@ -318,7 +319,7 @@ class PatchV2TargetIdentifierAttributesAttributeRequest(BaseModel):
         PatchV2TargetIdentifierAttributesAttributeTarget,
         FieldMetadata(path=PathParamMetadata(style="simple", explode=False)),
     ]
-    r"""Whether the attribute is on an object or a list."""
+    r"""Whether the attribute is on an object, a list or an activity."""
 
     identifier: Annotated[
         str, FieldMetadata(path=PathParamMetadata(style="simple", explode=False))

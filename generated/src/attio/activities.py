@@ -9,6 +9,8 @@ from typing import Any, Mapping, Optional, Union
 
 
 class Activities(BaseSDK):
+    r"""Activities model event-based data that can be logged against a record, for example a phone call. Each activity extends a schema, which supplies the attributes that every activity of that kind shares."""
+
     def get_v2_activities(
         self,
         *,
@@ -23,7 +25,7 @@ class Activities(BaseSDK):
 
         Lists all system-defined and user-defined activities in your workspace.
 
-        This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+        This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
         Required scopes: `activity_configuration:read`.
 
@@ -84,7 +86,7 @@ class Activities(BaseSDK):
                 oauth2_scopes=None,
                 security_source=self.sdk_configuration.security,
                 tags=["Activities"],
-                extensions={"x-hidden": True, "x-mint": {"metadata": {"tag": "ALPHA"}}},
+                extensions={"x-mint": {"metadata": {"tag": "BETA"}}},
             ),
             request=req,
             is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
@@ -116,7 +118,7 @@ class Activities(BaseSDK):
 
         Lists all system-defined and user-defined activities in your workspace.
 
-        This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+        This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
         Required scopes: `activity_configuration:read`.
 
@@ -177,7 +179,7 @@ class Activities(BaseSDK):
                 oauth2_scopes=None,
                 security_source=self.sdk_configuration.security,
                 tags=["Activities"],
-                extensions={"x-hidden": True, "x-mint": {"metadata": {"tag": "ALPHA"}}},
+                extensions={"x-mint": {"metadata": {"tag": "BETA"}}},
             ),
             request=req,
             is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
@@ -208,7 +210,7 @@ class Activities(BaseSDK):
 
         Creates a new custom activity in your workspace. Your workspace must have the custom activities billing feature enabled. Public apps may instead create activities with the integration activities billing feature.
 
-        This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+        This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
         Required scopes: `activity_configuration:read-write`.
 
@@ -270,7 +272,7 @@ class Activities(BaseSDK):
                 oauth2_scopes=None,
                 security_source=self.sdk_configuration.security,
                 tags=["Activities"],
-                extensions={"x-hidden": True, "x-mint": {"metadata": {"tag": "ALPHA"}}},
+                extensions={"x-mint": {"metadata": {"tag": "BETA"}}},
             ),
             request=req,
             is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
@@ -312,7 +314,7 @@ class Activities(BaseSDK):
 
         Creates a new custom activity in your workspace. Your workspace must have the custom activities billing feature enabled. Public apps may instead create activities with the integration activities billing feature.
 
-        This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+        This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
         Required scopes: `activity_configuration:read-write`.
 
@@ -374,7 +376,7 @@ class Activities(BaseSDK):
                 oauth2_scopes=None,
                 security_source=self.sdk_configuration.security,
                 tags=["Activities"],
-                extensions={"x-hidden": True, "x-mint": {"metadata": {"tag": "ALPHA"}}},
+                extensions={"x-mint": {"metadata": {"tag": "BETA"}}},
             ),
             request=req,
             is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
@@ -416,7 +418,7 @@ class Activities(BaseSDK):
 
         Gets a single activity by its `activity_id` or slug.
 
-        This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+        This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
         Required scopes: `activity_configuration:read`.
 
@@ -475,7 +477,7 @@ class Activities(BaseSDK):
                 oauth2_scopes=None,
                 security_source=self.sdk_configuration.security,
                 tags=["Activities"],
-                extensions={"x-hidden": True, "x-mint": {"metadata": {"tag": "ALPHA"}}},
+                extensions={"x-mint": {"metadata": {"tag": "BETA"}}},
             ),
             request=req,
             is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
@@ -514,7 +516,7 @@ class Activities(BaseSDK):
 
         Gets a single activity by its `activity_id` or slug.
 
-        This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+        This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
         Required scopes: `activity_configuration:read`.
 
@@ -573,7 +575,7 @@ class Activities(BaseSDK):
                 oauth2_scopes=None,
                 security_source=self.sdk_configuration.security,
                 tags=["Activities"],
-                extensions={"x-hidden": True, "x-mint": {"metadata": {"tag": "ALPHA"}}},
+                extensions={"x-mint": {"metadata": {"tag": "BETA"}}},
             ),
             request=req,
             is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
@@ -616,7 +618,7 @@ class Activities(BaseSDK):
 
         Updates a single activity by its `activity_id` or slug. The schema an activity extends is fixed after creation, so `extends` cannot be changed.
 
-        This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+        This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
         Required scopes: `activity_configuration:read-write`.
 
@@ -688,7 +690,7 @@ class Activities(BaseSDK):
                 oauth2_scopes=None,
                 security_source=self.sdk_configuration.security,
                 tags=["Activities"],
-                extensions={"x-hidden": True, "x-mint": {"metadata": {"tag": "ALPHA"}}},
+                extensions={"x-mint": {"metadata": {"tag": "BETA"}}},
             ),
             request=req,
             is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
@@ -752,7 +754,7 @@ class Activities(BaseSDK):
 
         Updates a single activity by its `activity_id` or slug. The schema an activity extends is fixed after creation, so `extends` cannot be changed.
 
-        This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+        This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
         Required scopes: `activity_configuration:read-write`.
 
@@ -824,7 +826,7 @@ class Activities(BaseSDK):
                 oauth2_scopes=None,
                 security_source=self.sdk_configuration.security,
                 tags=["Activities"],
-                extensions={"x-hidden": True, "x-mint": {"metadata": {"tag": "ALPHA"}}},
+                extensions={"x-mint": {"metadata": {"tag": "BETA"}}},
             ),
             request=req,
             is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
@@ -886,7 +888,7 @@ class Activities(BaseSDK):
 
         This endpoint should be used with caution as it has the potential to remove a large amount of potentially valuable data.
 
-        This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+        This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
         Required scopes: `activity_configuration:read-write`, `activity_record:read-write`.
 
@@ -945,7 +947,7 @@ class Activities(BaseSDK):
                 oauth2_scopes=None,
                 security_source=self.sdk_configuration.security,
                 tags=["Activities"],
-                extensions={"x-hidden": True, "x-mint": {"metadata": {"tag": "ALPHA"}}},
+                extensions={"x-mint": {"metadata": {"tag": "BETA"}}},
             ),
             request=req,
             is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
@@ -1003,7 +1005,7 @@ class Activities(BaseSDK):
 
         This endpoint should be used with caution as it has the potential to remove a large amount of potentially valuable data.
 
-        This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+        This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
         Required scopes: `activity_configuration:read-write`, `activity_record:read-write`.
 
@@ -1062,7 +1064,7 @@ class Activities(BaseSDK):
                 oauth2_scopes=None,
                 security_source=self.sdk_configuration.security,
                 tags=["Activities"],
-                extensions={"x-hidden": True, "x-mint": {"metadata": {"tag": "ALPHA"}}},
+                extensions={"x-mint": {"metadata": {"tag": "BETA"}}},
             ),
             request=req,
             is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),

@@ -11,8 +11,9 @@ from typing_extensions import Annotated, TypedDict
 PostV2TargetIdentifierAttributesAttributeOptionsTarget = Literal[
     "objects",
     "lists",
+    "activities",
 ]
-r"""Whether the attribute is on an object or a list."""
+r"""Whether the attribute is on an object, a list or an activity."""
 
 
 class PostV2TargetIdentifierAttributesAttributeOptionsDataTypedDict(TypedDict):
@@ -35,7 +36,7 @@ class PostV2TargetIdentifierAttributesAttributeOptionsRequestBody(BaseModel):
 
 class PostV2TargetIdentifierAttributesAttributeOptionsRequestTypedDict(TypedDict):
     target: PostV2TargetIdentifierAttributesAttributeOptionsTarget
-    r"""Whether the attribute is on an object or a list."""
+    r"""Whether the attribute is on an object, a list or an activity."""
     identifier: str
     attribute: str
     request_body: PostV2TargetIdentifierAttributesAttributeOptionsRequestBodyTypedDict
@@ -46,7 +47,7 @@ class PostV2TargetIdentifierAttributesAttributeOptionsRequest(BaseModel):
         PostV2TargetIdentifierAttributesAttributeOptionsTarget,
         FieldMetadata(path=PathParamMetadata(style="simple", explode=False)),
     ]
-    r"""Whether the attribute is on an object or a list."""
+    r"""Whether the attribute is on an object, a list or an activity."""
 
     identifier: Annotated[
         str, FieldMetadata(path=PathParamMetadata(style="simple", explode=False))

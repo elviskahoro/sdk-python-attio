@@ -11,22 +11,22 @@ import httpx
 from typing import Optional
 
 
-class PostV2ObjectsObjectRecordsConcurrentWriteConflictErrorData(BaseModel):
+class PostV2ObjectsObjectRecordsConflictInvalidRequestErrorData(BaseModel):
     status_code: float
     type: models_post_v2_objects_object_recordsop.PostV2ObjectsObjectRecordsConflictType
-    code: models_post_v2_objects_object_recordsop.PostV2ObjectsObjectRecordsCodeConcurrentWriteConflict
+    code: models_post_v2_objects_object_recordsop.PostV2ObjectsObjectRecordsCodeUnion
     message: str
 
 
 @dataclass(unsafe_hash=True)
-class PostV2ObjectsObjectRecordsConcurrentWriteConflictError(SDKError):
+class PostV2ObjectsObjectRecordsConflictInvalidRequestError(SDKError):
     r"""Conflict"""
 
-    data: PostV2ObjectsObjectRecordsConcurrentWriteConflictErrorData = field(hash=False)
+    data: PostV2ObjectsObjectRecordsConflictInvalidRequestErrorData = field(hash=False)
 
     def __init__(
         self,
-        data: PostV2ObjectsObjectRecordsConcurrentWriteConflictErrorData,
+        data: PostV2ObjectsObjectRecordsConflictInvalidRequestErrorData,
         raw_response: httpx.Response,
         body: Optional[str] = None,
     ):
@@ -88,7 +88,7 @@ class PostV2ObjectsObjectRecordsUnauthorizedError(SDKError):
         object.__setattr__(self, "data", data)
 
 
-class PostV2ObjectsObjectRecordsInvalidRequestErrorData(BaseModel):
+class PostV2ObjectsObjectRecordsBadRequestInvalidRequestErrorData(BaseModel):
     status_code: float
     type: (
         models_post_v2_objects_object_recordsop.PostV2ObjectsObjectRecordsBadRequestType
@@ -100,14 +100,16 @@ class PostV2ObjectsObjectRecordsInvalidRequestErrorData(BaseModel):
 
 
 @dataclass(unsafe_hash=True)
-class PostV2ObjectsObjectRecordsInvalidRequestError(SDKError):
+class PostV2ObjectsObjectRecordsBadRequestInvalidRequestError(SDKError):
     r"""Bad Request"""
 
-    data: PostV2ObjectsObjectRecordsInvalidRequestErrorData = field(hash=False)
+    data: PostV2ObjectsObjectRecordsBadRequestInvalidRequestErrorData = field(
+        hash=False
+    )
 
     def __init__(
         self,
-        data: PostV2ObjectsObjectRecordsInvalidRequestErrorData,
+        data: PostV2ObjectsObjectRecordsBadRequestInvalidRequestErrorData,
         raw_response: httpx.Response,
         body: Optional[str] = None,
     ):

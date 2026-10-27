@@ -12,8 +12,9 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 PatchV2TargetIdentifierAttributesAttributeOptionsOptionTarget = Literal[
     "objects",
     "lists",
+    "activities",
 ]
-r"""Whether the attribute is on an object or a list."""
+r"""Whether the attribute is on an object, a list or an activity."""
 
 
 class PatchV2TargetIdentifierAttributesAttributeOptionsOptionDataTypedDict(TypedDict):
@@ -61,7 +62,7 @@ class PatchV2TargetIdentifierAttributesAttributeOptionsOptionRequestTypedDict(
     TypedDict
 ):
     target: PatchV2TargetIdentifierAttributesAttributeOptionsOptionTarget
-    r"""Whether the attribute is on an object or a list."""
+    r"""Whether the attribute is on an object, a list or an activity."""
     identifier: str
     attribute: str
     option: str
@@ -75,7 +76,7 @@ class PatchV2TargetIdentifierAttributesAttributeOptionsOptionRequest(BaseModel):
         PatchV2TargetIdentifierAttributesAttributeOptionsOptionTarget,
         FieldMetadata(path=PathParamMetadata(style="simple", explode=False)),
     ]
-    r"""Whether the attribute is on an object or a list."""
+    r"""Whether the attribute is on an object, a list or an activity."""
 
     identifier: Annotated[
         str, FieldMetadata(path=PathParamMetadata(style="simple", explode=False))

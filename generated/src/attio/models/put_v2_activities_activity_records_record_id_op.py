@@ -58,9 +58,39 @@ class PutV2ActivitiesActivityRecordsRecordIDRequest(BaseModel):
 PutV2ActivitiesActivityRecordsRecordIDConflictType = Literal["invalid_request_error",]
 
 
+PutV2ActivitiesActivityRecordsRecordIDCodeUniquenessConflict = Literal[
+    "uniqueness_conflict",
+]
+
+
+PutV2ActivitiesActivityRecordsRecordIDCodeConflictMultipleMatchResults = Literal[
+    "multiple_match_results",
+]
+
+
 PutV2ActivitiesActivityRecordsRecordIDCodeConcurrentWriteConflict = Literal[
     "concurrent_write_conflict",
 ]
+
+
+PutV2ActivitiesActivityRecordsRecordIDConflictCodeUnionTypedDict = TypeAliasType(
+    "PutV2ActivitiesActivityRecordsRecordIDConflictCodeUnionTypedDict",
+    Union[
+        PutV2ActivitiesActivityRecordsRecordIDCodeConcurrentWriteConflict,
+        PutV2ActivitiesActivityRecordsRecordIDCodeConflictMultipleMatchResults,
+        PutV2ActivitiesActivityRecordsRecordIDCodeUniquenessConflict,
+    ],
+)
+
+
+PutV2ActivitiesActivityRecordsRecordIDConflictCodeUnion = TypeAliasType(
+    "PutV2ActivitiesActivityRecordsRecordIDConflictCodeUnion",
+    Union[
+        PutV2ActivitiesActivityRecordsRecordIDCodeConcurrentWriteConflict,
+        PutV2ActivitiesActivityRecordsRecordIDCodeConflictMultipleMatchResults,
+        PutV2ActivitiesActivityRecordsRecordIDCodeUniquenessConflict,
+    ],
+)
 
 
 PutV2ActivitiesActivityRecordsRecordIDNotFoundType = Literal["invalid_request_error",]
@@ -78,7 +108,7 @@ PutV2ActivitiesActivityRecordsRecordIDCodeUnauthorized = Literal["unauthorized",
 PutV2ActivitiesActivityRecordsRecordIDBadRequestType = Literal["invalid_request_error",]
 
 
-PutV2ActivitiesActivityRecordsRecordIDCodeMultipleMatchResults = Literal[
+PutV2ActivitiesActivityRecordsRecordIDCodeBadRequestMultipleMatchResults = Literal[
     "multiple_match_results",
 ]
 
@@ -103,8 +133,8 @@ PutV2ActivitiesActivityRecordsRecordIDCodeParticleGateViolation = Literal[
 PutV2ActivitiesActivityRecordsRecordIDCodeMissingValue = Literal["missing_value",]
 
 
-PutV2ActivitiesActivityRecordsRecordIDCodeUnionTypedDict = TypeAliasType(
-    "PutV2ActivitiesActivityRecordsRecordIDCodeUnionTypedDict",
+PutV2ActivitiesActivityRecordsRecordIDBadRequestCodeUnionTypedDict = TypeAliasType(
+    "PutV2ActivitiesActivityRecordsRecordIDBadRequestCodeUnionTypedDict",
     Union[
         PutV2ActivitiesActivityRecordsRecordIDCodeMissingValue,
         PutV2ActivitiesActivityRecordsRecordIDCodeParticleGateViolation,
@@ -112,13 +142,13 @@ PutV2ActivitiesActivityRecordsRecordIDCodeUnionTypedDict = TypeAliasType(
         PutV2ActivitiesActivityRecordsRecordIDCodeValidationType,
         PutV2ActivitiesActivityRecordsRecordIDCodeDuplicateValues,
         PutV2ActivitiesActivityRecordsRecordIDCodeLimitReached,
-        PutV2ActivitiesActivityRecordsRecordIDCodeMultipleMatchResults,
+        PutV2ActivitiesActivityRecordsRecordIDCodeBadRequestMultipleMatchResults,
     ],
 )
 
 
-PutV2ActivitiesActivityRecordsRecordIDCodeUnion = TypeAliasType(
-    "PutV2ActivitiesActivityRecordsRecordIDCodeUnion",
+PutV2ActivitiesActivityRecordsRecordIDBadRequestCodeUnion = TypeAliasType(
+    "PutV2ActivitiesActivityRecordsRecordIDBadRequestCodeUnion",
     Union[
         PutV2ActivitiesActivityRecordsRecordIDCodeMissingValue,
         PutV2ActivitiesActivityRecordsRecordIDCodeParticleGateViolation,
@@ -126,7 +156,7 @@ PutV2ActivitiesActivityRecordsRecordIDCodeUnion = TypeAliasType(
         PutV2ActivitiesActivityRecordsRecordIDCodeValidationType,
         PutV2ActivitiesActivityRecordsRecordIDCodeDuplicateValues,
         PutV2ActivitiesActivityRecordsRecordIDCodeLimitReached,
-        PutV2ActivitiesActivityRecordsRecordIDCodeMultipleMatchResults,
+        PutV2ActivitiesActivityRecordsRecordIDCodeBadRequestMultipleMatchResults,
     ],
 )
 

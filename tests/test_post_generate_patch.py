@@ -467,6 +467,9 @@ def test_module_aliases_restore_the_committed_state_byte_identically(
         assert PGP.ensure_module_aliases(target, module) is False
 
 
+@pytest.mark.skipif(
+    not PGP.MODEL_RENAME_ALIASES, reason="no rename aliases are currently shipped"
+)
 def test_models_init_aliases_restore_the_committed_state_byte_identically(
     tmp_path: Path,
 ) -> None:
@@ -527,7 +530,14 @@ def test_init_entry_helpers_insert_at_sorted_positions() -> None:
     ) in text
 
 
-def test_module_alias_raises_when_rename_target_missing(tmp_path: Path) -> None:
+def test_module_alias_raises_when_rename_target_missing(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(
+        PGP,
+        "MODEL_RENAME_ALIASES",
+        {"post_v2_activities_activity_recordsop": {"Old": "New"}},
+    )
     target = tmp_path / "post_v2_activities_activity_recordsop.py"
     target.write_text('X = Literal["unauthorized",]\n')
 
@@ -535,7 +545,14 @@ def test_module_alias_raises_when_rename_target_missing(tmp_path: Path) -> None:
         PGP.ensure_module_aliases(target, "post_v2_activities_activity_recordsop")
 
 
-def test_models_init_alias_raises_when_import_block_missing(tmp_path: Path) -> None:
+def test_models_init_alias_raises_when_import_block_missing(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(
+        PGP,
+        "MODEL_RENAME_ALIASES",
+        {"put_v2_lists_list_entriesop": {"Old": "New"}},
+    )
     target = tmp_path / "__init__.py"
     target.write_text(
         "from typing import TYPE_CHECKING\n\n"

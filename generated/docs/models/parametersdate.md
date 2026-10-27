@@ -1,0 +1,9 @@
+# ParametersDate
+
+
+## Fields
+
+| Field                                                                        | Type                                                                         | Required                                                                     | Description                                                                  | Example                                                                      |
+| ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `type`                                                                       | [models.TypeDate](../models/typedate.md)                                     | :heavy_check_mark:                                                           | The type of the parameter.                                                   |                                                                              |
+| `value`                                                                      | [datetime](https://docs.python.org/3/library/datetime.html#datetime-objects) | :heavy_check_mark:                                                           | A calendar date in the format YYYY-MM-DD.                                    | 2023-01-01                                                                   |

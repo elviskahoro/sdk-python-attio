@@ -58,9 +58,39 @@ class PatchV2ObjectsObjectRecordsRecordIDRequest(BaseModel):
 PatchV2ObjectsObjectRecordsRecordIDConflictType = Literal["invalid_request_error",]
 
 
+PatchV2ObjectsObjectRecordsRecordIDCodeUniquenessConflict = Literal[
+    "uniqueness_conflict",
+]
+
+
+PatchV2ObjectsObjectRecordsRecordIDCodeConflictMultipleMatchResults = Literal[
+    "multiple_match_results",
+]
+
+
 PatchV2ObjectsObjectRecordsRecordIDCodeConcurrentWriteConflict = Literal[
     "concurrent_write_conflict",
 ]
+
+
+PatchV2ObjectsObjectRecordsRecordIDConflictCodeUnionTypedDict = TypeAliasType(
+    "PatchV2ObjectsObjectRecordsRecordIDConflictCodeUnionTypedDict",
+    Union[
+        PatchV2ObjectsObjectRecordsRecordIDCodeConcurrentWriteConflict,
+        PatchV2ObjectsObjectRecordsRecordIDCodeConflictMultipleMatchResults,
+        PatchV2ObjectsObjectRecordsRecordIDCodeUniquenessConflict,
+    ],
+)
+
+
+PatchV2ObjectsObjectRecordsRecordIDConflictCodeUnion = TypeAliasType(
+    "PatchV2ObjectsObjectRecordsRecordIDConflictCodeUnion",
+    Union[
+        PatchV2ObjectsObjectRecordsRecordIDCodeConcurrentWriteConflict,
+        PatchV2ObjectsObjectRecordsRecordIDCodeConflictMultipleMatchResults,
+        PatchV2ObjectsObjectRecordsRecordIDCodeUniquenessConflict,
+    ],
+)
 
 
 PatchV2ObjectsObjectRecordsRecordIDNotFoundType = Literal["invalid_request_error",]
@@ -78,7 +108,7 @@ PatchV2ObjectsObjectRecordsRecordIDCodeUnauthorized = Literal["unauthorized",]
 PatchV2ObjectsObjectRecordsRecordIDBadRequestType = Literal["invalid_request_error",]
 
 
-PatchV2ObjectsObjectRecordsRecordIDCodeMultipleMatchResults = Literal[
+PatchV2ObjectsObjectRecordsRecordIDCodeBadRequestMultipleMatchResults = Literal[
     "multiple_match_results",
 ]
 
@@ -106,8 +136,8 @@ PatchV2ObjectsObjectRecordsRecordIDCodeMergeInProgress = Literal["merge_in_progr
 PatchV2ObjectsObjectRecordsRecordIDCodeMissingValue = Literal["missing_value",]
 
 
-PatchV2ObjectsObjectRecordsRecordIDCodeUnionTypedDict = TypeAliasType(
-    "PatchV2ObjectsObjectRecordsRecordIDCodeUnionTypedDict",
+PatchV2ObjectsObjectRecordsRecordIDBadRequestCodeUnionTypedDict = TypeAliasType(
+    "PatchV2ObjectsObjectRecordsRecordIDBadRequestCodeUnionTypedDict",
     Union[
         PatchV2ObjectsObjectRecordsRecordIDCodeMissingValue,
         PatchV2ObjectsObjectRecordsRecordIDCodeMergeInProgress,
@@ -116,13 +146,13 @@ PatchV2ObjectsObjectRecordsRecordIDCodeUnionTypedDict = TypeAliasType(
         PatchV2ObjectsObjectRecordsRecordIDCodeValidationType,
         PatchV2ObjectsObjectRecordsRecordIDCodeDuplicateValues,
         PatchV2ObjectsObjectRecordsRecordIDCodeLimitReached,
-        PatchV2ObjectsObjectRecordsRecordIDCodeMultipleMatchResults,
+        PatchV2ObjectsObjectRecordsRecordIDCodeBadRequestMultipleMatchResults,
     ],
 )
 
 
-PatchV2ObjectsObjectRecordsRecordIDCodeUnion = TypeAliasType(
-    "PatchV2ObjectsObjectRecordsRecordIDCodeUnion",
+PatchV2ObjectsObjectRecordsRecordIDBadRequestCodeUnion = TypeAliasType(
+    "PatchV2ObjectsObjectRecordsRecordIDBadRequestCodeUnion",
     Union[
         PatchV2ObjectsObjectRecordsRecordIDCodeMissingValue,
         PatchV2ObjectsObjectRecordsRecordIDCodeMergeInProgress,
@@ -131,7 +161,7 @@ PatchV2ObjectsObjectRecordsRecordIDCodeUnion = TypeAliasType(
         PatchV2ObjectsObjectRecordsRecordIDCodeValidationType,
         PatchV2ObjectsObjectRecordsRecordIDCodeDuplicateValues,
         PatchV2ObjectsObjectRecordsRecordIDCodeLimitReached,
-        PatchV2ObjectsObjectRecordsRecordIDCodeMultipleMatchResults,
+        PatchV2ObjectsObjectRecordsRecordIDCodeBadRequestMultipleMatchResults,
     ],
 )
 

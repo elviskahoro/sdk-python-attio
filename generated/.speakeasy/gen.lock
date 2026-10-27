@@ -1,16 +1,16 @@
 lockVersion: 2.0.0
 id: 8dc93348-09a5-472d-90a9-8d558c23be86
 management:
-  docChecksum: 0648ed31ef9e7220a2184e536ed2b336
+  docChecksum: 5529f5de41b974228f8ab2b61a1b4f59
   docVersion: 2.0.0
   speakeasyVersion: 1.804.0
   generationVersion: 2.952.5
-  releaseVersion: 0.26.5
-  configChecksum: 892387b9faca0970a693f64dda51092a
+  releaseVersion: 0.26.6
+  configChecksum: 19fc0adc9cea9855b07c232d0dc06cb8
 persistentEdits:
-  generation_id: f65332e1-b9d0-4a14-9e93-be862bf434aa
-  pristine_commit_hash: a0a526bd118cbef0ed6a189a6a452582c8d989a9
-  pristine_tree_hash: 2ed09aa91150e615a60178791a2aacf7fc0f6e4f
+  generation_id: 0d97ac1a-99c2-47e8-a346-aec1fcd4cd18
+  pristine_commit_hash: 1065bd4894c6090a4f221fd0b93ad06359999a2c
+  pristine_tree_hash: 0a223cc96fb1ca8516dd960e6dfe401d4d574d2a
 features:
   python:
     additionalDependencies: 1.1.0
@@ -235,14 +235,14 @@ trackedFiles:
     id: 6b59bdc9448b
     last_write_checksum: sha1:613fa068eaf691a125551194ebfe0b258b7627ee
     pristine_git_object: 29d02d36c031988a1f8479e0c39ebb3a6b19dfc8
-  docs/errors/patchv2activitiesactivityrecordsrecordidconcurrentwriteconflicterror.md:
-    id: 9086489960a6
-    last_write_checksum: sha1:5cea59ce0e6a514754174dda8a61d4b3edeccbfc
-    pristine_git_object: 270f23293180732fd9ef4e73ae709d8991a9ac0e
-  docs/errors/patchv2activitiesactivityrecordsrecordidinvalidrequesterror.md:
-    id: 833006e7f579
-    last_write_checksum: sha1:5ec9f23e26b0d467dc2f90ba180108d78bb27d8e
-    pristine_git_object: e2ebf4267591eb521cacdc44762bdd6705ccd3f8
+  docs/errors/patchv2activitiesactivityrecordsrecordidbadrequestinvalidrequesterror.md:
+    id: 65e6b3772fd9
+    last_write_checksum: sha1:eacf1f4fc1368011b092bd61fa014653fab095f2
+    pristine_git_object: 95bdc042790fc34c5a9dd0e8928f7264ec774495
+  docs/errors/patchv2activitiesactivityrecordsrecordidconflictinvalidrequesterror.md:
+    id: f271ec816583
+    last_write_checksum: sha1:7a03afdd9590fcc7276c24486fdf6d3e7e439296
+    pristine_git_object: cc83fed94e1845f5d7c5abe93fb6183932758926
   docs/errors/patchv2activitiesactivityrecordsrecordidnotfounderror.md:
     id: 41cccda0d9c2
     last_write_checksum: sha1:923ab79c497ee0aed2865d90b76b2df73c3b0cb8
@@ -303,14 +303,14 @@ trackedFiles:
     id: ff77a218cd23
     last_write_checksum: sha1:da0d0b6feec5b41171aacc3ba334161d651cc9a4
     pristine_git_object: ae7332e8c68bc627ee22a3ab4cb1cd15b6d45e14
-  docs/errors/patchv2objectsobjectrecordsrecordidconcurrentwriteconflicterror.md:
-    id: 4d19813020dc
-    last_write_checksum: sha1:84cddf709c578b1e2346ecc6d3198a85813c871b
-    pristine_git_object: 58f5e316f87698a5c9888f9b6a7e89981516fdc6
-  docs/errors/patchv2objectsobjectrecordsrecordidinvalidrequesterror.md:
-    id: e605060afcaf
-    last_write_checksum: sha1:571497e9e7ba2e4e3795a1308f7411178af3aeac
-    pristine_git_object: 487dd845dcde2b22126c74b0d64fef9529abf791
+  docs/errors/patchv2objectsobjectrecordsrecordidbadrequestinvalidrequesterror.md:
+    id: 45456a69acc9
+    last_write_checksum: sha1:5a9fa16a249a910f66d38fce548f3c6e57a45d8b
+    pristine_git_object: 45f1349f8a6095603cb3b08131f94d1f8da9d787
+  docs/errors/patchv2objectsobjectrecordsrecordidconflictinvalidrequesterror.md:
+    id: d6c9fd4972cd
+    last_write_checksum: sha1:1360d1f688411ac9036229f2903e2bd0f8f5d62b
+    pristine_git_object: 00fbfbdc2d63b15410bdca8c392dde97be1d0f8f
   docs/errors/patchv2objectsobjectrecordsrecordidnotfounderror.md:
     id: ec6c3a12110c
     last_write_checksum: sha1:9f0fd764b9ad6a7de95f9ed63e98d1cb5710f34b
@@ -393,16 +393,16 @@ trackedFiles:
     pristine_git_object: 1203ac05598f589fc2604b70452d8012d1c4c804
   docs/errors/postv2activitiesactivityrecordsautherror.md:
     id: 08db453b33f0
-    last_write_checksum: sha1:3245d4945daa9a64f399fab21713697b9d9616ca
-    pristine_git_object: b6abd971e4951e999891239a59c12721944d6d6a
-  docs/errors/postv2activitiesactivityrecordsconcurrentwriteconflicterror.md:
-    id: b3843edefd4d
-    last_write_checksum: sha1:d2031b77bbdc0c5643a62dd77e4f21efc246e7a8
-    pristine_git_object: 60ada859242412214cc9b27daa8a87252298871a
-  docs/errors/postv2activitiesactivityrecordsinvalidrequesterror.md:
-    id: 0679076c1503
-    last_write_checksum: sha1:ece2650b49ecf2c5ecf3b8a9206fe9797ff1c8e0
-    pristine_git_object: 6ef5051ae839c2bfb57a4166076a17949df81437
+    last_write_checksum: sha1:0f9452037cc1a5b8bf49664476931454619387ff
+    pristine_git_object: 7890b26d593281ef39c1e9c360cc23c8a324b44f
+  docs/errors/postv2activitiesactivityrecordsbadrequestinvalidrequesterror.md:
+    id: 68d8888062da
+    last_write_checksum: sha1:fff197ae3b185452da1e8213f9e973d317f553a0
+    pristine_git_object: 5b012fc067ad391add70e54d85047bd33a7bf1ae
+  docs/errors/postv2activitiesactivityrecordsconflictinvalidrequesterror.md:
+    id: a14a0559785f
+    last_write_checksum: sha1:0cde7453caa40b1f43cfbb3a1083713e5acfa63c
+    pristine_git_object: 9273a310de2cf400845973ff35c70d187f1c9b85
   docs/errors/postv2activitiesactivityrecordsnotfounderror.md:
     id: 6ec4e651abe0
     last_write_checksum: sha1:c3cdb7b6a0276609105f803ffc97d2f77450006d
@@ -483,14 +483,14 @@ trackedFiles:
     id: f560702ee1e1
     last_write_checksum: sha1:2252ec0f6218187a1536db1e4fd3b220a16146bd
     pristine_git_object: 390cd5fbe25555343686f9b6295d4bddfcc74935
-  docs/errors/postv2objectsobjectrecordsconcurrentwriteconflicterror.md:
-    id: 3cebca4aa2c9
-    last_write_checksum: sha1:23e196fa94d2f8a85674aabdfeed5ca77a5b3794
-    pristine_git_object: 982abe83110186c5651be91923609b9318893d84
-  docs/errors/postv2objectsobjectrecordsinvalidrequesterror.md:
-    id: 9560d33a8b0d
-    last_write_checksum: sha1:ee5c6defbfa24408198449400ba3bbadadc24d6d
-    pristine_git_object: bac425c96539fb564a0f756eda7eb7da6b750280
+  docs/errors/postv2objectsobjectrecordsbadrequestinvalidrequesterror.md:
+    id: bc1b548fbc3d
+    last_write_checksum: sha1:04bec5cb88073c4efd2c5d075ae2aabdf41e82a1
+    pristine_git_object: b071330d43703430b29c504282b80be00947c250
+  docs/errors/postv2objectsobjectrecordsconflictinvalidrequesterror.md:
+    id: 31e7f32c9b28
+    last_write_checksum: sha1:4a6aa6fc65dd294b0c8febe71ee34fa85d9d3fe5
+    pristine_git_object: 095fe8691cae6b9ca61606d25612b0da52284f1f
   docs/errors/postv2objectsobjectrecordsmergeinvalidrequesterror.md:
     id: 4bcba652a323
     last_write_checksum: sha1:a43aa590d7dd79925e4e692bb00197c2bacb22bf
@@ -533,8 +533,8 @@ trackedFiles:
     pristine_git_object: 6e389ca57b0ef91cdb240ed0b2a1616cbaef9dfd
   docs/errors/postv2sqlfiltererror.md:
     id: 0889ca89a93b
-    last_write_checksum: sha1:967e6f0a030e0b9692dd9e715465f789a0f4767b
-    pristine_git_object: 55ab761faa486b1e7f019b4a9f1417de7258e950
+    last_write_checksum: sha1:59f6773905601d12d1f22735cc8998256a020aed
+    pristine_git_object: 9abc4b573060973dbcc05c83316aaaa44be04b47
   docs/errors/postv2targetidentifierattributesattributeoptionsnotfounderror.md:
     id: d8c6cc8f8c53
     last_write_checksum: sha1:b382f532e02df785c8483ab0648e2d2ba2eb83db
@@ -601,28 +601,28 @@ trackedFiles:
     pristine_git_object: b4c4c609915b3eaebd2cd6472d5e500af899b099
   docs/errors/putv2activitiesactivityrecordsautherror.md:
     id: a06797d16ec0
-    last_write_checksum: sha1:1c86db9906ec58698f12e9cdf0ede0306d3bdd1d
-    pristine_git_object: ad192adff47fab34058b18304b30e64028c7e4c2
-  docs/errors/putv2activitiesactivityrecordsconcurrentwriteconflicterror.md:
-    id: 80054f20c977
-    last_write_checksum: sha1:404623ba27744822f12ff38f7a8042c8f5ae5411
-    pristine_git_object: b285fc764ae0b0a0cb4ea86c1a873c5379798c10
-  docs/errors/putv2activitiesactivityrecordsinvalidrequesterror.md:
-    id: e0159b3da37f
-    last_write_checksum: sha1:5f88bdac0a1357314eb55494206fb027eac353e4
-    pristine_git_object: 975818c2336522abe44c6dd01884c9342d40266f
+    last_write_checksum: sha1:96c51aa43a860035c6e4ccd0c2ae7fa64b6ff3fd
+    pristine_git_object: e2e015b8fcd1db121f1a0177755b7fbdf25b0e4f
+  docs/errors/putv2activitiesactivityrecordsbadrequestinvalidrequesterror.md:
+    id: 89ac280b835a
+    last_write_checksum: sha1:52add44af2c91340fd55ead5fd264227491909bd
+    pristine_git_object: d42eec9597c4f7ade55091e2c792e396e0fbfe1b
+  docs/errors/putv2activitiesactivityrecordsconflictinvalidrequesterror.md:
+    id: eeff51708615
+    last_write_checksum: sha1:d8e7aceb0a763bb14a1a17689ef5744c631d367d
+    pristine_git_object: 8c20bb898db1aac1e613aa7f5628fa1111fa0ae2
   docs/errors/putv2activitiesactivityrecordsnotfounderror.md:
     id: 681460c1a74b
     last_write_checksum: sha1:6ceea211eaa1664c10435564bf65b6942ecc1e58
     pristine_git_object: 1590da778b02fca3c075136a3b9ef358ec0e0334
-  docs/errors/putv2activitiesactivityrecordsrecordidconcurrentwriteconflicterror.md:
-    id: 28148b8f044b
-    last_write_checksum: sha1:62b58174ef4634410bb54eef711944e24df6ad48
-    pristine_git_object: 7954edc161e2cff41fbf236c5374759a0e3e4ce3
-  docs/errors/putv2activitiesactivityrecordsrecordidinvalidrequesterror.md:
-    id: 86c5d4075565
-    last_write_checksum: sha1:fec2f6faaddfae62ad0f4b5366f6e5a1e97a5435
-    pristine_git_object: af1d2546707d492c4127c94add9bb97231e78b50
+  docs/errors/putv2activitiesactivityrecordsrecordidbadrequestinvalidrequesterror.md:
+    id: bd453788dd0e
+    last_write_checksum: sha1:c8ea7a8a050742db1ea88e04fa10619c09e2162d
+    pristine_git_object: a5d59b7f8b97816822c0137955787bffbbe16650
+  docs/errors/putv2activitiesactivityrecordsrecordidconflictinvalidrequesterror.md:
+    id: b598af8cf358
+    last_write_checksum: sha1:0bc818e9577ab31c8c2599c55e4165881591e4de
+    pristine_git_object: 9dc92a8b7d74ec9ac9818e2b099d5d59240ae211
   docs/errors/putv2activitiesactivityrecordsrecordidnotfounderror.md:
     id: 2bdaeb5eea7d
     last_write_checksum: sha1:a0644ae720f14c630883f8b4586c295a58a4887c
@@ -675,14 +675,14 @@ trackedFiles:
     id: 86e2adf7af46
     last_write_checksum: sha1:84466ae68581a7e6ee53d5d33773676fdb36156d
     pristine_git_object: 3e094518033e2ae9e2a1d08f9caf9315c816902f
-  docs/errors/putv2objectsobjectrecordsconcurrentwriteconflicterror.md:
-    id: 4b425f6060ae
-    last_write_checksum: sha1:b37e048dcf715beb644dc4aa69900c3ec4d6d97e
-    pristine_git_object: c2750ef6baabe97e3fbcfc101d09e266e60ad2e1
-  docs/errors/putv2objectsobjectrecordsinvalidrequesterror.md:
-    id: 8b640b94f1be
-    last_write_checksum: sha1:b06f048845229c7e98348b360cf41bcfc7b55566
-    pristine_git_object: 919b0a0403a3eb37eecfe60441c866127b0250a3
+  docs/errors/putv2objectsobjectrecordsbadrequestinvalidrequesterror.md:
+    id: 7f52ab4c2d59
+    last_write_checksum: sha1:72481b79cb0c54b9235287d0f5b4f4f2c2839dac
+    pristine_git_object: 7e1930f61f86b07f78a6c383b8e47324c9723c21
+  docs/errors/putv2objectsobjectrecordsconflictinvalidrequesterror.md:
+    id: a625a6ef3a13
+    last_write_checksum: sha1:9b937d3b9838dc7275d0514991d8808d38fcc6c4
+    pristine_git_object: c48bae5aa7b000e74b48fc970e79234418f19def
   docs/errors/putv2objectsobjectrecordsnotfounderror.md:
     id: cd9ccf29b519
     last_write_checksum: sha1:fd988647111f1ef5c29808b6d15a31823a7e2d05
@@ -699,14 +699,14 @@ trackedFiles:
     id: 574a71484ed5
     last_write_checksum: sha1:956c148ea91520576c2d1e77bdc2a5b9c78b5ef2
     pristine_git_object: a9277c7313c9c0674b3e54ea4f64e2f76faae41b
-  docs/errors/putv2objectsobjectrecordsrecordidconcurrentwriteconflicterror.md:
-    id: 08b08f56990b
-    last_write_checksum: sha1:ad635533bff9890490ddabefc0863b16b7d466be
-    pristine_git_object: 6e38c9f15f3dca04fb38a4cf038f7a7bab4352c4
-  docs/errors/putv2objectsobjectrecordsrecordidinvalidrequesterror.md:
-    id: 66405cbb41b2
-    last_write_checksum: sha1:2123d9c86c0f87a4544d1687c6f9731aa80b623c
-    pristine_git_object: b98dcf89b4cee4168b57dd3782199e3673291b75
+  docs/errors/putv2objectsobjectrecordsrecordidbadrequestinvalidrequesterror.md:
+    id: dccac0596265
+    last_write_checksum: sha1:05631095d096da7cb840ad79ccede5fe66fe79b8
+    pristine_git_object: ee946182338d6b2a702e513351a45c69aad4a3d8
+  docs/errors/putv2objectsobjectrecordsrecordidconflictinvalidrequesterror.md:
+    id: 1625f6033795
+    last_write_checksum: sha1:28e5682b54f96af89615496e4e3ec9a4ac5b5fbb
+    pristine_git_object: 51550065294cebeaa4523c91ffb105f37bb916d8
   docs/errors/putv2objectsobjectrecordsrecordidnotfounderror.md:
     id: db7439a7690d
     last_write_checksum: sha1:da036bd85a30f60ec35be71e26b62bd5213b8ed4
@@ -851,10 +851,6 @@ trackedFiles:
     id: 25ed547aeece
     last_write_checksum: sha1:e6d57f41dd540a2585899099a66ae7c7743f9f75
     pristine_git_object: 66abc5129a69ac532c9f2caa6f7faa7fe7082581
-  docs/models/codemultiplematchresults.md:
-    id: 23edf19826bb
-    last_write_checksum: sha1:449a0b0280759dac05ca584b9e667f0b645664f7
-    pristine_git_object: 9bd88ed9c301162614b2d40dcb7a9988a0b9c42a
   docs/models/codeselfmerge.md:
     id: 777ece0d3038
     last_write_checksum: sha1:e2e20aeb369a9653a3a2c3b96495f9df841947fd
@@ -3357,24 +3353,24 @@ trackedFiles:
     pristine_git_object: 72306dddb1f6a2d7a692e81b035e5912be43690d
   docs/models/getv2targetidentifierattributesattributeoptionsrequest.md:
     id: e3bfe4b523e1
-    last_write_checksum: sha1:f0109c51a112e4944a4c06520304ad690ece99a3
-    pristine_git_object: b8743b088c1a0b98a4530e667d6bcf88777f34e1
+    last_write_checksum: sha1:9e8df6d79d946e8381d25ea3bb98fb13d439bdc3
+    pristine_git_object: 3de12c0fb429d09479da0edd43f8cc04aabbadce
   docs/models/getv2targetidentifierattributesattributeoptionsresponse.md:
     id: 164f45921675
     last_write_checksum: sha1:6c3c34d851e269eb399180c8cabeff3d02fc2f81
     pristine_git_object: 203979c2492245fab004ea480d50b0411ae8e20c
   docs/models/getv2targetidentifierattributesattributeoptionstarget.md:
     id: 3b2f58c238ba
-    last_write_checksum: sha1:86a3fbdc42096b5f72205f1107ced0f5f89f9385
-    pristine_git_object: b20cabda0980243340116367be9ebd7e25e7a6c2
+    last_write_checksum: sha1:ee06a4aafd0472d853a529608b39e7b76d118f73
+    pristine_git_object: f79c535f4194ba4b002696b2222e3cfce503ce41
   docs/models/getv2targetidentifierattributesattributeoptionstype.md:
     id: 43e4b8839d3d
     last_write_checksum: sha1:94258edc547224406c66bba71ed8cb8a9d26dbc9
     pristine_git_object: 53163b878b4ea8bf4a17075608755e2efcf2516e
   docs/models/getv2targetidentifierattributesattributerequest.md:
     id: 61a6d0c66593
-    last_write_checksum: sha1:cabd8cd78b0a5de231f81d1433912814c4ae3e36
-    pristine_git_object: 9b1c15c45d7ad165b0b606265c7149011a8fddd5
+    last_write_checksum: sha1:dc4ad5b40f717c2c1fac62b56dd2dd0c17022fbf
+    pristine_git_object: a51fa8d29daf79ac3af9874f6e33306e75fae2bc
   docs/models/getv2targetidentifierattributesattributeresponse.md:
     id: e53c6aa8d042
     last_write_checksum: sha1:27141328037dcc853a2966fb2a09ded94cfc51c2
@@ -3401,24 +3397,24 @@ trackedFiles:
     pristine_git_object: 505a6f4023b453756fb7462a1c15c45a43d00163
   docs/models/getv2targetidentifierattributesattributetarget.md:
     id: e61d3edc21bc
-    last_write_checksum: sha1:3eaddd09ac3966d894abd924a56dc8e343eaff38
-    pristine_git_object: eaa522403326e7d8257fad13e24bf32a3416b4cb
+    last_write_checksum: sha1:ce3b6c33cc4edce8acef8771a10a4cbedc61eb0e
+    pristine_git_object: 38cff78a63e2631ec9c80f3e101cb25349e49b4f
   docs/models/getv2targetidentifierattributesattributetype.md:
     id: f13e08c6d2dd
     last_write_checksum: sha1:4994aad5f189ab38bdf98165a314972b976b958b
     pristine_git_object: 0f21ab3173937214224b43c1e19bdbdc13b7c36f
   docs/models/getv2targetidentifierattributesrequest.md:
     id: e58ca42d6c7f
-    last_write_checksum: sha1:a8d252424676b5ba786085d60a2b780bd6e74d6d
-    pristine_git_object: 37587fb5bad024f6ce9db1f58dbe8206ab4f34a6
+    last_write_checksum: sha1:a4b90025fe41edc5fecf2e2c28a5971ae00e9c8d
+    pristine_git_object: 9fa9426e0fd70cae1dda4de4b8d0fcfa83a4f959
   docs/models/getv2targetidentifierattributesresponse.md:
     id: 1c123f021d93
     last_write_checksum: sha1:dbd1e86654530ef5749759465972b49081013016
     pristine_git_object: 45319e03269a25950909d652bef91c32862e1311
   docs/models/getv2targetidentifierattributestarget.md:
     id: 83a4c410f9c9
-    last_write_checksum: sha1:7cb13399b5679e477af3304e8a8fc05df44850ec
-    pristine_git_object: 0056babf3d197fdecc2b6c77df618b23f73138ca
+    last_write_checksum: sha1:cac18a6e419aacac6296388781e1c995efa1fe12
+    pristine_git_object: bc8e260b8eecc78c4687fc315f8a0db32debf333
   docs/models/getv2tasksrequest.md:
     id: 3d48180e012f
     last_write_checksum: sha1:d90b462809fddf615d25be4a304b9d6b631f8e11
@@ -3729,8 +3725,8 @@ trackedFiles:
     pristine_git_object: e7a314491e7e64ed4900a72c3d1ec435377de5f9
   docs/models/inputvalue8.md:
     id: c4945eb185ef
-    last_write_checksum: sha1:b79ed4ba63f80a77a364273d2a0970357ea8ce61
-    pristine_git_object: 77fccdb7b5961fab22fa12f5130f585b83d0da47
+    last_write_checksum: sha1:cfd938b90cb4492ff0dd001a98f22e1308d052dc
+    pristine_git_object: 2187a6a17b44df17081405aa943e07bb821721eb
   docs/models/inputvalue9.md:
     id: e57f206ac104
     last_write_checksum: sha1:8411b755caa9c06455171df5188910a4b76ce984
@@ -3787,6 +3783,10 @@ trackedFiles:
     id: c2ebf228df99
     last_write_checksum: sha1:14db038bfcaefd92e2f073119d9299542fce807a
     pristine_git_object: cf74ac5a1f104815c8332b7d6459b81fb3f02039
+  docs/models/itemtype.md:
+    id: 4923b3f8fd8c
+    last_write_checksum: sha1:2b48247b3e2c32d9bb2e92d32ed2b75c532d2925
+    pristine_git_object: 1fd2911ffc321a44c7c7b4c72333d20165461167
   docs/models/level.md:
     id: 3ad46a07f4e3
     last_write_checksum: sha1:214b8cf184e96b5f25d216e02d9a0cc2b3c1bb76
@@ -3987,6 +3987,50 @@ trackedFiles:
     id: a757b7ccd0b4
     last_write_checksum: sha1:c7840eb7f3123871ea3e54706174a0c08933f598
     pristine_git_object: 718a5d192ea804755fbe6a2b2210237f2e0f38a4
+  docs/models/parameters.md:
+    id: e4a3969226fc
+    last_write_checksum: sha1:4b5b0be99a1e76bfdfd2c1444abc62dde9b3924b
+    pristine_git_object: eee13181bbcc22271d1d1a74802661d8fef9a161
+  docs/models/parametersboolean.md:
+    id: c026e3d8bc3d
+    last_write_checksum: sha1:feaaf78b56e651fef98526c9bb3e7c28aeff933e
+    pristine_git_object: 0d82cf9ff9b68d0ee2ef9bf389e15657d1beba11
+  docs/models/parametersdate.md:
+    id: 2e3c21819aee
+    last_write_checksum: sha1:f3a5d6ae27e0e1a03867aff338135a90ea4a6bfa
+    pristine_git_object: 23a03465d506fad050469a188c634914b8fc43ad
+  docs/models/parametersdecimal.md:
+    id: "682663650219"
+    last_write_checksum: sha1:1e43b1b4e9fd797361075ec12f94f07cf5c37bc6
+    pristine_git_object: 0862f2b8eb33e04dd3b350d30488c4d6d3b7c9ec
+  docs/models/parametersdouble.md:
+    id: ea40f1102988
+    last_write_checksum: sha1:b5e43d5d725af9f2ef6e643d6292d251197d1c4c
+    pristine_git_object: 93a085a36865be9931ef0db949394df2a1aed9b0
+  docs/models/parametersinteger.md:
+    id: 3eb5e5ae7b4c
+    last_write_checksum: sha1:4c06310e7d6479da317b7b1ddf3f48f0c32520e9
+    pristine_git_object: 5054b54764caa20aff52d1a4b05d46cc7e86a21e
+  docs/models/parameterslist.md:
+    id: bd635f1ff6d7
+    last_write_checksum: sha1:2188843968cfae3edd294eee7ef3764441fa5512
+    pristine_git_object: dffab1ebcaa3b621bee62207a2a5ede9d14e6042
+  docs/models/parametersnull.md:
+    id: bf4bfcdd4c7c
+    last_write_checksum: sha1:d1587164ae72cbe6077c0300b14f39328901a1ec
+    pristine_git_object: 3fd11e3544e91605c672438a1f6324e1915f0083
+  docs/models/parametersstring.md:
+    id: 73d3d8df9376
+    last_write_checksum: sha1:7b263d3511b217688df19df64692a6e58112fcc7
+    pristine_git_object: 9d4d7d549058dc7535602af549f91a9bf0215141
+  docs/models/parametersstruct.md:
+    id: 619a9b616f1b
+    last_write_checksum: sha1:ae90ecbd27073962d734b713a8dc1380ea9b614b
+    pristine_git_object: 18dedc71e1fb9679e3f008c163406273811502db
+  docs/models/parameterstimestamp.md:
+    id: 535f746fdeb3
+    last_write_checksum: sha1:b3ca98ea9b7fed5d78e545878c97121962885bf3
+    pristine_git_object: 75257120d364d7c653e2e09823aada75773cf27b
   docs/models/patchv2activitiesactivitybadrequesttype.md:
     id: a19c8dafe07d
     last_write_checksum: sha1:f6c7f945fe095c54cee35f1449720fb2cbdbc9e6
@@ -4091,14 +4135,34 @@ trackedFiles:
     id: 6246f16615ed
     last_write_checksum: sha1:42968d28e97f679606195cdbfea4d4afc990b63e
     pristine_git_object: b9042ea4e4168e02d3387776c1a349d018e7161d
+  docs/models/patchv2activitiesactivityrecordsrecordidbadrequestcodeunion.md:
+    id: 9f0d50265313
+    last_write_checksum: sha1:bf1e7f65d845b8967ed92c6759213d45e49d9a36
+    pristine_git_object: 2f2435fa5c6d404d243af43586a9119c0cbdcdcf
   docs/models/patchv2activitiesactivityrecordsrecordidbadrequesttype.md:
     id: 991411aa87e0
     last_write_checksum: sha1:43a03f606ab25e72569fed2f8609971ffa4bfba4
     pristine_git_object: 990bbe5ac4aac1b7900b6c09848b12d5bf4bbf22
+  docs/models/patchv2activitiesactivityrecordsrecordidcodebadrequestmultiplematchresults.md:
+    id: 0080d99141ee
+    last_write_checksum: sha1:31983c74d72a0488d6be24b7e8bce547880fbfd2
+    pristine_git_object: 7d62852d0963f763afa8100f9f7a1a01d54ff959
   docs/models/patchv2activitiesactivityrecordsrecordidcodeconcurrentwriteconflict.md:
     id: "367789974255"
     last_write_checksum: sha1:d62a4ec6c022b1b6e7712c7f2d9636e7a9a0f4cd
     pristine_git_object: b01fe265e9343960f715b75355c9152be2ccc64e
+  docs/models/patchv2activitiesactivityrecordsrecordidcodeconflictmultiplematchresults.md:
+    id: 821da59f9f9d
+    last_write_checksum: sha1:d317796219e9221284ba26ca8c24237b3a6eb300
+    pristine_git_object: 446d452fdfd771c8509a3a8bcfe7c501fad209ea
+  docs/models/patchv2activitiesactivityrecordsrecordidcodeduplicatevalues.md:
+    id: cd544a060f3d
+    last_write_checksum: sha1:f10fa319a059e0f2d17508c0008c0e1bbf214e55
+    pristine_git_object: eafedf6248d5aefb7908b76031eeb93941d81b5d
+  docs/models/patchv2activitiesactivityrecordsrecordidcodelimitreached.md:
+    id: 59bcc4db42e6
+    last_write_checksum: sha1:e63878d609fd7273fd3ecd5fa275852b3ed89142
+    pristine_git_object: 99bed0f69b6f00e8812eb8eb43781c9410db55ea
   docs/models/patchv2activitiesactivityrecordsrecordidcodemissingvalue.md:
     id: 205b8645ad81
     last_write_checksum: sha1:78cd695485d07bbb1301cbba0efffb1c5c6efdb2
@@ -4111,10 +4175,22 @@ trackedFiles:
     id: 2c0e627b54cc
     last_write_checksum: sha1:2af30484ea723bc7719cd74ecab7769a725b12f0
     pristine_git_object: cc4f696fff1bde7a4bfc4a88842b28a39abe0fe1
-  docs/models/patchv2activitiesactivityrecordsrecordidcodeunion.md:
-    id: 1c566866ac4e
-    last_write_checksum: sha1:5140feff6516b01e0e4d65a240c2fe913713a9c3
-    pristine_git_object: 98e881cfdb28bae9648836898a696ed2d40927f4
+  docs/models/patchv2activitiesactivityrecordsrecordidcodeuniquenessconflict.md:
+    id: 5d0513a6b373
+    last_write_checksum: sha1:79f1ac8883604f11cb38d789b221b29e3b29022c
+    pristine_git_object: 163b506a6f8be7c5579d3cf922d5440675b43a53
+  docs/models/patchv2activitiesactivityrecordsrecordidcodevalidationtype.md:
+    id: 4f0c6025db92
+    last_write_checksum: sha1:273c4e5aca879da3d85a81a5810877792aa58ba9
+    pristine_git_object: 562d81eecc315e547170042aa43bac7410679c70
+  docs/models/patchv2activitiesactivityrecordsrecordidcodevaluenotfound.md:
+    id: 61f3ffc9f5eb
+    last_write_checksum: sha1:aa3e857fc6763a13607b632ec14bdf2314804330
+    pristine_git_object: 46111f2f3236d44348ad4425a3fb36f99dfe5d3d
+  docs/models/patchv2activitiesactivityrecordsrecordidconflictcodeunion.md:
+    id: 7021a1f89be4
+    last_write_checksum: sha1:a5ffd8dbdab118bc99cc02415d777885518b0189
+    pristine_git_object: a0186b6f802fd2d5c64cca1469d0859389e14a23
   docs/models/patchv2activitiesactivityrecordsrecordidconflicttype.md:
     id: f90366f2e42c
     last_write_checksum: sha1:34e272405c2f2ecf4c7a95a06384f8c71b3648c1
@@ -4501,8 +4577,12 @@ trackedFiles:
     pristine_git_object: 8130720d30aee1f7a0809c02990650a248cb6c74
   docs/models/patchv2listslistentriesentryidcodeunion.md:
     id: 568f36caea64
-    last_write_checksum: sha1:05f38e82dee35e8190d2e348a41b47fa34ff085f
-    pristine_git_object: b2d2322f537c24f81433802f7b04bb3d1611649f
+    last_write_checksum: sha1:467b5b0399d986e0f97e10b2cc8a27ce7e7b922c
+    pristine_git_object: 38a1684473df3329b26536322e6b462fa09d9080
+  docs/models/patchv2listslistentriesentryidcodevalidationtype.md:
+    id: 10a74d3a97de
+    last_write_checksum: sha1:808709c8e80bcaaace3e5b81ead1661efadfd32a
+    pristine_git_object: 1ecefc877c7252ed2d9d8a67c633213c1a84bf73
   docs/models/patchv2listslistentriesentryidcountrycode1.md:
     id: 1c9d58b29eb2
     last_write_checksum: sha1:528c920821ea8de269d73a9f5a0602363a2288e4
@@ -4991,14 +5071,34 @@ trackedFiles:
     id: 751a44eb285b
     last_write_checksum: sha1:071f101a0b71dce59799b06a61cf170e285b6ca7
     pristine_git_object: 29090508f7a907665f03e74345f2a5c864ef9396
+  docs/models/patchv2objectsobjectrecordsrecordidbadrequestcodeunion.md:
+    id: c27cda572cdb
+    last_write_checksum: sha1:876b568adfa919a8bcec6c98400ada7a75c8020e
+    pristine_git_object: a5044974572da45b9c00a24522d2bef794692725
   docs/models/patchv2objectsobjectrecordsrecordidbadrequesttype.md:
     id: fcf12e5a4061
     last_write_checksum: sha1:4b50475881321609d7d0726510accb6d5f5b7f98
     pristine_git_object: 8766204ceb0647ae38ffdc0cf280e98fa5ef98ec
+  docs/models/patchv2objectsobjectrecordsrecordidcodebadrequestmultiplematchresults.md:
+    id: 3edbc92774e5
+    last_write_checksum: sha1:2ad4659adeb2647be0e689d7789ab01ade48ee8f
+    pristine_git_object: 3907ae2395279943e50c6812745fec7225ac74c4
   docs/models/patchv2objectsobjectrecordsrecordidcodeconcurrentwriteconflict.md:
     id: d02ddec75ae6
     last_write_checksum: sha1:ebdebcd0a6b600192e2afe241f61d2b1554fcaf6
     pristine_git_object: 398ddbd87b8ebd5741eb9c145c3041df9fed809b
+  docs/models/patchv2objectsobjectrecordsrecordidcodeconflictmultiplematchresults.md:
+    id: 43c0dfec05e8
+    last_write_checksum: sha1:9457ef824f3e605e654e561893cc06469464538e
+    pristine_git_object: 932254347706d8c2abef86a9f91f23b25af926d9
+  docs/models/patchv2objectsobjectrecordsrecordidcodeduplicatevalues.md:
+    id: 248e6efd231c
+    last_write_checksum: sha1:14dc6458ab1a41b3e59f4067a0de56b01a96521d
+    pristine_git_object: 6ad77c12c62cbe3fdea1ad6ee74052809a6f0b1f
+  docs/models/patchv2objectsobjectrecordsrecordidcodelimitreached.md:
+    id: dc5e3f3e3f29
+    last_write_checksum: sha1:53d5a3c3048987843ea2aaa521a641b44d4d9491
+    pristine_git_object: 5609e3e9359948ccc2b2ad1ab8ff4fd989a20da9
   docs/models/patchv2objectsobjectrecordsrecordidcodemergeinprogress.md:
     id: b6a95ac2151e
     last_write_checksum: sha1:482081edd0eea9854b0745690a95afa5afe8df5e
@@ -5015,10 +5115,22 @@ trackedFiles:
     id: 6204b4615abc
     last_write_checksum: sha1:138f15ee70543d92b0770abced1e629dcc0fdec5
     pristine_git_object: 065541979ed7642ad8138fa17c762a578d1731bd
-  docs/models/patchv2objectsobjectrecordsrecordidcodeunion.md:
-    id: fe2a299525b9
-    last_write_checksum: sha1:2da6c2fd42dd15dba720e8d0e366503038b6b34a
-    pristine_git_object: 3260fdd2285dd0f2df7e29f2c143effc32436b1c
+  docs/models/patchv2objectsobjectrecordsrecordidcodeuniquenessconflict.md:
+    id: 9b912ddb9e5a
+    last_write_checksum: sha1:6957870c73a14f5288e0f0cfe81eaa5b24f44cf9
+    pristine_git_object: ae74ccd90543283ef3f5baee108049f83cd06ca6
+  docs/models/patchv2objectsobjectrecordsrecordidcodevalidationtype.md:
+    id: 8b4c5aa6401c
+    last_write_checksum: sha1:a28186d65c9c102386875d5e306ce425dfbcd2d1
+    pristine_git_object: 328d48a2b78c86d077f094ea20eeff16c686c25f
+  docs/models/patchv2objectsobjectrecordsrecordidcodevaluenotfound.md:
+    id: ccf9e2f295b0
+    last_write_checksum: sha1:8032d645373b648c627c89cad9847a823f94b0ee
+    pristine_git_object: 78e3676234b5fc7c62624776bdf183d62a82ce48
+  docs/models/patchv2objectsobjectrecordsrecordidconflictcodeunion.md:
+    id: 895c6742edd3
+    last_write_checksum: sha1:bb09ef0da84bfce99f7a6ab7c2dc6c68f49be3bf
+    pristine_git_object: fa7edf8ef907b6801a0ea31ddeea61023eb79b4c
   docs/models/patchv2objectsobjectrecordsrecordidconflicttype.md:
     id: 67745313bb9e
     last_write_checksum: sha1:de22baddfa246c39aa0f3a9094ce7dd6e035d1c9
@@ -5401,8 +5513,8 @@ trackedFiles:
     pristine_git_object: f8ca0106ac8dfc8c0eb85bcaf1b3ab959890db3b
   docs/models/patchv2targetidentifierattributesattributeoptionsoptionrequest.md:
     id: 88f6aa99670e
-    last_write_checksum: sha1:2db5da004d6602d9a4da2d09d16a62796f0f97cb
-    pristine_git_object: 523a715bd38480b01c0b780c8b4955847c76ed79
+    last_write_checksum: sha1:36e2b3adbda8ab874256c8349d0fcb4c49f0167e
+    pristine_git_object: 85bbc02de1085590b78cb924e93c355b54e8d98e
   docs/models/patchv2targetidentifierattributesattributeoptionsoptionrequestbody.md:
     id: f10697b32cb4
     last_write_checksum: sha1:9d68f32adbed4574f7aa3938f3bb5bda4d374dbb
@@ -5413,16 +5525,16 @@ trackedFiles:
     pristine_git_object: 49b2699750f68e8a2fb656b7816ebbde04dc9bf3
   docs/models/patchv2targetidentifierattributesattributeoptionsoptiontarget.md:
     id: 2be3b1b60001
-    last_write_checksum: sha1:b92d915798b005347c33cad497a441ebf717cd0a
-    pristine_git_object: 2fbc0b86fbae18997a4b81d9ef35f11d6aa0c7ac
+    last_write_checksum: sha1:5decf776930bc73781c3e6296078392dc0bf7309
+    pristine_git_object: 3fc748e437640043b3297dcd1cb12ee3194f4026
   docs/models/patchv2targetidentifierattributesattributerecordreference.md:
     id: 9c0ed8370acf
     last_write_checksum: sha1:bff0c4243e35a41716f3872da0590350a5872fcd
     pristine_git_object: 908e5f2d1a763dd1a5b998e4abff65f39ddd00a8
   docs/models/patchv2targetidentifierattributesattributerequest.md:
     id: bb173e6c3546
-    last_write_checksum: sha1:38ee54d7dcd5ccbbb660742f6e8f7f3c3502fd29
-    pristine_git_object: 6db17cdb4d8da16775fc15b69c8653ffa1fa81a1
+    last_write_checksum: sha1:c2b396410182cfb5d74aab397967ecab24fcd934
+    pristine_git_object: c806562f4f702b30c54395cfdcc6de330766bb24
   docs/models/patchv2targetidentifierattributesattributerequestbody.md:
     id: 8239e75aef6b
     last_write_checksum: sha1:70204430647d67f89b1a2a4e395890f6ccf88332
@@ -5485,8 +5597,8 @@ trackedFiles:
     pristine_git_object: 48d7e73bc904568dc70fccef0e5116bfd2198c9e
   docs/models/patchv2targetidentifierattributesattributetarget.md:
     id: f50f83ca35c1
-    last_write_checksum: sha1:43f351665080025997661389963aba24ef721397
-    pristine_git_object: 3f7cad64b754a63cb7fd351e68f529114e03bd6b
+    last_write_checksum: sha1:21c78c9bcf574cfa80318cb4b5552e2abb4097ad
+    pristine_git_object: 06dbc69cb844e425278bd6b2798ea6e1025992a5
   docs/models/patchv2targetidentifierattributesattributetemplate.md:
     id: e3153634a301
     last_write_checksum: sha1:f85d5c9bb0e67cdd6b21a0cd95d8219c65349c64
@@ -5541,8 +5653,8 @@ trackedFiles:
     pristine_git_object: 2f1c62f49c6e59e567f0db06279fda3ff553731a
   docs/models/patchv2taskstaskidlinkedrecords2.md:
     id: feb827e31042
-    last_write_checksum: sha1:1fdd9b4e979cac3597b20eff2f254926fb499133
-    pristine_git_object: 7b39a55e147ba52a9003a83f7b9d44c81c3206b1
+    last_write_checksum: sha1:a04cf2835eaa3f9f6177672dbd5ca3d1e13dd0cc
+    pristine_git_object: e4787cc0610d15ee146725ff127226a03e6a09fb
   docs/models/patchv2taskstaskidlinkedrecordsunion1.md:
     id: 5164375334bc
     last_write_checksum: sha1:3feb560ad50e93de57bf1feb132925621cf16c9b
@@ -5833,8 +5945,8 @@ trackedFiles:
     pristine_git_object: 10836e826a34bd34fe34a193fb8431af0cce348e
   docs/models/postv2activitiesactivityrecordsbadrequestcode.md:
     id: b2ca8006734a
-    last_write_checksum: sha1:b032b2a666cdcb4e1d5f707e6246004c2a13282b
-    pristine_git_object: 73de2e5d576448a289ac8d37e967ada1eb9e3938
+    last_write_checksum: sha1:fc057edcd12edd532a3adabc6fb0f70ecb5a11fb
+    pristine_git_object: db7a1172a1994426ce6b1605cb09a5bfc16ec395
   docs/models/postv2activitiesactivityrecordsbadrequesttype.md:
     id: 22ddea76473b
     last_write_checksum: sha1:f085a91518abc35427473f180bef018842cc7c7c
@@ -5847,14 +5959,22 @@ trackedFiles:
     id: 024a8333fe2f
     last_write_checksum: sha1:9236ebe8be2f73bf53ff213fdeaccf6ed176f575
     pristine_git_object: 337b82089cd35e9a34e1e912063184be4401b906
+  docs/models/postv2activitiesactivityrecordscodemultiplematchresults.md:
+    id: 075fab3c64d9
+    last_write_checksum: sha1:52a29b7ec6d56929a17cb2a94751f2268e7561d4
+    pristine_git_object: c2907a065c673c3237099c0701b5ac64b71136d7
   docs/models/postv2activitiesactivityrecordscodeunauthorized.md:
     id: e7c6f79e17b0
     last_write_checksum: sha1:16b2c8449f732fd9efa2bf322789860e6f890984
     pristine_git_object: 9a05c8e598f038be4d95a6b6d02a9444cdf85907
-  docs/models/postv2activitiesactivityrecordscodeunion.md:
-    id: 6059d7d5b990
-    last_write_checksum: sha1:2dd7dcc2a29a956eb5dd8cbabf93777d9ebf260f
-    pristine_git_object: 3784ad715b51e0e4a633d4f3675cc26c9e3cfa90
+  docs/models/postv2activitiesactivityrecordscodeuniquenessconflict.md:
+    id: 23d9becbca54
+    last_write_checksum: sha1:66cf86e1a52f505ea6d7b095213a59c07a179348
+    pristine_git_object: affbfe67097d9ed7dc1611fadc7291025e5eda49
+  docs/models/postv2activitiesactivityrecordsconflictcodeunion.md:
+    id: 2eca5a5f2465
+    last_write_checksum: sha1:143f3b19ccb1d49a70014c8af86b99cfdaa79181
+    pristine_git_object: 0dd18087d8a3d8a2568c7357c22ac4465b321c4f
   docs/models/postv2activitiesactivityrecordsconflicttype.md:
     id: c03978fc5c95
     last_write_checksum: sha1:50bc8160190321db96cb5880acd64525e77df8ed
@@ -6015,6 +6135,10 @@ trackedFiles:
     id: 71d998484542
     last_write_checksum: sha1:f94f3c957fca37bf7dc85579d755d884b4ff7768
     pristine_git_object: dec726839590a8f31684d3f5132e319e60759b26
+  docs/models/postv2activitiesactivityrecordsforbiddencodeunion.md:
+    id: acf34eaa7084
+    last_write_checksum: sha1:0b674f96b56eb13324ff129ea606cfb7992e450e
+    pristine_git_object: 3aa3ed0538329d423ed9465610d6b193029926a9
   docs/models/postv2activitiesactivityrecordsforbiddentype.md:
     id: e24bda509d63
     last_write_checksum: sha1:62481138a5f2db68beed7d4ab6ffcceebacd4019
@@ -7699,10 +7823,22 @@ trackedFiles:
     id: 2c571770b082
     last_write_checksum: sha1:0f3882f20f5d041a53cd889e8479e4d2749e5120
     pristine_git_object: e49b514bf406af1678a86d70d8b3380735efc84e
+  docs/models/postv2objectsobjectrecordscodemultiplematchresults.md:
+    id: 7c0fd1e53761
+    last_write_checksum: sha1:ce10284e2d20a9b8f3ef13450c7d2e6f1311957b
+    pristine_git_object: 724a8a55407a3096340bab3a6811d01188e63235
   docs/models/postv2objectsobjectrecordscodeunauthorized.md:
     id: 663ffc697198
     last_write_checksum: sha1:b2eb0c4770a4ff55538a66d7c6c6d2a8950a5274
     pristine_git_object: a78255e9a17d339111aa33c8e74ebf50eae1f046
+  docs/models/postv2objectsobjectrecordscodeunion.md:
+    id: b2fbf0e6ca96
+    last_write_checksum: sha1:5a1b2bd2806e6588e2a125a1cc53adf9ee9197db
+    pristine_git_object: 8b3ec2bd5d639f930907b4eac2859b974ac39da0
+  docs/models/postv2objectsobjectrecordscodeuniquenessconflict.md:
+    id: cfd39895fedf
+    last_write_checksum: sha1:cf718b4e1624187c14744960fd2ccc4d5afcd794
+    pristine_git_object: dd817d02b36bd84ecb2c9a31366fa10a9dd84920
   docs/models/postv2objectsobjectrecordsconflicttype.md:
     id: afbabadea9b2
     last_write_checksum: sha1:4a0f3a97ddb788d6836f1e99ad6c6cb378742d03
@@ -8467,6 +8603,10 @@ trackedFiles:
     id: a31ae04ec2fe
     last_write_checksum: sha1:9255746201332262ee19360439b6cc9465785417
     pristine_git_object: b5055986ced03e6a556033242def47d0cc8dfb64
+  docs/models/postv2sqlbadrequesttype.md:
+    id: dadc2a4d0603
+    last_write_checksum: sha1:d5095436f652560a537f60e42bc93d54bd8944ce
+    pristine_git_object: 3ce8c74b4e31dd283ba70dec894882691b476cc5
   docs/models/postv2sqlcode.md:
     id: 6e8a27952f96
     last_write_checksum: sha1:818315929d1fb3af984462c1ce4e05333aedccc6
@@ -8477,16 +8617,16 @@ trackedFiles:
     pristine_git_object: 51bd865ceb8151ad53c1926c132a031fe5cada6e
   docs/models/postv2sqlrequest.md:
     id: 607a6b957f2e
-    last_write_checksum: sha1:8a739e5149faa325bf4236e81ea32280d1db0327
-    pristine_git_object: c3083e3eff855e6978be11cc96df05823144b5c1
+    last_write_checksum: sha1:ff2eca79f2e200e076c5e684e4fd45d03f6075f4
+    pristine_git_object: bd41233b9f44b6b5e9aabf171ac3e0ea470a1afe
   docs/models/postv2sqlresponse.md:
     id: 1be379dbbb61
     last_write_checksum: sha1:084ec0ce7ad9b87e8cc5338051bacb00bb3e3c60
     pristine_git_object: d9f6115de10ec79ac4bc954f389704a815f9b10a
-  docs/models/postv2sqltype.md:
-    id: 2375da939626
-    last_write_checksum: sha1:587f5afb0ec657daf87ca9d5b3671c587033b571
-    pristine_git_object: 738b526182ccaddb926fdb7c85405766311b50f0
+  docs/models/postv2sqlvalue.md:
+    id: ce3d1ee14580
+    last_write_checksum: sha1:6ddd213a71b677791797be1e715e6770f04f7579
+    pristine_git_object: ff94af42a4335ed645b8f93dd3dcd2b4658a0d75
   docs/models/postv2targetidentifierattributesattributeoptionsbadrequesttype.md:
     id: 019aa85f643c
     last_write_checksum: sha1:a0f8b764f96ad588582c63a4d65c1ed3d4e91392
@@ -8525,8 +8665,8 @@ trackedFiles:
     pristine_git_object: 32e3acfe62a879f50409d78691286aca844e59a3
   docs/models/postv2targetidentifierattributesattributeoptionsrequest.md:
     id: 53d2cc514e10
-    last_write_checksum: sha1:0a89d306e4909a15efd31f2deac47c9fa13aa4c0
-    pristine_git_object: f278d43511f4dbaf0c60236d5325025385adda7a
+    last_write_checksum: sha1:8fa507946fc494576163665798b72bec856a3c53
+    pristine_git_object: 8864fc825b17bd2291484e0e287163d91cae22f3
   docs/models/postv2targetidentifierattributesattributeoptionsrequestbody.md:
     id: a69cfef5a4f9
     last_write_checksum: sha1:918e698b1ad9576e8b86c5c7a37f5d03903bf17c
@@ -8537,8 +8677,8 @@ trackedFiles:
     pristine_git_object: 1e38d37d6b64e7211b0d7a4c8108539c69b1575d
   docs/models/postv2targetidentifierattributesattributeoptionstarget.md:
     id: 006e640a1eb3
-    last_write_checksum: sha1:7ac5a23dc2c8e421c54721786ba327d4b3406880
-    pristine_git_object: 52e5e6b93305f84185de3887f91e097743465ebf
+    last_write_checksum: sha1:31f45c879dddad93c07f2753607b0f366b482a78
+    pristine_git_object: 9e43f78ba5c6e4f1f288fb619fc20687c1e9f319
   docs/models/postv2targetidentifierattributesattributestatusesbadrequesttype.md:
     id: 6cc10aef6620
     last_write_checksum: sha1:3ebb40454217960bd5217fc3c21c91110834386e
@@ -8665,8 +8805,8 @@ trackedFiles:
     pristine_git_object: 5816e57b8a2526ad890fd852f7b06e3c9051b195
   docs/models/postv2targetidentifierattributesrequest.md:
     id: 0f685e383362
-    last_write_checksum: sha1:e624ac48e279ed8a63867a69bf59be230b910e50
-    pristine_git_object: 4f8587132d82b55310b55524670d850b464f3a7f
+    last_write_checksum: sha1:ed7d18d99e3a5ba7c8e062f132eacfa8602adaae
+    pristine_git_object: 69d55d70f217a76539ecde89a7c59eff4ea92630
   docs/models/postv2targetidentifierattributesrequestbody.md:
     id: 4d9ba96d0f98
     last_write_checksum: sha1:4833965ac3fdb76fbadfd4b7c80f98d67a8b388b
@@ -8677,8 +8817,8 @@ trackedFiles:
     pristine_git_object: 0b10e885ceec5dd12b624f97925b67153a740314
   docs/models/postv2targetidentifierattributestarget.md:
     id: 3ea0f8fe8ee8
-    last_write_checksum: sha1:a0d4dbaa6c91040b521ce3239a9e2c462532b6e5
-    pristine_git_object: 2bf8b7d0ddff0312dc1f5a609d09eeb9c306589c
+    last_write_checksum: sha1:715d542925ff381d9af38599da52545e5aacef01
+    pristine_git_object: 4f7394eae5b8cddf1ebb0217ae911c93403d6191
   docs/models/postv2targetidentifierattributestemplate.md:
     id: ddd907d0cfab
     last_write_checksum: sha1:6578a4d5a211c210c8caa8e7ceba61742e05b815
@@ -8741,8 +8881,8 @@ trackedFiles:
     pristine_git_object: 9945a0bc415fc8b5729648a51e2d03d9e52b099a
   docs/models/postv2taskslinkedrecords2.md:
     id: 513f46998ff8
-    last_write_checksum: sha1:5370a9c8532434bd2a4fb80a4e46863528eb2c29
-    pristine_git_object: 859b0d3f88b671a1591d9afba3312b38e659636d
+    last_write_checksum: sha1:35796b65c42a7c0e7d4ffee1b064247777b09459
+    pristine_git_object: f5eb40f197a7c32a9d38bd2605b18b5abd702144
   docs/models/postv2taskslinkedrecordsunion1.md:
     id: ad380fb7b1d8
     last_write_checksum: sha1:b451d3b9b14dc5e446181915ca9b277f0229b816
@@ -9025,8 +9165,8 @@ trackedFiles:
     pristine_git_object: 20aa9b3e58b134310e9c2d6332b7e6000e11fb2b
   docs/models/putv2activitiesactivityrecordsbadrequestcode.md:
     id: 2d42577c4cf1
-    last_write_checksum: sha1:dbba239f3b3f9946ee0febe17c485a0c4c7ec312
-    pristine_git_object: ca84787c7c73168da7244212a4480683fdab17dc
+    last_write_checksum: sha1:7a10652f9a43beefe2ccf129094b71467023181f
+    pristine_git_object: 47950f76aec520a069dd123fda035edc45aae79a
   docs/models/putv2activitiesactivityrecordsbadrequesttype.md:
     id: af7637b29883
     last_write_checksum: sha1:86eb060a3f0d5db00a0e89d761d334c10a8cabe4
@@ -9039,14 +9179,22 @@ trackedFiles:
     id: 29641601267e
     last_write_checksum: sha1:94c2d19c2307e11fbe85546ed4f2fdf842f192c9
     pristine_git_object: a2abe3b43dba19ca81cc62af3de80540f63fdae6
+  docs/models/putv2activitiesactivityrecordscodemultiplematchresults.md:
+    id: a7ac232fcea2
+    last_write_checksum: sha1:158e9ec17f50b15779632c515052882bb89d3d95
+    pristine_git_object: 66fee710449a9983849057ca0b58d57ce11d247d
   docs/models/putv2activitiesactivityrecordscodeunauthorized.md:
     id: 15b167457bb1
     last_write_checksum: sha1:b581ea4d5775297d2afa5155966948b65e5a2518
     pristine_git_object: 8c858c22c7d8189152b6fc8f3b3d00a84c615a03
-  docs/models/putv2activitiesactivityrecordscodeunion.md:
-    id: 2abdfe075669
-    last_write_checksum: sha1:939a682020bd8a721729f26ab3de8fa48ef186a0
-    pristine_git_object: e130029088ba14d7bacb09019374fc6fdf6eada8
+  docs/models/putv2activitiesactivityrecordscodeuniquenessconflict.md:
+    id: ad6298727fa6
+    last_write_checksum: sha1:707f9aee0535d7b4c133ffb77291742eac57fef3
+    pristine_git_object: d37967ef92e4a59dda254bf2f3ad3929db9d3243
+  docs/models/putv2activitiesactivityrecordsconflictcodeunion.md:
+    id: 07a6794e19fc
+    last_write_checksum: sha1:37d3f8a4e40273cb81195cdefca87589d7d814bf
+    pristine_git_object: 2a698b992ece6b0eee0025cddfa160fc071f0c10
   docs/models/putv2activitiesactivityrecordsconflicttype.md:
     id: bf754965c830
     last_write_checksum: sha1:d997349b244dfd230ed704096d4676a9bd198a51
@@ -9207,6 +9355,10 @@ trackedFiles:
     id: 4bd9e96272d6
     last_write_checksum: sha1:4c40f5210018442361de714d001c19d840c1d090
     pristine_git_object: 528879e8d58e14d68251a476a03e926c2e5f4b1d
+  docs/models/putv2activitiesactivityrecordsforbiddencodeunion.md:
+    id: "743417519040"
+    last_write_checksum: sha1:5264d47e492c7e263a770d6a76fcc8a09d00e9e8
+    pristine_git_object: 56082ff059469393eb4cffdeabd2ce006b1d32f6
   docs/models/putv2activitiesactivityrecordsforbiddentype.md:
     id: c9b029989c4e
     last_write_checksum: sha1:d1c31bdf723b339c50476d0b5e16afbca9e4c98a
@@ -9303,14 +9455,34 @@ trackedFiles:
     id: 8ef3e90a5830
     last_write_checksum: sha1:b378c47424e64f95bd2f023bddd02ff8e8b29c49
     pristine_git_object: 0155871c8305e13229cfb7bb9c20f66078d79233
+  docs/models/putv2activitiesactivityrecordsrecordidbadrequestcodeunion.md:
+    id: b1f70eb5dd3e
+    last_write_checksum: sha1:f66fb53dbee2d9dea0def7435cefbf7000a71957
+    pristine_git_object: 609eb53e7d47002e8bfe3e2f03053cc4ae4f169c
   docs/models/putv2activitiesactivityrecordsrecordidbadrequesttype.md:
     id: 5b118532ce3c
     last_write_checksum: sha1:a1474a59482f71273db0d338891b2385c1ecb634
     pristine_git_object: d9115ab97878a593f282cac7a30c3b1ff561c5ef
+  docs/models/putv2activitiesactivityrecordsrecordidcodebadrequestmultiplematchresults.md:
+    id: 520099f271e3
+    last_write_checksum: sha1:4f9f5e3224fd6687ee2ecc7637faab35c36c75e1
+    pristine_git_object: a87fe4564974ae92dd6f5b5bc87884a4a67ce5de
   docs/models/putv2activitiesactivityrecordsrecordidcodeconcurrentwriteconflict.md:
     id: 9441a3194469
     last_write_checksum: sha1:5ce0268d36b5c55f3708d0979134a855709caa83
     pristine_git_object: c73780123f672f85aac07a62787ef4bab58f8ddc
+  docs/models/putv2activitiesactivityrecordsrecordidcodeconflictmultiplematchresults.md:
+    id: d8638e37494e
+    last_write_checksum: sha1:2113cce00c2eb779f9203f89d9b4d5d471c3ab2b
+    pristine_git_object: 68d167bf599c457716fa082d875e5d72c53297c7
+  docs/models/putv2activitiesactivityrecordsrecordidcodeduplicatevalues.md:
+    id: 2d3456126aa2
+    last_write_checksum: sha1:09b15afe0a37d156fcaaff65ce2a2f8148cec37d
+    pristine_git_object: 108dbb639869e7fd5f8dbb435979401fa3bc0db2
+  docs/models/putv2activitiesactivityrecordsrecordidcodelimitreached.md:
+    id: 5334c575271d
+    last_write_checksum: sha1:4b465ad5f06ee274a1614ca4372b5261ad117ff5
+    pristine_git_object: 70c9bcae4b4e0c68eeca237994bdafd7864444df
   docs/models/putv2activitiesactivityrecordsrecordidcodemissingvalue.md:
     id: ab5a4f3df196
     last_write_checksum: sha1:feea388b081bddf78adb3b351a8be57861bb5be4
@@ -9323,10 +9495,22 @@ trackedFiles:
     id: 92d25990dc87
     last_write_checksum: sha1:8a46766f3542d323ed250af36c8b389d27b7ce6c
     pristine_git_object: 15ce55ef26b252c5f1f75e027a37ef37d877e18c
-  docs/models/putv2activitiesactivityrecordsrecordidcodeunion.md:
-    id: dee403c9dcac
-    last_write_checksum: sha1:515cf84dc271c983521b2adeafeb8813a5b35e63
-    pristine_git_object: 508828e72403b5e658ce00640909922b484cc851
+  docs/models/putv2activitiesactivityrecordsrecordidcodeuniquenessconflict.md:
+    id: e1097c0c0fc1
+    last_write_checksum: sha1:02a4c544980056f7c7dcdc3a790183e1c0df4d4a
+    pristine_git_object: b1add1e24fa4afcb0546bfa361b3507d10ae2c22
+  docs/models/putv2activitiesactivityrecordsrecordidcodevalidationtype.md:
+    id: cccecef617c4
+    last_write_checksum: sha1:23147be40287248708435fb0802e243272aee528
+    pristine_git_object: 6e0e8bd8d973ba5513448816d5f7fcf85947158a
+  docs/models/putv2activitiesactivityrecordsrecordidcodevaluenotfound.md:
+    id: 906906595aa5
+    last_write_checksum: sha1:49b6e48a093a26b81ccd05ada1fda6c86cc51b36
+    pristine_git_object: cf7458d1e626999526bde58b63ed9cc1c54ae40f
+  docs/models/putv2activitiesactivityrecordsrecordidconflictcodeunion.md:
+    id: 61879838d5fe
+    last_write_checksum: sha1:421eddcfd4c2f44a2660aa8d7b5d4b439d3445d4
+    pristine_git_object: c9d4d741e93764e9abdbef5fe31295046575343b
   docs/models/putv2activitiesactivityrecordsrecordidconflicttype.md:
     id: 0654bd9e263e
     last_write_checksum: sha1:5f4dcee1a52c7a770195555f354d944c3a87a7f3
@@ -9767,14 +9951,22 @@ trackedFiles:
     id: 64349a7da4af
     last_write_checksum: sha1:7dd5bb465ee3d3e45e1b9231fed9a56ef87afdc4
     pristine_git_object: ebc9a7117776b668025506773c9b2602dd74ead7
+  docs/models/putv2listslistentriescodemultiplematchresults.md:
+    id: 43855435ded6
+    last_write_checksum: sha1:a1f51708da45ffaab57b80e4e3fc4a9dac86b3c1
+    pristine_git_object: 5265ab68b384a5c70c54e74bb5b978e6f20c18ee
   docs/models/putv2listslistentriescodeunauthorized.md:
     id: 0b9ef75b7c56
     last_write_checksum: sha1:c7cfe5b9e9ad9f7118f9fed65e09339a7a9aaa92
     pristine_git_object: 72063dbd6ae120a35a35e789e49820e026bb48a3
   docs/models/putv2listslistentriescodeunion.md:
     id: 1f47316f878f
-    last_write_checksum: sha1:28bf17bef4c537333c9f6dd269bf5ee2034de2e9
-    pristine_git_object: aecfe44bdce3d9548ef15d067b177ee177041388
+    last_write_checksum: sha1:7861d07f71845c8d3dd72b055d44444aee7fddeb
+    pristine_git_object: e85146cd497f9c46b3bb2d807a3a15f087ebc467
+  docs/models/putv2listslistentriescodevalidationtype.md:
+    id: 6abc283511f6
+    last_write_checksum: sha1:eb3d4e65f3d3ecefbc7e1655d12ae369bfa2795a
+    pristine_git_object: c77bddef50b45b1ed3495962e90297d5b19eb231
   docs/models/putv2listslistentriescountrycode1.md:
     id: 87672e26c8ed
     last_write_checksum: sha1:075c5bd5133ec7f8fc4df97fe1ee1ab76d74e9ce
@@ -10369,8 +10561,12 @@ trackedFiles:
     pristine_git_object: 2d442f5ff70360ba63ed08a81b9a75207ae33b34
   docs/models/putv2listslistentriesentryidcodeunion.md:
     id: 5d0730e86fab
-    last_write_checksum: sha1:862c8c3bcc061cb37bcb82e4dce25afffb88c78a
-    pristine_git_object: 6745e9132c24cc7df207c30377a5412e4aba4bcf
+    last_write_checksum: sha1:6db9145c989592e8a7a38aa8307ecdd3840244de
+    pristine_git_object: 7adae92cee977dbd4bd7c535e7478b04b924eb5e
+  docs/models/putv2listslistentriesentryidcodevalidationtype.md:
+    id: ea7143748c1a
+    last_write_checksum: sha1:270b0e722b48e8762a26e11d5ddd0887b936b9a3
+    pristine_git_object: 41878092f2b91e211f16496827f8d144e5426e92
   docs/models/putv2listslistentriesentryidcountrycode1.md:
     id: d46cde0ae7fa
     last_write_checksum: sha1:a530df994814d4c51f6dc8f3b58814c1c238523e
@@ -10883,10 +11079,22 @@ trackedFiles:
     id: 35af3b2d9191
     last_write_checksum: sha1:3ea0c47b581f6596e8709bfdadfd7ada459ab885
     pristine_git_object: afccd78af1e08cb468fbc7c881516c7a8c44f73b
+  docs/models/putv2objectsobjectrecordscodemultiplematchresults.md:
+    id: 9119fa543e39
+    last_write_checksum: sha1:27cfd2f051d44bdcd9eb9340d2fd6948e5b18e83
+    pristine_git_object: 46e8e3e0adc46b7c0b8b9cd5995c0a057f4dd800
   docs/models/putv2objectsobjectrecordscodeunauthorized.md:
     id: b6f8cbb83f17
     last_write_checksum: sha1:6870cafd13f0fa9b5ac5e29cf70d4d9469886ede
     pristine_git_object: 8b7e22ce8d5b776a30209f4517af3923bc3c41bd
+  docs/models/putv2objectsobjectrecordscodeunion.md:
+    id: da85b219367e
+    last_write_checksum: sha1:2dc8d68df5fa5449bfe513df695ff8e7272ccc50
+    pristine_git_object: bbb8ed5d065a72c9648a242b7c0cc3180b3c0e3c
+  docs/models/putv2objectsobjectrecordscodeuniquenessconflict.md:
+    id: d1b90ea651ae
+    last_write_checksum: sha1:e5b2e19f994284e7ad76a47a60045647f0071d9b
+    pristine_git_object: ddfdeab8dffb21f566b8dd8bddf29192d9dbdea0
   docs/models/putv2objectsobjectrecordsconflicttype.md:
     id: e95ae15bed59
     last_write_checksum: sha1:9e3dc2f73253a33584fb9cd64d89a9aa1182b941
@@ -11495,14 +11703,34 @@ trackedFiles:
     id: b2f22caefddb
     last_write_checksum: sha1:3f7070b866f7ba6f4fa246541b4db62b12276d1e
     pristine_git_object: 8181cea1dc09d1678e2967678d2fcc82d5058030
+  docs/models/putv2objectsobjectrecordsrecordidbadrequestcodeunion.md:
+    id: 0f51d924ac41
+    last_write_checksum: sha1:010f91006fc04f2c0cb928a402c595f71a7dc776
+    pristine_git_object: 4315a1fb4b2c91ab43c1f1412b3287b916e9ffcf
   docs/models/putv2objectsobjectrecordsrecordidbadrequesttype.md:
     id: abca37705e7c
     last_write_checksum: sha1:2add276382d5b68b48c2ce7fb5a05a794dadccb7
     pristine_git_object: aec67bf84e5b29b608e8e142c8430e0f8858e7f6
+  docs/models/putv2objectsobjectrecordsrecordidcodebadrequestmultiplematchresults.md:
+    id: ce7b769c714d
+    last_write_checksum: sha1:d6e3cf473be2b1f6e760ed28af335f2dbe97b991
+    pristine_git_object: 9dc2ca25fd081f09d9d4b32f80283db817f22d39
   docs/models/putv2objectsobjectrecordsrecordidcodeconcurrentwriteconflict.md:
     id: e93b1f8bf3ff
     last_write_checksum: sha1:adf3c714c0d05d9a337b1ca9dafbcc4a58d41ea6
     pristine_git_object: e6bccf2a6d3a5cf7d84c10081738f4ded42309be
+  docs/models/putv2objectsobjectrecordsrecordidcodeconflictmultiplematchresults.md:
+    id: 56ef21af292e
+    last_write_checksum: sha1:ee848641757b3e4535d8b8e412fc0586e5a5962a
+    pristine_git_object: 43d67cdc693e76058062076acba96ea3c46093af
+  docs/models/putv2objectsobjectrecordsrecordidcodeduplicatevalues.md:
+    id: 632f5801df7c
+    last_write_checksum: sha1:7b237ed1987a86fbb03199227dda3e76fd1d1284
+    pristine_git_object: 7179ea1fc27c51f5e60f661e0f1b78e491330497
+  docs/models/putv2objectsobjectrecordsrecordidcodelimitreached.md:
+    id: 7519ddd49026
+    last_write_checksum: sha1:c0adf37ce392f4b4d4ecc05b3937a0dbb329e720
+    pristine_git_object: ea775aff7b8d975889ea09cd1a963daf419087c6
   docs/models/putv2objectsobjectrecordsrecordidcodemergeinprogress.md:
     id: 793967e3bfcf
     last_write_checksum: sha1:94fb386199291db7f275ad459242bafe2c3182cf
@@ -11519,10 +11747,22 @@ trackedFiles:
     id: 500bd47df4a3
     last_write_checksum: sha1:70a8df8c4c3f125b30eca43169479aff9740a43c
     pristine_git_object: 5e79e8a7d77e122ffd11faa2d75b348e2934b2a0
-  docs/models/putv2objectsobjectrecordsrecordidcodeunion.md:
-    id: 76abb4be4feb
-    last_write_checksum: sha1:4404e45b2da348497cd135fadd55db61a756a9d2
-    pristine_git_object: 6636e61b2e04c68a15ee1f365e5bc2e25f63a56e
+  docs/models/putv2objectsobjectrecordsrecordidcodeuniquenessconflict.md:
+    id: 76fde9a970df
+    last_write_checksum: sha1:20049793a2a48ada2b872c2a4e843bd40036f9a7
+    pristine_git_object: ae78d1c028dfca21f3999af55b9cf444adb1453e
+  docs/models/putv2objectsobjectrecordsrecordidcodevalidationtype.md:
+    id: cd5ea5a53060
+    last_write_checksum: sha1:bfe4c463fd543612ebf6f3b0bfb75bad48b701c4
+    pristine_git_object: c41737076cb23de2e3f2a4e5ce98196725de4825
+  docs/models/putv2objectsobjectrecordsrecordidcodevaluenotfound.md:
+    id: 845f498d9a8d
+    last_write_checksum: sha1:a2265c8de0caad52363b0780de8aed64e1405f0e
+    pristine_git_object: 9c09c35175ae00c3c034c4ea836f63379107056d
+  docs/models/putv2objectsobjectrecordsrecordidconflictcodeunion.md:
+    id: 02460ef263e0
+    last_write_checksum: sha1:0b46d6dea249c04000529ce25029a30184679dda
+    pristine_git_object: 8195585bea6a6244c0c51cc510a55d2a642ad4d8
   docs/models/putv2objectsobjectrecordsrecordidconflicttype.md:
     id: b696b54a7bb2
     last_write_checksum: sha1:2076c18cdf4277f48d0ac973088e339be2a00621
@@ -12063,10 +12303,50 @@ trackedFiles:
     id: bea1d46b0212
     last_write_checksum: sha1:0c5ed1428162ff88d597c23a4fcc9514de1bf823
     pristine_git_object: cd49331962a4918d9fea1a392de3721d7fc688ef
+  docs/models/typeboolean.md:
+    id: fba7390f08f0
+    last_write_checksum: sha1:1a025a9ae9510399ec8ddf0b6faa2f9c95d2d5ae
+    pristine_git_object: ab6cbdab3b279de548449b6393e4e5df50bc559f
+  docs/models/typedate.md:
+    id: 135fac89b02e
+    last_write_checksum: sha1:36299632bf16de1203525200a09e7891fde94deb
+    pristine_git_object: 3b2f617c313fe8efdb3704809c245ab1177fc44a
+  docs/models/typedecimal.md:
+    id: b983d70cdaa9
+    last_write_checksum: sha1:5e27fae87971f2d17d8127b2799ecd3a173b8189
+    pristine_git_object: 87de24e17fe690b295e3d803bf27539decc1108f
+  docs/models/typedouble.md:
+    id: dfb0861535e4
+    last_write_checksum: sha1:7e2f86e159d9620ac0f94bac0b9c2ba002985192
+    pristine_git_object: 022f009ddb1271f98b49c279633f7e5d2f898b24
+  docs/models/typeinteger.md:
+    id: f4de0e435fa9
+    last_write_checksum: sha1:ec5ac29e025c08d33a67489ba163db1fd4f51921
+    pristine_git_object: edcabdfb6f4b49c62f19d3a88671709feb5b758b
+  docs/models/typelist.md:
+    id: e97ce5dd0885
+    last_write_checksum: sha1:2d1953e6cc6e21e6107d643792205c4a41765fbd
+    pristine_git_object: fbc610b3b057363458bd9c6375dc3c504fcc5023
+  docs/models/typenull.md:
+    id: 7f61fbc5f51e
+    last_write_checksum: sha1:fd0ed3268ffc793e5a61c8e6c5dfca203bd9522b
+    pristine_git_object: f3f4065a59f9e2326745a937c7bc40b7d4b39b78
   docs/models/typerecord.md:
     id: 2f62cfef828b
     last_write_checksum: sha1:442cdaeb7d85154a5e9626e525cdceb5f4a0b593
     pristine_git_object: cf8fe7f8d5cd281ad6e6f9e650946dd0eaf1ac7f
+  docs/models/typestring.md:
+    id: 07376fd2a435
+    last_write_checksum: sha1:6f67d6d501219e4cf3b656e593ed2a4296d09db9
+    pristine_git_object: 5873640a255cf4cb222d14045cdc67d11c509b50
+  docs/models/typestruct.md:
+    id: 35ed7211102c
+    last_write_checksum: sha1:a014e9e83e4e858f589c218488315f5e1a466e22
+    pristine_git_object: 5a47d3def938e0117078001812645d995a98d53c
+  docs/models/typetimestamp.md:
+    id: be922e91f2bd
+    last_write_checksum: sha1:270dd2273acab3d25e2b59e770275a85a80f0d5a
+    pristine_git_object: be7ae369d796812698f1b27c56a7783eb3482ab0
   docs/models/typeworkspace.md:
     id: 6ff94683e066
     last_write_checksum: sha1:2c034e270e857196a3b25640461a83affec5f012
@@ -12121,20 +12401,20 @@ trackedFiles:
     pristine_git_object: 07fce86de71e75fc33b319175a2b1e576d7ca370
   src/attio/_version.py:
     id: 601b0c828c8d
-    last_write_checksum: sha1:ec03c9e959cbe0c45fe4d643d3ce60f90fd69250
-    pristine_git_object: 4f4c51505c548cf0a067dd562078c21ec6b7d74c
+    last_write_checksum: sha1:f0f4bda1c2491bff4227874e49fd6de32c6dc3ad
+    pristine_git_object: b2cca5870acbece1d6d1bcfeb2e95fb0805936c8
   src/attio/activities.py:
     id: b43e8ae24d8e
-    last_write_checksum: sha1:5fa0bb535d77dcf2ccef41ac3d666f97c49c7c33
-    pristine_git_object: 5ce59e3302729049969bb45de5e12cd7d4a7c269
+    last_write_checksum: sha1:e697e2847c81186670fd69e63f040a0866970d4c
+    pristine_git_object: 8e0328695e21afa25b8478bf759697d0525cbe8c
   src/attio/activity_records.py:
     id: 8060a89bb8c3
-    last_write_checksum: sha1:061259cb9260b9077b0d8959bf58093ab08d4b8c
-    pristine_git_object: 47330e0d981dd716e27025d49cd770efd23a0c14
+    last_write_checksum: sha1:71caa13f70499d21c4be8c6cb674ba163ff43f7f
+    pristine_git_object: f38450d1a623dc620ab55ec34b70f84321c84c35
   src/attio/attributes.py:
     id: 7c101fc896f8
-    last_write_checksum: sha1:b8209a6fa5f9b80ecd3dc0db617fb48c9cda7e84
-    pristine_git_object: 838387389054147c7bc61eb16f97bee713856f3e
+    last_write_checksum: sha1:ccc18bb31e53b018a63c9894d4ae74b82087f0c1
+    pristine_git_object: 92b33106778a69a9a08b947add90ce82d0afd0f9
   src/attio/basesdk.py:
     id: 4b73fc4d9152
     last_write_checksum: sha1:8dec86e9bef3bd9b1934caf3947f4626eb45806a
@@ -12157,8 +12437,8 @@ trackedFiles:
     pristine_git_object: db95026ce488cabf5398a7a9bf2b022150ae0042
   src/attio/errors/__init__.py:
     id: 7c90e5764394
-    last_write_checksum: sha1:ffa77abe787274c6de2846b37ccde4b7a21c5fbc
-    pristine_git_object: 2ca3bf2cf4eb1f1b988016dc927acc2de7627a1d
+    last_write_checksum: sha1:0e3f06475c5675e1e4391e5f27402499b9b3cdf9
+    pristine_git_object: fd1eadacceb52e58c380eaf5d5f80c1303b3247c
   src/attio/errors/delete_v2_activities_activity_op.py:
     id: 60f946ff4d9a
     last_write_checksum: sha1:5a5f7b3242bab676685ed168c716ba12f5673532
@@ -12309,8 +12589,8 @@ trackedFiles:
     pristine_git_object: c09aebed9c14679d5591434ab635b8ed2a4d125a
   src/attio/errors/patch_v2_activities_activity_records_record_id_op.py:
     id: a0238aeeb9f9
-    last_write_checksum: sha1:5bfabdc703f9df2b8094f9b5d62c9d5c8153a93d
-    pristine_git_object: a21d599b3cae1dae0433c3a3130feb51646bd2f4
+    last_write_checksum: sha1:987fc4ce7e8c3ac069cc42d03b17c0f65f1d2701
+    pristine_git_object: b0ee87224235455f909b52cc717170a77fa2aef0
   src/attio/errors/patch_v2_lists_list_entries_entry_id_op.py:
     id: 86b1a16cb9bd
     last_write_checksum: sha1:c89aff22b97b52d14a221469c5b5e2e7d5c8e2d6
@@ -12333,8 +12613,8 @@ trackedFiles:
     pristine_git_object: 39576101577ffe238b1657760f4691fbde32499a
   src/attio/errors/patch_v2_objects_object_records_record_id_op.py:
     id: 4b5c9cabd94f
-    last_write_checksum: sha1:234da7c9b2ede533ea1a9de89edc5c2956ab33a4
-    pristine_git_object: 79c14228e117c77de660b2d4e1762a1f4218af39
+    last_write_checksum: sha1:d7cb93a529433af5630c62e1ddf9e9c62ef48205
+    pristine_git_object: d7f36b6597205eb76249ec9c5cfb0db7bc72dc48
   src/attio/errors/patch_v2_target_identifier_attributes_attribute_op.py:
     id: 55cb6e503d41
     last_write_checksum: sha1:fded5fa816a26ae616cdcd7ba85144a816a43e3d
@@ -12361,8 +12641,8 @@ trackedFiles:
     pristine_git_object: 5be2c141eba44b1f696fb45a718c77eedbf98963
   src/attio/errors/post_v2_activities_activity_recordsop.py:
     id: 52324fedea17
-    last_write_checksum: sha1:15afc2353bb9ee1fb13ac94bb4e627dc9059c29c
-    pristine_git_object: 7b8411a7244bc9ffdf78f67d1db118429d1bf21c
+    last_write_checksum: sha1:2ce111e12088f337c7314bb55fd4977b1b866bea
+    pristine_git_object: 2c24b867dea9e2ac793d362a09bc9485618a41b3
   src/attio/errors/post_v2_activitiesop.py:
     id: 54a5eae3e3c7
     last_write_checksum: sha1:fe82db65c2494d387a9dd52f3a6708d5f4f43595
@@ -12409,8 +12689,8 @@ trackedFiles:
     pristine_git_object: 8cdaf40c6362721c1c1c80d8ecc22f5f6886ab46
   src/attio/errors/post_v2_objects_object_recordsop.py:
     id: 5c14ad9d1352
-    last_write_checksum: sha1:a9466d7dfe471846b0c869812fd13977d321162e
-    pristine_git_object: ae14724e48d2aa42d321684ddd17cca931eb2269
+    last_write_checksum: sha1:a18beaff806a9c2370e4263828156eb0bf300abd
+    pristine_git_object: 117fb27aa6192c998c8d22d8e74b6a4a29398efe
   src/attio/errors/post_v2_objects_records_searchop.py:
     id: 1146217c425b
     last_write_checksum: sha1:312423d1875149325083991573bfa4b7b87acf59
@@ -12425,8 +12705,8 @@ trackedFiles:
     pristine_git_object: bd041a3c41a027945d251f3daefeb4a0fafefffa
   src/attio/errors/post_v2_sqlop.py:
     id: 1251c765feb2
-    last_write_checksum: sha1:cbed4d88f1d4376babef574a438d0160cd3c573e
-    pristine_git_object: 3a27b0fd02d7c1bcc7b549b283e4d0d3fe192b1a
+    last_write_checksum: sha1:1fb2b01797adebcaadf37cf7f0880acd02ba0b0c
+    pristine_git_object: e0b7ae0242342b76b65a1bea24295cc9ed53ab39
   src/attio/errors/post_v2_target_identifier_attributes_attribute_optionsop.py:
     id: 852ac660e501
     last_write_checksum: sha1:8be9118ce192c5527d32730be6c80447c2cdd48c
@@ -12449,12 +12729,12 @@ trackedFiles:
     pristine_git_object: 3f2e9c15859e55ec1941aaeef90c1c21b6b22356
   src/attio/errors/put_v2_activities_activity_records_record_id_op.py:
     id: 4d71c0eba79a
-    last_write_checksum: sha1:e8f18a5ee29e95c4489785fbbb03e9d7cf21868a
-    pristine_git_object: bd65a2bf31a2fa8664c195be8d2783ceaa1c118a
+    last_write_checksum: sha1:b212584dffa218f9d83766da141be0040702565a
+    pristine_git_object: 5538d886abec82993ebcc2fc7aca4807998dd3e1
   src/attio/errors/put_v2_activities_activity_recordsop.py:
     id: fa9720d97138
-    last_write_checksum: sha1:4841cc4c8b6a21bb595cded1e05db8f0a5abd06d
-    pristine_git_object: 52bc3774e0b6856cad68fe3d4bc45c0914f52f86
+    last_write_checksum: sha1:ade8c334df16cf6bbad8c1cb8f8d20ea70f355f1
+    pristine_git_object: 30ef0f936cc60af1c6a857f1529d4ee304e5aa40
   src/attio/errors/put_v2_lists_list_entries_entry_id_attributes_attribute_valuesop.py:
     id: 20f91b0213f8
     last_write_checksum: sha1:589c20db089f0b73e0c52fd9977c7140c5d43295
@@ -12477,12 +12757,12 @@ trackedFiles:
     pristine_git_object: 0d490b14634515df1e04ae55bdf9544125230f81
   src/attio/errors/put_v2_objects_object_records_record_id_op.py:
     id: 2e0c6c236c4f
-    last_write_checksum: sha1:9d4fe9fa5a42780d230a146408bfe8eee968d952
-    pristine_git_object: 4be4f0083e900fd38fdb833fc74d101f05750622
+    last_write_checksum: sha1:eb0b7c2dd198bf932b2adfc7028acdedcb3f686c
+    pristine_git_object: 05957c8ffbcfe324b3ff4f109eb1bcb2cf716b3c
   src/attio/errors/put_v2_objects_object_recordsop.py:
     id: d03ed32bcb39
-    last_write_checksum: sha1:4c7f71f39ff3e1a5a26bfa006fced42d16500275
-    pristine_git_object: c378d96ecb916f916a3bf16f651f1e5c924b3c30
+    last_write_checksum: sha1:0bfb4cf32eaf2ffe5b77b7cc75b91338d35abb13
+    pristine_git_object: 4b2de1e3564f0197762c9bdf1d810d242d41879e
   src/attio/errors/responsevalidationerror.py:
     id: 3e7293984a37
     last_write_checksum: sha1:7ae837437b10247493976aaf763c76667210c14a
@@ -12517,8 +12797,8 @@ trackedFiles:
     pristine_git_object: 6f065a0fe84570a4412e24856a62fef911ce10a1
   src/attio/models/__init__.py:
     id: f9c8b4a4dc53
-    last_write_checksum: sha1:5e943ceb9427ec38ae73de5ddd25bda6bf9148fd
-    pristine_git_object: 316b5c0555e4dbc9776b127c988a915756c3fbf8
+    last_write_checksum: sha1:40bd4518064f9aeaab5bcf24a76b31900ae258c3
+    pristine_git_object: afdb6e063cef556d65e75c2a8faa9e205af814c2
   src/attio/models/activity.py:
     id: 4fa0596ac2e4
     last_write_checksum: sha1:942b984a70aaaf48f78ad0bab946081beeac3d76
@@ -12709,20 +12989,20 @@ trackedFiles:
     pristine_git_object: 2f1507d82a0e48d34f00fe94008404e403405030
   src/attio/models/get_v2_target_identifier_attributes_attribute_op.py:
     id: e5ae1228f75a
-    last_write_checksum: sha1:18c2aaa18583d23b09d896f9faed5ec20b7c04ad
-    pristine_git_object: de93af8c38e259b04a682fd5acb073c4782d5f9c
+    last_write_checksum: sha1:0a1b64613326f61a9ddc1d5216e8f92b11a55183
+    pristine_git_object: 4e5a058921b6c52bdd3ca276ff56542be112cd9c
   src/attio/models/get_v2_target_identifier_attributes_attribute_optionsop.py:
     id: a4a84da21335
-    last_write_checksum: sha1:9521604ad80179b5490b39ea2687fbb7c3992786
-    pristine_git_object: bed79e22b30202321d190a72aa657f1035724b66
+    last_write_checksum: sha1:3c8dc62b8e6b3eac9da0a6b0b752263f7ff7e806
+    pristine_git_object: 3f55335bb340651c5eba78e92b6443bc86166de0
   src/attio/models/get_v2_target_identifier_attributes_attribute_statusesop.py:
     id: fe9c24969640
     last_write_checksum: sha1:09fd5a2b1b9c16fdca63445d7fe711c10451b3f5
     pristine_git_object: 097f4417e9a685e820af3c80984a946044c65d1b
   src/attio/models/get_v2_target_identifier_attributesop.py:
     id: e0d9e4d45a24
-    last_write_checksum: sha1:c338c5c6e3f2ab2f633de05c79fae14d90a66cd9
-    pristine_git_object: c5248d136677385487e5c73a0748de3654ba7d43
+    last_write_checksum: sha1:c17eeda3c37e8ddba60d85f336a989d7a00a8753
+    pristine_git_object: a3bb03b14dc7defafd39cc1cd2e2c629f6013413
   src/attio/models/get_v2_tasks_task_id_op.py:
     id: 3cb403ea4c34
     last_write_checksum: sha1:6f74a1571c707bf1fd7ba7c125c2c79417fe9f0c
@@ -12757,8 +13037,8 @@ trackedFiles:
     pristine_git_object: f6d7f0393d0e7e32059eb0abf401aef12328e8c7
   src/attio/models/input_value_union.py:
     id: d668dc2122a2
-    last_write_checksum: sha1:5e7b357ed875dc6fac9668f7a2c246d78132e4ce
-    pristine_git_object: a7ffb484fd13dcab4aabccbfb01c435ac3783dfe
+    last_write_checksum: sha1:5f02bdd17dd4fd587539b12f06703e458234e83b
+    pristine_git_object: 6bb024fc77b5b670b1a027fb076620fb5a3075d1
   src/attio/models/list.py:
     id: cf806c3deb50
     last_write_checksum: sha1:b4ef8f541891870ef6c45d39f8a5bee0c1850392
@@ -12793,12 +13073,12 @@ trackedFiles:
     pristine_git_object: e9be6fbb6f09e9d29d4b3318cb962988384f46fd
   src/attio/models/patch_v2_activities_activity_records_record_id_op.py:
     id: ceb5a90c6547
-    last_write_checksum: sha1:1eb7d504bc852b73fd92fe85de4c5dc056e9e7a5
-    pristine_git_object: 2e785b7ba77141feb75256c5cc261e8b93de6f02
+    last_write_checksum: sha1:feaeb87607d1e9f7d1a3a1b8dfd59e85721ee216
+    pristine_git_object: dfd51b8326e0bd01ccbe5afbf887a9a701d8f21d
   src/attio/models/patch_v2_lists_list_entries_entry_id_op.py:
     id: 118c14255acd
-    last_write_checksum: sha1:1d4fa9505c8913cc9019fc23a5feed75597f8360
-    pristine_git_object: 8495d1205251d17f4375324b72a3e3423f96df30
+    last_write_checksum: sha1:8b2622d0f790452ef59bdbc77644511169af97ba
+    pristine_git_object: ed1505d6e5d971be9a1a5c350e2021b8596d281e
   src/attio/models/patch_v2_lists_list_op.py:
     id: f3cc6cc82e7d
     last_write_checksum: sha1:e53c309a9a2b4ea2bab601b4c3f6613307d4cdfa
@@ -12817,24 +13097,24 @@ trackedFiles:
     pristine_git_object: e77d2c7c20b39d7f809a086a511467a5b03188e5
   src/attio/models/patch_v2_objects_object_records_record_id_op.py:
     id: e1d220f261d5
-    last_write_checksum: sha1:4d9756299002031430a7b84296c04c4adcbd2194
-    pristine_git_object: 933122e9fbc954826bc9d84d5799393e53e6ee73
+    last_write_checksum: sha1:d351c4bcb07fb1f4f6c061f99a5623b70c962c9a
+    pristine_git_object: cb45491d10eae1be7948b54f74d64e45608bdb2d
   src/attio/models/patch_v2_target_identifier_attributes_attribute_op.py:
     id: c83a653d2044
-    last_write_checksum: sha1:d063c39f96a73fc371ee1a38851b37f33a944efa
-    pristine_git_object: bac138205bee8519576e6e9b5ef2166d6e7bbcbd
+    last_write_checksum: sha1:a0215d87d120e121dc2fe98b31482d3e2c49b2cc
+    pristine_git_object: 3c98480ba49512fa710b9b32e8850a950365f7e9
   src/attio/models/patch_v2_target_identifier_attributes_attribute_options_option_op.py:
     id: 7235b8c6fc04
-    last_write_checksum: sha1:0af5f2e5477ee2b9e6622bd149a990eaa8f356ac
-    pristine_git_object: be4151ac6898bde0ca1e4a00f750a918366fab2a
+    last_write_checksum: sha1:2edaf657f1de2f4a907e9fb456f9d98eaf6859e1
+    pristine_git_object: 05e06da0ca7981e6ed95a6dbd5429219c95f595e
   src/attio/models/patch_v2_target_identifier_attributes_attribute_statuses_status_op.py:
     id: a955fd737514
     last_write_checksum: sha1:0543b566103f2400e4725493fa5f2223fe00f103
     pristine_git_object: ef78baa6c0727d40e9a3269242f2315835e0672a
   src/attio/models/patch_v2_tasks_task_id_op.py:
     id: 3b9298ae6037
-    last_write_checksum: sha1:e7058d0e7cdaeea7349bd23bf26cf84aeb5fc921
-    pristine_git_object: d72a7520ae81feab96370126ce99aa0753adef2d
+    last_write_checksum: sha1:f16c319d04fbc1277e7e65f0ee9f4caaa8779d1f
+    pristine_git_object: 71c5789d063af784b2d8e431a5065434565fd319
   src/attio/models/patch_v2_webhooks_webhook_id_op.py:
     id: 233f078f11c7
     last_write_checksum: sha1:369c7b5d05024b26b95d175276e338fe2b97ee09
@@ -12845,8 +13125,8 @@ trackedFiles:
     pristine_git_object: 159b90d3a0bd2ed69c5b9c04575c4366c86b1788
   src/attio/models/post_v2_activities_activity_recordsop.py:
     id: 3d130652d3ed
-    last_write_checksum: sha1:549cc3ff14a16fdde86064b529ba40e32237d573
-    pristine_git_object: 506e678236db05085f346c2af89a7a9909ffcaef
+    last_write_checksum: sha1:419013c562f231e4a151d0e52f24751ac40fe014
+    pristine_git_object: 75484029a4805da75e2f4ba6eea178545d2f0558
   src/attio/models/post_v2_activitiesop.py:
     id: e8cb86c883cb
     last_write_checksum: sha1:b6f87ad94aa50028718eda8e5ddd51de972a7c2d
@@ -12897,8 +13177,8 @@ trackedFiles:
     pristine_git_object: 12b69f734189c9b79611fb98ba839ee4252c9b62
   src/attio/models/post_v2_objects_object_recordsop.py:
     id: 28e6e8c42129
-    last_write_checksum: sha1:f87a061cb3143fd5ef240d49c3b213d5bbbf4505
-    pristine_git_object: 6db38193064cb34f9aaefb472be054b23a2d7dde
+    last_write_checksum: sha1:45eda5cbe30cb9010ae49cd8bee6a876d25c1fce
+    pristine_git_object: 0b453a65cce0abfd9407d9fa123d7431f853903f
   src/attio/models/post_v2_objects_records_searchop.py:
     id: 13314f773426
     last_write_checksum: sha1:f63b5a337bce4ccb53dee8d7544e18860e106e27
@@ -12913,48 +13193,48 @@ trackedFiles:
     pristine_git_object: 9f070d46bc7358045644e95be5362d776935bb78
   src/attio/models/post_v2_sqlop.py:
     id: 089e55f77037
-    last_write_checksum: sha1:b347c1dc88325d29c5f81a84c3206b9a49b47223
-    pristine_git_object: 390ab70922e671a866f1fa166f2916d719a743d7
+    last_write_checksum: sha1:a85a948fa1bfd55c57886ebdc8bd78f9d7b51b64
+    pristine_git_object: 1d736baaa480b3edb55fdc86b150bced0ee8904d
   src/attio/models/post_v2_target_identifier_attributes_attribute_optionsop.py:
     id: a5102feab7cd
-    last_write_checksum: sha1:52e0340f360afbbb63d6293162b98dd914c1ab1e
-    pristine_git_object: 2aae2c434fe4b197a8265872b0182f91959fdca4
+    last_write_checksum: sha1:2573bfffb926b5bd9742f663ff2fd1823df51273
+    pristine_git_object: e3cfaeece6a824b5c11612008cafe9af34121ce4
   src/attio/models/post_v2_target_identifier_attributes_attribute_statusesop.py:
     id: b78b7f83cb85
     last_write_checksum: sha1:9f8bdd6cc9ee9fac464fca621339e985f7c44e10
     pristine_git_object: 13e0c56d7a90a8098292a727aced1341f4ca4dc1
   src/attio/models/post_v2_target_identifier_attributesop.py:
     id: 96a60a717ce9
-    last_write_checksum: sha1:d3058832adeb0f2dee1a9589257595c4e27ea8f5
-    pristine_git_object: ce5f801c71b37fedac9d32a07d8273613381c50a
+    last_write_checksum: sha1:33c8947f3237bd4e2b00ed9582279107c948fa1a
+    pristine_git_object: f740c8e72f7d27b5f592bc494a31f037e0c71513
   src/attio/models/post_v2_tasksop.py:
     id: f1ff7d7f100a
-    last_write_checksum: sha1:fa4c739911373f8b864c9f15981fdee10ec28910
-    pristine_git_object: 731ae6be77852d3a6caa8dccc8602b2d65060043
+    last_write_checksum: sha1:8f490e6314ddd07cbe6a0fe836bf5238f2ac018c
+    pristine_git_object: f02d214e41d7728a81c5a2013810adf2f777eba1
   src/attio/models/post_v2_webhooksop.py:
     id: 3788a5025538
     last_write_checksum: sha1:68aa9967481190d396243da3ce1d0d6083ec36d8
     pristine_git_object: 91213d536b44ea52f461e6461782846d02786c72
   src/attio/models/put_v2_activities_activity_records_record_id_op.py:
     id: ee1d26a5713c
-    last_write_checksum: sha1:e4d63f806981791c9f079ca2196733fbb3ee1dcd
-    pristine_git_object: 2d04ec29c1c210b9b53dae325eb141fa0872320f
+    last_write_checksum: sha1:0558f427d75bd40f99d1ed5f43c3a529cb37c6ea
+    pristine_git_object: ded0474c4f0526712cb3022d67e108031e4dc659
   src/attio/models/put_v2_activities_activity_recordsop.py:
     id: 0e34f7753c5c
-    last_write_checksum: sha1:2d5ef86e38a3a0e6e3a83c662138f1099277174c
-    pristine_git_object: fb0b94836abeb42ec54b04af81b86a4e0703aaeb
+    last_write_checksum: sha1:04353a76bcc21e6bfb7ba7d04b50b4216156bcc7
+    pristine_git_object: a9d41d028dacbad0b6183e10e9524308c184dbbf
   src/attio/models/put_v2_lists_list_entries_entry_id_attributes_attribute_valuesop.py:
     id: 3a730340ef61
     last_write_checksum: sha1:b1b26901fab3d31697f75ec963b928d7e220c82a
     pristine_git_object: c8230d988b4f4a7440847192766cfe0f6983dca6
   src/attio/models/put_v2_lists_list_entries_entry_id_op.py:
     id: e6f55339471f
-    last_write_checksum: sha1:68a9647240dcbc19591e70e131b1cbca42eab7c8
-    pristine_git_object: e534f4fbeff95791ee2061a2e18f710bb0f683ab
+    last_write_checksum: sha1:c7c99a0f344b589f50aba34dd57d958dad3c6736
+    pristine_git_object: f8f4838cc6e4e4afb3f15744de46e83640465b85
   src/attio/models/put_v2_lists_list_entriesop.py:
     id: fd8593c149ca
-    last_write_checksum: sha1:2183d614f0ac2e5a915c8d91ce93d1f026bef14b
-    pristine_git_object: fcf3d120ece8e4d527c22a74bc94c6dafbb93de8
+    last_write_checksum: sha1:a6af9c7ff97a53825c7a09d25a76ceb2efcd1ac2
+    pristine_git_object: 908130386f436d3471be9c85adaeb9de6c45bc69
   src/attio/models/put_v2_meetings_meeting_id_op.py:
     id: 8e0c96e19564
     last_write_checksum: sha1:494a0ebcb6981db76aa8504e4d0833e9a2f70403
@@ -12965,12 +13245,12 @@ trackedFiles:
     pristine_git_object: b6acd58183d1baab9fedcfe8f36bf58abe611c49
   src/attio/models/put_v2_objects_object_records_record_id_op.py:
     id: c304c3011539
-    last_write_checksum: sha1:bc18e051a03a128ab8b3b640f340e25fd7acf72f
-    pristine_git_object: 157262ba4e448e442bb462eecaebcd4b49992f9e
+    last_write_checksum: sha1:bfa50551b6726c4fff9b41a8788d9aa7fecf260a
+    pristine_git_object: 0a8a07af7012494f754471738a609cda2bc83eb9
   src/attio/models/put_v2_objects_object_recordsop.py:
     id: 97095d1a5c2a
-    last_write_checksum: sha1:cae7008ddbf615483b8cb1f80bf9984316a40090
-    pristine_git_object: 310822adae020b00363d828eab0828f21f455ec3
+    last_write_checksum: sha1:a40eced19f5c6b87fc0c9399d1c5c5b9abbf4873
+    pristine_git_object: 35d8e5ef9434527a42f4b0d3851499f38558eb81
   src/attio/models/security.py:
     id: 85ee2962631a
     last_write_checksum: sha1:ae8cd0db99350218e7f8350d3fd352b74d922021
@@ -13009,12 +13289,12 @@ trackedFiles:
     pristine_git_object: 3e38f1a929f7d6b1d6de74604aa87e3d8f010544
   src/attio/records.py:
     id: 24471ef94a17
-    last_write_checksum: sha1:12636238c5d866111466723e4284f19a8df6bf36
-    pristine_git_object: 5f8d7d032425a2c84605dcfc55c2eef46c9aef6d
+    last_write_checksum: sha1:23b5f10d17ced478c0615eda450aeb0e4b9afa5d
+    pristine_git_object: fdca50e42af839454722d3bbefee8e4143715a5c
   src/attio/sdk.py:
     id: c9d3347e371f
-    last_write_checksum: sha1:95d618d9c785f78770ec8fcae9213809b0baf5e6
-    pristine_git_object: e45b0483fc4d05b26933699dd5e0cd23f9a7b17b
+    last_write_checksum: sha1:7d0f67ebf1aee4aef4dd6ebc01d371f95d87ce36
+    pristine_git_object: a309e457c2adf45f7857e9d3d97e44faed199a32
   src/attio/sdkconfiguration.py:
     id: 8e7545581179
     last_write_checksum: sha1:9102a68505d89b7401cf61f65289ec24dbaa3b93
@@ -13025,8 +13305,8 @@ trackedFiles:
     pristine_git_object: f7bd77c32b24c5ef23ec566646f4640f322a1886
   src/attio/sql.py:
     id: f5a347f06bb1
-    last_write_checksum: sha1:08fc822a9bb21c2b0b0527e542b273d394c0581c
-    pristine_git_object: 84eef4c855c0a175e237db3118fe01ff248ec734
+    last_write_checksum: sha1:1e4bd8533530b937324e37883dc2a9253540bed4
+    pristine_git_object: 1edd12bd6a5ba1e1f455562346d43347420a1149
   src/attio/tasks.py:
     id: 7f9870a7d8e4
     last_write_checksum: sha1:19f86ecfe40558cb68f1d861c83ede588ad9f7a8
@@ -13401,13 +13681,47 @@ examples:
         "200":
           application/json: {"data": {"id": {"workspace_id": "14beef7a-99f7-4534-a87e-70b564330a4c", "object_id": "97052eb9-e65e-443f-a297-f2d9a4a7f795", "record_id": "bf071e1f-6035-429d-b874-d83ea64ea13b"}, "created_at": "2022-11-21T13:22:49.061281000Z", "web_url": "https://app.attio.com/salarya/person/bf071e1f-6035-429d-b874-d83ea64ea13b", "values": {"key": [], "key1": [{"active_from": "2023-01-01T15:00:00.000000000Z", "active_until": "2023-01-01T15:00:00.000000000Z", "created_by_actor": {"id": "50cf242c-7fa3-4cad-87d0-75b1af71c57b", "type": "workspace-member"}, "status": {"id": {"workspace_id": "14beef7a-99f7-4534-a87e-70b564330a4c", "object_id": "97052eb9-e65e-443f-a297-f2d9a4a7f795", "attribute_id": "41252299-f8c7-4b5e-99c9-4ff8321d2f96", "status_id": "11f07f01-c10f-4e05-a522-33e050bc52ee"}, "title": "In Progress", "is_archived": false, "celebration_enabled": false, "target_time_in_status": "P0Y0M1DT0H0M0S"}, "attribute_type": "status"}], "key2": []}}}
         "400":
-          application/json: {"status_code": 4266.82, "type": "invalid_request_error", "code": "value_not_found", "message": "Cannot find select attribute with select option title \"In Progress\"."}
+          application/json: {"status_code": 4266.82, "type": "invalid_request_error", "code": "duplicate_values", "message": "Cannot find select attribute with select option title \"In Progress\"."}
         "404":
-          application/json: {"status_code": 3546.83, "type": "invalid_request_error", "code": "not_found", "message": "Object with slug/ID \"people\" not found."}
+          application/json: {"status_code": 8955.44, "type": "invalid_request_error", "code": "not_found", "message": "Object with slug/ID \"people\" not found."}
         "403":
-          application/json: {"status_code": 7930.54, "type": "auth_error", "code": "unauthorized", "message": "You do not have the necessary permissions to create this record."}
+          application/json: {"status_code": 9764.72, "type": "auth_error", "code": "unauthorized", "message": "You do not have the necessary permissions to create this record."}
         "409":
-          application/json: {"status_code": 3428.39, "type": "invalid_request_error", "code": "concurrent_write_conflict", "message": "The record was modified by another request while this write was being validated. Please try again."}
+          application/json: {"status_code": 9456.84, "type": "invalid_request_error", "code": "uniqueness_conflict", "message": "The record was modified by another request while this write was being validated. Please try again."}
+    Attribute values:
+      parameters:
+        path:
+          object: "people"
+      requestBody:
+        application/json: {"data": {"values": {"name": ["Alice Adams"], "email_addresses": ["alice@app.attio.com"]}}}
+      responses:
+        "200":
+          application/json: {"data": {"id": {"workspace_id": "14beef7a-99f7-4534-a87e-70b564330a4c", "object_id": "97052eb9-e65e-443f-a297-f2d9a4a7f795", "record_id": "bf071e1f-6035-429d-b874-d83ea64ea13b"}, "created_at": "2022-11-21T13:22:49.061281000Z", "web_url": "https://app.attio.com/salarya/person/bf071e1f-6035-429d-b874-d83ea64ea13b", "values": {"key": [], "key1": [{"active_from": "2023-01-01T15:00:00.000000000Z", "active_until": "2023-01-01T15:00:00.000000000Z", "created_by_actor": {"id": "50cf242c-7fa3-4cad-87d0-75b1af71c57b", "type": "workspace-member"}, "status": {"id": {"workspace_id": "14beef7a-99f7-4534-a87e-70b564330a4c", "object_id": "97052eb9-e65e-443f-a297-f2d9a4a7f795", "attribute_id": "41252299-f8c7-4b5e-99c9-4ff8321d2f96", "status_id": "11f07f01-c10f-4e05-a522-33e050bc52ee"}, "title": "In Progress", "is_archived": false, "celebration_enabled": false, "target_time_in_status": "P0Y0M1DT0H0M0S"}, "attribute_type": "status"}], "key2": []}}}
+        "400":
+          application/json: {"status_code": 4266.82, "type": "invalid_request_error", "code": "duplicate_values", "message": "Cannot find select attribute with select option title \"In Progress\"."}
+        "403":
+          application/json: {"status_code": 9764.72, "type": "auth_error", "code": "unauthorized", "message": "You do not have the necessary permissions to create this record."}
+        "404":
+          application/json: {"status_code": 8955.44, "type": "invalid_request_error", "code": "not_found", "message": "Object with slug/ID \"people\" not found."}
+        "409":
+          application/json: {"status_code": 9456.84, "type": "invalid_request_error", "code": "uniqueness_conflict", "message": "The record was modified by another request while this write was being validated. Please try again."}
+    Reference a record by a matching attribute:
+      parameters:
+        path:
+          object: "people"
+      requestBody:
+        application/json: {"data": {"values": {"name": ["Alice Adams"], "company": [{"target_object": "companies", "target_record_reference": {"match": {"domains": [{"domain": "app.attio.com"}]}, "if_unmatched": "create", "if_multiple_matches": "error", "create": {"name": "Attio"}}}]}}}
+      responses:
+        "200":
+          application/json: {"data": {"id": {"workspace_id": "14beef7a-99f7-4534-a87e-70b564330a4c", "object_id": "97052eb9-e65e-443f-a297-f2d9a4a7f795", "record_id": "bf071e1f-6035-429d-b874-d83ea64ea13b"}, "created_at": "2022-11-21T13:22:49.061281000Z", "web_url": "https://app.attio.com/salarya/person/bf071e1f-6035-429d-b874-d83ea64ea13b", "values": {"key": [], "key1": [{"active_from": "2023-01-01T15:00:00.000000000Z", "active_until": "2023-01-01T15:00:00.000000000Z", "created_by_actor": {"id": "50cf242c-7fa3-4cad-87d0-75b1af71c57b", "type": "workspace-member"}, "status": {"id": {"workspace_id": "14beef7a-99f7-4534-a87e-70b564330a4c", "object_id": "97052eb9-e65e-443f-a297-f2d9a4a7f795", "attribute_id": "41252299-f8c7-4b5e-99c9-4ff8321d2f96", "status_id": "11f07f01-c10f-4e05-a522-33e050bc52ee"}, "title": "In Progress", "is_archived": false, "celebration_enabled": false, "target_time_in_status": "P0Y0M1DT0H0M0S"}, "attribute_type": "status"}], "key2": []}}}
+        "400":
+          application/json: {"status_code": 4266.82, "type": "invalid_request_error", "code": "duplicate_values", "message": "Cannot find select attribute with select option title \"In Progress\"."}
+        "403":
+          application/json: {"status_code": 9764.72, "type": "auth_error", "code": "unauthorized", "message": "You do not have the necessary permissions to create this record."}
+        "404":
+          application/json: {"status_code": 8955.44, "type": "invalid_request_error", "code": "not_found", "message": "Object with slug/ID \"people\" not found."}
+        "409":
+          application/json: {"status_code": 9456.84, "type": "invalid_request_error", "code": "uniqueness_conflict", "message": "The record was modified by another request while this write was being validated. Please try again."}
   put_/v2/objects/{object}/records:
     speakeasy-default-put-/v2-/objects/{object}/records:
       parameters:
@@ -13421,13 +13735,51 @@ examples:
         "200":
           application/json: {"data": {"id": {"workspace_id": "14beef7a-99f7-4534-a87e-70b564330a4c", "object_id": "97052eb9-e65e-443f-a297-f2d9a4a7f795", "record_id": "bf071e1f-6035-429d-b874-d83ea64ea13b"}, "created_at": "2022-11-21T13:22:49.061281000Z", "web_url": "https://app.attio.com/salarya/person/bf071e1f-6035-429d-b874-d83ea64ea13b", "values": {"key": [], "key1": [{"active_from": "2023-01-01T15:00:00.000000000Z", "active_until": "2023-01-01T15:00:00.000000000Z", "created_by_actor": {"id": "50cf242c-7fa3-4cad-87d0-75b1af71c57b", "type": "workspace-member"}, "line_1": "1 Infinite Loop", "line_2": "Block 1", "line_3": "Hilldrop Estate", "line_4": "Westborough", "locality": "Cupertino", "region": "CA", "postcode": "95014", "country_code": "US", "latitude": "37.331741", "longitude": "-122.030333", "attribute_type": "location"}]}}}
         "400":
-          application/json: {"status_code": 7766.91, "type": "invalid_request_error", "code": "value_not_found", "message": "No attribute was found for matching_attribute slug/ID \"my-attribute\"."}
+          application/json: {"status_code": 7766.91, "type": "invalid_request_error", "code": "multiple_match_results", "message": "No attribute was found for matching_attribute slug/ID \"my_attribute\"."}
         "404":
-          application/json: {"status_code": 8367.72, "type": "invalid_request_error", "code": "not_found", "message": "Object with slug/ID \"people\" not found."}
+          application/json: {"status_code": 2250.35, "type": "invalid_request_error", "code": "not_found", "message": "Object with slug/ID \"people\" not found."}
         "403":
-          application/json: {"status_code": 5614.68, "type": "auth_error", "code": "unauthorized", "message": "You do not have the necessary permissions to create or update records of this object."}
+          application/json: {"status_code": 6287.7, "type": "auth_error", "code": "unauthorized", "message": "You do not have the necessary permissions to create or update records of this object."}
         "409":
-          application/json: {"status_code": 4708.9, "type": "invalid_request_error", "code": "concurrent_write_conflict", "message": "The record was modified by another request while this write was being validated. Please try again."}
+          application/json: {"status_code": 283.69, "type": "invalid_request_error", "code": "uniqueness_conflict", "message": "The record was modified by another request while this write was being validated. Please try again."}
+    Attribute values:
+      parameters:
+        path:
+          object: "people"
+        query:
+          matching_attribute: "41252299-f8c7-4b5e-99c9-4ff8321d2f96"
+      requestBody:
+        application/json: {"data": {"values": {"name": ["Alice Adams"], "email_addresses": ["alice@app.attio.com"]}}}
+      responses:
+        "200":
+          application/json: {"data": {"id": {"workspace_id": "14beef7a-99f7-4534-a87e-70b564330a4c", "object_id": "97052eb9-e65e-443f-a297-f2d9a4a7f795", "record_id": "bf071e1f-6035-429d-b874-d83ea64ea13b"}, "created_at": "2022-11-21T13:22:49.061281000Z", "web_url": "https://app.attio.com/salarya/person/bf071e1f-6035-429d-b874-d83ea64ea13b", "values": {"key": [], "key1": [{"active_from": "2023-01-01T15:00:00.000000000Z", "active_until": "2023-01-01T15:00:00.000000000Z", "created_by_actor": {"id": "50cf242c-7fa3-4cad-87d0-75b1af71c57b", "type": "workspace-member"}, "line_1": "1 Infinite Loop", "line_2": "Block 1", "line_3": "Hilldrop Estate", "line_4": "Westborough", "locality": "Cupertino", "region": "CA", "postcode": "95014", "country_code": "US", "latitude": "37.331741", "longitude": "-122.030333", "attribute_type": "location"}]}}}
+        "400":
+          application/json: {"status_code": 7766.91, "type": "invalid_request_error", "code": "multiple_match_results", "message": "No attribute was found for matching_attribute slug/ID \"my_attribute\"."}
+        "403":
+          application/json: {"status_code": 6287.7, "type": "auth_error", "code": "unauthorized", "message": "You do not have the necessary permissions to create or update records of this object."}
+        "404":
+          application/json: {"status_code": 2250.35, "type": "invalid_request_error", "code": "not_found", "message": "Object with slug/ID \"people\" not found."}
+        "409":
+          application/json: {"status_code": 283.69, "type": "invalid_request_error", "code": "uniqueness_conflict", "message": "The record was modified by another request while this write was being validated. Please try again."}
+    Reference a record by a matching attribute:
+      parameters:
+        path:
+          object: "people"
+        query:
+          matching_attribute: "41252299-f8c7-4b5e-99c9-4ff8321d2f96"
+      requestBody:
+        application/json: {"data": {"values": {"name": ["Alice Adams"], "company": [{"target_object": "companies", "target_record_reference": {"match": {"domains": [{"domain": "app.attio.com"}]}, "if_unmatched": "create", "if_multiple_matches": "error", "create": {"name": "Attio"}}}]}}}
+      responses:
+        "200":
+          application/json: {"data": {"id": {"workspace_id": "14beef7a-99f7-4534-a87e-70b564330a4c", "object_id": "97052eb9-e65e-443f-a297-f2d9a4a7f795", "record_id": "bf071e1f-6035-429d-b874-d83ea64ea13b"}, "created_at": "2022-11-21T13:22:49.061281000Z", "web_url": "https://app.attio.com/salarya/person/bf071e1f-6035-429d-b874-d83ea64ea13b", "values": {"key": [], "key1": [{"active_from": "2023-01-01T15:00:00.000000000Z", "active_until": "2023-01-01T15:00:00.000000000Z", "created_by_actor": {"id": "50cf242c-7fa3-4cad-87d0-75b1af71c57b", "type": "workspace-member"}, "line_1": "1 Infinite Loop", "line_2": "Block 1", "line_3": "Hilldrop Estate", "line_4": "Westborough", "locality": "Cupertino", "region": "CA", "postcode": "95014", "country_code": "US", "latitude": "37.331741", "longitude": "-122.030333", "attribute_type": "location"}]}}}
+        "400":
+          application/json: {"status_code": 7766.91, "type": "invalid_request_error", "code": "multiple_match_results", "message": "No attribute was found for matching_attribute slug/ID \"my_attribute\"."}
+        "403":
+          application/json: {"status_code": 6287.7, "type": "auth_error", "code": "unauthorized", "message": "You do not have the necessary permissions to create or update records of this object."}
+        "404":
+          application/json: {"status_code": 2250.35, "type": "invalid_request_error", "code": "not_found", "message": "Object with slug/ID \"people\" not found."}
+        "409":
+          application/json: {"status_code": 283.69, "type": "invalid_request_error", "code": "uniqueness_conflict", "message": "The record was modified by another request while this write was being validated. Please try again."}
   get_/v2/objects/{object}/records/{record_id}:
     speakeasy-default-get-/v2-/objects/{object}/records/{record-id}:
       parameters:
@@ -13451,13 +13803,49 @@ examples:
         "200":
           application/json: {"data": {"id": {"workspace_id": "14beef7a-99f7-4534-a87e-70b564330a4c", "object_id": "97052eb9-e65e-443f-a297-f2d9a4a7f795", "record_id": "bf071e1f-6035-429d-b874-d83ea64ea13b"}, "created_at": "2022-11-21T13:22:49.061281000Z", "web_url": "https://app.attio.com/salarya/person/bf071e1f-6035-429d-b874-d83ea64ea13b", "values": {"key": []}}}
         "400":
-          application/json: {"status_code": 8004.04, "type": "invalid_request_error", "code": "missing_value", "message": "Required value for attribute with ID \"41252299-f8c7-4b5e-99c9-4ff8321d2f96\" was not provided."}
+          application/json: {"status_code": 8004.04, "type": "invalid_request_error", "code": "validation_type", "message": "Required value for attribute with ID \"41252299-f8c7-4b5e-99c9-4ff8321d2f96\" was not provided."}
         "404":
-          application/json: {"status_code": 5048.59, "type": "invalid_request_error", "code": "not_found", "message": "Object with slug/ID \"people\" not found."}
+          application/json: {"status_code": 4426.95, "type": "invalid_request_error", "code": "not_found", "message": "Object with slug/ID \"people\" not found."}
         "403":
-          application/json: {"status_code": 3625.3, "type": "auth_error", "code": "unauthorized", "message": "You do not have the necessary permissions to update this record."}
+          application/json: {"status_code": 128, "type": "auth_error", "code": "unauthorized", "message": "You do not have the necessary permissions to update this record."}
         "409":
-          application/json: {"status_code": 4971.22, "type": "invalid_request_error", "code": "concurrent_write_conflict", "message": "The record was modified by another request while this write was being validated. Please try again."}
+          application/json: {"status_code": 2164.28, "type": "invalid_request_error", "code": "multiple_match_results", "message": "The record was modified by another request while this write was being validated. Please try again."}
+    Attribute values:
+      parameters:
+        path:
+          object: "people"
+          record_id: "891dcbfc-9141-415d-9b2a-2238a6cc012d"
+      requestBody:
+        application/json: {"data": {"values": {"name": ["Alice Adams"], "email_addresses": ["alice@app.attio.com"]}}}
+      responses:
+        "200":
+          application/json: {"data": {"id": {"workspace_id": "14beef7a-99f7-4534-a87e-70b564330a4c", "object_id": "97052eb9-e65e-443f-a297-f2d9a4a7f795", "record_id": "bf071e1f-6035-429d-b874-d83ea64ea13b"}, "created_at": "2022-11-21T13:22:49.061281000Z", "web_url": "https://app.attio.com/salarya/person/bf071e1f-6035-429d-b874-d83ea64ea13b", "values": {"key": []}}}
+        "400":
+          application/json: {"status_code": 8004.04, "type": "invalid_request_error", "code": "validation_type", "message": "Required value for attribute with ID \"41252299-f8c7-4b5e-99c9-4ff8321d2f96\" was not provided."}
+        "403":
+          application/json: {"status_code": 128, "type": "auth_error", "code": "unauthorized", "message": "You do not have the necessary permissions to update this record."}
+        "404":
+          application/json: {"status_code": 4426.95, "type": "invalid_request_error", "code": "not_found", "message": "Object with slug/ID \"people\" not found."}
+        "409":
+          application/json: {"status_code": 2164.28, "type": "invalid_request_error", "code": "multiple_match_results", "message": "The record was modified by another request while this write was being validated. Please try again."}
+    Reference a record by a matching attribute:
+      parameters:
+        path:
+          object: "people"
+          record_id: "891dcbfc-9141-415d-9b2a-2238a6cc012d"
+      requestBody:
+        application/json: {"data": {"values": {"name": ["Alice Adams"], "company": [{"target_object": "companies", "target_record_reference": {"match": {"domains": [{"domain": "app.attio.com"}]}, "if_unmatched": "create", "if_multiple_matches": "error", "create": {"name": "Attio"}}}]}}}
+      responses:
+        "200":
+          application/json: {"data": {"id": {"workspace_id": "14beef7a-99f7-4534-a87e-70b564330a4c", "object_id": "97052eb9-e65e-443f-a297-f2d9a4a7f795", "record_id": "bf071e1f-6035-429d-b874-d83ea64ea13b"}, "created_at": "2022-11-21T13:22:49.061281000Z", "web_url": "https://app.attio.com/salarya/person/bf071e1f-6035-429d-b874-d83ea64ea13b", "values": {"key": []}}}
+        "400":
+          application/json: {"status_code": 8004.04, "type": "invalid_request_error", "code": "validation_type", "message": "Required value for attribute with ID \"41252299-f8c7-4b5e-99c9-4ff8321d2f96\" was not provided."}
+        "403":
+          application/json: {"status_code": 128, "type": "auth_error", "code": "unauthorized", "message": "You do not have the necessary permissions to update this record."}
+        "404":
+          application/json: {"status_code": 4426.95, "type": "invalid_request_error", "code": "not_found", "message": "Object with slug/ID \"people\" not found."}
+        "409":
+          application/json: {"status_code": 2164.28, "type": "invalid_request_error", "code": "multiple_match_results", "message": "The record was modified by another request while this write was being validated. Please try again."}
   put_/v2/objects/{object}/records/{record_id}:
     speakeasy-default-put-/v2-/objects/{object}/records/{record-id}:
       parameters:
@@ -13470,13 +13858,49 @@ examples:
         "200":
           application/json: {"data": {"id": {"workspace_id": "14beef7a-99f7-4534-a87e-70b564330a4c", "object_id": "97052eb9-e65e-443f-a297-f2d9a4a7f795", "record_id": "bf071e1f-6035-429d-b874-d83ea64ea13b"}, "created_at": "2022-11-21T13:22:49.061281000Z", "web_url": "https://app.attio.com/salarya/person/bf071e1f-6035-429d-b874-d83ea64ea13b", "values": {"key": [], "key1": [{"active_from": "2023-01-01T15:00:00.000000000Z", "active_until": "2023-01-01T15:00:00.000000000Z", "created_by_actor": {"id": "50cf242c-7fa3-4cad-87d0-75b1af71c57b", "type": "workspace-member"}, "referenced_actor_type": "workspace-member", "referenced_actor_id": "50cf242c-7fa3-4cad-87d0-75b1af71c57b", "attribute_type": "actor-reference"}]}}}
         "400":
-          application/json: {"status_code": 9160.91, "type": "invalid_request_error", "code": "missing_value", "message": "Required value for attribute with ID \"41252299-f8c7-4b5e-99c9-4ff8321d2f96\" was not provided."}
+          application/json: {"status_code": 9160.91, "type": "invalid_request_error", "code": "merge_in_progress", "message": "Required value for attribute with ID \"41252299-f8c7-4b5e-99c9-4ff8321d2f96\" was not provided."}
         "404":
-          application/json: {"status_code": 2358.62, "type": "invalid_request_error", "code": "not_found", "message": "Object with slug/ID \"people\" not found."}
+          application/json: {"status_code": 1622.87, "type": "invalid_request_error", "code": "not_found", "message": "Object with slug/ID \"people\" not found."}
         "403":
-          application/json: {"status_code": 7215.89, "type": "auth_error", "code": "unauthorized", "message": "You do not have the necessary permissions to update this record."}
+          application/json: {"status_code": 6167.51, "type": "auth_error", "code": "unauthorized", "message": "You do not have the necessary permissions to update this record."}
         "409":
-          application/json: {"status_code": 346.94, "type": "invalid_request_error", "code": "concurrent_write_conflict", "message": "The record was modified by another request while this write was being validated. Please try again."}
+          application/json: {"status_code": 6612.08, "type": "invalid_request_error", "code": "multiple_match_results", "message": "The record was modified by another request while this write was being validated. Please try again."}
+    Attribute values:
+      parameters:
+        path:
+          object: "people"
+          record_id: "891dcbfc-9141-415d-9b2a-2238a6cc012d"
+      requestBody:
+        application/json: {"data": {"values": {"name": ["Alice Adams"], "email_addresses": ["alice@app.attio.com"]}}}
+      responses:
+        "200":
+          application/json: {"data": {"id": {"workspace_id": "14beef7a-99f7-4534-a87e-70b564330a4c", "object_id": "97052eb9-e65e-443f-a297-f2d9a4a7f795", "record_id": "bf071e1f-6035-429d-b874-d83ea64ea13b"}, "created_at": "2022-11-21T13:22:49.061281000Z", "web_url": "https://app.attio.com/salarya/person/bf071e1f-6035-429d-b874-d83ea64ea13b", "values": {"key": [], "key1": [{"active_from": "2023-01-01T15:00:00.000000000Z", "active_until": "2023-01-01T15:00:00.000000000Z", "created_by_actor": {"id": "50cf242c-7fa3-4cad-87d0-75b1af71c57b", "type": "workspace-member"}, "referenced_actor_type": "workspace-member", "referenced_actor_id": "50cf242c-7fa3-4cad-87d0-75b1af71c57b", "attribute_type": "actor-reference"}]}}}
+        "400":
+          application/json: {"status_code": 9160.91, "type": "invalid_request_error", "code": "merge_in_progress", "message": "Required value for attribute with ID \"41252299-f8c7-4b5e-99c9-4ff8321d2f96\" was not provided."}
+        "403":
+          application/json: {"status_code": 6167.51, "type": "auth_error", "code": "unauthorized", "message": "You do not have the necessary permissions to update this record."}
+        "404":
+          application/json: {"status_code": 1622.87, "type": "invalid_request_error", "code": "not_found", "message": "Object with slug/ID \"people\" not found."}
+        "409":
+          application/json: {"status_code": 6612.08, "type": "invalid_request_error", "code": "multiple_match_results", "message": "The record was modified by another request while this write was being validated. Please try again."}
+    Reference a record by a matching attribute:
+      parameters:
+        path:
+          object: "people"
+          record_id: "891dcbfc-9141-415d-9b2a-2238a6cc012d"
+      requestBody:
+        application/json: {"data": {"values": {"name": ["Alice Adams"], "company": [{"target_object": "companies", "target_record_reference": {"match": {"domains": [{"domain": "app.attio.com"}]}, "if_unmatched": "create", "if_multiple_matches": "error", "create": {"name": "Attio"}}}]}}}
+      responses:
+        "200":
+          application/json: {"data": {"id": {"workspace_id": "14beef7a-99f7-4534-a87e-70b564330a4c", "object_id": "97052eb9-e65e-443f-a297-f2d9a4a7f795", "record_id": "bf071e1f-6035-429d-b874-d83ea64ea13b"}, "created_at": "2022-11-21T13:22:49.061281000Z", "web_url": "https://app.attio.com/salarya/person/bf071e1f-6035-429d-b874-d83ea64ea13b", "values": {"key": [], "key1": [{"active_from": "2023-01-01T15:00:00.000000000Z", "active_until": "2023-01-01T15:00:00.000000000Z", "created_by_actor": {"id": "50cf242c-7fa3-4cad-87d0-75b1af71c57b", "type": "workspace-member"}, "referenced_actor_type": "workspace-member", "referenced_actor_id": "50cf242c-7fa3-4cad-87d0-75b1af71c57b", "attribute_type": "actor-reference"}]}}}
+        "400":
+          application/json: {"status_code": 9160.91, "type": "invalid_request_error", "code": "merge_in_progress", "message": "Required value for attribute with ID \"41252299-f8c7-4b5e-99c9-4ff8321d2f96\" was not provided."}
+        "403":
+          application/json: {"status_code": 6167.51, "type": "auth_error", "code": "unauthorized", "message": "You do not have the necessary permissions to update this record."}
+        "404":
+          application/json: {"status_code": 1622.87, "type": "invalid_request_error", "code": "not_found", "message": "Object with slug/ID \"people\" not found."}
+        "409":
+          application/json: {"status_code": 6612.08, "type": "invalid_request_error", "code": "multiple_match_results", "message": "The record was modified by another request while this write was being validated. Please try again."}
   delete_/v2/objects/{object}/records/{record_id}:
     speakeasy-default-delete-/v2-/objects/{object}/records/{record-id}:
       parameters:
@@ -14250,7 +14674,7 @@ examples:
   post_/v2/sql:
     speakeasy-default-post-/v2-/sql:
       requestBody:
-        application/json: {"sql": "SELECT * FROM companies WHERE companies.name = 'Fundstack'"}
+        application/json: {"sql": "SELECT * FROM companies WHERE companies.name = 'Fundstack'", "parameters": {"name": {"type": "string", "value": "Fundstack"}, "since": {"type": "timestamp", "value": "2023-01-01T15:00:00.000000000Z"}, "names": {"type": "list", "item_type": "string", "value": ["Fundstack", "Acme"]}}}
       responses:
         "200":
           application/json: {"data": {"rows": [{"record_id": "bf071e1f-6035-429d-b874-d83ea64ea13b", "created_at": "2023-01-01T15:00:00.000000000Z", "name": "Fundstack", "created_by": {"type": "workspace-member", "id": "50cf242c-7fa3-4cad-87d0-75b1af71c57b"}, "domains": ["fundstack.com"]}]}}
@@ -14387,7 +14811,41 @@ examples:
         "404":
           application/json: {"status_code": 9436.56, "type": "invalid_request_error", "code": "not_found", "message": "Activity with slug/ID \"phone_calls\" not found."}
         "409":
-          application/json: {"status_code": 5713.49, "type": "invalid_request_error", "code": "concurrent_write_conflict", "message": "The record was modified by another request while this write was being validated. Please try again."}
+          application/json: {"status_code": 5713.49, "type": "invalid_request_error", "code": "uniqueness_conflict", "message": "The record was modified by another request while this write was being validated. Please try again."}
+    Attribute values:
+      parameters:
+        path:
+          activity: "phone_calls"
+      requestBody:
+        application/json: {"data": {"values": {"direction": ["Outbound"]}}}
+      responses:
+        "200":
+          application/json: {"data": {"id": {"workspace_id": "14beef7a-99f7-4534-a87e-70b564330a4c", "activity_id": "97052eb9-e65e-443f-a297-f2d9a4a7f795", "record_id": "5f4f2d9c-2b3e-4a83-9c76-1de3a3f14f26"}, "created_at": "2022-11-21T13:22:49.061281000Z", "values": {"key": [{"active_from": "2023-01-01T15:00:00.000000000Z", "active_until": "2023-01-01T15:00:00.000000000Z", "created_by_actor": {"id": "50cf242c-7fa3-4cad-87d0-75b1af71c57b", "type": "workspace-member"}, "first_name": "Ada", "last_name": "Lovelace", "full_name": "Ada Lovelace", "attribute_type": "personal-name"}], "key1": [{"active_from": "2023-01-01T15:00:00.000000000Z", "active_until": "2023-01-01T15:00:00.000000000Z", "created_by_actor": {"id": "50cf242c-7fa3-4cad-87d0-75b1af71c57b", "type": "workspace-member"}, "original_phone_number": "5558675309", "country_code": "US", "phone_number": "+15558675309", "attribute_type": "phone-number"}], "key2": [{"active_from": "2023-01-01T15:00:00.000000000Z", "active_until": "2023-01-01T15:00:00.000000000Z", "created_by_actor": {"id": "50cf242c-7fa3-4cad-87d0-75b1af71c57b", "type": "workspace-member"}, "value": 42, "attribute_type": "number"}]}}}
+        "400":
+          application/json: {"status_code": 7972.58, "type": "invalid_request_error", "code": "value_not_found", "message": "Cannot find select attribute with select option title \"In Progress\"."}
+        "403":
+          application/json: {"status_code": 2011.25, "type": "auth_error", "code": "billing_error", "message": "You do not have the necessary permissions to create this activity record."}
+        "404":
+          application/json: {"status_code": 9436.56, "type": "invalid_request_error", "code": "not_found", "message": "Activity with slug/ID \"phone_calls\" not found."}
+        "409":
+          application/json: {"status_code": 5713.49, "type": "invalid_request_error", "code": "uniqueness_conflict", "message": "The record was modified by another request while this write was being validated. Please try again."}
+    Reference a record by a matching attribute:
+      parameters:
+        path:
+          activity: "phone_calls"
+      requestBody:
+        application/json: {"data": {"values": {"direction": ["Outbound"], "participant": [{"target_object": "people", "target_record_reference": {"match": {"email_addresses": [{"email_address": "alice@app.attio.com"}]}, "if_unmatched": "ignore", "if_multiple_matches": "match_all"}}]}}}
+      responses:
+        "200":
+          application/json: {"data": {"id": {"workspace_id": "14beef7a-99f7-4534-a87e-70b564330a4c", "activity_id": "97052eb9-e65e-443f-a297-f2d9a4a7f795", "record_id": "5f4f2d9c-2b3e-4a83-9c76-1de3a3f14f26"}, "created_at": "2022-11-21T13:22:49.061281000Z", "values": {"key": [{"active_from": "2023-01-01T15:00:00.000000000Z", "active_until": "2023-01-01T15:00:00.000000000Z", "created_by_actor": {"id": "50cf242c-7fa3-4cad-87d0-75b1af71c57b", "type": "workspace-member"}, "first_name": "Ada", "last_name": "Lovelace", "full_name": "Ada Lovelace", "attribute_type": "personal-name"}], "key1": [{"active_from": "2023-01-01T15:00:00.000000000Z", "active_until": "2023-01-01T15:00:00.000000000Z", "created_by_actor": {"id": "50cf242c-7fa3-4cad-87d0-75b1af71c57b", "type": "workspace-member"}, "original_phone_number": "5558675309", "country_code": "US", "phone_number": "+15558675309", "attribute_type": "phone-number"}], "key2": [{"active_from": "2023-01-01T15:00:00.000000000Z", "active_until": "2023-01-01T15:00:00.000000000Z", "created_by_actor": {"id": "50cf242c-7fa3-4cad-87d0-75b1af71c57b", "type": "workspace-member"}, "value": 42, "attribute_type": "number"}]}}}
+        "400":
+          application/json: {"status_code": 7972.58, "type": "invalid_request_error", "code": "value_not_found", "message": "Cannot find select attribute with select option title \"In Progress\"."}
+        "403":
+          application/json: {"status_code": 2011.25, "type": "auth_error", "code": "billing_error", "message": "You do not have the necessary permissions to create this activity record."}
+        "404":
+          application/json: {"status_code": 9436.56, "type": "invalid_request_error", "code": "not_found", "message": "Activity with slug/ID \"phone_calls\" not found."}
+        "409":
+          application/json: {"status_code": 5713.49, "type": "invalid_request_error", "code": "uniqueness_conflict", "message": "The record was modified by another request while this write was being validated. Please try again."}
   put_/v2/activities/{activity}/records:
     speakeasy-default-put-/v2-/activities/{activity}/records:
       parameters:
@@ -14401,13 +14859,51 @@ examples:
         "200":
           application/json: {"data": {"id": {"workspace_id": "14beef7a-99f7-4534-a87e-70b564330a4c", "activity_id": "97052eb9-e65e-443f-a297-f2d9a4a7f795", "record_id": "5f4f2d9c-2b3e-4a83-9c76-1de3a3f14f26"}, "created_at": "2022-11-21T13:22:49.061281000Z", "values": {"key": [{"active_from": "2023-01-01T15:00:00.000000000Z", "active_until": "2023-01-01T15:00:00.000000000Z", "created_by_actor": {"id": "50cf242c-7fa3-4cad-87d0-75b1af71c57b", "type": "workspace-member"}, "referenced_actor_type": "workspace-member", "referenced_actor_id": "50cf242c-7fa3-4cad-87d0-75b1af71c57b", "attribute_type": "actor-reference"}], "key1": [], "key2": [{"active_from": "2023-01-01T15:00:00.000000000Z", "active_until": "2023-01-01T15:00:00.000000000Z", "created_by_actor": {"id": "50cf242c-7fa3-4cad-87d0-75b1af71c57b", "type": "workspace-member"}, "value": 42, "attribute_type": "number"}]}}}
         "400":
-          application/json: {"status_code": 4350.44, "type": "invalid_request_error", "code": "multiple_match_results", "message": "No attribute was found for matching_attribute slug/ID \"my_attribute\"."}
+          application/json: {"status_code": 4350.44, "type": "invalid_request_error", "code": "limit_reached", "message": "No attribute was found for matching_attribute slug/ID \"my_attribute\"."}
         "403":
           application/json: {"status_code": 844.44, "type": "auth_error", "code": "billing_error", "message": "You do not have the necessary permissions to create or update records of this activity."}
         "404":
           application/json: {"status_code": 3698.4, "type": "invalid_request_error", "code": "not_found", "message": "Activity with slug/ID \"phone_calls\" not found."}
         "409":
-          application/json: {"status_code": 7448.62, "type": "invalid_request_error", "code": "concurrent_write_conflict", "message": "The record was modified by another request while this write was being validated. Please try again."}
+          application/json: {"status_code": 7448.62, "type": "invalid_request_error", "code": "multiple_match_results", "message": "The record was modified by another request while this write was being validated. Please try again."}
+    Attribute values:
+      parameters:
+        path:
+          activity: "phone_calls"
+        query:
+          matching_attribute: "41252299-f8c7-4b5e-99c9-4ff8321d2f96"
+      requestBody:
+        application/json: {"data": {"values": {"direction": ["Outbound"]}}}
+      responses:
+        "200":
+          application/json: {"data": {"id": {"workspace_id": "14beef7a-99f7-4534-a87e-70b564330a4c", "activity_id": "97052eb9-e65e-443f-a297-f2d9a4a7f795", "record_id": "5f4f2d9c-2b3e-4a83-9c76-1de3a3f14f26"}, "created_at": "2022-11-21T13:22:49.061281000Z", "values": {"key": [{"active_from": "2023-01-01T15:00:00.000000000Z", "active_until": "2023-01-01T15:00:00.000000000Z", "created_by_actor": {"id": "50cf242c-7fa3-4cad-87d0-75b1af71c57b", "type": "workspace-member"}, "referenced_actor_type": "workspace-member", "referenced_actor_id": "50cf242c-7fa3-4cad-87d0-75b1af71c57b", "attribute_type": "actor-reference"}], "key1": [], "key2": [{"active_from": "2023-01-01T15:00:00.000000000Z", "active_until": "2023-01-01T15:00:00.000000000Z", "created_by_actor": {"id": "50cf242c-7fa3-4cad-87d0-75b1af71c57b", "type": "workspace-member"}, "value": 42, "attribute_type": "number"}]}}}
+        "400":
+          application/json: {"status_code": 4350.44, "type": "invalid_request_error", "code": "limit_reached", "message": "No attribute was found for matching_attribute slug/ID \"my_attribute\"."}
+        "403":
+          application/json: {"status_code": 844.44, "type": "auth_error", "code": "billing_error", "message": "You do not have the necessary permissions to create or update records of this activity."}
+        "404":
+          application/json: {"status_code": 3698.4, "type": "invalid_request_error", "code": "not_found", "message": "Activity with slug/ID \"phone_calls\" not found."}
+        "409":
+          application/json: {"status_code": 7448.62, "type": "invalid_request_error", "code": "multiple_match_results", "message": "The record was modified by another request while this write was being validated. Please try again."}
+    Reference a record by a matching attribute:
+      parameters:
+        path:
+          activity: "phone_calls"
+        query:
+          matching_attribute: "41252299-f8c7-4b5e-99c9-4ff8321d2f96"
+      requestBody:
+        application/json: {"data": {"values": {"direction": ["Outbound"], "participant": [{"target_object": "people", "target_record_reference": {"match": {"email_addresses": [{"email_address": "alice@app.attio.com"}]}, "if_unmatched": "ignore", "if_multiple_matches": "match_all"}}]}}}
+      responses:
+        "200":
+          application/json: {"data": {"id": {"workspace_id": "14beef7a-99f7-4534-a87e-70b564330a4c", "activity_id": "97052eb9-e65e-443f-a297-f2d9a4a7f795", "record_id": "5f4f2d9c-2b3e-4a83-9c76-1de3a3f14f26"}, "created_at": "2022-11-21T13:22:49.061281000Z", "values": {"key": [{"active_from": "2023-01-01T15:00:00.000000000Z", "active_until": "2023-01-01T15:00:00.000000000Z", "created_by_actor": {"id": "50cf242c-7fa3-4cad-87d0-75b1af71c57b", "type": "workspace-member"}, "referenced_actor_type": "workspace-member", "referenced_actor_id": "50cf242c-7fa3-4cad-87d0-75b1af71c57b", "attribute_type": "actor-reference"}], "key1": [], "key2": [{"active_from": "2023-01-01T15:00:00.000000000Z", "active_until": "2023-01-01T15:00:00.000000000Z", "created_by_actor": {"id": "50cf242c-7fa3-4cad-87d0-75b1af71c57b", "type": "workspace-member"}, "value": 42, "attribute_type": "number"}]}}}
+        "400":
+          application/json: {"status_code": 4350.44, "type": "invalid_request_error", "code": "limit_reached", "message": "No attribute was found for matching_attribute slug/ID \"my_attribute\"."}
+        "403":
+          application/json: {"status_code": 844.44, "type": "auth_error", "code": "billing_error", "message": "You do not have the necessary permissions to create or update records of this activity."}
+        "404":
+          application/json: {"status_code": 3698.4, "type": "invalid_request_error", "code": "not_found", "message": "Activity with slug/ID \"phone_calls\" not found."}
+        "409":
+          application/json: {"status_code": 7448.62, "type": "invalid_request_error", "code": "multiple_match_results", "message": "The record was modified by another request while this write was being validated. Please try again."}
   get_/v2/activities/{activity}/records/{record_id}:
     speakeasy-default-get-/v2-/activities/{activity}/records/{record-id}:
       parameters:
@@ -14431,13 +14927,49 @@ examples:
         "200":
           application/json: {"data": {"id": {"workspace_id": "14beef7a-99f7-4534-a87e-70b564330a4c", "activity_id": "97052eb9-e65e-443f-a297-f2d9a4a7f795", "record_id": "5f4f2d9c-2b3e-4a83-9c76-1de3a3f14f26"}, "created_at": "2022-11-21T13:22:49.061281000Z", "values": {"key": [{"active_from": "2023-01-01T15:00:00.000000000Z", "active_until": "2023-01-01T15:00:00.000000000Z", "created_by_actor": {"id": "50cf242c-7fa3-4cad-87d0-75b1af71c57b", "type": "workspace-member"}, "line_1": "1 Infinite Loop", "line_2": "Block 1", "line_3": "Hilldrop Estate", "line_4": "Westborough", "locality": "Cupertino", "region": "CA", "postcode": "95014", "country_code": "US", "latitude": "37.331741", "longitude": "-122.030333", "attribute_type": "location"}]}}}
         "400":
-          application/json: {"status_code": 4828.42, "type": "invalid_request_error", "code": "missing_value", "message": "Required value for attribute with ID \"41252299-f8c7-4b5e-99c9-4ff8321d2f96\" was not provided."}
+          application/json: {"status_code": 4828.42, "type": "invalid_request_error", "code": "validation_type", "message": "Required value for attribute with ID \"41252299-f8c7-4b5e-99c9-4ff8321d2f96\" was not provided."}
         "403":
           application/json: {"status_code": 317.14, "type": "auth_error", "code": "unauthorized", "message": "You do not have the necessary permissions to update this activity record."}
         "404":
           application/json: {"status_code": 8686.2, "type": "invalid_request_error", "code": "not_found", "message": "Activity with slug/ID \"phone_calls\" not found."}
         "409":
-          application/json: {"status_code": 2828.81, "type": "invalid_request_error", "code": "concurrent_write_conflict", "message": "The record was modified by another request while this write was being validated. Please try again."}
+          application/json: {"status_code": 2828.81, "type": "invalid_request_error", "code": "multiple_match_results", "message": "The record was modified by another request while this write was being validated. Please try again."}
+    Attribute values:
+      parameters:
+        path:
+          activity: "phone_calls"
+          record_id: "5f4f2d9c-2b3e-4a83-9c76-1de3a3f14f26"
+      requestBody:
+        application/json: {"data": {"values": {"direction": ["Outbound"]}}}
+      responses:
+        "200":
+          application/json: {"data": {"id": {"workspace_id": "14beef7a-99f7-4534-a87e-70b564330a4c", "activity_id": "97052eb9-e65e-443f-a297-f2d9a4a7f795", "record_id": "5f4f2d9c-2b3e-4a83-9c76-1de3a3f14f26"}, "created_at": "2022-11-21T13:22:49.061281000Z", "values": {"key": [{"active_from": "2023-01-01T15:00:00.000000000Z", "active_until": "2023-01-01T15:00:00.000000000Z", "created_by_actor": {"id": "50cf242c-7fa3-4cad-87d0-75b1af71c57b", "type": "workspace-member"}, "line_1": "1 Infinite Loop", "line_2": "Block 1", "line_3": "Hilldrop Estate", "line_4": "Westborough", "locality": "Cupertino", "region": "CA", "postcode": "95014", "country_code": "US", "latitude": "37.331741", "longitude": "-122.030333", "attribute_type": "location"}]}}}
+        "400":
+          application/json: {"status_code": 4828.42, "type": "invalid_request_error", "code": "validation_type", "message": "Required value for attribute with ID \"41252299-f8c7-4b5e-99c9-4ff8321d2f96\" was not provided."}
+        "403":
+          application/json: {"status_code": 317.14, "type": "auth_error", "code": "unauthorized", "message": "You do not have the necessary permissions to update this activity record."}
+        "404":
+          application/json: {"status_code": 8686.2, "type": "invalid_request_error", "code": "not_found", "message": "Activity with slug/ID \"phone_calls\" not found."}
+        "409":
+          application/json: {"status_code": 2828.81, "type": "invalid_request_error", "code": "multiple_match_results", "message": "The record was modified by another request while this write was being validated. Please try again."}
+    Reference a record by a matching attribute:
+      parameters:
+        path:
+          activity: "phone_calls"
+          record_id: "5f4f2d9c-2b3e-4a83-9c76-1de3a3f14f26"
+      requestBody:
+        application/json: {"data": {"values": {"direction": ["Outbound"], "participant": [{"target_object": "people", "target_record_reference": {"match": {"email_addresses": [{"email_address": "alice@app.attio.com"}]}, "if_unmatched": "ignore", "if_multiple_matches": "match_all"}}]}}}
+      responses:
+        "200":
+          application/json: {"data": {"id": {"workspace_id": "14beef7a-99f7-4534-a87e-70b564330a4c", "activity_id": "97052eb9-e65e-443f-a297-f2d9a4a7f795", "record_id": "5f4f2d9c-2b3e-4a83-9c76-1de3a3f14f26"}, "created_at": "2022-11-21T13:22:49.061281000Z", "values": {"key": [{"active_from": "2023-01-01T15:00:00.000000000Z", "active_until": "2023-01-01T15:00:00.000000000Z", "created_by_actor": {"id": "50cf242c-7fa3-4cad-87d0-75b1af71c57b", "type": "workspace-member"}, "line_1": "1 Infinite Loop", "line_2": "Block 1", "line_3": "Hilldrop Estate", "line_4": "Westborough", "locality": "Cupertino", "region": "CA", "postcode": "95014", "country_code": "US", "latitude": "37.331741", "longitude": "-122.030333", "attribute_type": "location"}]}}}
+        "400":
+          application/json: {"status_code": 4828.42, "type": "invalid_request_error", "code": "validation_type", "message": "Required value for attribute with ID \"41252299-f8c7-4b5e-99c9-4ff8321d2f96\" was not provided."}
+        "403":
+          application/json: {"status_code": 317.14, "type": "auth_error", "code": "unauthorized", "message": "You do not have the necessary permissions to update this activity record."}
+        "404":
+          application/json: {"status_code": 8686.2, "type": "invalid_request_error", "code": "not_found", "message": "Activity with slug/ID \"phone_calls\" not found."}
+        "409":
+          application/json: {"status_code": 2828.81, "type": "invalid_request_error", "code": "multiple_match_results", "message": "The record was modified by another request while this write was being validated. Please try again."}
   put_/v2/activities/{activity}/records/{record_id}:
     speakeasy-default-put-/v2-/activities/{activity}/records/{record-id}:
       parameters:
@@ -14450,13 +14982,49 @@ examples:
         "200":
           application/json: {"data": {"id": {"workspace_id": "14beef7a-99f7-4534-a87e-70b564330a4c", "activity_id": "97052eb9-e65e-443f-a297-f2d9a4a7f795", "record_id": "5f4f2d9c-2b3e-4a83-9c76-1de3a3f14f26"}, "created_at": "2022-11-21T13:22:49.061281000Z", "values": {"key": [], "key1": [], "key2": [{"active_from": "2023-01-01T15:00:00.000000000Z", "active_until": "2023-01-01T15:00:00.000000000Z", "created_by_actor": {"id": "50cf242c-7fa3-4cad-87d0-75b1af71c57b", "type": "workspace-member"}, "value": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", "attribute_type": "text"}]}}}
         "400":
-          application/json: {"status_code": 2450.5, "type": "invalid_request_error", "code": "particle_gate_violation", "message": "Required value for attribute with ID \"41252299-f8c7-4b5e-99c9-4ff8321d2f96\" was not provided."}
+          application/json: {"status_code": 2450.5, "type": "invalid_request_error", "code": "multiple_match_results", "message": "Required value for attribute with ID \"41252299-f8c7-4b5e-99c9-4ff8321d2f96\" was not provided."}
         "403":
           application/json: {"status_code": 9972.42, "type": "auth_error", "code": "unauthorized", "message": "You do not have the necessary permissions to update this activity record."}
         "404":
           application/json: {"status_code": 3730.86, "type": "invalid_request_error", "code": "not_found", "message": "Activity with slug/ID \"phone_calls\" not found."}
         "409":
-          application/json: {"status_code": 3745, "type": "invalid_request_error", "code": "concurrent_write_conflict", "message": "The record was modified by another request while this write was being validated. Please try again."}
+          application/json: {"status_code": 3745, "type": "invalid_request_error", "code": "multiple_match_results", "message": "The record was modified by another request while this write was being validated. Please try again."}
+    Attribute values:
+      parameters:
+        path:
+          activity: "phone_calls"
+          record_id: "5f4f2d9c-2b3e-4a83-9c76-1de3a3f14f26"
+      requestBody:
+        application/json: {"data": {"values": {"direction": ["Outbound"]}}}
+      responses:
+        "200":
+          application/json: {"data": {"id": {"workspace_id": "14beef7a-99f7-4534-a87e-70b564330a4c", "activity_id": "97052eb9-e65e-443f-a297-f2d9a4a7f795", "record_id": "5f4f2d9c-2b3e-4a83-9c76-1de3a3f14f26"}, "created_at": "2022-11-21T13:22:49.061281000Z", "values": {"key": [], "key1": [], "key2": [{"active_from": "2023-01-01T15:00:00.000000000Z", "active_until": "2023-01-01T15:00:00.000000000Z", "created_by_actor": {"id": "50cf242c-7fa3-4cad-87d0-75b1af71c57b", "type": "workspace-member"}, "value": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", "attribute_type": "text"}]}}}
+        "400":
+          application/json: {"status_code": 2450.5, "type": "invalid_request_error", "code": "multiple_match_results", "message": "Required value for attribute with ID \"41252299-f8c7-4b5e-99c9-4ff8321d2f96\" was not provided."}
+        "403":
+          application/json: {"status_code": 9972.42, "type": "auth_error", "code": "unauthorized", "message": "You do not have the necessary permissions to update this activity record."}
+        "404":
+          application/json: {"status_code": 3730.86, "type": "invalid_request_error", "code": "not_found", "message": "Activity with slug/ID \"phone_calls\" not found."}
+        "409":
+          application/json: {"status_code": 3745, "type": "invalid_request_error", "code": "multiple_match_results", "message": "The record was modified by another request while this write was being validated. Please try again."}
+    Reference a record by a matching attribute:
+      parameters:
+        path:
+          activity: "phone_calls"
+          record_id: "5f4f2d9c-2b3e-4a83-9c76-1de3a3f14f26"
+      requestBody:
+        application/json: {"data": {"values": {"direction": ["Outbound"], "participant": [{"target_object": "people", "target_record_reference": {"match": {"email_addresses": [{"email_address": "alice@app.attio.com"}]}, "if_unmatched": "ignore", "if_multiple_matches": "match_all"}}]}}}
+      responses:
+        "200":
+          application/json: {"data": {"id": {"workspace_id": "14beef7a-99f7-4534-a87e-70b564330a4c", "activity_id": "97052eb9-e65e-443f-a297-f2d9a4a7f795", "record_id": "5f4f2d9c-2b3e-4a83-9c76-1de3a3f14f26"}, "created_at": "2022-11-21T13:22:49.061281000Z", "values": {"key": [], "key1": [], "key2": [{"active_from": "2023-01-01T15:00:00.000000000Z", "active_until": "2023-01-01T15:00:00.000000000Z", "created_by_actor": {"id": "50cf242c-7fa3-4cad-87d0-75b1af71c57b", "type": "workspace-member"}, "value": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", "attribute_type": "text"}]}}}
+        "400":
+          application/json: {"status_code": 2450.5, "type": "invalid_request_error", "code": "multiple_match_results", "message": "Required value for attribute with ID \"41252299-f8c7-4b5e-99c9-4ff8321d2f96\" was not provided."}
+        "403":
+          application/json: {"status_code": 9972.42, "type": "auth_error", "code": "unauthorized", "message": "You do not have the necessary permissions to update this activity record."}
+        "404":
+          application/json: {"status_code": 3730.86, "type": "invalid_request_error", "code": "not_found", "message": "Activity with slug/ID \"phone_calls\" not found."}
+        "409":
+          application/json: {"status_code": 3745, "type": "invalid_request_error", "code": "multiple_match_results", "message": "The record was modified by another request while this write was being validated. Please try again."}
   delete_/v2/activities/{activity}/records/{record_id}:
     speakeasy-default-delete-/v2-/activities/{activity}/records/{record-id}:
       parameters:

@@ -9,7 +9,7 @@ from typing import Any, Mapping, Optional, Union
 
 
 class Attributes(BaseSDK):
-    r"""Attributes model properties of objects and lists. Some attributes, such as the `name` attribute on a person, are system-defined, while others are user-defined. Attributes are one of [many types](/docs/attribute-types) such as text, location or select. See our [objects and lists guide](/docs/objects-and-lists) for more information."""
+    r"""Attributes model properties of objects, lists and activities. Some attributes, such as the `name` attribute on a person, are system-defined, while others are user-defined. Attributes are one of [many types](/docs/attribute-types) such as text, location or select. See our [objects and lists guide](/docs/objects-and-lists) for more information."""
 
     def get_v2_target_identifier_attributes(
         self,
@@ -26,13 +26,13 @@ class Attributes(BaseSDK):
     ) -> models.GetV2TargetIdentifierAttributesResponse:
         r"""List attributes
 
-        Lists all attributes defined on a specific object or list. Attributes are returned in the order that they are sorted by in the UI.
+        Lists all attributes defined on a specific object, list or activity. Attributes are returned in the order that they are sorted by in the UI.
 
-        When `target` is `objects`, the required scopes are `object_configuration:read`. When `target` is `lists`, the required scopes are `list_configuration:read`.
+        When `target` is `objects`, the required scopes are `object_configuration:read`. When `target` is `lists`, the required scopes are `list_configuration:read`. When `target` is `activities`, the required scopes are `activity_configuration:read`.
 
         Supported token levels: `workspace`, `user`.
 
-        :param target: Whether the attributes are on an object or a list.
+        :param target: Whether the attributes are on an object, a list or an activity.
         :param identifier:
         :param limit:
         :param offset:
@@ -128,13 +128,13 @@ class Attributes(BaseSDK):
     ) -> models.GetV2TargetIdentifierAttributesResponse:
         r"""List attributes
 
-        Lists all attributes defined on a specific object or list. Attributes are returned in the order that they are sorted by in the UI.
+        Lists all attributes defined on a specific object, list or activity. Attributes are returned in the order that they are sorted by in the UI.
 
-        When `target` is `objects`, the required scopes are `object_configuration:read`. When `target` is `lists`, the required scopes are `list_configuration:read`.
+        When `target` is `objects`, the required scopes are `object_configuration:read`. When `target` is `lists`, the required scopes are `list_configuration:read`. When `target` is `activities`, the required scopes are `activity_configuration:read`.
 
         Supported token levels: `workspace`, `user`.
 
-        :param target: Whether the attributes are on an object or a list.
+        :param target: Whether the attributes are on an object, a list or an activity.
         :param identifier:
         :param limit:
         :param offset:
@@ -231,7 +231,7 @@ class Attributes(BaseSDK):
     ) -> models.PostV2TargetIdentifierAttributesResponse:
         r"""Create an attribute
 
-        Creates a new attribute on either an object or a list.
+        Creates a new attribute on either an object, a list or an activity.
 
         For record-reference attributes, you can optionally create a bidirectional relationship by providing a `relationship` object. This will create two entangled attributes: one on the specified object and a reverse attribute on the related object.
 
@@ -239,9 +239,11 @@ class Attributes(BaseSDK):
 
         To create an attribute on a list, you must also have the `list_configuration:read-write` scope.
 
+        To create an attribute on an activity, you must also have the `activity_configuration:read-write` scope.
+
         Supported token levels: `workspace`, `user`.
 
-        :param target: Whether the attribute is to be created on an object or a list.
+        :param target: Whether the attribute is to be created on an object, a list or an activity.
         :param identifier:
         :param data:
         :param retries: Override the default retry configuration for this method
@@ -374,7 +376,7 @@ class Attributes(BaseSDK):
     ) -> models.PostV2TargetIdentifierAttributesResponse:
         r"""Create an attribute
 
-        Creates a new attribute on either an object or a list.
+        Creates a new attribute on either an object, a list or an activity.
 
         For record-reference attributes, you can optionally create a bidirectional relationship by providing a `relationship` object. This will create two entangled attributes: one on the specified object and a reverse attribute on the related object.
 
@@ -382,9 +384,11 @@ class Attributes(BaseSDK):
 
         To create an attribute on a list, you must also have the `list_configuration:read-write` scope.
 
+        To create an attribute on an activity, you must also have the `activity_configuration:read-write` scope.
+
         Supported token levels: `workspace`, `user`.
 
-        :param target: Whether the attribute is to be created on an object or a list.
+        :param target: Whether the attribute is to be created on an object, a list or an activity.
         :param identifier:
         :param data:
         :param retries: Override the default retry configuration for this method
@@ -514,13 +518,13 @@ class Attributes(BaseSDK):
     ) -> models.GetV2TargetIdentifierAttributesAttributeResponse:
         r"""Get an attribute
 
-        Gets information about a single attribute on either an object or a list.
+        Gets information about a single attribute on either an object, a list or an activity.
 
-        When `target` is `objects`, the required scopes are `object_configuration:read`. When `target` is `lists`, the required scopes are `list_configuration:read`.
+        When `target` is `objects`, the required scopes are `object_configuration:read`. When `target` is `lists`, the required scopes are `list_configuration:read`. When `target` is `activities`, the required scopes are `activity_configuration:read`.
 
         Supported token levels: `workspace`, `user`.
 
-        :param target: Whether the attribute is on an object or a list.
+        :param target: Whether the attribute is on an object, a list or an activity.
         :param identifier:
         :param attribute:
         :param retries: Override the default retry configuration for this method
@@ -619,13 +623,13 @@ class Attributes(BaseSDK):
     ) -> models.GetV2TargetIdentifierAttributesAttributeResponse:
         r"""Get an attribute
 
-        Gets information about a single attribute on either an object or a list.
+        Gets information about a single attribute on either an object, a list or an activity.
 
-        When `target` is `objects`, the required scopes are `object_configuration:read`. When `target` is `lists`, the required scopes are `list_configuration:read`.
+        When `target` is `objects`, the required scopes are `object_configuration:read`. When `target` is `lists`, the required scopes are `list_configuration:read`. When `target` is `activities`, the required scopes are `activity_configuration:read`.
 
         Supported token levels: `workspace`, `user`.
 
-        :param target: Whether the attribute is on an object or a list.
+        :param target: Whether the attribute is on an object, a list or an activity.
         :param identifier:
         :param attribute:
         :param retries: Override the default retry configuration for this method
@@ -728,13 +732,13 @@ class Attributes(BaseSDK):
     ) -> models.PatchV2TargetIdentifierAttributesAttributeResponse:
         r"""Update an attribute
 
-        Updates a single attribute on a given object or list.
+        Updates a single attribute on a given object, list or activity.
 
-        When `target` is `objects`, the required scopes are `object_configuration:read-write`. When `target` is `lists`, the required scopes are `list_configuration:read-write`.
+        When `target` is `objects`, the required scopes are `object_configuration:read-write`. When `target` is `lists`, the required scopes are `list_configuration:read-write`. When `target` is `activities`, the required scopes are `activity_configuration:read-write`.
 
         Supported token levels: `workspace`, `user`.
 
-        :param target: Whether the attribute is on an object or a list.
+        :param target: Whether the attribute is on an object, a list or an activity.
         :param identifier:
         :param attribute:
         :param data:
@@ -866,13 +870,13 @@ class Attributes(BaseSDK):
     ) -> models.PatchV2TargetIdentifierAttributesAttributeResponse:
         r"""Update an attribute
 
-        Updates a single attribute on a given object or list.
+        Updates a single attribute on a given object, list or activity.
 
-        When `target` is `objects`, the required scopes are `object_configuration:read-write`. When `target` is `lists`, the required scopes are `list_configuration:read-write`.
+        When `target` is `objects`, the required scopes are `object_configuration:read-write`. When `target` is `lists`, the required scopes are `list_configuration:read-write`. When `target` is `activities`, the required scopes are `activity_configuration:read-write`.
 
         Supported token levels: `workspace`, `user`.
 
-        :param target: Whether the attribute is on an object or a list.
+        :param target: Whether the attribute is on an object, a list or an activity.
         :param identifier:
         :param attribute:
         :param data:
@@ -1001,13 +1005,13 @@ class Attributes(BaseSDK):
     ) -> models.GetV2TargetIdentifierAttributesAttributeOptionsResponse:
         r"""List select options
 
-        Lists all select options for a particular attribute on either an object or a list.
+        Lists all select options for a particular attribute on either an object, a list or an activity.
 
-        When `target` is `objects`, the required scopes are `object_configuration:read`. When `target` is `lists`, the required scopes are `list_configuration:read`.
+        When `target` is `objects`, the required scopes are `object_configuration:read`. When `target` is `lists`, the required scopes are `list_configuration:read`. When `target` is `activities`, the required scopes are `activity_configuration:read`.
 
         Supported token levels: `workspace`, `user`.
 
-        :param target: Whether the attribute is on an object or a list.
+        :param target: Whether the attribute is on an object, a list or an activity.
         :param identifier:
         :param attribute:
         :param show_archived:
@@ -1109,13 +1113,13 @@ class Attributes(BaseSDK):
     ) -> models.GetV2TargetIdentifierAttributesAttributeOptionsResponse:
         r"""List select options
 
-        Lists all select options for a particular attribute on either an object or a list.
+        Lists all select options for a particular attribute on either an object, a list or an activity.
 
-        When `target` is `objects`, the required scopes are `object_configuration:read`. When `target` is `lists`, the required scopes are `list_configuration:read`.
+        When `target` is `objects`, the required scopes are `object_configuration:read`. When `target` is `lists`, the required scopes are `list_configuration:read`. When `target` is `activities`, the required scopes are `activity_configuration:read`.
 
         Supported token levels: `workspace`, `user`.
 
-        :param target: Whether the attribute is on an object or a list.
+        :param target: Whether the attribute is on an object, a list or an activity.
         :param identifier:
         :param attribute:
         :param show_archived:
@@ -1220,13 +1224,13 @@ class Attributes(BaseSDK):
     ) -> models.PostV2TargetIdentifierAttributesAttributeOptionsResponse:
         r"""Create a select option
 
-        Adds a select option to a select attribute on an object or a list.
+        Adds a select option to a select attribute on an object, a list or an activity.
 
-        When `target` is `objects`, the required scopes are `object_configuration:read-write`. When `target` is `lists`, the required scopes are `list_configuration:read-write`.
+        When `target` is `objects`, the required scopes are `object_configuration:read-write`. When `target` is `lists`, the required scopes are `list_configuration:read-write`. When `target` is `activities`, the required scopes are `activity_configuration:read-write`.
 
         Supported token levels: `workspace`, `user`.
 
-        :param target: Whether the attribute is on an object or a list.
+        :param target: Whether the attribute is on an object, a list or an activity.
         :param identifier:
         :param attribute:
         :param data:
@@ -1367,13 +1371,13 @@ class Attributes(BaseSDK):
     ) -> models.PostV2TargetIdentifierAttributesAttributeOptionsResponse:
         r"""Create a select option
 
-        Adds a select option to a select attribute on an object or a list.
+        Adds a select option to a select attribute on an object, a list or an activity.
 
-        When `target` is `objects`, the required scopes are `object_configuration:read-write`. When `target` is `lists`, the required scopes are `list_configuration:read-write`.
+        When `target` is `objects`, the required scopes are `object_configuration:read-write`. When `target` is `lists`, the required scopes are `list_configuration:read-write`. When `target` is `activities`, the required scopes are `activity_configuration:read-write`.
 
         Supported token levels: `workspace`, `user`.
 
-        :param target: Whether the attribute is on an object or a list.
+        :param target: Whether the attribute is on an object, a list or an activity.
         :param identifier:
         :param attribute:
         :param data:
@@ -1515,13 +1519,13 @@ class Attributes(BaseSDK):
     ) -> models.PatchV2TargetIdentifierAttributesAttributeOptionsOptionResponse:
         r"""Update a select option
 
-        Updates a select option on an attribute on either an object or a list.
+        Updates a select option on an attribute on either an object, a list or an activity.
 
-        When `target` is `objects`, the required scopes are `object_configuration:read-write`. When `target` is `lists`, the required scopes are `list_configuration:read-write`.
+        When `target` is `objects`, the required scopes are `object_configuration:read-write`. When `target` is `lists`, the required scopes are `list_configuration:read-write`. When `target` is `activities`, the required scopes are `activity_configuration:read-write`.
 
         Supported token levels: `workspace`, `user`.
 
-        :param target: Whether the attribute is on an object or a list.
+        :param target: Whether the attribute is on an object, a list or an activity.
         :param identifier:
         :param attribute:
         :param option:
@@ -1666,13 +1670,13 @@ class Attributes(BaseSDK):
     ) -> models.PatchV2TargetIdentifierAttributesAttributeOptionsOptionResponse:
         r"""Update a select option
 
-        Updates a select option on an attribute on either an object or a list.
+        Updates a select option on an attribute on either an object, a list or an activity.
 
-        When `target` is `objects`, the required scopes are `object_configuration:read-write`. When `target` is `lists`, the required scopes are `list_configuration:read-write`.
+        When `target` is `objects`, the required scopes are `object_configuration:read-write`. When `target` is `lists`, the required scopes are `list_configuration:read-write`. When `target` is `activities`, the required scopes are `activity_configuration:read-write`.
 
         Supported token levels: `workspace`, `user`.
 
-        :param target: Whether the attribute is on an object or a list.
+        :param target: Whether the attribute is on an object, a list or an activity.
         :param identifier:
         :param attribute:
         :param option:

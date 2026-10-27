@@ -6,7 +6,7 @@ import pytest
 
 from attio import errors
 from attio.errors.post_v2_objects_object_recordsop import (
-    PostV2ObjectsObjectRecordsInvalidRequestErrorData,
+    PostV2ObjectsObjectRecordsBadRequestInvalidRequestErrorData,
 )
 from attio.utils.unmarshal_json_response import unmarshal_json_response
 
@@ -22,7 +22,7 @@ INVALID_REQUEST_MODELS = [
     ),
     (
         "attio.errors.post_v2_objects_object_recordsop",
-        "PostV2ObjectsObjectRecordsInvalidRequestErrorData",
+        "PostV2ObjectsObjectRecordsBadRequestInvalidRequestErrorData",
     ),
     (
         "attio.errors.post_v2_objects_records_searchop",
@@ -37,27 +37,27 @@ INVALID_REQUEST_MODELS = [
     ("attio.errors.post_v2_commentsop", "PostV2CommentsInvalidRequestErrorData"),
     (
         "attio.errors.post_v2_activities_activity_recordsop",
-        "PostV2ActivitiesActivityRecordsInvalidRequestErrorData",
+        "PostV2ActivitiesActivityRecordsBadRequestInvalidRequestErrorData",
     ),
     (
         "attio.errors.put_v2_activities_activity_recordsop",
-        "PutV2ActivitiesActivityRecordsInvalidRequestErrorData",
+        "PutV2ActivitiesActivityRecordsBadRequestInvalidRequestErrorData",
     ),
     (
         "attio.errors.patch_v2_objects_object_records_record_id_op",
-        "PatchV2ObjectsObjectRecordsRecordIDInvalidRequestErrorData",
+        "PatchV2ObjectsObjectRecordsRecordIDBadRequestInvalidRequestErrorData",
     ),
     (
         "attio.errors.put_v2_objects_object_records_record_id_op",
-        "PutV2ObjectsObjectRecordsRecordIDInvalidRequestErrorData",
+        "PutV2ObjectsObjectRecordsRecordIDBadRequestInvalidRequestErrorData",
     ),
     (
         "attio.errors.patch_v2_activities_activity_records_record_id_op",
-        "PatchV2ActivitiesActivityRecordsRecordIDInvalidRequestErrorData",
+        "PatchV2ActivitiesActivityRecordsRecordIDBadRequestInvalidRequestErrorData",
     ),
     (
         "attio.errors.put_v2_activities_activity_records_record_id_op",
-        "PutV2ActivitiesActivityRecordsRecordIDInvalidRequestErrorData",
+        "PutV2ActivitiesActivityRecordsRecordIDBadRequestInvalidRequestErrorData",
     ),
 ]
 
@@ -93,7 +93,7 @@ def test_invalid_request_error_models_accept_both_codes(
 @pytest.mark.parametrize("code", ["value_not_found", "merge_in_progress"])
 def test_put_records_invalid_request_accepts_merge_codes(code: str) -> None:
     from attio.errors.put_v2_objects_object_recordsop import (
-        PutV2ObjectsObjectRecordsInvalidRequestErrorData,
+        PutV2ObjectsObjectRecordsBadRequestInvalidRequestErrorData,
     )
 
     body = json.dumps(
@@ -107,7 +107,7 @@ def test_put_records_invalid_request_accepts_merge_codes(code: str) -> None:
     http_res = _mock_http_response(body)
 
     parsed = unmarshal_json_response(
-        PutV2ObjectsObjectRecordsInvalidRequestErrorData, http_res
+        PutV2ObjectsObjectRecordsBadRequestInvalidRequestErrorData, http_res
     )
 
     assert parsed.type == "invalid_request_error"
@@ -128,7 +128,7 @@ def test_put_activities_activity_records_invalid_request_accepts_upsert_codes(
     code: str,
 ) -> None:
     from attio.errors.put_v2_activities_activity_recordsop import (
-        PutV2ActivitiesActivityRecordsInvalidRequestErrorData,
+        PutV2ActivitiesActivityRecordsBadRequestInvalidRequestErrorData,
     )
 
     body = json.dumps(
@@ -142,7 +142,7 @@ def test_put_activities_activity_records_invalid_request_accepts_upsert_codes(
     http_res = _mock_http_response(body)
 
     parsed = unmarshal_json_response(
-        PutV2ActivitiesActivityRecordsInvalidRequestErrorData, http_res
+        PutV2ActivitiesActivityRecordsBadRequestInvalidRequestErrorData, http_res
     )
 
     assert parsed.type == "invalid_request_error"
@@ -158,19 +158,19 @@ def test_put_activities_activity_records_invalid_request_accepts_upsert_codes(
     [
         (
             "attio.errors.post_v2_objects_object_recordsop",
-            "PostV2ObjectsObjectRecordsInvalidRequestErrorData",
+            "PostV2ObjectsObjectRecordsBadRequestInvalidRequestErrorData",
         ),
         (
             "attio.errors.put_v2_objects_object_recordsop",
-            "PutV2ObjectsObjectRecordsInvalidRequestErrorData",
+            "PutV2ObjectsObjectRecordsBadRequestInvalidRequestErrorData",
         ),
         (
             "attio.errors.post_v2_activities_activity_recordsop",
-            "PostV2ActivitiesActivityRecordsInvalidRequestErrorData",
+            "PostV2ActivitiesActivityRecordsBadRequestInvalidRequestErrorData",
         ),
         (
             "attio.errors.put_v2_activities_activity_recordsop",
-            "PutV2ActivitiesActivityRecordsInvalidRequestErrorData",
+            "PutV2ActivitiesActivityRecordsBadRequestInvalidRequestErrorData",
         ),
     ],
 )
@@ -202,7 +202,7 @@ def test_records_create_upsert_invalid_request_accepts_new_spec_codes(
 UNION_CODE_MODELS = [
     (
         "attio.errors.put_v2_objects_object_records_record_id_op",
-        "PutV2ObjectsObjectRecordsRecordIDInvalidRequestErrorData",
+        "PutV2ObjectsObjectRecordsRecordIDBadRequestInvalidRequestErrorData",
         [
             "missing_value",
             "merge_in_progress",
@@ -216,7 +216,7 @@ UNION_CODE_MODELS = [
     ),
     (
         "attio.errors.patch_v2_objects_object_records_record_id_op",
-        "PatchV2ObjectsObjectRecordsRecordIDInvalidRequestErrorData",
+        "PatchV2ObjectsObjectRecordsRecordIDBadRequestInvalidRequestErrorData",
         [
             "missing_value",
             "merge_in_progress",
@@ -230,7 +230,7 @@ UNION_CODE_MODELS = [
     ),
     (
         "attio.errors.put_v2_activities_activity_records_record_id_op",
-        "PutV2ActivitiesActivityRecordsRecordIDInvalidRequestErrorData",
+        "PutV2ActivitiesActivityRecordsRecordIDBadRequestInvalidRequestErrorData",
         [
             "missing_value",
             "particle_gate_violation",
@@ -243,7 +243,7 @@ UNION_CODE_MODELS = [
     ),
     (
         "attio.errors.patch_v2_activities_activity_records_record_id_op",
-        "PatchV2ActivitiesActivityRecordsRecordIDInvalidRequestErrorData",
+        "PatchV2ActivitiesActivityRecordsRecordIDBadRequestInvalidRequestErrorData",
         [
             "missing_value",
             "particle_gate_violation",
@@ -308,7 +308,7 @@ def test_post_records_invalid_request_rejects_unknown_code() -> None:
     http_res = _mock_http_response(body)
 
     with pytest.raises(errors.ResponseValidationError):
-        unmarshal_json_response(PostV2ObjectsObjectRecordsInvalidRequestErrorData, http_res)
+        unmarshal_json_response(PostV2ObjectsObjectRecordsBadRequestInvalidRequestErrorData, http_res)
 
 
 # 400 codes the 2026-10-26 upstream spec added to the record and entry write
@@ -320,42 +320,42 @@ def test_post_records_invalid_request_rejects_unknown_code() -> None:
 NEW_UPSTREAM_400_CODES = [
     (
         "attio.errors.post_v2_objects_object_recordsop",
-        "PostV2ObjectsObjectRecordsInvalidRequestErrorData",
+        "PostV2ObjectsObjectRecordsBadRequestInvalidRequestErrorData",
         ("duplicate_values", "limit_reached", "multiple_match_results"),
     ),
     (
         "attio.errors.put_v2_objects_object_recordsop",
-        "PutV2ObjectsObjectRecordsInvalidRequestErrorData",
+        "PutV2ObjectsObjectRecordsBadRequestInvalidRequestErrorData",
         ("duplicate_values", "limit_reached", "multiple_match_results"),
     ),
     (
         "attio.errors.post_v2_activities_activity_recordsop",
-        "PostV2ActivitiesActivityRecordsInvalidRequestErrorData",
+        "PostV2ActivitiesActivityRecordsBadRequestInvalidRequestErrorData",
         ("duplicate_values", "limit_reached", "multiple_match_results"),
     ),
     (
         "attio.errors.put_v2_activities_activity_recordsop",
-        "PutV2ActivitiesActivityRecordsInvalidRequestErrorData",
+        "PutV2ActivitiesActivityRecordsBadRequestInvalidRequestErrorData",
         ("duplicate_values", "limit_reached"),
     ),
     (
         "attio.errors.patch_v2_objects_object_records_record_id_op",
-        "PatchV2ObjectsObjectRecordsRecordIDInvalidRequestErrorData",
+        "PatchV2ObjectsObjectRecordsRecordIDBadRequestInvalidRequestErrorData",
         ("duplicate_values", "limit_reached", "multiple_match_results"),
     ),
     (
         "attio.errors.put_v2_objects_object_records_record_id_op",
-        "PutV2ObjectsObjectRecordsRecordIDInvalidRequestErrorData",
+        "PutV2ObjectsObjectRecordsRecordIDBadRequestInvalidRequestErrorData",
         ("duplicate_values", "limit_reached", "multiple_match_results"),
     ),
     (
         "attio.errors.patch_v2_activities_activity_records_record_id_op",
-        "PatchV2ActivitiesActivityRecordsRecordIDInvalidRequestErrorData",
+        "PatchV2ActivitiesActivityRecordsRecordIDBadRequestInvalidRequestErrorData",
         ("duplicate_values", "limit_reached", "multiple_match_results"),
     ),
     (
         "attio.errors.put_v2_activities_activity_records_record_id_op",
-        "PutV2ActivitiesActivityRecordsRecordIDInvalidRequestErrorData",
+        "PutV2ActivitiesActivityRecordsRecordIDBadRequestInvalidRequestErrorData",
         ("duplicate_values", "limit_reached", "multiple_match_results"),
     ),
     (

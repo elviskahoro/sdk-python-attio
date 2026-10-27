@@ -11,22 +11,22 @@ import httpx
 from typing import Optional
 
 
-class PutV2ObjectsObjectRecordsConcurrentWriteConflictErrorData(BaseModel):
+class PutV2ObjectsObjectRecordsConflictInvalidRequestErrorData(BaseModel):
     status_code: float
     type: models_put_v2_objects_object_recordsop.PutV2ObjectsObjectRecordsConflictType
-    code: models_put_v2_objects_object_recordsop.PutV2ObjectsObjectRecordsCodeConcurrentWriteConflict
+    code: models_put_v2_objects_object_recordsop.PutV2ObjectsObjectRecordsCodeUnion
     message: str
 
 
 @dataclass(unsafe_hash=True)
-class PutV2ObjectsObjectRecordsConcurrentWriteConflictError(SDKError):
+class PutV2ObjectsObjectRecordsConflictInvalidRequestError(SDKError):
     r"""Conflict"""
 
-    data: PutV2ObjectsObjectRecordsConcurrentWriteConflictErrorData = field(hash=False)
+    data: PutV2ObjectsObjectRecordsConflictInvalidRequestErrorData = field(hash=False)
 
     def __init__(
         self,
-        data: PutV2ObjectsObjectRecordsConcurrentWriteConflictErrorData,
+        data: PutV2ObjectsObjectRecordsConflictInvalidRequestErrorData,
         raw_response: httpx.Response,
         body: Optional[str] = None,
     ):
@@ -88,7 +88,7 @@ class PutV2ObjectsObjectRecordsUnauthorizedError(SDKError):
         object.__setattr__(self, "data", data)
 
 
-class PutV2ObjectsObjectRecordsInvalidRequestErrorData(BaseModel):
+class PutV2ObjectsObjectRecordsBadRequestInvalidRequestErrorData(BaseModel):
     status_code: float
     type: models_put_v2_objects_object_recordsop.PutV2ObjectsObjectRecordsBadRequestType
     code: models_put_v2_objects_object_recordsop.PutV2ObjectsObjectRecordsBadRequestCode
@@ -96,14 +96,14 @@ class PutV2ObjectsObjectRecordsInvalidRequestErrorData(BaseModel):
 
 
 @dataclass(unsafe_hash=True)
-class PutV2ObjectsObjectRecordsInvalidRequestError(SDKError):
+class PutV2ObjectsObjectRecordsBadRequestInvalidRequestError(SDKError):
     r"""Bad Request"""
 
-    data: PutV2ObjectsObjectRecordsInvalidRequestErrorData = field(hash=False)
+    data: PutV2ObjectsObjectRecordsBadRequestInvalidRequestErrorData = field(hash=False)
 
     def __init__(
         self,
-        data: PutV2ObjectsObjectRecordsInvalidRequestErrorData,
+        data: PutV2ObjectsObjectRecordsBadRequestInvalidRequestErrorData,
         raw_response: httpx.Response,
         body: Optional[str] = None,
     ):

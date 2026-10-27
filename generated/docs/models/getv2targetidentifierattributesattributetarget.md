@@ -1,6 +1,6 @@
 # GetV2TargetIdentifierAttributesAttributeTarget
 
-Whether the attribute is on an object or a list.
+Whether the attribute is on an object, a list or an activity.
 
 ## Example Usage
 
@@ -14,3 +14,4 @@ value: GetV2TargetIdentifierAttributesAttributeTarget = "objects"
 
 - `"objects"`
 - `"lists"`
+- `"activities"`

@@ -59,9 +59,35 @@ class PutV2ObjectsObjectRecordsRequest(BaseModel):
 PutV2ObjectsObjectRecordsConflictType = Literal["invalid_request_error",]
 
 
+PutV2ObjectsObjectRecordsCodeUniquenessConflict = Literal["uniqueness_conflict",]
+
+
+PutV2ObjectsObjectRecordsCodeMultipleMatchResults = Literal["multiple_match_results",]
+
+
 PutV2ObjectsObjectRecordsCodeConcurrentWriteConflict = Literal[
     "concurrent_write_conflict",
 ]
+
+
+PutV2ObjectsObjectRecordsCodeUnionTypedDict = TypeAliasType(
+    "PutV2ObjectsObjectRecordsCodeUnionTypedDict",
+    Union[
+        PutV2ObjectsObjectRecordsCodeConcurrentWriteConflict,
+        PutV2ObjectsObjectRecordsCodeMultipleMatchResults,
+        PutV2ObjectsObjectRecordsCodeUniquenessConflict,
+    ],
+)
+
+
+PutV2ObjectsObjectRecordsCodeUnion = TypeAliasType(
+    "PutV2ObjectsObjectRecordsCodeUnion",
+    Union[
+        PutV2ObjectsObjectRecordsCodeConcurrentWriteConflict,
+        PutV2ObjectsObjectRecordsCodeMultipleMatchResults,
+        PutV2ObjectsObjectRecordsCodeUniquenessConflict,
+    ],
+)
 
 
 PutV2ObjectsObjectRecordsNotFoundType = Literal["invalid_request_error",]

@@ -53,9 +53,35 @@ class PostV2ObjectsObjectRecordsRequest(BaseModel):
 PostV2ObjectsObjectRecordsConflictType = Literal["invalid_request_error",]
 
 
+PostV2ObjectsObjectRecordsCodeUniquenessConflict = Literal["uniqueness_conflict",]
+
+
+PostV2ObjectsObjectRecordsCodeMultipleMatchResults = Literal["multiple_match_results",]
+
+
 PostV2ObjectsObjectRecordsCodeConcurrentWriteConflict = Literal[
     "concurrent_write_conflict",
 ]
+
+
+PostV2ObjectsObjectRecordsCodeUnionTypedDict = TypeAliasType(
+    "PostV2ObjectsObjectRecordsCodeUnionTypedDict",
+    Union[
+        PostV2ObjectsObjectRecordsCodeConcurrentWriteConflict,
+        PostV2ObjectsObjectRecordsCodeMultipleMatchResults,
+        PostV2ObjectsObjectRecordsCodeUniquenessConflict,
+    ],
+)
+
+
+PostV2ObjectsObjectRecordsCodeUnion = TypeAliasType(
+    "PostV2ObjectsObjectRecordsCodeUnion",
+    Union[
+        PostV2ObjectsObjectRecordsCodeConcurrentWriteConflict,
+        PostV2ObjectsObjectRecordsCodeMultipleMatchResults,
+        PostV2ObjectsObjectRecordsCodeUniquenessConflict,
+    ],
+)
 
 
 PostV2ObjectsObjectRecordsNotFoundType = Literal["invalid_request_error",]

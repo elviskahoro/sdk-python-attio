@@ -53,9 +53,37 @@ class PostV2ActivitiesActivityRecordsRequest(BaseModel):
 PostV2ActivitiesActivityRecordsConflictType = Literal["invalid_request_error",]
 
 
+PostV2ActivitiesActivityRecordsCodeUniquenessConflict = Literal["uniqueness_conflict",]
+
+
+PostV2ActivitiesActivityRecordsCodeMultipleMatchResults = Literal[
+    "multiple_match_results",
+]
+
+
 PostV2ActivitiesActivityRecordsCodeConcurrentWriteConflict = Literal[
     "concurrent_write_conflict",
 ]
+
+
+PostV2ActivitiesActivityRecordsConflictCodeUnionTypedDict = TypeAliasType(
+    "PostV2ActivitiesActivityRecordsConflictCodeUnionTypedDict",
+    Union[
+        PostV2ActivitiesActivityRecordsCodeConcurrentWriteConflict,
+        PostV2ActivitiesActivityRecordsCodeMultipleMatchResults,
+        PostV2ActivitiesActivityRecordsCodeUniquenessConflict,
+    ],
+)
+
+
+PostV2ActivitiesActivityRecordsConflictCodeUnion = TypeAliasType(
+    "PostV2ActivitiesActivityRecordsConflictCodeUnion",
+    Union[
+        PostV2ActivitiesActivityRecordsCodeConcurrentWriteConflict,
+        PostV2ActivitiesActivityRecordsCodeMultipleMatchResults,
+        PostV2ActivitiesActivityRecordsCodeUniquenessConflict,
+    ],
+)
 
 
 PostV2ActivitiesActivityRecordsNotFoundType = Literal["invalid_request_error",]
@@ -73,8 +101,8 @@ PostV2ActivitiesActivityRecordsCodeBillingError = Literal["billing_error",]
 PostV2ActivitiesActivityRecordsCodeUnauthorized = Literal["unauthorized",]
 
 
-PostV2ActivitiesActivityRecordsCodeUnionTypedDict = TypeAliasType(
-    "PostV2ActivitiesActivityRecordsCodeUnionTypedDict",
+PostV2ActivitiesActivityRecordsForbiddenCodeUnionTypedDict = TypeAliasType(
+    "PostV2ActivitiesActivityRecordsForbiddenCodeUnionTypedDict",
     Union[
         PostV2ActivitiesActivityRecordsCodeUnauthorized,
         PostV2ActivitiesActivityRecordsCodeBillingError,
@@ -82,22 +110,12 @@ PostV2ActivitiesActivityRecordsCodeUnionTypedDict = TypeAliasType(
 )
 
 
-PostV2ActivitiesActivityRecordsForbiddenCodeUnionTypedDict = (
-    PostV2ActivitiesActivityRecordsCodeUnionTypedDict
-)
-
-
-PostV2ActivitiesActivityRecordsCodeUnion = TypeAliasType(
-    "PostV2ActivitiesActivityRecordsCodeUnion",
+PostV2ActivitiesActivityRecordsForbiddenCodeUnion = TypeAliasType(
+    "PostV2ActivitiesActivityRecordsForbiddenCodeUnion",
     Union[
         PostV2ActivitiesActivityRecordsCodeUnauthorized,
         PostV2ActivitiesActivityRecordsCodeBillingError,
     ],
-)
-
-
-PostV2ActivitiesActivityRecordsForbiddenCodeUnion = (
-    PostV2ActivitiesActivityRecordsCodeUnion
 )
 
 

@@ -11,7 +11,7 @@ from typing import Optional
 
 class PostV2SQLFilterErrorData(BaseModel):
     status_code: float
-    type: models_post_v2_sqlop.PostV2SQLType
+    type: models_post_v2_sqlop.PostV2SQLBadRequestType
     code: models_post_v2_sqlop.PostV2SQLCode
     message: str
 
