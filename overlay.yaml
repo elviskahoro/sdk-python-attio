@@ -709,3 +709,11 @@ actions:
   - target: "$.paths['/v2/meetings/{meeting_id}/call_recordings/{call_recording_id}'].delete.responses['204'].content"
     description: "Remove the 204 response body for DELETE call-recording so Speakeasy generates a bodyless-204 handler instead of unmarshaling an empty body"
     remove: true
+
+  # The upstream spec types each struct-parameter field as a bare
+  # `{type: object}`, which Speakeasy generates as the fieldless model
+  # `PostV2SQLValue`; Pydantic then drops the nested `type`/`value` keys and
+  # serializes `"name": {}`. Removing the `type` makes the field free-form.
+  - target: "$.paths['/v2/sql'].post.requestBody.content['application/json'].schema.properties.parameters.additionalProperties.oneOf[9].properties['value'].additionalProperties.type"
+    description: "Make SQL struct parameter fields free-form so nested type/value survive serialization"
+    remove: true

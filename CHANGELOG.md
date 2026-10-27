@@ -37,7 +37,7 @@ the overlay for upstream error-code drift: the lists-entries POST 400 `code`
 anyOf is flattened and the activity-record POST/PUT 400 enums gain the
 missing codes, so the record and entry write endpoints now accept
 `duplicate_values`, `limit_reached`, and `multiple_match_results` 400 codes.
-**Breaking changes** (the 0.x minor bump is the signal; 0.26.2–0.26.6 were
+**Breaking changes** (the 0.x minor bump is the signal; 0.26.2–0.26.7 were
 never published, so 0.27.0 is the first release after 0.26.1) — 50 exports
 that shipped in 0.26.1 are renamed or removed, without aliases:
 
@@ -55,9 +55,10 @@ that shipped in 0.26.1 are renamed or removed, without aliases:
   `BadRequestCodeUnion` (+ `TypedDict`), `...CodeValueNotFound`,
   `...CodeParticleGateViolation`, and
   `CodeMatchingAttributeDefinitionNotUnique`.
-- **`PostV2SQLType` is removed** (SQL request models reshaped) — use
-  `PostV2SQLValue` (+ `TypedDict`); `PostV2SQLBadRequestType` is new for
-  400 responses.
+- **`PostV2SQLType` is removed** (SQL request models reshaped) — struct
+  parameter values are now free-form (`Dict[str, Any]`) so nested
+  `type`/`value` pairs survive serialization (#106);
+  `PostV2SQLBadRequestType` is new for 400 responses.
 
 ## 0.25.1 — 2026-10-03
 
