@@ -18,6 +18,10 @@ so existing imports keep working; prefer the new names:
   `PutV2ActivitiesActivityRecordsCodeUnion` (+ `TypedDict`)
 - `PutV2ListsListEntriesCodeMultipleMatchResults` → `CodeMultipleMatchResults`
 
+Regenerates the SDK (0.26.3) against the unchanged spec — a content-empty
+bump that keeps `pyproject.toml`, `uv.lock`, and the Speakeasy-side version
+files in lockstep.
+
 ## 0.25.1 — 2026-10-03
 
 Adopts Attio's 2026-10-03 OpenAPI spec and repairs the Speakeasy overlay.
