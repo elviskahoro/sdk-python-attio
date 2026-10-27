@@ -54,196 +54,196 @@ info:
   version: 0.0.1
 actions:
   # Remove format field from timestamp value in components.schemas.output-value
-  - target: "$.components.schemas['output-value'].anyOf[18].properties.value.format"
+  - target: "$.components.schemas['output-value'].anyOf[18].properties['value'].format"
     description: "Remove format field from timestamp value in output-value schema to generate as str instead of date"
     remove: true
 
   # Remove format field from timestamp value in POST /v2/objects/{object}/records/query response
-  - target: "$.paths['/v2/objects/{object}/records/query'].post.responses['200'].content['application/json'].schema.properties.data.items.properties.values.additionalProperties.items.oneOf[16].properties.value.format"
+  - target: "$.paths['/v2/objects/{object}/records/query'].post.responses['200'].content['application/json'].schema.properties.data.items.properties.values.additionalProperties.items.oneOf[16].properties['value'].format"
     description: "Remove format field from timestamp value in query records response"
     remove: true
 
   # Remove format field from timestamp value in POST /v2/objects/{object}/records response
-  - target: "$.paths['/v2/objects/{object}/records'].post.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.format"
+  - target: "$.paths['/v2/objects/{object}/records'].post.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties['value'].format"
     description: "Remove format field from timestamp value in POST records response"
     remove: true
 
   # Remove format field from timestamp value in PUT /v2/objects/{object}/records response
-  - target: "$.paths['/v2/objects/{object}/records'].put.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.format"
+  - target: "$.paths['/v2/objects/{object}/records'].put.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties['value'].format"
     description: "Remove format field from timestamp value in PUT records response"
     remove: true
 
   # Remove format field from timestamp value in GET /v2/objects/{object}/records/{record_id} response
-  - target: "$.paths['/v2/objects/{object}/records/{record_id}'].get.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.format"
+  - target: "$.paths['/v2/objects/{object}/records/{record_id}'].get.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties['value'].format"
     description: "Remove format field from timestamp value in GET record response"
     remove: true
 
   # Remove format field from timestamp value in PATCH /v2/objects/{object}/records/{record_id} response
-  - target: "$.paths['/v2/objects/{object}/records/{record_id}'].patch.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.format"
+  - target: "$.paths['/v2/objects/{object}/records/{record_id}'].patch.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties['value'].format"
     description: "Remove format field from timestamp value in PATCH record response"
     remove: true
 
   # Remove format field from timestamp value in PUT /v2/objects/{object}/records/{record_id} response
-  - target: "$.paths['/v2/objects/{object}/records/{record_id}'].put.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.format"
+  - target: "$.paths['/v2/objects/{object}/records/{record_id}'].put.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties['value'].format"
     description: "Remove format field from timestamp value in PUT record response"
     remove: true
 
   # Remove format field from timestamp value in GET /v2/objects/{object}/records/{record_id}/attributes/{attribute}/values response
-  - target: "$.paths['/v2/objects/{object}/records/{record_id}/attributes/{attribute}/values'].get.responses['200'].content['application/json'].schema.properties.data.items.oneOf[16].properties.value.format"
+  - target: "$.paths['/v2/objects/{object}/records/{record_id}/attributes/{attribute}/values'].get.responses['200'].content['application/json'].schema.properties.data.items.oneOf[16].properties['value'].format"
     description: "Remove format field from timestamp value in GET attribute values response"
     remove: true
 
   # Remove format field from timestamp value in POST /v2/lists/{list}/entries/query response
-  - target: "$.paths['/v2/lists/{list}/entries/query'].post.responses['200'].content['application/json'].schema.properties.data.items.properties.entry_values.additionalProperties.items.oneOf[16].properties.value.format"
+  - target: "$.paths['/v2/lists/{list}/entries/query'].post.responses['200'].content['application/json'].schema.properties.data.items.properties.entry_values.additionalProperties.items.oneOf[16].properties['value'].format"
     description: "Remove format field from timestamp value in query list entries response"
     remove: true
 
   # Remove format field from timestamp value in POST /v2/lists/{list}/entries response
-  - target: "$.paths['/v2/lists/{list}/entries'].post.responses['200'].content['application/json'].schema.properties.data.properties.entry_values.additionalProperties.items.oneOf[16].properties.value.format"
+  - target: "$.paths['/v2/lists/{list}/entries'].post.responses['200'].content['application/json'].schema.properties.data.properties.entry_values.additionalProperties.items.oneOf[16].properties['value'].format"
     description: "Remove format field from timestamp value in POST list entries response"
     remove: true
 
   # Remove format field from timestamp value in PUT /v2/lists/{list}/entries response
-  - target: "$.paths['/v2/lists/{list}/entries'].put.responses['200'].content['application/json'].schema.properties.data.properties.entry_values.additionalProperties.items.oneOf[16].properties.value.format"
+  - target: "$.paths['/v2/lists/{list}/entries'].put.responses['200'].content['application/json'].schema.properties.data.properties.entry_values.additionalProperties.items.oneOf[16].properties['value'].format"
     description: "Remove format field from timestamp value in PUT list entries response"
     remove: true
 
   # Remove format field from timestamp value in GET /v2/lists/{list}/entries/{entry_id} response
-  - target: "$.paths['/v2/lists/{list}/entries/{entry_id}'].get.responses['200'].content['application/json'].schema.properties.data.properties.entry_values.additionalProperties.items.oneOf[16].properties.value.format"
+  - target: "$.paths['/v2/lists/{list}/entries/{entry_id}'].get.responses['200'].content['application/json'].schema.properties.data.properties.entry_values.additionalProperties.items.oneOf[16].properties['value'].format"
     description: "Remove format field from timestamp value in GET list entry response"
     remove: true
 
   # Remove format field from timestamp value in PATCH /v2/lists/{list}/entries/{entry_id} response
-  - target: "$.paths['/v2/lists/{list}/entries/{entry_id}'].patch.responses['200'].content['application/json'].schema.properties.data.properties.entry_values.additionalProperties.items.oneOf[16].properties.value.format"
+  - target: "$.paths['/v2/lists/{list}/entries/{entry_id}'].patch.responses['200'].content['application/json'].schema.properties.data.properties.entry_values.additionalProperties.items.oneOf[16].properties['value'].format"
     description: "Remove format field from timestamp value in PATCH list entry response"
     remove: true
 
   # Remove format field from timestamp value in PUT /v2/lists/{list}/entries/{entry_id} response
-  - target: "$.paths['/v2/lists/{list}/entries/{entry_id}'].put.responses['200'].content['application/json'].schema.properties.data.properties.entry_values.additionalProperties.items.oneOf[16].properties.value.format"
+  - target: "$.paths['/v2/lists/{list}/entries/{entry_id}'].put.responses['200'].content['application/json'].schema.properties.data.properties.entry_values.additionalProperties.items.oneOf[16].properties['value'].format"
     description: "Remove format field from timestamp value in PUT list entry response"
     remove: true
 
   # Remove format field from timestamp value in GET /v2/lists/{list}/entries/{entry_id}/attributes/{attribute}/values response
-  - target: "$.paths['/v2/lists/{list}/entries/{entry_id}/attributes/{attribute}/values'].get.responses['200'].content['application/json'].schema.properties.data.items.oneOf[16].properties.value.format"
+  - target: "$.paths['/v2/lists/{list}/entries/{entry_id}/attributes/{attribute}/values'].get.responses['200'].content['application/json'].schema.properties.data.items.oneOf[16].properties['value'].format"
     description: "Remove format field from timestamp value in GET list entry attribute values response"
     remove: true
 
   # Change timestamp value examples to non-ISO8601 strings so Speakeasy doesn't infer date type
-  - target: "$.paths['/v2/objects/{object}/records/query'].post.responses['200'].content['application/json'].schema.properties.data.items.properties.values.additionalProperties.items.oneOf[16].properties.value.example"
+  - target: "$.paths['/v2/objects/{object}/records/query'].post.responses['200'].content['application/json'].schema.properties.data.items.properties.values.additionalProperties.items.oneOf[16].properties['value'].example"
     description: "Change timestamp example to non-ISO8601 format in POST /v2/objects/{object}/records/query"
     update: "timestamp_string_value"
 
-  - target: "$.paths['/v2/objects/{object}/records'].post.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.example"
+  - target: "$.paths['/v2/objects/{object}/records'].post.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties['value'].example"
     description: "Change timestamp example to non-ISO8601 format in POST /v2/objects/{object}/records"
     update: "timestamp_string_value"
 
-  - target: "$.paths['/v2/objects/{object}/records'].put.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.example"
+  - target: "$.paths['/v2/objects/{object}/records'].put.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties['value'].example"
     description: "Change timestamp example to non-ISO8601 format in PUT /v2/objects/{object}/records"
     update: "timestamp_string_value"
 
-  - target: "$.paths['/v2/objects/{object}/records/{record_id}'].get.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.example"
+  - target: "$.paths['/v2/objects/{object}/records/{record_id}'].get.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties['value'].example"
     description: "Change timestamp example to non-ISO8601 format in GET /v2/objects/{object}/records/{record_id}"
     update: "timestamp_string_value"
 
-  - target: "$.paths['/v2/objects/{object}/records/{record_id}'].patch.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.example"
+  - target: "$.paths['/v2/objects/{object}/records/{record_id}'].patch.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties['value'].example"
     description: "Change timestamp example to non-ISO8601 format in PATCH /v2/objects/{object}/records/{record_id}"
     update: "timestamp_string_value"
 
-  - target: "$.paths['/v2/objects/{object}/records/{record_id}'].put.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.example"
+  - target: "$.paths['/v2/objects/{object}/records/{record_id}'].put.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties['value'].example"
     description: "Change timestamp example to non-ISO8601 format in PUT /v2/objects/{object}/records/{record_id}"
     update: "timestamp_string_value"
 
-  - target: "$.paths['/v2/objects/{object}/records/{record_id}/attributes/{attribute}/values'].get.responses['200'].content['application/json'].schema.properties.data.items.oneOf[16].properties.value.example"
+  - target: "$.paths['/v2/objects/{object}/records/{record_id}/attributes/{attribute}/values'].get.responses['200'].content['application/json'].schema.properties.data.items.oneOf[16].properties['value'].example"
     description: "Change timestamp example to non-ISO8601 format in GET /v2/objects/{object}/records/{record_id}/attributes/{attribute}/values"
     update: "timestamp_string_value"
 
-  - target: "$.paths['/v2/lists/{list}/entries/query'].post.responses['200'].content['application/json'].schema.properties.data.items.properties.entry_values.additionalProperties.items.oneOf[16].properties.value.example"
+  - target: "$.paths['/v2/lists/{list}/entries/query'].post.responses['200'].content['application/json'].schema.properties.data.items.properties.entry_values.additionalProperties.items.oneOf[16].properties['value'].example"
     description: "Change timestamp example to non-ISO8601 format in POST /v2/lists/{list}/entries/query"
     update: "timestamp_string_value"
 
-  - target: "$.paths['/v2/lists/{list}/entries'].post.responses['200'].content['application/json'].schema.properties.data.properties.entry_values.additionalProperties.items.oneOf[16].properties.value.example"
+  - target: "$.paths['/v2/lists/{list}/entries'].post.responses['200'].content['application/json'].schema.properties.data.properties.entry_values.additionalProperties.items.oneOf[16].properties['value'].example"
     description: "Change timestamp example to non-ISO8601 format in POST /v2/lists/{list}/entries"
     update: "timestamp_string_value"
 
-  - target: "$.paths['/v2/lists/{list}/entries'].put.responses['200'].content['application/json'].schema.properties.data.properties.entry_values.additionalProperties.items.oneOf[16].properties.value.example"
+  - target: "$.paths['/v2/lists/{list}/entries'].put.responses['200'].content['application/json'].schema.properties.data.properties.entry_values.additionalProperties.items.oneOf[16].properties['value'].example"
     description: "Change timestamp example to non-ISO8601 format in PUT /v2/lists/{list}/entries"
     update: "timestamp_string_value"
 
-  - target: "$.paths['/v2/lists/{list}/entries/{entry_id}'].get.responses['200'].content['application/json'].schema.properties.data.properties.entry_values.additionalProperties.items.oneOf[16].properties.value.example"
+  - target: "$.paths['/v2/lists/{list}/entries/{entry_id}'].get.responses['200'].content['application/json'].schema.properties.data.properties.entry_values.additionalProperties.items.oneOf[16].properties['value'].example"
     description: "Change timestamp example to non-ISO8601 format in GET /v2/lists/{list}/entries/{entry_id}"
     update: "timestamp_string_value"
 
-  - target: "$.paths['/v2/lists/{list}/entries/{entry_id}'].patch.responses['200'].content['application/json'].schema.properties.data.properties.entry_values.additionalProperties.items.oneOf[16].properties.value.example"
+  - target: "$.paths['/v2/lists/{list}/entries/{entry_id}'].patch.responses['200'].content['application/json'].schema.properties.data.properties.entry_values.additionalProperties.items.oneOf[16].properties['value'].example"
     description: "Change timestamp example to non-ISO8601 format in PATCH /v2/lists/{list}/entries/{entry_id}"
     update: "timestamp_string_value"
 
-  - target: "$.paths['/v2/lists/{list}/entries/{entry_id}'].put.responses['200'].content['application/json'].schema.properties.data.properties.entry_values.additionalProperties.items.oneOf[16].properties.value.example"
+  - target: "$.paths['/v2/lists/{list}/entries/{entry_id}'].put.responses['200'].content['application/json'].schema.properties.data.properties.entry_values.additionalProperties.items.oneOf[16].properties['value'].example"
     description: "Change timestamp example to non-ISO8601 format in PUT /v2/lists/{list}/entries/{entry_id}"
     update: "timestamp_string_value"
 
-  - target: "$.paths['/v2/lists/{list}/entries/{entry_id}/attributes/{attribute}/values'].get.responses['200'].content['application/json'].schema.properties.data.items.oneOf[16].properties.value.example"
+  - target: "$.paths['/v2/lists/{list}/entries/{entry_id}/attributes/{attribute}/values'].get.responses['200'].content['application/json'].schema.properties.data.items.oneOf[16].properties['value'].example"
     description: "Change timestamp example to non-ISO8601 format in GET /v2/lists/{list}/entries/{entry_id}/attributes/{attribute}/values"
     update: "timestamp_string_value"
 
   # Change timestamp value descriptions to avoid Speakeasy inferring date type
-  - target: "$.paths['/v2/objects/{object}/records/query'].post.responses['200'].content['application/json'].schema.properties.data.items.properties.values.additionalProperties.items.oneOf[16].properties.value.description"
+  - target: "$.paths['/v2/objects/{object}/records/query'].post.responses['200'].content['application/json'].schema.properties.data.items.properties.values.additionalProperties.items.oneOf[16].properties['value'].description"
     description: "Change timestamp description in POST /v2/objects/{object}/records/query"
     update: "A timestamp string value"
 
-  - target: "$.paths['/v2/objects/{object}/records'].post.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.description"
+  - target: "$.paths['/v2/objects/{object}/records'].post.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties['value'].description"
     description: "Change timestamp description in POST /v2/objects/{object}/records"
     update: "A timestamp string value"
 
-  - target: "$.paths['/v2/objects/{object}/records'].put.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.description"
+  - target: "$.paths['/v2/objects/{object}/records'].put.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties['value'].description"
     description: "Change timestamp description in PUT /v2/objects/{object}/records"
     update: "A timestamp string value"
 
-  - target: "$.paths['/v2/objects/{object}/records/{record_id}'].get.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.description"
+  - target: "$.paths['/v2/objects/{object}/records/{record_id}'].get.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties['value'].description"
     description: "Change timestamp description in GET /v2/objects/{object}/records/{record_id}"
     update: "A timestamp string value"
 
-  - target: "$.paths['/v2/objects/{object}/records/{record_id}'].patch.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.description"
+  - target: "$.paths['/v2/objects/{object}/records/{record_id}'].patch.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties['value'].description"
     description: "Change timestamp description in PATCH /v2/objects/{object}/records/{record_id}"
     update: "A timestamp string value"
 
-  - target: "$.paths['/v2/objects/{object}/records/{record_id}'].put.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.description"
+  - target: "$.paths['/v2/objects/{object}/records/{record_id}'].put.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties['value'].description"
     description: "Change timestamp description in PUT /v2/objects/{object}/records/{record_id}"
     update: "A timestamp string value"
 
-  - target: "$.paths['/v2/objects/{object}/records/{record_id}/attributes/{attribute}/values'].get.responses['200'].content['application/json'].schema.properties.data.items.oneOf[16].properties.value.description"
+  - target: "$.paths['/v2/objects/{object}/records/{record_id}/attributes/{attribute}/values'].get.responses['200'].content['application/json'].schema.properties.data.items.oneOf[16].properties['value'].description"
     description: "Change timestamp description in GET /v2/objects/{object}/records/{record_id}/attributes/{attribute}/values"
     update: "A timestamp string value"
 
-  - target: "$.paths['/v2/lists/{list}/entries/query'].post.responses['200'].content['application/json'].schema.properties.data.items.properties.entry_values.additionalProperties.items.oneOf[16].properties.value.description"
+  - target: "$.paths['/v2/lists/{list}/entries/query'].post.responses['200'].content['application/json'].schema.properties.data.items.properties.entry_values.additionalProperties.items.oneOf[16].properties['value'].description"
     description: "Change timestamp description in POST /v2/lists/{list}/entries/query"
     update: "A timestamp string value"
 
-  - target: "$.paths['/v2/lists/{list}/entries'].post.responses['200'].content['application/json'].schema.properties.data.properties.entry_values.additionalProperties.items.oneOf[16].properties.value.description"
+  - target: "$.paths['/v2/lists/{list}/entries'].post.responses['200'].content['application/json'].schema.properties.data.properties.entry_values.additionalProperties.items.oneOf[16].properties['value'].description"
     description: "Change timestamp description in POST /v2/lists/{list}/entries"
     update: "A timestamp string value"
 
-  - target: "$.paths['/v2/lists/{list}/entries'].put.responses['200'].content['application/json'].schema.properties.data.properties.entry_values.additionalProperties.items.oneOf[16].properties.value.description"
+  - target: "$.paths['/v2/lists/{list}/entries'].put.responses['200'].content['application/json'].schema.properties.data.properties.entry_values.additionalProperties.items.oneOf[16].properties['value'].description"
     description: "Change timestamp description in PUT /v2/lists/{list}/entries"
     update: "A timestamp string value"
 
-  - target: "$.paths['/v2/lists/{list}/entries/{entry_id}'].get.responses['200'].content['application/json'].schema.properties.data.properties.entry_values.additionalProperties.items.oneOf[16].properties.value.description"
+  - target: "$.paths['/v2/lists/{list}/entries/{entry_id}'].get.responses['200'].content['application/json'].schema.properties.data.properties.entry_values.additionalProperties.items.oneOf[16].properties['value'].description"
     description: "Change timestamp description in GET /v2/lists/{list}/entries/{entry_id}"
     update: "A timestamp string value"
 
-  - target: "$.paths['/v2/lists/{list}/entries/{entry_id}'].patch.responses['200'].content['application/json'].schema.properties.data.properties.entry_values.additionalProperties.items.oneOf[16].properties.value.description"
+  - target: "$.paths['/v2/lists/{list}/entries/{entry_id}'].patch.responses['200'].content['application/json'].schema.properties.data.properties.entry_values.additionalProperties.items.oneOf[16].properties['value'].description"
     description: "Change timestamp description in PATCH /v2/lists/{list}/entries/{entry_id}"
     update: "A timestamp string value"
 
-  - target: "$.paths['/v2/lists/{list}/entries/{entry_id}'].put.responses['200'].content['application/json'].schema.properties.data.properties.entry_values.additionalProperties.items.oneOf[16].properties.value.description"
+  - target: "$.paths['/v2/lists/{list}/entries/{entry_id}'].put.responses['200'].content['application/json'].schema.properties.data.properties.entry_values.additionalProperties.items.oneOf[16].properties['value'].description"
     description: "Change timestamp description in PUT /v2/lists/{list}/entries/{entry_id}"
     update: "A timestamp string value"
 
-  - target: "$.paths['/v2/lists/{list}/entries/{entry_id}/attributes/{attribute}/values'].get.responses['200'].content['application/json'].schema.properties.data.items.oneOf[16].properties.value.description"
+  - target: "$.paths['/v2/lists/{list}/entries/{entry_id}/attributes/{attribute}/values'].get.responses['200'].content['application/json'].schema.properties.data.items.oneOf[16].properties['value'].description"
     description: "Change timestamp description in GET /v2/lists/{list}/entries/{entry_id}/attributes/{attribute}/values"
     update: "A timestamp string value"
 
   # Add x-speakeasy-type to force string type for timestamp values
-  - target: "$.paths['/v2/objects/{object}/records'].post.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value"
+  - target: "$.paths['/v2/objects/{object}/records'].post.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties['value']"
     description: "Force string type for timestamp value in POST /v2/objects/{object}/records"
     update:
       type: string
@@ -565,75 +565,75 @@ actions:
   # of `str` (a full ISO 8601 timestamp like 2023-01-02T13:00:00.000000000Z
   # fails date parsing). Same format/example/description recipe as above.
 
-  - target: "$.paths['/v2/activities/{activity}/records/query'].post.responses['200'].content['application/json'].schema.properties.data.items.properties.values.additionalProperties.items.oneOf[16].properties.value.format"
+  - target: "$.paths['/v2/activities/{activity}/records/query'].post.responses['200'].content['application/json'].schema.properties.data.items.properties.values.additionalProperties.items.oneOf[16].properties['value'].format"
     description: "Remove format field from timestamp value in POST /v2/activities/{activity}/records/query response"
     remove: true
 
-  - target: "$.paths['/v2/activities/{activity}/records/query'].post.responses['200'].content['application/json'].schema.properties.data.items.properties.values.additionalProperties.items.oneOf[16].properties.value.example"
+  - target: "$.paths['/v2/activities/{activity}/records/query'].post.responses['200'].content['application/json'].schema.properties.data.items.properties.values.additionalProperties.items.oneOf[16].properties['value'].example"
     description: "Change timestamp example to non-ISO8601 format in POST /v2/activities/{activity}/records/query"
     update: "timestamp_string_value"
 
-  - target: "$.paths['/v2/activities/{activity}/records/query'].post.responses['200'].content['application/json'].schema.properties.data.items.properties.values.additionalProperties.items.oneOf[16].properties.value.description"
+  - target: "$.paths['/v2/activities/{activity}/records/query'].post.responses['200'].content['application/json'].schema.properties.data.items.properties.values.additionalProperties.items.oneOf[16].properties['value'].description"
     description: "Change timestamp description in POST /v2/activities/{activity}/records/query"
     update: "A timestamp string value"
 
-  - target: "$.paths['/v2/activities/{activity}/records'].post.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.format"
+  - target: "$.paths['/v2/activities/{activity}/records'].post.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties['value'].format"
     description: "Remove format field from timestamp value in POST /v2/activities/{activity}/records response"
     remove: true
 
-  - target: "$.paths['/v2/activities/{activity}/records'].post.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.example"
+  - target: "$.paths['/v2/activities/{activity}/records'].post.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties['value'].example"
     description: "Change timestamp example to non-ISO8601 format in POST /v2/activities/{activity}/records"
     update: "timestamp_string_value"
 
-  - target: "$.paths['/v2/activities/{activity}/records'].post.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.description"
+  - target: "$.paths['/v2/activities/{activity}/records'].post.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties['value'].description"
     description: "Change timestamp description in POST /v2/activities/{activity}/records"
     update: "A timestamp string value"
 
-  - target: "$.paths['/v2/activities/{activity}/records'].put.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.format"
+  - target: "$.paths['/v2/activities/{activity}/records'].put.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties['value'].format"
     description: "Remove format field from timestamp value in PUT /v2/activities/{activity}/records response (upsert endpoint added in the 2026-10-03 spec)"
     remove: true
 
-  - target: "$.paths['/v2/activities/{activity}/records'].put.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.example"
+  - target: "$.paths['/v2/activities/{activity}/records'].put.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties['value'].example"
     description: "Change timestamp example to non-ISO8601 format in PUT /v2/activities/{activity}/records"
     update: "timestamp_string_value"
 
-  - target: "$.paths['/v2/activities/{activity}/records'].put.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.description"
+  - target: "$.paths['/v2/activities/{activity}/records'].put.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties['value'].description"
     description: "Change timestamp description in PUT /v2/activities/{activity}/records"
     update: "A timestamp string value"
 
-  - target: "$.paths['/v2/activities/{activity}/records/{record_id}'].get.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.format"
+  - target: "$.paths['/v2/activities/{activity}/records/{record_id}'].get.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties['value'].format"
     description: "Remove format field from timestamp value in GET /v2/activities/{activity}/records/{record_id} response"
     remove: true
 
-  - target: "$.paths['/v2/activities/{activity}/records/{record_id}'].get.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.example"
+  - target: "$.paths['/v2/activities/{activity}/records/{record_id}'].get.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties['value'].example"
     description: "Change timestamp example to non-ISO8601 format in GET /v2/activities/{activity}/records/{record_id}"
     update: "timestamp_string_value"
 
-  - target: "$.paths['/v2/activities/{activity}/records/{record_id}'].get.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.description"
+  - target: "$.paths['/v2/activities/{activity}/records/{record_id}'].get.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties['value'].description"
     description: "Change timestamp description in GET /v2/activities/{activity}/records/{record_id}"
     update: "A timestamp string value"
 
-  - target: "$.paths['/v2/activities/{activity}/records/{record_id}'].patch.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.format"
+  - target: "$.paths['/v2/activities/{activity}/records/{record_id}'].patch.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties['value'].format"
     description: "Remove format field from timestamp value in PATCH /v2/activities/{activity}/records/{record_id} response"
     remove: true
 
-  - target: "$.paths['/v2/activities/{activity}/records/{record_id}'].patch.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.example"
+  - target: "$.paths['/v2/activities/{activity}/records/{record_id}'].patch.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties['value'].example"
     description: "Change timestamp example to non-ISO8601 format in PATCH /v2/activities/{activity}/records/{record_id}"
     update: "timestamp_string_value"
 
-  - target: "$.paths['/v2/activities/{activity}/records/{record_id}'].patch.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.description"
+  - target: "$.paths['/v2/activities/{activity}/records/{record_id}'].patch.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties['value'].description"
     description: "Change timestamp description in PATCH /v2/activities/{activity}/records/{record_id}"
     update: "A timestamp string value"
 
-  - target: "$.paths['/v2/activities/{activity}/records/{record_id}'].put.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.format"
+  - target: "$.paths['/v2/activities/{activity}/records/{record_id}'].put.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties['value'].format"
     description: "Remove format field from timestamp value in PUT /v2/activities/{activity}/records/{record_id} response"
     remove: true
 
-  - target: "$.paths['/v2/activities/{activity}/records/{record_id}'].put.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.example"
+  - target: "$.paths['/v2/activities/{activity}/records/{record_id}'].put.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties['value'].example"
     description: "Change timestamp example to non-ISO8601 format in PUT /v2/activities/{activity}/records/{record_id}"
     update: "timestamp_string_value"
 
-  - target: "$.paths['/v2/activities/{activity}/records/{record_id}'].put.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties.value.description"
+  - target: "$.paths['/v2/activities/{activity}/records/{record_id}'].put.responses['200'].content['application/json'].schema.properties.data.properties.values.additionalProperties.items.oneOf[16].properties['value'].description"
     description: "Change timestamp description in PUT /v2/activities/{activity}/records/{record_id}"
     update: "A timestamp string value"
 
@@ -641,27 +641,27 @@ actions:
   # coverage above; they also carry the oneOf[16] timestamp value and were
   # never covered, so their upsert responses generated timestamps as `date`.
 
-  - target: "$.paths['/v2/objects/{object}/records/{record_id}/attributes/{attribute}/values'].put.responses['200'].content['application/json'].schema.properties.data.items.oneOf[16].properties.value.format"
+  - target: "$.paths['/v2/objects/{object}/records/{record_id}/attributes/{attribute}/values'].put.responses['200'].content['application/json'].schema.properties.data.items.oneOf[16].properties['value'].format"
     description: "Remove format field from timestamp value in PUT object record attribute values response"
     remove: true
 
-  - target: "$.paths['/v2/objects/{object}/records/{record_id}/attributes/{attribute}/values'].put.responses['200'].content['application/json'].schema.properties.data.items.oneOf[16].properties.value.example"
+  - target: "$.paths['/v2/objects/{object}/records/{record_id}/attributes/{attribute}/values'].put.responses['200'].content['application/json'].schema.properties.data.items.oneOf[16].properties['value'].example"
     description: "Change timestamp example to non-ISO8601 format in PUT /v2/objects/{object}/records/{record_id}/attributes/{attribute}/values"
     update: "timestamp_string_value"
 
-  - target: "$.paths['/v2/objects/{object}/records/{record_id}/attributes/{attribute}/values'].put.responses['200'].content['application/json'].schema.properties.data.items.oneOf[16].properties.value.description"
+  - target: "$.paths['/v2/objects/{object}/records/{record_id}/attributes/{attribute}/values'].put.responses['200'].content['application/json'].schema.properties.data.items.oneOf[16].properties['value'].description"
     description: "Change timestamp description in PUT /v2/objects/{object}/records/{record_id}/attributes/{attribute}/values"
     update: "A timestamp string value"
 
-  - target: "$.paths['/v2/lists/{list}/entries/{entry_id}/attributes/{attribute}/values'].put.responses['200'].content['application/json'].schema.properties.data.items.oneOf[16].properties.value.format"
+  - target: "$.paths['/v2/lists/{list}/entries/{entry_id}/attributes/{attribute}/values'].put.responses['200'].content['application/json'].schema.properties.data.items.oneOf[16].properties['value'].format"
     description: "Remove format field from timestamp value in PUT list entry attribute values response"
     remove: true
 
-  - target: "$.paths['/v2/lists/{list}/entries/{entry_id}/attributes/{attribute}/values'].put.responses['200'].content['application/json'].schema.properties.data.items.oneOf[16].properties.value.example"
+  - target: "$.paths['/v2/lists/{list}/entries/{entry_id}/attributes/{attribute}/values'].put.responses['200'].content['application/json'].schema.properties.data.items.oneOf[16].properties['value'].example"
     description: "Change timestamp example to non-ISO8601 format in PUT /v2/lists/{list}/entries/{entry_id}/attributes/{attribute}/values"
     update: "timestamp_string_value"
 
-  - target: "$.paths['/v2/lists/{list}/entries/{entry_id}/attributes/{attribute}/values'].put.responses['200'].content['application/json'].schema.properties.data.items.oneOf[16].properties.value.description"
+  - target: "$.paths['/v2/lists/{list}/entries/{entry_id}/attributes/{attribute}/values'].put.responses['200'].content['application/json'].schema.properties.data.items.oneOf[16].properties['value'].description"
     description: "Change timestamp description in PUT /v2/lists/{list}/entries/{entry_id}/attributes/{attribute}/values"
     update: "A timestamp string value"
 
@@ -670,15 +670,15 @@ actions:
   # so the request side generated `date` and forced callers to pass datetime.date
   # objects instead of Attio's ISO 8601 timestamp strings.
 
-  - target: "$.components.schemas['input-value'].anyOf[18].properties.value.format"
+  - target: "$.components.schemas['input-value'].anyOf[18].properties['value'].format"
     description: "Remove format field from timestamp value in input-value schema to generate as str instead of date"
     remove: true
 
-  - target: "$.components.schemas['input-value'].anyOf[18].properties.value.example"
+  - target: "$.components.schemas['input-value'].anyOf[18].properties['value'].example"
     description: "Change timestamp example to non-ISO8601 format in input-value schema"
     update: "timestamp_string_value"
 
-  - target: "$.components.schemas['input-value'].anyOf[18].properties.value.description"
+  - target: "$.components.schemas['input-value'].anyOf[18].properties['value'].description"
     description: "Change timestamp description in input-value schema"
     update: "A timestamp string value"
 
