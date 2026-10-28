@@ -292,32 +292,15 @@ merge:
   # covers PRs and the merge queue's trunk-merge/** pushes. Re-verify with
   # the command above after the first run on a PR.
   #
-  # "pullfrog-approval" is NOT an Actions job: the Pullfrog GitHub App posts
-  # it directly on the PR head once its agent review of that exact commit
-  # finds no outstanding Pullfrog feedback. Two Pullfrog console settings
-  # are hard dependencies -- verify after any console change:
-  #   pullfrog config list --repo elviskahoro/sdk-python-attio
-  #   review.approval-check  -- posts the check at all (without it, no PR
-  #                             ever reports this status)
-  #   review.drafts          -- reviews draft PRs, which is what the queue's
-  #                             test PRs are in Draft PR mode (without it,
-  #                             every queued PR would wait out the test
-  #                             timeout and fail out)
-  # Pullfrog semantics that matter here: a new push has no check until
-  # Pullfrog re-reviews it (review.re-review is on; runs take minutes), and
-  # a failed or cancelled run posts nothing -- the queue then waits out its
-  # test timeout and fails the PR out; resubmit once the next run reports.
+  # "pullfrog-approval" is intentionally NOT required: the Pullfrog GitHub App
+  # posts it asynchronously (or never, e.g. failed runs and bot-opened PRs), so
+  # requiring it left PRs and the queue stuck on "Waiting for status to be
+  # reported". It remains an advisory check. Keep it out of the GitHub ruleset
+  # "main - required PR checks" too.
   #
   # Do NOT add path-filtered workflows here -- they do not report on every PR
   # and would deadlock the queue. Same for workflow_run-triggered workflows,
   # the tag-only .rwx/publish.yml, and the scheduled .rwx/spec-update-check.yml
   # (which never runs on PRs at all).
-  #
-  # Known gap: Pullfrog skips bot-opened PRs by default, so the weekly
-  # spec-update PR reports no pullfrog-approval status. It is now opened by
-  # the RWX workflow with the GITHUB_TOKEN vault secret, so RWX CI does run on
-  # it; until Pullfrog reviews bot PRs it needs a human poke (push to its
-  # branch, @pullfrog mention) before it can merge.
   required_statuses:
     - "RWX: CI"
-    - "pullfrog-approval"
