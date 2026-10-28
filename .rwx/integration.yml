@@ -1,4 +1,4 @@
-# Live-API integration check against Attio (ATTIO_API_TOKEN from the
+# Live-API integration check against Attio (ATTIO_API_KEY from the
 # sdk-python-attio vault, which is locked to main with approvals enabled).
 # Runs on main pushes and on pull requests. On a PR ref the vault denies the
 # integration task, so RWX raises an approval request and the task waits until
@@ -61,7 +61,7 @@ tasks:
     use: sync
     cache: false
     env:
-      ATTIO_API_TOKEN: ${{ vaults.sdk-python-attio.secrets.ATTIO_API_TOKEN }}
+      ATTIO_API_TOKEN: ${{ vaults.sdk-python-attio.secrets.ATTIO_API_KEY }}
     # stdout is discarded: the script dumps workspace people, emails and
     # members, which must not land in retained CI logs. The exit code and
     # stderr traceback still report failures.
