@@ -16,7 +16,6 @@ async def run_sync_in_thread(func: Callable[..., _T], *args) -> _T:
 if TYPE_CHECKING:
     from .annotations import get_discriminator
     from .datetimes import parse_datetime, parse_duration
-    from .enums import OpenEnumMeta
     from .headers import get_headers, get_response_headers
     from .metadata import (
         FieldMetadata,
@@ -85,7 +84,6 @@ __all__ = [
     "match_status_codes",
     "match_response",
     "MultipartFormMetadata",
-    "OpenEnumMeta",
     "PathParamMetadata",
     "QueryParamMetadata",
     "remove_suffix",
@@ -140,7 +138,6 @@ _dynamic_imports: dict[str, str] = {
     "match_status_codes": ".values",
     "match_response": ".values",
     "MultipartFormMetadata": ".metadata",
-    "OpenEnumMeta": ".enums",
     "PathParamMetadata": ".metadata",
     "QueryParamMetadata": ".metadata",
     "remove_suffix": ".url",

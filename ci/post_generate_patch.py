@@ -82,6 +82,23 @@ Patch: ``generated/src/attio/models/__init__.py`` 0.26.1 model rename aliases
     ``TYPE_CHECKING`` import block, ``__all__``, and ``_dynamic_imports``).
     Retire the aliases deliberately in a major release by removing the
     ``MODEL_RENAME_ALIASES`` entries.
+
+Patch: ``generated/src/attio/utils/enums.py`` and ``generated/src/attio/utils/__init__.py``
+
+    The 2026-10-25 regeneration (``df87959``) emitted ``utils/enums.py``,
+    a 134-line ``OpenEnumMeta(enum.EnumMeta)`` metaclass, and re-exported
+    it from ``utils/__init__.py`` (the ``TYPE_CHECKING`` import, ``__all__``,
+    and ``_dynamic_imports`` entries). No generated enum ever used
+    ``metaclass=OpenEnumMeta`` (the SDK's only enum, ``OAuth2Scope``, is a
+    plain ``Enum``), and unknown-variant handling lives in
+    ``types/basemodel.py`` + ``utils/serializers.py``, so the metaclass was
+    dead code. This patch deletes ``utils/enums.py`` and strips the three
+    re-export lines from ``utils/__init__.py`` after every regeneration so
+    the removal survives. It is a no-op on the committed (already-stripped)
+    tree. If a future spec/config ever emits a generated enum with
+    ``metaclass=OpenEnumMeta`` (i.e. some module outside ``utils/enums.py``
+    references it as a metaclass), this raises ``RuntimeError`` rather than
+    deleting a file the SDK then needs.
 """
 
 from __future__ import annotations
@@ -95,6 +112,9 @@ SDKHOOKS_PATH = REPO_ROOT / "generated" / "src" / "attio" / "_hooks" / "sdkhooks
 HOOKS_INIT_PATH = REPO_ROOT / "generated" / "src" / "attio" / "_hooks" / "__init__.py"
 MODELS_DIR = REPO_ROOT / "generated" / "src" / "attio" / "models"
 MODELS_INIT_PATH = MODELS_DIR / "__init__.py"
+GENERATED_SRC_DIR = REPO_ROOT / "generated" / "src" / "attio"
+UTILS_INIT_PATH = REPO_ROOT / "generated" / "src" / "attio" / "utils" / "__init__.py"
+UTILS_ENUMS_PATH = REPO_ROOT / "generated" / "src" / "attio" / "utils" / "enums.py"
 
 # Anchors and lines for the SDKHooks init_hooks wiring patch (see
 # ``ensure_init_hooks_wiring`` / ``ensure_hooks_package_reexport``).
@@ -739,6 +759,67 @@ def restore_script_wrappers() -> list[Path]:
     return restored
 
 
+# Lines the OpenEnumMeta removal strips from ``utils/__init__.py`` (the
+# ``TYPE_CHECKING`` import, the ``__all__`` entry, and the
+# ``_dynamic_imports`` lazy-loader mapping). Each is alphabetically sorted
+# into its structure by the generator, so removing the literal line is the
+# inverse of the regeneration that re-adds it.
+_OPEN_ENUM_META_INIT_LINES = (
+    "    from .enums import OpenEnumMeta",
+    '    "OpenEnumMeta",',
+    '    "OpenEnumMeta": ".enums",',
+)
+
+
+def remove_open_enum_meta() -> list[str]:
+    """Delete the unused ``OpenEnumMeta`` metaclass module and its re-exports.
+
+    ``speakeasy run`` re-emits ``generated/src/attio/utils/enums.py`` (the
+    ``OpenEnumMeta`` metaclass) and the three matching re-export lines in
+    ``generated/src/attio/utils/__init__.py`` on every regeneration. No
+    generated enum uses ``metaclass=OpenEnumMeta`` (the SDK's only enum,
+    ``OAuth2Scope``, is a plain ``Enum``), so the module is dead code; this
+    re-applies the removal after every generation so it is not silently
+    undone.
+
+    Returns the list of paths it touched. It is a no-op (returns ``[]``) on
+    the committed, already-stripped tree. Raises ``RuntimeError`` if a
+    regenerated enum outside ``utils/enums.py`` references
+    ``metaclass=OpenEnumMeta`` — a future open-enum spec/config would emit
+    exactly that, and deleting the module the SDK then needs must fail
+    loudly instead of shipping a broken tree.
+    """
+    touched: list[str] = []
+
+    if UTILS_ENUMS_PATH.exists():
+        for path in GENERATED_SRC_DIR.rglob("*.py"):
+            if path == UTILS_ENUMS_PATH:
+                continue
+            text = path.read_text(encoding="utf-8")
+            if "metaclass=OpenEnumMeta" in text:
+                msg = (
+                    f"{path.relative_to(REPO_ROOT)} references "
+                    "`metaclass=OpenEnumMeta`; a future spec/config now uses "
+                    "the open-enum metaclass, so the post-generation patch "
+                    "must not delete utils/enums.py. Remove the "
+                    "remove_open_enum_meta patch from ci/post_generate_patch.py."
+                )
+                raise RuntimeError(msg)
+        UTILS_ENUMS_PATH.unlink()
+        touched.append(str(UTILS_ENUMS_PATH.relative_to(REPO_ROOT)))
+
+    init_text = UTILS_INIT_PATH.read_text(encoding="utf-8")
+    original = init_text
+    for line in _OPEN_ENUM_META_INIT_LINES:
+        init_text = init_text.replace(line + "\n", "", 1)
+    if init_text != original:
+        compile(init_text, str(UTILS_INIT_PATH), "exec")
+        UTILS_INIT_PATH.write_text(init_text, encoding="utf-8")
+        touched.append(str(UTILS_INIT_PATH.relative_to(REPO_ROOT)))
+
+    return touched
+
+
 def main() -> int:
     messages: list[str] = []
 
@@ -761,6 +842,9 @@ def main() -> int:
         messages.append(
             f"post_generate_patch: restored wrapper {wrapper.relative_to(REPO_ROOT)}",
         )
+
+    for touched in remove_open_enum_meta():
+        messages.append(f"post_generate_patch: removed {touched}")
 
     # Fallible hook-wiring patches run after wrapper restoration so a drifted
     # anchor raises here without leaving a naive publish script in the tree.
