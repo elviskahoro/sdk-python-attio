@@ -1,0 +1,10 @@
+test-suites:
+  sdk-python-attio-pytest:
+    command: uv run pytest -q --report-log=tmp/log.json
+    results:
+      path: tmp/log.json
+    output:
+      print-summary: true
+    retries:
+      attempts: 2
+      command: uv run pytest -q --report-log=tmp/log.json {{ tests }}
