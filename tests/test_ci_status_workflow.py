@@ -104,10 +104,15 @@ def test_required_workflows_declare_one_name_across_triggers(
 def test_integration_gates_pull_requests_behind_vault_approval() -> None:
     """The sdk-python-attio vault is locked to main with approvals enabled, so
     a pull_request run waits for an approver instead of reading the token.
-    trunk-merge/** refs get no trigger: nobody would approve them and the
-    queue must never depend on this status."""
+    trunk-merge/** and trunk-merge-beta/** refs get no trigger in either queue
+    mode — nobody should be asked to approve a queued merge, and the queue
+    must never depend on this status."""
     gh = _github_triggers(_load(INTEGRATION_WORKFLOW))
-    assert gh["pull_request"]["status-checks"]["name"] == "integration"
+    pull_request = gh["pull_request"]
+    assert pull_request["status-checks"]["name"] == "integration"
+    assert pull_request.get("if") == (
+        "${{ event.git.branch !~ '^trunk-merge(-beta)?/' }}"
+    ), pull_request
     pushes = gh.get("push") or []
     assert pushes, "expected the main-push trigger to remain"
     for push in pushes:

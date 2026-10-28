@@ -3,11 +3,15 @@
 # Runs on main pushes and on pull requests. On a PR ref the vault denies the
 # integration task, so RWX raises an approval request and the task waits until
 # an approver grants access (a denial fails it). Not a required status, so a
-# pending or skipped run cannot stall the merge queue; trunk-merge/** refs do
-# not trigger it.
+# pending or skipped run cannot stall the merge queue. Queue test branches
+# (trunk-merge/** and trunk-merge-beta/**) never trigger it in either queue
+# mode: push fires only from main, and the pull_request trigger filters those
+# namespaces because draft-PR queue mode opens the queue's test branch as a
+# PR that would otherwise raise an approval request nobody should grant.
 on:
   github:
     pull_request:
+      if: ${{ event.git.branch !~ '^trunk-merge(-beta)?/' }}
       init:
         commit-sha: ${{ event.git.sha }}
       status-checks:
