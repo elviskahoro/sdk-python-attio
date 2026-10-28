@@ -148,6 +148,29 @@ never set it in CI or automation, and fix the overlay afterwards.
    `pyproject.toml` and `generated/src/attio/_version.py` (speakeasy auto-bumps the
    patch version on each regeneration with changes).
 
+### RWX CLI Authentication
+
+The `rwx` CLI (`rwx results`, `rwx logs`, `rwx dispatch`) reads its token from
+`RWX_ACCESS_TOKEN`, and fails with `Unauthorized` when it is unset. Agent
+sandboxes do not set that name; they expose per-org tokens under suffixed names,
+so map the right one in for the command. The runs for this repo live in the
+`elviskahoro` org:
+
+```bash
+env | cut -d= -f1 | grep -iE "rwx|rwc"   # list names only, never print values
+export RWX_ACCESS_TOKEN="$RWC_ACCESS_TOKEN_ELVISKAHORO"
+rwx results <run-id>                      # run-id is the hex id in the cloud.rwx.com/elviskahoro/runs/<id> URL
+rwx logs <task-id> --output /tmp/rwxlogs  # task ids are listed by `rwx results` for failed tasks
+```
+
+- Use the `elviskahoro` token. A token for another org (e.g.
+  `RWX_ACCESS_TOKEN_MARCHILI`) authenticates but returns `not found` for this
+  repo's runs.
+- Never echo, log, or commit the token value.
+- `rwx results` prints task-level failure reasons that GitHub checks hide, e.g.
+  `The vault "sdk-python-attio" is locked` when a non-`main` run cannot read
+  secrets (the run fails before any task log exists).
+
 ### Regenerating on RWX (`.rwx/regenerate.yml`)
 
 Use this when you have no Speakeasy CLI or container runtime locally. It
