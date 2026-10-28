@@ -155,6 +155,15 @@ def test_speakeasy_key_reaches_only_the_generate_task(tasks: dict[str, dict]) ->
         assert "ci/pipeline.py generate" not in tasks[key]["run"], key
 
 
+@pytest.mark.parametrize("key", ["check", "generate"])
+def test_speakeasy_key_reads_from_the_project_vault(tasks: dict[str, dict], key: str) -> None:
+    """`secrets.*` resolves from the `default` vault, which lacks the key."""
+    assert (
+        tasks[key]["env"]["SPEAKEASY_API_KEY"]
+        == "${{ vaults.sdk-python-attio.secrets.SPEAKEASY_API_KEY }}"
+    )
+
+
 @pytest.mark.parametrize("key", ["fetch-spec", "generate", "regenerate"])
 def test_regeneration_stages_record_failure_and_skip_cleanly(
     tasks: dict[str, dict], key: str
