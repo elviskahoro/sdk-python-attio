@@ -123,9 +123,11 @@ never set it in CI or automation, and fix the overlay afterwards.
    `scripts/release.sh` wrappers, the standalone CLI entry point/docs in
    `pyproject.toml` and `README.md`, SDKHooks `init_hooks` wiring plus
    the hooks-package re-export in `generated/src/attio/_hooks/sdkhooks.py` and
-   `generated/src/attio/_hooks/__init__.py`, and the 0.26.1 model rename
+   `generated/src/attio/_hooks/__init__.py`, the 0.26.1 model rename
    aliases in `generated/src/attio/models/__init__.py` and the renamed
-   activity/list operation modules). Drop `--no-fetch` to also
+   activity/list operation modules, and the unused `OpenEnumMeta` metaclass
+   removal from `generated/src/attio/utils/enums.py` and
+   `generated/src/attio/utils/__init__.py`). Drop `--no-fetch` to also
    adopt a freshly fetched spec. Note the Dagger path exports only `generated/`
    back to the host — docs/, README, pyproject and USAGE refresh on the
    host-CLI path (the default) — and it logs that when chosen.

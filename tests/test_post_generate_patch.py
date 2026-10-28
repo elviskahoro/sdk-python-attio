@@ -37,6 +37,9 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 PATCH_SCRIPT = REPO_ROOT / "ci" / "post_generate_patch.py"
 COMMITTED_MODEL = REPO_ROOT / "generated" / "src" / "attio" / "models" / "get_v2_selfop.py"
 FIXTURE_UNPATCHED = REPO_ROOT / "tests" / "fixtures" / "get_v2_selfop_unpatched.txt"
+UTILS_INIT_COMMITTED = REPO_ROOT / "generated" / "src" / "attio" / "utils" / "__init__.py"
+UTILS_INIT_UNPATCHED = REPO_ROOT / "tests" / "fixtures" / "utils_init_unpatched.txt"
+UTILS_ENUMS_UNPATCHED = REPO_ROOT / "tests" / "fixtures" / "utils_enums_unpatched.txt"
 
 ACTIVE_PAYLOAD = {
     "active": True,
@@ -562,3 +565,144 @@ def test_models_init_alias_raises_when_import_block_missing(
 
     with pytest.raises(RuntimeError, match="no longer imports from"):
         PGP.ensure_models_init_aliases(target)
+
+
+# ---------------------------------------------------------------------------
+# OpenEnumMeta removal
+# ---------------------------------------------------------------------------
+
+
+def _stage_open_enum_meta_tree(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Point the patch at a tmp tree carrying the freshly generated forms."""
+    utils_dir = tmp_path / "generated" / "src" / "attio" / "utils"
+    utils_dir.mkdir(parents=True)
+    (utils_dir / "__init__.py").write_text(UTILS_INIT_UNPATCHED.read_text())
+    (utils_dir / "enums.py").write_text(UTILS_ENUMS_UNPATCHED.read_text())
+    monkeypatch.setattr(PGP, "REPO_ROOT", tmp_path)
+    monkeypatch.setattr(
+        PGP, "GENERATED_SRC_DIR", tmp_path / "generated" / "src" / "attio"
+    )
+    monkeypatch.setattr(PGP, "UTILS_INIT_PATH", utils_dir / "__init__.py")
+    monkeypatch.setattr(PGP, "UTILS_ENUMS_PATH", utils_dir / "enums.py")
+
+
+def test_committed_tree_has_no_open_enum_meta() -> None:
+    """The committed tree is already patched: enums.py is gone and the
+    re-export lines are stripped from utils/__init__.py."""
+    assert not (REPO_ROOT / "generated" / "src" / "attio" / "utils" / "enums.py").exists()
+    text = UTILS_INIT_COMMITTED.read_text()
+    assert "OpenEnumMeta" not in text
+    assert "from .enums import OpenEnumMeta" not in text
+    assert '"OpenEnumMeta",' not in text
+    assert '"OpenEnumMeta": ".enums"' not in text
+
+
+def test_remove_open_enum_meta_is_noop_on_committed_tree(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """On the committed (already-stripped) tree the patch touches nothing."""
+    committed_init = UTILS_INIT_COMMITTED.read_text()
+    monkeypatch.setattr(PGP, "GENERATED_SRC_DIR", REPO_ROOT / "generated" / "src" / "attio")
+    monkeypatch.setattr(PGP, "UTILS_INIT_PATH", UTILS_INIT_COMMITTED)
+    monkeypatch.setattr(
+        PGP, "UTILS_ENUMS_PATH", REPO_ROOT / "generated" / "src" / "attio" / "utils" / "enums.py"
+    )
+
+    assert PGP.remove_open_enum_meta() == []
+    assert not (REPO_ROOT / "generated" / "src" / "attio" / "utils" / "enums.py").exists()
+    assert UTILS_INIT_COMMITTED.read_text() == committed_init
+
+
+def test_remove_open_enum_meta_strips_unpatched_to_committed(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _stage_open_enum_meta_tree(tmp_path, monkeypatch)
+
+    touched = PGP.remove_open_enum_meta()
+
+    assert sorted(touched) == [
+        "generated/src/attio/utils/__init__.py",
+        "generated/src/attio/utils/enums.py",
+    ]
+    assert not (tmp_path / "generated" / "src" / "attio" / "utils" / "enums.py").exists()
+    assert (
+        (tmp_path / "generated" / "src" / "attio" / "utils" / "__init__.py").read_text()
+        == UTILS_INIT_COMMITTED.read_text()
+    )
+
+
+def test_remove_open_enum_meta_is_idempotent(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _stage_open_enum_meta_tree(tmp_path, monkeypatch)
+
+    first = PGP.remove_open_enum_meta()
+    assert first  # applied once
+    init_after = (tmp_path / "generated" / "src" / "attio" / "utils" / "__init__.py").read_text()
+
+    second = PGP.remove_open_enum_meta()
+    assert second == []
+    assert (
+        (tmp_path / "generated" / "src" / "attio" / "utils" / "__init__.py").read_text()
+        == init_after
+    )
+
+
+def test_remove_open_enum_meta_strips_init_without_enums_py(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A partial state (enums.py already gone but re-exports lingering) is
+    still repaired — the init strip does not depend on the file."""
+    utils_dir = tmp_path / "generated" / "src" / "attio" / "utils"
+    utils_dir.mkdir(parents=True)
+    (utils_dir / "__init__.py").write_text(UTILS_INIT_UNPATCHED.read_text())
+    monkeypatch.setattr(PGP, "REPO_ROOT", tmp_path)
+    monkeypatch.setattr(
+        PGP, "GENERATED_SRC_DIR", tmp_path / "generated" / "src" / "attio"
+    )
+    monkeypatch.setattr(PGP, "UTILS_INIT_PATH", utils_dir / "__init__.py")
+    monkeypatch.setattr(PGP, "UTILS_ENUMS_PATH", utils_dir / "enums.py")
+
+    touched = PGP.remove_open_enum_meta()
+
+    assert touched == ["generated/src/attio/utils/__init__.py"]
+    assert not (utils_dir / "enums.py").exists()
+    assert (utils_dir / "__init__.py").read_text() == UTILS_INIT_COMMITTED.read_text()
+
+
+def test_remove_open_enum_meta_aborts_when_metaclass_is_used(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """If a regenerated enum uses ``metaclass=OpenEnumMeta`` the patch must
+    raise rather than delete the module the SDK then needs."""
+    _stage_open_enum_meta_tree(tmp_path, monkeypatch)
+    models_dir = tmp_path / "generated" / "src" / "attio" / "models"
+    models_dir.mkdir(parents=True)
+    (models_dir / "needs_open_enum.py").write_text(
+        "from attio.utils.enums import OpenEnumMeta\n"
+        "class Color(str, metaclass=OpenEnumMeta):\n"
+        "    RED = 'red'\n"
+    )
+
+    with pytest.raises(RuntimeError, match="metaclass=OpenEnumMeta"):
+        PGP.remove_open_enum_meta()
+
+    # The module must survive the aborted run.
+    assert (tmp_path / "generated" / "src" / "attio" / "utils" / "enums.py").exists()
+
+
+def test_remove_open_enum_meta_subprocess_is_noop_on_committed_tree() -> None:
+    """Running the whole script on the committed tree must not touch
+    utils/__init__.py or recreate utils/enums.py."""
+    init_before = UTILS_INIT_COMMITTED.read_text()
+    result = subprocess.run(
+        [sys.executable, str(PATCH_SCRIPT)],
+        capture_output=True,
+        text=True,
+        cwd=str(REPO_ROOT),
+        check=False,
+    )
+
+    assert result.returncode == 0, result.stderr
+    assert UTILS_INIT_COMMITTED.read_text() == init_before
+    assert not (REPO_ROOT / "generated" / "src" / "attio" / "utils" / "enums.py").exists()
