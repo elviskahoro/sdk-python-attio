@@ -17,7 +17,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 RWX_DIR = REPO_ROOT / ".rwx"
 TRUNK_YAML = REPO_ROOT / ".trunk" / "trunk.yaml"
 INTEGRATION_WORKFLOW = RWX_DIR / "integration.yml"
-LOCKED_VAULT_TOKEN = "vaults.sdk-python-attio.secrets.ATTIO_API_TOKEN"
+LOCKED_VAULT_TOKEN = "vaults.sdk-python-attio.secrets.ATTIO_API_TOKEN"  # nosec B105 - vault reference, not a credential
 
 
 def _load(path: Path) -> dict:
