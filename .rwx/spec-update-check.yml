@@ -12,7 +12,9 @@
 #
 # Required vault secrets: GITHUB_TOKEN (contents+pull-requests+issues write;
 # the repo is public, so cloning needs no token),
-# SPEAKEASY_API_KEY (optional; without it drift only produces an issue).
+# SPEAKEASY_API_KEY, read from the sdk-python-attio vault (optional; without
+# it, drift only produces an issue. The vault is locked to main, so a CLI
+# run from another ref fails at secret resolution before any task runs).
 # No task pushes to main.
 on:
   cron:
@@ -74,7 +76,7 @@ tasks:
     use: sync
     cache: false
     env:
-      SPEAKEASY_API_KEY: ${{ secrets.SPEAKEASY_API_KEY }}
+      SPEAKEASY_API_KEY: ${{ vaults.sdk-python-attio.secrets.SPEAKEASY_API_KEY }}
     run: |
       # The overlay gate must never be bypassed in automation. The exit 1
       # below deliberately fires before the value writes and the EXIT trap:
@@ -166,7 +168,7 @@ tasks:
     env:
       READY: ${{ tasks.fetch-spec.values.ready }}
       PRIOR_RESULT: ${{ tasks.fetch-spec.values.result }}
-      SPEAKEASY_API_KEY: ${{ secrets.SPEAKEASY_API_KEY }}
+      SPEAKEASY_API_KEY: ${{ vaults.sdk-python-attio.secrets.SPEAKEASY_API_KEY }}
       SPEAKEASY_USE_HOST_CLI: "1"
       SPEAKEASY_FAIL_ON_VERSION_MISMATCH: "true"
     run: |
@@ -326,7 +328,7 @@ tasks:
         if [ "$OVERLAY_OK" = "false" ]; then
           note="Automatic regeneration was skipped because \`overlay.yaml\` is unhealthy — a regeneration cannot fix the overlay. Fix it first (see the report below), then regenerate with \`uv run python ci/pipeline.py generate\`."
         elif [ "$HAS_KEY" = "false" ]; then
-          note="Automatic regeneration did not run: the \`SPEAKEASY_API_KEY\` RWX vault secret is not configured. Add it to enable automated regeneration PRs, or run \`uv run python ci/pipeline.py generate\` locally."
+          note="Automatic regeneration did not run: the \`SPEAKEASY_API_KEY\` secret was not found in the \`sdk-python-attio\` RWX vault. Check the vault to enable automated regeneration PRs, or run \`uv run python ci/pipeline.py generate\` locally."
         else
           note="See the report below."
         fi
