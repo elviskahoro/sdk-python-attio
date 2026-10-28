@@ -126,3 +126,12 @@ def test_integration_is_uncached_and_token_stays_scoped() -> None:
         if LOCKED_VAULT_TOKEN in str(task.get("env", {}))
     ]
     assert holders == ["integration"]
+
+
+def test_integration_discards_stdout() -> None:
+    """tests/test_live_api.py prints workspace people, emails and members;
+    dropping the redirect would copy them into retained main-branch logs
+    while every status stays green."""
+    doc = _load(INTEGRATION_WORKFLOW)
+    tasks = {task["key"]: task for task in doc["tasks"]}
+    assert "> /dev/null" in tasks["integration"]["run"]
