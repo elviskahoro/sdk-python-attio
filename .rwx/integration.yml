@@ -54,4 +54,7 @@ tasks:
     cache: false
     env:
       ATTIO_API_TOKEN: ${{ vaults.sdk-python-attio.secrets.ATTIO_API_TOKEN }}
-    run: uv run python tests/test_live_api.py
+    # stdout is discarded: the script dumps workspace people, emails and
+    # members, which must not land in retained CI logs. The exit code and
+    # stderr traceback still report failures.
+    run: uv run python tests/test_live_api.py > /dev/null
