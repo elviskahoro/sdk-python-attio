@@ -542,11 +542,11 @@ def test_gate_success_keeps_adopted_workflow_reference(
     assert scratch.read_text(encoding="utf-8") == "location: openapi/api-NEW.json\n"
 
 
-def test_log_host_cli_version_warns_on_drift_and_unparseable_banner(
+def test_log_host_cli_version_fails_on_drift_and_warns_on_unparseable_banner(
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
 ) -> None:
-    """CLI drift from the pin — and an unparsable banner — must be loud."""
+    """CLI drift from the pin is an error; an unparsable banner is a warning."""
     from types import SimpleNamespace
 
     monkeypatch.setattr(
@@ -561,9 +561,9 @@ def test_log_host_cli_version_warns_on_drift_and_unparseable_banner(
     monkeypatch.setattr("subprocess.run", fake_run)
 
     banners.append("speakeasy version 0.1.0\n")
-    PIPE._log_host_cli_version()
-    err = capsys.readouterr().err
-    assert "differs from the pinned" in err
+    with pytest.raises(RuntimeError, match="differs from the pinned"):
+        PIPE._log_host_cli_version()
+    capsys.readouterr()
 
     banners.append("speakeasy-cli custom build, no standard banner\n")
     PIPE._log_host_cli_version()

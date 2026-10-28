@@ -89,6 +89,7 @@ tasks:
     env:
       SPEAKEASY_API_KEY: ${{ vaults.sdk-python-attio.secrets.SPEAKEASY_API_KEY }}
       SPEAKEASY_USE_HOST_CLI: "1"
+      SPEAKEASY_FAIL_ON_VERSION_MISMATCH: "true"
       FETCH: ${{ init.fetch }}
     run: |
       # --no-fetch regenerates from the committed spec; fetch=true adopts the
