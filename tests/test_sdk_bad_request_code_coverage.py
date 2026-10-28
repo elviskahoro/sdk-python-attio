@@ -138,7 +138,8 @@ def _literals() -> dict[str, tuple[str, set[str]]]:
 
     Speakeasy names some of them ``*Code`` instead of ``*BadRequestCode``; a
     plain ``*Code`` Literal only counts when the overlay advertises 400 codes
-    for its endpoint (other ``*Code`` Literals have no 400 response).
+    for its endpoint (other ``*Code`` Literals sit on endpoints with no
+    overlay-advertised 400 codes, e.g. the spec-native ``PostV2MeetingsCode``).
     """
     overlay_stems = _overlay_codes_by_stem()
     found: dict[str, tuple[str, set[str]]] = {}
