@@ -194,9 +194,9 @@ git apply .rwx/downloads/<dir>/regenerate.patch
   output is captured.
 - Secret: `SPEAKEASY_API_KEY` lives in the RWX vault `sdk-python-attio`
   (referenced as `vaults.sdk-python-attio.secrets.SPEAKEASY_API_KEY`), not the
-  `default` vault. `spec-update-check.yml` still reads the default vault, so
-  its regeneration step is skipped until it is pointed at the new vault. The
-  vault is locked to `main`, so local `rwx run` is refused (use the dispatch above).
+  `default` vault. `spec-update-check.yml` reads it from that vault, so the
+  scheduled run (pinned to `main`) resolves the key and regenerates on drift.
+  The vault is locked to `main`, so local `rwx run` is refused (use the dispatch above).
 - `generated/mypy.ini` is required: Speakeasy's compile step runs mypy with
   `generated/` as cwd, where the root `pyproject.toml` `[tool.mypy]` is not
   read, which otherwise fails with ~565 `import-not-found` errors. It is

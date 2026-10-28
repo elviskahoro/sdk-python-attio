@@ -13,8 +13,8 @@
 # Required vault secrets: GITHUB_TOKEN (contents+pull-requests+issues write;
 # the repo is public, so cloning needs no token),
 # SPEAKEASY_API_KEY, read from the sdk-python-attio vault (optional; without
-# it, or when that vault is unreadable from the run's ref, drift only
-# produces an issue).
+# it, drift only produces an issue. The vault is locked to main, so a CLI
+# run from another ref fails at secret resolution before any task runs).
 # No task pushes to main.
 on:
   cron:
@@ -328,7 +328,7 @@ tasks:
         if [ "$OVERLAY_OK" = "false" ]; then
           note="Automatic regeneration was skipped because \`overlay.yaml\` is unhealthy — a regeneration cannot fix the overlay. Fix it first (see the report below), then regenerate with \`uv run python ci/pipeline.py generate\`."
         elif [ "$HAS_KEY" = "false" ]; then
-          note="Automatic regeneration did not run: the \`SPEAKEASY_API_KEY\` secret in the \`sdk-python-attio\` RWX vault was not readable (missing, or the vault is locked to another ref). Check the vault and its lock to enable automated regeneration PRs, or run \`uv run python ci/pipeline.py generate\` locally."
+          note="Automatic regeneration did not run: the \`SPEAKEASY_API_KEY\` secret was not found in the \`sdk-python-attio\` RWX vault. Check the vault to enable automated regeneration PRs, or run \`uv run python ci/pipeline.py generate\` locally."
         else
           note="See the report below."
         fi
