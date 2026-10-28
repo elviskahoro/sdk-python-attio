@@ -204,6 +204,7 @@ def test_generate_blocks_when_overlay_unhealthy(monkeypatch: pytest.MonkeyPatch)
 
     monkeypatch.delenv("SKIP_OVERLAY_CHECK", raising=False)
     monkeypatch.setattr(PIPE, "_local_speakeasy_usable", lambda: True)
+    monkeypatch.setattr(PIPE, "_log_host_cli_version", lambda: None)
     monkeypatch.setattr(PIPE, "_run_local_speakeasy", fake_run_local)
     monkeypatch.setattr(PIPE, "_has_local_speakeasy_auth", lambda: True)
     monkeypatch.setattr(PIPE, "_verify_overlay_health", boom)
@@ -230,6 +231,7 @@ def test_generate_no_fetch_skips_fetch(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.delenv("SKIP_OVERLAY_CHECK", raising=False)
     monkeypatch.setattr(PIPE, "fetch_latest_spec", fake_fetch)
     monkeypatch.setattr(PIPE, "_local_speakeasy_usable", lambda: True)
+    monkeypatch.setattr(PIPE, "_log_host_cli_version", lambda: None)
     monkeypatch.setattr(PIPE, "_run_local_speakeasy", fake_run_local)
     monkeypatch.setattr(PIPE, "_has_local_speakeasy_auth", lambda: True)
     monkeypatch.setattr(PIPE, "_verify_overlay_health", lambda *, skip=False: None)
@@ -255,6 +257,7 @@ def test_generate_skip_overlay_check_bypasses_gate(
         assert skip is True, "escape hatch must be forwarded to the gate"
 
     monkeypatch.setattr(PIPE, "_local_speakeasy_usable", lambda: True)
+    monkeypatch.setattr(PIPE, "_log_host_cli_version", lambda: None)
     monkeypatch.setattr(PIPE, "_run_local_speakeasy", fake_run_local)
     monkeypatch.setattr(PIPE, "_has_local_speakeasy_auth", lambda: True)
     monkeypatch.setattr(PIPE, "_verify_overlay_health", gate)
@@ -448,6 +451,7 @@ def test_cmd_ci_gates_before_generating(monkeypatch: pytest.MonkeyPatch) -> None
     monkeypatch.delenv("SPEAKEASY_API_KEY", raising=False)
     monkeypatch.delenv("SKIP_OVERLAY_CHECK", raising=False)
     monkeypatch.setattr(PIPE, "_has_local_speakeasy_auth", lambda: True)
+    monkeypatch.setattr(PIPE, "_log_host_cli_version", lambda: None)
     monkeypatch.setattr(PIPE, "fetch_latest_spec", fake_fetch)
     monkeypatch.setattr(PIPE, "_verify_overlay_health", gate)
     monkeypatch.setattr(PIPE, "_generate_sdk", fake_generate_sdk)
@@ -542,11 +546,11 @@ def test_gate_success_keeps_adopted_workflow_reference(
     assert scratch.read_text(encoding="utf-8") == "location: openapi/api-NEW.json\n"
 
 
-def test_log_host_cli_version_warns_on_drift_and_unparseable_banner(
+def test_log_host_cli_version_fails_on_drift_and_warns_on_unparseable_banner(
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
 ) -> None:
-    """CLI drift from the pin — and an unparsable banner — must be loud."""
+    """CLI drift from the pin is an error; an unparsable banner is a warning."""
     from types import SimpleNamespace
 
     monkeypatch.setattr(
@@ -561,11 +565,62 @@ def test_log_host_cli_version_warns_on_drift_and_unparseable_banner(
     monkeypatch.setattr("subprocess.run", fake_run)
 
     banners.append("speakeasy version 0.1.0\n")
-    PIPE._log_host_cli_version()
-    err = capsys.readouterr().err
-    assert "differs from the pinned" in err
+    with pytest.raises(RuntimeError, match="differs from the pinned"):
+        PIPE._log_host_cli_version()
+    capsys.readouterr()
 
     banners.append("speakeasy-cli custom build, no standard banner\n")
     PIPE._log_host_cli_version()
     err = capsys.readouterr().err
     assert "could not parse the CLI version" in err
+
+
+def test_preflight_fails_on_drifted_host_cli_before_adoption(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A drifted host CLI must fail ``generate`` before the fetch adopts a
+    spec, not after — the tree must never be left adopted to a spec that was
+    never generated."""
+    import asyncio
+    from types import SimpleNamespace
+
+    fetched: list[int] = []
+
+    async def adopting_fetch() -> str:
+        fetched.append(1)
+        return "openapi/api-x.json"
+
+    monkeypatch.delenv("SPEAKEASY_API_KEY", raising=False)
+    monkeypatch.setattr(PIPE, "_has_local_speakeasy_auth", lambda: True)
+    monkeypatch.setattr(PIPE, "_local_speakeasy_usable", lambda: True)
+    monkeypatch.setattr(
+        "shutil.which",
+        lambda name: "/usr/local/bin/speakeasy" if name == "speakeasy" else None,
+    )
+
+    def fake_run(cmd: list[str], **kwargs: object) -> SimpleNamespace:
+        return SimpleNamespace(stdout="speakeasy version 0.1.0\n", stderr="")
+
+    monkeypatch.setattr("subprocess.run", fake_run)
+    monkeypatch.setattr(PIPE, "fetch_latest_spec", adopting_fetch)
+
+    with pytest.raises(RuntimeError, match="differs from the pinned"):
+        asyncio.run(PIPE.cmd_generate(force=False, version=None, no_fetch=False))
+    assert fetched == [], "the version failure must fire before the fetch"
+
+
+def test_preflight_skips_version_check_on_dagger_path(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A drifted host CLI is irrelevant when the pinned container generates,
+    so the preflight must not run the version check on the Dagger path."""
+    checked: list[int] = []
+
+    def boom() -> None:
+        checked.append(1)
+
+    monkeypatch.setattr(PIPE, "_local_speakeasy_usable", lambda: False)
+    monkeypatch.setattr(PIPE, "_log_host_cli_version", boom)
+
+    PIPE._preflight_generation_path()
+    assert checked == []

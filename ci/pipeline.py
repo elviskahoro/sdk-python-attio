@@ -148,8 +148,8 @@ vfile.write_text(new)
 _PYPI_PUBLISHER_MODULE = "github.com/elviskahoro/sdk-python-publish-to-pypi@main"
 
 # The Speakeasy CLI version the weekly spec-update-check workflow pins. The
-# host-CLI path logs a warning when the installed CLI differs from this, so
-# generated output drift between local runs and CI is visible.
+# host-CLI path fails the run when the installed CLI differs from this, so
+# generated output cannot drift between local runs and CI.
 _SPEAKEASY_CLI_PIN = "1.800.1"
 
 
@@ -405,13 +405,16 @@ def _preflight_generation_path() -> None:
     Runs the path-selection predicate purely for its loud failure (an
     explicit ``SPEAKEASY_USE_HOST_CLI`` with no installed CLI raises), so a
     later ``_generate_sdk`` call cannot hit that error after the fetch has
-    already adopted a new spec.
+    already adopted a new spec. When the host path is selected, the CLI
+    version check runs here too: a drifted host CLI must fail before the
+    fetch adopts a spec, not after.
     """
-    _local_speakeasy_usable()
+    if _local_speakeasy_usable():
+        _log_host_cli_version()
 
 
 def _log_host_cli_version() -> None:
-    """Log the host CLI version and warn when it differs from the pin."""
+    """Log the host CLI version and raise when it differs from the pin."""
     import re
 
     cli = shutil.which("speakeasy")
@@ -439,11 +442,12 @@ def _log_host_cli_version() -> None:
             file=sys.stderr,
         )
     elif match.group(1) != _SPEAKEASY_CLI_PIN:
-        print(
-            f"WARNING: host CLI {match.group(1)} differs from the pinned "
-            f"{_SPEAKEASY_CLI_PIN}; generated output may differ from CI",
-            file=sys.stderr,
+        msg = (
+            f"host CLI {match.group(1)} differs from the pinned "
+            f"{_SPEAKEASY_CLI_PIN}; install the pinned CLI (see "
+            ".speakeasy/workflow.yaml speakeasyVersion)"
         )
+        raise RuntimeError(msg)
 
 
 async def _run_local_speakeasy(*, version: str | None) -> None:

@@ -255,6 +255,13 @@ def test_speakeasy_installer_is_pinned(tasks: dict[str, dict]) -> None:
     workflow_version = re.search(r"VERSION=(\S+)", script).group(1)
     assert workflow_version == pipeline._SPEAKEASY_CLI_PIN
 
+    # speakeasyVersion in workflow.yaml is what stops `speakeasy run` from
+    # self-upgrading to latest; it must match the other pins.
+    speakeasy_workflow = yaml.safe_load(
+        (REPO_ROOT / ".speakeasy" / "workflow.yaml").read_text(encoding="utf-8")
+    )
+    assert str(speakeasy_workflow["speakeasyVersion"]) == pipeline._SPEAKEASY_CLI_PIN
+
 
 def test_every_jq_program_runs_clean_against_a_sample_report() -> None:
     """The jq filters only ever run on Mondays in RWX. This compiles and runs

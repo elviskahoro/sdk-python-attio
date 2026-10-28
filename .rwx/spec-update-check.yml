@@ -168,6 +168,7 @@ tasks:
       PRIOR_RESULT: ${{ tasks.fetch-spec.values.result }}
       SPEAKEASY_API_KEY: ${{ secrets.SPEAKEASY_API_KEY }}
       SPEAKEASY_USE_HOST_CLI: "1"
+      SPEAKEASY_FAIL_ON_VERSION_MISMATCH: "true"
     run: |
       echo "$PRIOR_RESULT" > "$RWX_VALUES/result"
       echo false > "$RWX_VALUES/ready"
