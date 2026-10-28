@@ -74,6 +74,14 @@ def test_every_required_rwx_status_is_declared_by_a_workflow(
     assert not missing, missing
 
 
+def test_only_rwx_statuses_are_required(required_statuses: list[str]) -> None:
+    """Externally posted checks (e.g. ``pullfrog-approval``) report on PR
+    heads but never on the queue's test branches, so requiring one deadlocks
+    the queue on "Waiting for status to be reported"."""
+    external = [s for s in required_statuses if not s.startswith("RWX: ")]
+    assert not external, external
+
+
 def test_required_workflows_declare_one_name_across_triggers(
     required_statuses: list[str],
 ) -> None:
