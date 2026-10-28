@@ -53,6 +53,9 @@ tasks:
       - pyproject.toml
       - uv.lock
 
+  - key: captain
+    call: rwx/install-captain 1.2.0
+
   - key: pytest
-    use: sync
-    run: uv run pytest -q
+    use: [sync, captain]
+    run: captain run sdk-python-attio-pytest
