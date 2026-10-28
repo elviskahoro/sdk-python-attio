@@ -150,9 +150,31 @@ def _literals() -> dict[str, tuple[str, set[str]]]:
 
 LITERALS = _literals()
 
+EXPECTED_LITERALS = frozenset(
+    {
+        "PatchV2ListsListBadRequestCode",
+        "PatchV2TargetIdentifierAttributesAttributeOptionsOptionBadRequestCode",
+        "PatchV2TargetIdentifierAttributesAttributeStatusesStatusBadRequestCode",
+        "PostV2ActivitiesActivityRecordsBadRequestCode",
+        "PostV2ListsBadRequestCode",
+        "PostV2ListsListEntriesBadRequestCode",
+        "PostV2ObjectsObjectRecordsBadRequestCode",
+        "PutV2ActivitiesActivityRecordsBadRequestCode",
+        "PutV2ListsListEntriesEntryIDAttributesAttributeValuesBadRequestCode",
+        "PutV2ObjectsObjectRecordsBadRequestCode",
+        "PutV2ObjectsObjectRecordsRecordIDAttributesAttributeValuesBadRequestCode",
+    }
+)
 
-def test_bad_request_code_literals_discovered() -> None:
-    assert LITERALS, f"no *{_SUFFIX} Literals found under {MODELS_DIR}"
+
+def test_bad_request_code_literals_match_expected() -> None:
+    """Fence the alias set so a removed/renamed Literal can't silently drop
+    its parametrized case; update EXPECTED_LITERALS when one is added."""
+    found = set(LITERALS)
+    assert found == EXPECTED_LITERALS, (
+        f"missing: {sorted(EXPECTED_LITERALS - found)}; "
+        f"unexpected: {sorted(found - EXPECTED_LITERALS)}"
+    )
 
 
 @pytest.mark.parametrize("name", sorted(LITERALS))
