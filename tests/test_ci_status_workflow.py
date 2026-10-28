@@ -101,12 +101,13 @@ def test_required_workflows_declare_one_name_across_triggers(
         )
 
 
-def test_integration_fires_only_where_the_locked_vault_is_readable() -> None:
-    """The sdk-python-attio vault is locked to main, so pull_request and
-    trunk-merge/** refs can never resolve ATTIO_API_TOKEN; firing there
-    would post a permanently red ``RWX: integration`` on every PR."""
+def test_integration_gates_pull_requests_behind_vault_approval() -> None:
+    """The sdk-python-attio vault is locked to main with approvals enabled, so
+    a pull_request run waits for an approver instead of reading the token.
+    trunk-merge/** refs get no trigger: nobody would approve them and the
+    queue must never depend on this status."""
     gh = _github_triggers(_load(INTEGRATION_WORKFLOW))
-    assert "pull_request" not in gh
+    assert gh["pull_request"]["status-checks"]["name"] == "integration"
     pushes = gh.get("push") or []
     assert pushes, "expected the main-push trigger to remain"
     for push in pushes:

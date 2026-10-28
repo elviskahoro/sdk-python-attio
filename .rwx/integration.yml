@@ -1,13 +1,17 @@
 # Live-API integration check against Attio (ATTIO_API_TOKEN from the
-# sdk-python-attio vault, which is locked to main).
-# Fires only on main pushes: locked-vault secrets are served solely to runs
-# whose git refs match the vault's patterns, so pull_request and
-# trunk-merge/** runs can never read the token and would post a permanently
-# red status. Per-PR live signal instead needs a read-scoped token in an
-# unlocked vault (a vault-side change, not a repo one). Not a required
-# status, so its absence on PR refs cannot stall the merge queue.
+# sdk-python-attio vault, which is locked to main with approvals enabled).
+# Runs on main pushes and on pull requests. On a PR ref the vault denies the
+# integration task, so RWX raises an approval request and the task waits until
+# an approver grants access (a denial fails it). Not a required status, so a
+# pending or skipped run cannot stall the merge queue; trunk-merge/** refs do
+# not trigger it.
 on:
   github:
+    pull_request:
+      init:
+        commit-sha: ${{ event.git.sha }}
+      status-checks:
+        name: integration
     push:
       - if: ${{ event.git.branch == 'main' }}
         init:
