@@ -25,6 +25,7 @@ import yaml
 REPO_ROOT = Path(__file__).resolve().parent.parent
 MODELS_DIR = REPO_ROOT / "generated" / "src" / "attio" / "models"
 _SUFFIX = "BadRequestCode"
+_PLAIN_SUFFIX = "Code"
 
 
 def _load_spec_diff() -> Any:
@@ -127,8 +128,19 @@ def _overlay_codes_by_stem() -> dict[str, set[str]]:
     return out
 
 
+def _stem(name: str) -> str:
+    base = name.removesuffix(_SUFFIX)
+    return base if base != name else name.removesuffix(_PLAIN_SUFFIX)
+
+
 def _literals() -> dict[str, tuple[str, set[str]]]:
-    """``{class name: (file name, literal values)}`` for every BadRequestCode."""
+    """``{class name: (file name, literal values)}`` for every 400-code Literal.
+
+    Speakeasy names some of them ``*Code`` instead of ``*BadRequestCode``; a
+    plain ``*Code`` Literal only counts when the overlay advertises 400 codes
+    for its endpoint (other ``*Code`` Literals have no 400 response).
+    """
+    overlay_stems = _overlay_codes_by_stem()
     found: dict[str, tuple[str, set[str]]] = {}
     for file in sorted(MODELS_DIR.glob("*.py")):
         for node in ast.parse(file.read_text(encoding="utf-8")).body:
@@ -136,7 +148,13 @@ def _literals() -> dict[str, tuple[str, set[str]]]:
                 isinstance(node, ast.Assign)
                 and len(node.targets) == 1
                 and isinstance(node.targets[0], ast.Name)
-                and node.targets[0].id.endswith(_SUFFIX)
+                and (
+                    node.targets[0].id.endswith(_SUFFIX)
+                    or (
+                        node.targets[0].id.endswith(_PLAIN_SUFFIX)
+                        and _stem(node.targets[0].id) in overlay_stems
+                    )
+                )
                 and isinstance(node.value, ast.Subscript)
             ):
                 values = {
@@ -157,8 +175,10 @@ EXPECTED_LITERALS = frozenset(
         "PatchV2TargetIdentifierAttributesAttributeStatusesStatusBadRequestCode",
         "PostV2ActivitiesActivityRecordsBadRequestCode",
         "PostV2ListsBadRequestCode",
+        "PostV2CommentsCode",
         "PostV2ListsListEntriesBadRequestCode",
         "PostV2ObjectsObjectRecordsBadRequestCode",
+        "PostV2ObjectsRecordsSearchCode",
         "PutV2ActivitiesActivityRecordsBadRequestCode",
         "PutV2ListsListEntriesEntryIDAttributesAttributeValuesBadRequestCode",
         "PutV2ObjectsObjectRecordsBadRequestCode",
@@ -177,10 +197,20 @@ def test_bad_request_code_literals_match_expected() -> None:
     )
 
 
+def test_every_overlay_endpoint_has_a_discovered_literal() -> None:
+    discovered = {_stem(name) for name in LITERALS}
+    missing = sorted(set(_overlay_codes_by_stem()) - discovered)
+    assert not missing, (
+        f"overlay.yaml advertises 400 codes for {missing} but no generated "
+        "*BadRequestCode/*Code Literal was found for them; the SDK side is "
+        "unguarded - update _literals or _class_stem."
+    )
+
+
 @pytest.mark.parametrize("name", sorted(LITERALS))
 def test_literal_covers_spec_codes(name: str) -> None:
     file_name, sdk_codes = LITERALS[name]
-    stem = name.removesuffix(_SUFFIX)
+    stem = _stem(name)
     spec_codes = _spec_codes_by_stem().get(stem)
     assert spec_codes is not None, (
         f"{name} ({file_name}) matches no spec operation; Speakeasy naming "
