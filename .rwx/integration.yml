@@ -61,7 +61,7 @@ tasks:
     use: sync
     cache: false
     env:
-      ATTIO_API_TOKEN: ${{ vaults.sdk-python-attio.secrets.ATTIO_API_KEY }}
+      ATTIO_API_KEY: ${{ vaults.sdk-python-attio.secrets.ATTIO_API_KEY }}
     # stdout is discarded: the script dumps workspace people, emails and
     # members, which must not land in retained CI logs. The exit code and
     # stderr traceback still report failures.

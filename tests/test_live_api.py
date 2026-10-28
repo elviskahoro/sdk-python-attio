@@ -1,6 +1,6 @@
 """Live API tests against an actual Attio instance.
 
-Requires ATTIO_API_TOKEN env var or .env.local file in the project root.
+Requires ATTIO_API_KEY env var or .env.local file in the project root.
 """
 
 import json
@@ -10,15 +10,15 @@ from pathlib import Path
 
 
 def load_token() -> str:
-    token = os.environ.get("ATTIO_API_TOKEN")
+    token = os.environ.get("ATTIO_API_KEY")
     if token:
         return token
     env_file = Path(__file__).parent.parent / ".env.local"
     if env_file.exists():
         for line in env_file.read_text().splitlines():
-            if line.startswith("ATTIO_API_TOKEN="):
+            if line.startswith("ATTIO_API_KEY="):
                 return line.split("=", 1)[1].strip()
-    raise RuntimeError("Set ATTIO_API_TOKEN env var or add it to .env.local")
+    raise RuntimeError("Set ATTIO_API_KEY env var or add it to .env.local")
 
 
 def pp(label: str, obj):
