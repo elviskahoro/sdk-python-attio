@@ -1,22 +1,15 @@
-# Live-API integration check against Attio (needs ATTIO_API_TOKEN in the
-# sdk-python-attio vault).
-# Not path-filtered: a path-filtered required check does not report on
-# every PR and would deadlock the Trunk Merge Queue. PR and queue/main pushes
-# share one status-check name so a single check covers both.
+# Live-API integration check against Attio (ATTIO_API_TOKEN from the
+# sdk-python-attio vault, which is locked to main).
+# Fires only on main pushes: locked-vault secrets are served solely to runs
+# whose git refs match the vault's patterns, so pull_request and
+# trunk-merge/** runs can never read the token and would post a permanently
+# red status. Per-PR live signal instead needs a read-scoped token in an
+# unlocked vault (a vault-side change, not a repo one). Not a required
+# status, so its absence on PR refs cannot stall the merge queue.
 on:
   github:
-    pull_request:
-      init:
-        commit-sha: ${{ event.git.sha }}
-      status-checks:
-        name: integration
     push:
       - if: ${{ event.git.branch == 'main' }}
-        init:
-          commit-sha: ${{ event.git.sha }}
-        status-checks:
-          name: integration
-      - if: ${{ starts-with(event.git.branch, 'trunk-merge/') || starts-with(event.git.branch, 'trunk-merge-beta/') }}
         init:
           commit-sha: ${{ event.git.sha }}
         status-checks:
@@ -54,8 +47,11 @@ tasks:
       - pyproject.toml
       - uv.lock
 
+  # Uncached: the verdict depends on the live Attio API, not only on repo
+  # content; a cache hit on a re-triggered run would replay the old verdict.
   - key: integration
     use: sync
+    cache: false
     env:
       ATTIO_API_TOKEN: ${{ vaults.sdk-python-attio.secrets.ATTIO_API_TOKEN }}
     run: uv run python tests/test_live_api.py
