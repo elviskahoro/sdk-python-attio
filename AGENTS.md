@@ -201,8 +201,10 @@ git apply .rwx/downloads/<dir>/regenerate.patch
   `generated/` as cwd, where the root `pyproject.toml` `[tool.mypy]` is not
   read, which otherwise fails with ~565 `import-not-found` errors. It is
   listed in `generated/.genignore` so regeneration keeps it.
-- The CLI is pinned to 1.800.1 but Speakeasy may self-upgrade (seen: 1.803.2);
-  the pipeline only warns on the mismatch.
+- The CLI is pinned to 1.800.1 via `speakeasyVersion` in
+  `.speakeasy/workflow.yaml`, so `speakeasy run` cannot self-upgrade (it once
+  promoted itself to 1.803.2); the pipeline fails the run when the host CLI
+  differs from the pin.
 - `tests/test_overlay_error_code_coverage.py::EXPECTED_ENDPOINTS` must list
   every endpoint `overlay.yaml` adds `validation_type` to.
 
