@@ -151,10 +151,10 @@ never set it in CI or automation, and fix the overlay afterwards.
 ### RWX CLI Authentication
 
 The `rwx` CLI (`rwx results`, `rwx logs`, `rwx dispatch`) reads its token from
-`RWX_ACCESS_TOKEN`, and fails with `Unauthorized` when it is unset. Agent
-sandboxes do not set that name; they expose per-org tokens under suffixed names,
-so map the right one in for the command. The runs for this repo live in the
-`elviskahoro` org:
+`RWX_ACCESS_TOKEN`, and fails with `Unauthorized` when it is unset. Local and
+Conductor sandboxes with the `rwx` CLI installed do not set that name; they
+expose per-org tokens under suffixed names, so map the right one in for the
+command. The runs for this repo live in the `elviskahoro` org:
 
 ```bash
 env | cut -d= -f1 | grep -iE "rwx|rwc"   # list names only, never print values
@@ -167,6 +167,10 @@ rwx logs <task-id> --output /tmp/rwxlogs  # task ids are listed by `rwx results`
   `RWX_ACCESS_TOKEN_MARCHILI`) authenticates but returns `not found` for this
   repo's runs.
 - Never echo, log, or commit the token value.
+- Pullfrog GitHub Actions agents have neither the CLI nor these variables
+  (credential env vars are filtered). Use GitHub commit-status metadata
+  instead: `gh api repos/<owner>/<repo>/commits/<sha>/status` carries the run
+  URL and failure description.
 - `rwx results` prints task-level failure reasons that GitHub checks hide, e.g.
   `The vault "sdk-python-attio" is locked` when a non-`main` run cannot read
   secrets (the run fails before any task log exists).
