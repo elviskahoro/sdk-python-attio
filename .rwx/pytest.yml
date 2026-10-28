@@ -58,4 +58,9 @@ tasks:
 
   - key: pytest
     use: [sync, captain]
+    # Uncached: captain run uploads test insights and reads cloud-side
+    # quarantines at run time; a cache hit on a same-commit re-run (PR
+    # reopen, rwx retry) would replay the recorded output and skip both,
+    # so a quarantine granted after the original run never applies.
+    cache: false
     run: captain run sdk-python-attio-pytest
