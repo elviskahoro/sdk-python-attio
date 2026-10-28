@@ -286,11 +286,15 @@ merge:
   # Re-verify after any pipeline rename:
   #   gh pr checks <pr-number> --json name --jq '.[].name'
   #
-  # "RWX: CI" is the single RWX status check from .rwx/ci.yml (pytest +
-  # trunk lint tasks). RWX names it "RWX: <status-checks.name>"; both the
-  # pull_request and push triggers set the same name so one required check
-  # covers PRs and the merge queue's trunk-merge/** pushes. Re-verify with
-  # the command above after the first run on a PR.
+  # "RWX: trunk-check" and "RWX: pytest" are the RWX status checks from
+  # .rwx/trunk-check.yml and .rwx/pytest.yml. RWX names them
+  # "RWX: <status-checks.name>"; both the pull_request and push triggers set
+  # the same name so one required check covers PRs and the merge queue's
+  # trunk-merge/** pushes. .rwx/integration.yml ("RWX: integration") hits the
+  # live Attio API with the ATTIO_API_TOKEN from the sdk-python-attio vault,
+  # which is locked to main; it fires only on main pushes and is deliberately
+  # not required, since PR and trunk-merge/** refs can never read that token.
+  # Re-verify with the command above after the first run on a PR.
   #
   # "pullfrog-approval" is intentionally NOT required: the Pullfrog GitHub App
   # posts it asynchronously (or never, e.g. failed runs and bot-opened PRs), so
@@ -303,4 +307,5 @@ merge:
   # the tag-only .rwx/publish.yml, and the scheduled .rwx/spec-update-check.yml
   # (which never runs on PRs at all).
   required_statuses:
-    - "RWX: CI"
+    - "RWX: trunk-check"
+    - "RWX: pytest"

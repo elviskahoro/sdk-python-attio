@@ -1,0 +1,60 @@
+# Live-API integration check against Attio (ATTIO_API_TOKEN from the
+# sdk-python-attio vault, which is locked to main).
+# Fires only on main pushes: locked-vault secrets are served solely to runs
+# whose git refs match the vault's patterns, so pull_request and
+# trunk-merge/** runs can never read the token and would post a permanently
+# red status. Per-PR live signal instead needs a read-scoped token in an
+# unlocked vault (a vault-side change, not a repo one). Not a required
+# status, so its absence on PR refs cannot stall the merge queue.
+on:
+  github:
+    push:
+      - if: ${{ event.git.branch == 'main' }}
+        init:
+          commit-sha: ${{ event.git.sha }}
+        status-checks:
+          name: integration
+  cli:
+    init:
+      commit-sha: ${{ event.git.sha }}
+
+base:
+  image: ubuntu:24.04
+  config: rwx/base 1.2.0
+
+tasks:
+  - key: code
+    call: git/clone 2.2.0
+    with:
+      repository: https://github.com/elviskahoro/sdk-python-attio.git
+      ref: ${{ init.commit-sha }}
+      preserve-git-dir: true
+      fetch-full-depth: true
+
+  - key: python
+    call: python/install 2.0.1
+    with:
+      python-version: "3.13"
+
+  - key: uv
+    use: python
+    run: pip install uv
+
+  - key: sync
+    use: [code, uv]
+    run: uv sync
+    filter:
+      - pyproject.toml
+      - uv.lock
+
+  # Uncached: the verdict depends on the live Attio API, not only on repo
+  # content; a cache hit on a re-triggered run would replay the old verdict.
+  - key: integration
+    use: sync
+    cache: false
+    env:
+      ATTIO_API_TOKEN: ${{ vaults.sdk-python-attio.secrets.ATTIO_API_TOKEN }}
+    # stdout is discarded: the script dumps workspace people, emails and
+    # members, which must not land in retained CI logs. The exit code and
+    # stderr traceback still report failures.
+    run: uv run python tests/test_live_api.py > /dev/null

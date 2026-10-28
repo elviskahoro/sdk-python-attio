@@ -1,32 +1,28 @@
-# Test + lint gates for the Trunk Merge Queue (merge.required_statuses in
-# .trunk/trunk.yaml). Not path-filtered: a path-filtered required check does
-# not report on every PR and would deadlock the queue. PR and queue/main
-# pushes share one status-check name so a single required check covers both.
+# Unit test gate for the Trunk Merge Queue.
+# Not path-filtered: a path-filtered required check does not report on
+# every PR and would deadlock the Trunk Merge Queue. PR and queue/main pushes
+# share one status-check name so a single check covers both.
 on:
   github:
     pull_request:
       init:
         commit-sha: ${{ event.git.sha }}
-        lint-upstream: origin/main
       status-checks:
-        name: CI
+        name: pytest
     push:
       - if: ${{ event.git.branch == 'main' }}
         init:
           commit-sha: ${{ event.git.sha }}
-          lint-upstream: HEAD^
         status-checks:
-          name: CI
+          name: pytest
       - if: ${{ starts-with(event.git.branch, 'trunk-merge/') || starts-with(event.git.branch, 'trunk-merge-beta/') }}
         init:
           commit-sha: ${{ event.git.sha }}
-          lint-upstream: origin/main
         status-checks:
-          name: CI
+          name: pytest
   cli:
     init:
       commit-sha: ${{ event.git.sha }}
-      lint-upstream: origin/main
 
 base:
   image: ubuntu:24.04
@@ -60,18 +56,3 @@ tasks:
   - key: pytest
     use: sync
     run: uv run pytest -q
-
-  - key: lint
-    use: sync
-    env:
-      UPSTREAM: ${{ init.lint-upstream }}
-    run: |
-      curl -fsSL https://get.trunk.io | bash -s -- -y
-      # Lint only the diff, like trunk-action. The trigger picks the base
-      # (PR/queue: main, push to main: previous commit) rather than this
-      # script inferring it from the branch name, which a fork PR from its
-      # own `main` would spoof.
-      if [ "$UPSTREAM" = "origin/main" ]; then
-        git fetch origin main
-      fi
-      trunk check --ci --upstream "$UPSTREAM"
