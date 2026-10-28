@@ -172,8 +172,11 @@ rwx logs <task-id> --output /tmp/rwxlogs  # task ids are listed by `rwx results`
   instead: `gh api repos/<owner>/<repo>/commits/<sha>/status` carries the run
   URL and failure description.
 - `rwx results` prints task-level failure reasons that GitHub checks hide, e.g.
-  `The vault "sdk-python-attio" is locked` when a non-`main` run cannot read
-  secrets (the run fails before any task log exists).
+  `The vault "sdk-python-attio" is locked` when a run cannot read its secrets
+  (the run fails before any task log exists). With approvals enabled on that
+  vault, a non-`main` run needing its secrets instead raises an approval
+  request and waits for an approver; a denial fails it. `.rwx/integration.yml`
+  depends on this to run the live-API check on PR refs.
 
 ### Regenerating on RWX (`.rwx/regenerate.yml`)
 
@@ -196,7 +199,9 @@ git apply .rwx/downloads/<dir>/regenerate.patch
   (referenced as `vaults.sdk-python-attio.secrets.SPEAKEASY_API_KEY`), not the
   `default` vault. `spec-update-check.yml` reads it from that vault, so the
   scheduled run (pinned to `main`) resolves the key and regenerates on drift.
-  The vault is locked to `main`, so local `rwx run` is refused (use the dispatch above).
+  The vault is locked to `main` with approvals enabled, so local `rwx run`
+  off `main` cannot resolve the key without a vault approval — use the
+  dispatch above (pinned to `main`).
 - `generated/mypy.ini` is required: Speakeasy's compile step runs mypy with
   `generated/` as cwd, where the root `pyproject.toml` `[tool.mypy]` is not
   read, which otherwise fails with ~565 `import-not-found` errors. It is
