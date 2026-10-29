@@ -746,3 +746,20 @@ def test_security_empty_guard_raises_when_anchor_missing(tmp_path: Path) -> None
     target.write_text("x = 1\n", encoding="utf-8")
     with pytest.raises(RuntimeError):
         patch.ensure_security_empty_guard(target)
+
+
+def test_duration_adapter_annotation_is_restored_idempotently(tmp_path: Path) -> None:
+    patch = _load_patch_module()
+    committed = (SECURITY_PATH.parent / "datetimes.py").read_text(encoding="utf-8")
+    annotated = "_DURATION_ADAPTER: TypeAdapter[timedelta] = TypeAdapter(timedelta)\n"
+    assert annotated in committed
+    target = tmp_path / "datetimes.py"
+    target.write_text(committed, encoding="utf-8")
+    assert patch.ensure_duration_adapter_annotation(target) is False
+    target.write_text(
+        committed.replace(annotated, "_DURATION_ADAPTER = TypeAdapter(timedelta)\n"),
+        encoding="utf-8",
+    )
+    assert patch.ensure_duration_adapter_annotation(target) is True
+    assert target.read_text(encoding="utf-8") == committed
+

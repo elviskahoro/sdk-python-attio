@@ -109,6 +109,15 @@ Patch: ``generated/src/attio/utils/security.py`` empty-value guard
     template without the guard, so this patch re-inserts ``if value == "":
     return`` before ``header_name`` is resolved in ``handle_security_scheme``.
     It is idempotent and raises ``RuntimeError`` if the anchor drifts.
+
+Patch: ``generated/src/attio/utils/datetimes.py`` duration adapter annotation
+
+    Template 2.952.5 emitted ``_DURATION_ADAPTER: TypeAdapter[timedelta] =
+    TypeAdapter(timedelta)``; the pinned 1.800.1 CLI (template 2.943.0) drops
+    the annotation, which makes ``mypy generated/src`` fail with ``Need type
+    annotation`` under newer pydantic releases (2.14+). This patch restores
+    the annotation after every generation. Retire it when a re-pin brings
+    back a template that emits the annotation.
 """
 
 from __future__ import annotations
@@ -844,6 +853,25 @@ def ensure_security_empty_guard(path: Path) -> bool:
     return True
 
 
+def ensure_duration_adapter_annotation(path: Path) -> bool:
+    """Restore the ``TypeAdapter[timedelta]`` annotation in ``datetimes.py``."""
+    text = path.read_text(encoding="utf-8")
+    plain = "_DURATION_ADAPTER = TypeAdapter(timedelta)\n"
+    if plain not in text:
+        if "_DURATION_ADAPTER: TypeAdapter[timedelta]" in text:
+            return False
+        msg = f"cannot locate _DURATION_ADAPTER assignment in {path}"
+        raise RuntimeError(msg)
+    path.write_text(
+        text.replace(
+            plain,
+            "_DURATION_ADAPTER: TypeAdapter[timedelta] = TypeAdapter(timedelta)\n",
+        ),
+        encoding="utf-8",
+    )
+    return True
+
+
 def main() -> int:
     messages: list[str] = []
 
@@ -887,6 +915,11 @@ def main() -> int:
         GENERATED_SRC_DIR / "utils" / "security.py",
     ):
         messages.append("post_generate_patch: restored security empty-value guard")
+
+    if ensure_duration_adapter_annotation(
+        GENERATED_SRC_DIR / "utils" / "datetimes.py",
+    ):
+        messages.append("post_generate_patch: restored duration adapter annotation")
 
     for target in ensure_model_rename_aliases():
         messages.append(
