@@ -52,6 +52,10 @@ If Attio added new endpoints or changed schema indices (e.g. the `oneOf[16]` pos
 
 ### 4. Regenerate the SDK
 
+**Always regenerate, and commit the result in the same PR as any overlay
+change.** The SDK diff must sit next to the overlay edit; never open an
+overlay-only PR. Use `ci/regenerate_host.sh` when Dagger/Docker is unavailable.
+
 ```bash
 speakeasy run
 ```

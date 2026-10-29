@@ -9,6 +9,10 @@ allowed-tools: Read, Grep, Glob, Bash
 
 Reference for creating and using OpenAPI Overlays to customize the API specification without modifying the original OpenAPI document. Overlays follow the [OpenAPI Overlay Specification v1.0.0](https://github.com/OAI/Overlay-Specification).
 
+> **Always regenerate after editing the overlay** (`ci/regenerate_host.sh` or
+> `uv run python ci/pipeline.py generate --no-fetch`) and commit the regenerated
+> SDK in the same PR as the overlay change.
+
 ## Why Use Overlays?
 
 - **Separation of concerns**: Keep API definition separate from SDK-specific customizations
