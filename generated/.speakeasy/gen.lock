@@ -3,25 +3,25 @@ id: 8dc93348-09a5-472d-90a9-8d558c23be86
 management:
   docChecksum: c96fbc6dca304479701dc3fbba459316
   docVersion: 2.0.0
-  speakeasyVersion: 1.800.1
-  generationVersion: 2.943.0
-  releaseVersion: 0.27.3
-  configChecksum: a0cbd13de3e43e711182cee3118c8923
+  speakeasyVersion: 1.804.0
+  generationVersion: 2.952.5
+  releaseVersion: 0.27.1
+  configChecksum: 772bfe6fbdbbf89f27f7e70b154bbf4f
 persistentEdits:
-  generation_id: fd5f4c35-935b-4686-be01-accd83f7bd66
-  pristine_commit_hash: 5f43b1136f71910977d02f5d7c7c1d59cea59ce1
-  pristine_tree_hash: 89c521e687ec76f78a3d6f8eff82f4eee3fd023a
+  generation_id: 97ab43dc-3294-4486-9102-4486265ad6b4
+  pristine_commit_hash: 2cc89e4932ebe04b06d9bf2120a1e2cd8dd0054b
+  pristine_tree_hash: dd41d73714601940107ec26ce9f1ef2ec65cc084
 features:
   python:
     additionalDependencies: 1.1.0
     constsAndDefaults: 1.0.8
-    core: 6.1.3
+    core: 6.1.5
     defaultEnabledRetries: 0.2.0
     enumUnions: 0.1.1
-    envVarSecurityUsage: 0.3.3
+    envVarSecurityUsage: 0.3.4
     flatRequests: 1.0.1
     flattening: 3.1.1
-    globalSecurity: 3.0.7
+    globalSecurity: 3.0.8
     globalSecurityCallbacks: 1.0.0
     globalSecurityFlattening: 1.0.0
     globalServerURLs: 3.2.1
@@ -33,7 +33,7 @@ features:
     retries: 3.1.2
     sdkHooks: 1.3.0
     unions: 3.1.12
-    uploadStreams: 1.0.3
+    uploadStreams: 1.0.4
 trackedFiles:
   .gitattributes:
     id: 24139dae6567
@@ -12397,8 +12397,8 @@ trackedFiles:
     pristine_git_object: 07fce86de71e75fc33b319175a2b1e576d7ca370
   src/attio/_version.py:
     id: 601b0c828c8d
-    last_write_checksum: sha1:8cc1c77a48c873f9d5e6fdb6445b4a2fcd00ddef
-    pristine_git_object: f5f175d961fe46d86255206ecd2969858e453369
+    last_write_checksum: sha1:42b7384443388d08addb48d3797e2189ccb1ebea
+    pristine_git_object: 8546ee0677c469d47f6dd9ff4702fca5634feeab
   src/attio/activities.py:
     id: b43e8ae24d8e
     last_write_checksum: sha1:e697e2847c81186670fd69e63f040a0866970d4c
@@ -13337,8 +13337,8 @@ trackedFiles:
     pristine_git_object: 12e0aa4f1151bb52474cc02e88397329b90703f6
   src/attio/utils/datetimes.py:
     id: ce8442e24081
-    last_write_checksum: sha1:dcbdac8f63789f5d41b64d4d0515db77961e1d0c
-    pristine_git_object: 688c29a59b33a38c3b8bd3276f89c98483fcdb58
+    last_write_checksum: sha1:8d08dfebf00458efa19e0c19455eddcc9f14b8ca
+    pristine_git_object: ad634bfe1b612415e92f188544da27a92b20a90c
   src/attio/utils/dynamic_imports.py:
     id: cc5fe264371c
     last_write_checksum: sha1:a1940c63feb8eddfd8026de53384baf5056d5dcc
@@ -13381,8 +13381,8 @@ trackedFiles:
     pristine_git_object: 406c1e7c36c7a4fa4fb48bb567d254e2803e1792
   src/attio/utils/security.py:
     id: cde1137a57b8
-    last_write_checksum: sha1:c11eef495b6aaa249178c24c796940cc540b7a00
-    pristine_git_object: 42d8d78e9981eed7507670014d99588e27ab325a
+    last_write_checksum: sha1:ef45e8c8810b4890c8e8761cff6e6f9a034e9a73
+    pristine_git_object: 74c020cff54e7fc580c3db915bceffd4740e6115
   src/attio/utils/serializers.py:
     id: 3cc02898d517
     last_write_checksum: sha1:2fb543339b424a0818b126e69695df5c91cd4d7b

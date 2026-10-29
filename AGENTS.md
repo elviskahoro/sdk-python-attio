@@ -127,9 +127,7 @@ never set it in CI or automation, and fix the overlay afterwards.
    aliases in `generated/src/attio/models/__init__.py` and the renamed
    activity/list operation modules, and the unused `OpenEnumMeta` metaclass
    removal from `generated/src/attio/utils/enums.py` and
-   `generated/src/attio/utils/__init__.py`, and the empty-value guard in
-   `generated/src/attio/utils/security.py`, and the duration adapter annotation in
-   `generated/src/attio/utils/datetimes.py`). Drop `--no-fetch` to also
+   `generated/src/attio/utils/__init__.py`). Drop `--no-fetch` to also
    adopt a freshly fetched spec. Note the Dagger path exports only `generated/`
    back to the host — docs/, README, pyproject and USAGE refresh on the
    host-CLI path (the default) — and it logs that when chosen.
@@ -208,7 +206,7 @@ git apply .rwx/downloads/<dir>/regenerate.patch
   `generated/` as cwd, where the root `pyproject.toml` `[tool.mypy]` is not
   read, which otherwise fails with ~565 `import-not-found` errors. It is
   listed in `generated/.genignore` so regeneration keeps it.
-- The CLI is pinned to 1.800.1 via `speakeasyVersion` in
+- The CLI is pinned to 1.804.0 via `speakeasyVersion` in
   `.speakeasy/workflow.yaml`, so `speakeasy run` cannot self-upgrade (it once
   promoted itself to 1.803.2); the pipeline fails the run when the host CLI
   differs from the pin.

@@ -153,7 +153,7 @@ tasks:
         https://raw.githubusercontent.com/speakeasy-api/speakeasy/89688fa0cfc3c959f4ac370329325d1b274db551/install.sh
       echo "9e2c4f1054e214d05352597cfd9ed1ab117a089e9442f532dd4a0d168665d757  /tmp/speakeasy-install.sh" \
         | sha256sum -c -
-      VERSION=1.800.1 sh /tmp/speakeasy-install.sh
+      VERSION=1.804.0 sh /tmp/speakeasy-install.sh
 
       uv run python ci/pipeline.py fetch-openapi
       # Re-verify the overlay against the adopted spec in case Attio
@@ -191,9 +191,7 @@ tasks:
       # in generated/src/attio/models/__init__.py and the renamed
       # activity/list operation modules; the unused OpenEnumMeta metaclass
       # removal from generated/src/attio/utils/enums.py and
-      # generated/src/attio/utils/__init__.py, and the empty-value guard in
-      # generated/src/attio/utils/security.py, and the duration adapter annotation
-      # in generated/src/attio/utils/datetimes.py).
+      # generated/src/attio/utils/__init__.py).
       uv run python ci/pipeline.py generate --no-fetch
       echo true > "$RWX_VALUES/ready"
 

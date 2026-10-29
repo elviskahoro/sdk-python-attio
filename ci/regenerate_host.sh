@@ -11,7 +11,7 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
-SPEAKEASY_VERSION=1.800.1
+SPEAKEASY_VERSION=1.804.0
 INSTALLER_URL=https://raw.githubusercontent.com/speakeasy-api/speakeasy/89688fa0cfc3c959f4ac370329325d1b274db551/install.sh
 INSTALLER_SHA256=9e2c4f1054e214d05352597cfd9ed1ab117a089e9442f532dd4a0d168665d757
 

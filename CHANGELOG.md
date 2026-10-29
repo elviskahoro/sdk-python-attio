@@ -2,6 +2,8 @@
 
 ## Unreleased — 2026-10-05
 
+Pins Speakeasy to 1.804.0, the generator that produced the committed tree, so pinned regeneration no longer downgrades the template (restores the `security.py` empty-value guard on regen).
+
 Expands the standalone `uvx gtm-attio` CLI with safe people search/add/update,
 company search/add/update, and note list/add/update commands. Mutations write
 immediately, validate JSON inputs, and return the versioned reliability
@@ -59,13 +61,6 @@ that shipped in 0.26.1 are renamed or removed, without aliases:
   parameter values are now free-form (`Dict[str, Any]`) so nested
   `type`/`value` pairs survive serialization (#106);
   `PostV2SQLBadRequestType` is new for 400 responses.
-
-Regenerates the SDK (0.27.3) against the unchanged spec. No model or
-API-surface changes: the pinned Speakeasy 1.800.1 emits generator template
-2.943.0 (down from 2.952.5), so `ci/post_generate_patch.py` now restores the
-empty-string guard in `utils/security.py` and the `_DURATION_ADAPTER` annotation in
-`utils/datetimes.py` after every regeneration (#117).
-Adds a test pinning the activity-record 403 `ForbiddenCodeUnion` names (#88).
 
 ## 0.25.1 — 2026-10-03
 
