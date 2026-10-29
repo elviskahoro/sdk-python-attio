@@ -300,11 +300,11 @@ merge:
   # main; the pull_request trigger filters them out). Re-verify with the
   # command above after the first run on a PR.
   #
-  # "pullfrog-approval" is intentionally NOT required: the Pullfrog GitHub App
-  # posts it asynchronously (or never, e.g. failed runs and bot-opened PRs), so
-  # requiring it left PRs and the queue stuck on "Waiting for status to be
-  # reported". It remains an advisory check. Keep it out of the GitHub ruleset
-  # "main - required PR checks" too.
+  # "pullfrog-approval" is required by the GitHub ruleset "main - required PR
+  # checks" only, and is intentionally NOT listed here: the Pullfrog GitHub App
+  # posts it asynchronously (or never, e.g. failed runs and bot-opened PRs) and
+  # never on the queue's trunk-merge/** branches, so listing it here would
+  # leave the queue stuck on "Waiting for status to be reported".
   #
   # Do NOT add path-filtered workflows here -- they do not report on every PR
   # and would deadlock the queue. Same for workflow_run-triggered workflows,
