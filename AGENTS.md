@@ -175,8 +175,10 @@ rwx logs <task-id> --output /tmp/rwxlogs  # task ids are listed by `rwx results`
   `The vault "sdk-python-attio" is locked` when a run cannot read its secrets
   (the run fails before any task log exists). With approvals enabled on that
   vault, a non-`main` run needing its secrets instead raises an approval
-  request and waits for an approver; a denial fails it. `.rwx/integration.yml`
-  depends on this to run the live-API check on PR refs.
+  request and waits for an approver; a denial fails it. That applies to the
+  main-pinned `spec-update-check.yml` and `regenerate.yml`.
+  `.rwx/integration.yml` instead reads the `sdk-python-attio-it` vault (a
+  throwaway sandbox key, approvals off, unlocked), so PR runs need no approver.
 
 ### Regenerating on RWX (`.rwx/regenerate.yml`)
 
