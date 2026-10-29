@@ -19,6 +19,18 @@ CASES = (
         "put_v2_activities_activity_recordsop",
         "PutV2ActivitiesActivityRecordsCodeMultipleMatchResults",
     ),
+    (
+        "post_v2_activities_activity_recordsop",
+        "PostV2ActivitiesActivityRecordsCodeMultipleMatchResults",
+    ),
+    (
+        "post_v2_objects_object_recordsop",
+        "PostV2ObjectsObjectRecordsCodeMultipleMatchResults",
+    ),
+    (
+        "put_v2_objects_object_recordsop",
+        "PutV2ObjectsObjectRecordsCodeMultipleMatchResults",
+    ),
 )
 
 
