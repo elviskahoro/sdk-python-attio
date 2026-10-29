@@ -2,6 +2,8 @@
 
 ## Unreleased — 2026-10-05
 
+Pins Speakeasy to 1.804.0, the generator that produced the committed tree, so pinned regeneration no longer downgrades the template (restores the `security.py` empty-value guard on regen).
+
 Expands the standalone `uvx gtm-attio` CLI with safe people search/add/update,
 company search/add/update, and note list/add/update commands. Mutations write
 immediately, validate JSON inputs, and return the versioned reliability

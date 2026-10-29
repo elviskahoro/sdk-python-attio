@@ -150,7 +150,7 @@ _PYPI_PUBLISHER_MODULE = "github.com/elviskahoro/sdk-python-publish-to-pypi@main
 # The Speakeasy CLI version the weekly spec-update-check workflow pins. The
 # host-CLI path fails the run when the installed CLI differs from this, so
 # generated output cannot drift between local runs and CI.
-_SPEAKEASY_CLI_PIN = "1.800.1"
+_SPEAKEASY_CLI_PIN = "1.804.0"
 
 
 # Repo root, anchored to this file per the repo path rule: spec adoption
