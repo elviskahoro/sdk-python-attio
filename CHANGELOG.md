@@ -32,6 +32,12 @@ Regenerates the SDK (0.26.5) against the unchanged spec — the overlay's
 `value` targets moved to RFC 9535 bracket notation; no model or API-surface
 changes.
 
+Regenerates the SDK (0.27.2) against the unchanged spec. No model or
+API-surface changes: the pinned Speakeasy 1.800.1 emits generator template
+2.943.0 (down from 2.952.5), so `ci/post_generate_patch.py` now restores the
+empty-string guard in `utils/security.py` after every regeneration (#117).
+Adds a test pinning the activity-record 403 `ForbiddenCodeUnion` names (#88).
+
 Regenerates the SDK (0.27.0) against the pinned 2026-10-26 spec and repairs
 the overlay for upstream error-code drift: the lists-entries POST 400 `code`
 anyOf is flattened and the activity-record POST/PUT 400 enums gain the

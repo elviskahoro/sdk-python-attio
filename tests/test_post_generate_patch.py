@@ -706,3 +706,43 @@ def test_remove_open_enum_meta_subprocess_is_noop_on_committed_tree() -> None:
     assert result.returncode == 0, result.stderr
     assert UTILS_INIT_COMMITTED.read_text() == init_before
     assert not (REPO_ROOT / "generated" / "src" / "attio" / "utils" / "enums.py").exists()
+
+
+SECURITY_PATH = (
+    Path(__file__).resolve().parent.parent
+    / "generated"
+    / "src"
+    / "attio"
+    / "utils"
+    / "security.py"
+)
+
+
+def test_security_empty_guard_is_noop_on_committed_file(tmp_path: Path) -> None:
+    patch = _load_patch_module()
+    target = tmp_path / "security.py"
+    target.write_text(SECURITY_PATH.read_text(encoding="utf-8"), encoding="utf-8")
+    assert patch.ensure_security_empty_guard(target) is False
+    assert target.read_text(encoding="utf-8") == SECURITY_PATH.read_text(
+        encoding="utf-8",
+    )
+
+
+def test_security_empty_guard_is_restored_idempotently(tmp_path: Path) -> None:
+    patch = _load_patch_module()
+    committed = SECURITY_PATH.read_text(encoding="utf-8")
+    guard = '    if value == "":\n        return\n\n'
+    assert guard in committed
+    target = tmp_path / "security.py"
+    target.write_text(committed.replace(guard, "", 1), encoding="utf-8")
+    assert patch.ensure_security_empty_guard(target) is True
+    assert target.read_text(encoding="utf-8") == committed
+    assert patch.ensure_security_empty_guard(target) is False
+
+
+def test_security_empty_guard_raises_when_anchor_missing(tmp_path: Path) -> None:
+    patch = _load_patch_module()
+    target = tmp_path / "security.py"
+    target.write_text("x = 1\n", encoding="utf-8")
+    with pytest.raises(RuntimeError):
+        patch.ensure_security_empty_guard(target)
