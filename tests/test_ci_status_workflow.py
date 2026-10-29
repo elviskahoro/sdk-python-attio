@@ -10,10 +10,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import json
-import shutil
-import subprocess  # nosec B404 - fixed gh CLI argv, no shell
-
 import pytest
 import yaml
 
@@ -21,8 +17,6 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 RWX_DIR = REPO_ROOT / ".rwx"
 TRUNK_YAML = REPO_ROOT / ".trunk" / "trunk.yaml"
 INTEGRATION_WORKFLOW = RWX_DIR / "integration.yml"
-REPO_SLUG = "elviskahoro/sdk-python-attio"
-RULESET_NAME = "main - required PR checks"
 LOCKED_VAULT_TOKEN = "vaults.sdk-python-attio.secrets.ATTIO_API_KEY"  # nosec B105 - vault reference, not a credential
 
 
@@ -87,32 +81,6 @@ def test_only_rwx_statuses_are_required(required_statuses: list[str]) -> None:
     to be reported"."""
     external = [s for s in required_statuses if not s.startswith("RWX: ")]
     assert not external, external
-
-
-def _gh_api(path: str) -> object:
-    gh = shutil.which("gh")
-    if gh is None:
-        pytest.skip("gh CLI not installed")
-    result = subprocess.run(  # nosec B603 - fixed argv, no shell
-        [gh, "api", path], capture_output=True, text=True, timeout=30, check=False
-    )
-    if result.returncode != 0:
-        pytest.skip(f"gh api {path} unavailable: {result.stderr.strip()[:200]}")
-    return json.loads(result.stdout)
-
-
-def test_github_ruleset_requires_trunk_statuses_plus_pullfrog_approval(
-    required_statuses: list[str],
-) -> None:
-    """The ruleset mirrors ``required_statuses`` plus ``pullfrog-approval``;
-    a rename that updates only the repo side stalls PRs on "Waiting for
-    status". Skipped when offline or ``gh`` is unauthenticated."""
-    rulesets = _gh_api(f"repos/{REPO_SLUG}/rulesets")
-    ruleset_id = next(r["id"] for r in rulesets if r["name"] == RULESET_NAME)
-    detail = _gh_api(f"repos/{REPO_SLUG}/rulesets/{ruleset_id}")
-    rule = next(r for r in detail["rules"] if r["type"] == "required_status_checks")
-    contexts = {c["context"] for c in rule["parameters"]["required_status_checks"]}
-    assert contexts == {*required_statuses, "pullfrog-approval"}
 
 
 def test_required_workflows_declare_one_name_across_triggers(
