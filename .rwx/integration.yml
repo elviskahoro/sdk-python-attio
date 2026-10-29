@@ -1,13 +1,15 @@
-# Live-API integration check against Attio (ATTIO_API_KEY from the
-# sdk-python-attio vault, which is locked to main with approvals enabled).
-# Runs on main pushes and on pull requests. On a PR ref the vault denies the
-# integration task, so RWX raises an approval request and the task waits until
-# an approver grants access (a denial fails it). Not a required status, so a
-# pending or skipped run cannot stall the merge queue. Queue test branches
-# (trunk-merge/** and trunk-merge-beta/**) never trigger it in either queue
-# mode: push fires only from main, and the pull_request trigger filters those
-# namespaces because draft-PR queue mode opens the queue's test branch as a
-# PR that would otherwise raise an approval request nobody should grant.
+# Live-API integration check against a sandbox Attio workspace (ATTIO_API_KEY
+# from the sdk-python-attio-it vault: a throwaway key, approvals disabled,
+# readable from main and pull request refs). A pull_request run's git ref is
+# refs/heads/<pr-branch> — never GitHub's refs/pull/N/head — and refs/pull/**
+# matches no documented vault pattern, so the vault must allow refs/heads/**
+# (or stay unlocked); with approvals off and no matching pattern the run dies
+# at secret resolution before any task. The production-token vault
+# sdk-python-attio stays locked to main with approvals and is not used here.
+# Runs on main pushes and on pull requests. Not a required status, so a
+# failed or skipped run cannot stall the merge queue. Queue test branches
+# (trunk-merge/** and trunk-merge-beta/**) never trigger it: push fires only
+# from main, and the pull_request trigger filters those namespaces.
 on:
   github:
     pull_request:
@@ -61,7 +63,7 @@ tasks:
     use: sync
     cache: false
     env:
-      ATTIO_API_KEY: ${{ vaults.sdk-python-attio.secrets.ATTIO_API_KEY }}
+      ATTIO_API_KEY: ${{ vaults.sdk-python-attio-it.secrets.ATTIO_API_KEY }}
     # stdout is discarded: the script dumps workspace people, emails and
     # members, which must not land in retained CI logs. The exit code and
     # stderr traceback still report failures.

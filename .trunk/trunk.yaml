@@ -291,11 +291,10 @@ merge:
   # "RWX: <status-checks.name>"; both the pull_request and push triggers set
   # the same name so one required check covers PRs and the merge queue's
   # trunk-merge/** pushes. .rwx/integration.yml ("RWX: integration") hits the
-  # live Attio API with the ATTIO_API_KEY secret from the sdk-python-attio vault,
-  # which is locked to main with approvals enabled; it fires on main pushes
-  # and on pull requests, where the run waits for a vault approver (a denial
-  # fails it). It is deliberately not required — a human-gated check would
-  # deadlock the queue — and neither trigger fires on the queue's
+  # live Attio API with the ATTIO_API_KEY secret from the sdk-python-attio-it vault
+  # (a throwaway sandbox key, approvals off); it fires on main pushes and on
+  # pull requests without waiting for an approver. It is deliberately not
+  # required — a failing live-API check must not gate merges — and neither trigger fires on the queue's
   # trunk-merge/** or trunk-merge-beta/** test branches (push runs only from
   # main; the pull_request trigger filters them out). Re-verify with the
   # command above after the first run on a PR.
