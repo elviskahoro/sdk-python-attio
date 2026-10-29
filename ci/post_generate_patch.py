@@ -849,7 +849,9 @@ def ensure_security_empty_guard(path: Path) -> bool:
     if text.count(anchor) != 1:
         msg = f"cannot locate empty-value guard anchor in {path}"
         raise RuntimeError(msg)
-    path.write_text(text.replace(anchor, guard + anchor), encoding="utf-8")
+    updated = text.replace(anchor, guard + anchor)
+    compile(updated, str(path), "exec")
+    path.write_text(updated, encoding="utf-8")
     return True
 
 
@@ -862,13 +864,12 @@ def ensure_duration_adapter_annotation(path: Path) -> bool:
             return False
         msg = f"cannot locate _DURATION_ADAPTER assignment in {path}"
         raise RuntimeError(msg)
-    path.write_text(
-        text.replace(
-            plain,
-            "_DURATION_ADAPTER: TypeAdapter[timedelta] = TypeAdapter(timedelta)\n",
-        ),
-        encoding="utf-8",
+    updated = text.replace(
+        plain,
+        "_DURATION_ADAPTER: TypeAdapter[timedelta] = TypeAdapter(timedelta)\n",
     )
+    compile(updated, str(path), "exec")
+    path.write_text(updated, encoding="utf-8")
     return True
 
 
