@@ -1,14 +1,12 @@
-"""Offline guard that overlay ``enum`` replacements match the spec's code unions.
+"""Two-way sync of overlay ``enum`` replacements against spec code unions.
 
-``ci/spec_diff.py:_check_error_code_sync`` only runs from the network-fetching
-``check-openapi`` / ``check-overlay`` commands. This lifts the same check into
-pytest so an overlay edit that drops a code the pinned spec's ``anyOf`` union
-still carries fails on the PR, not in the weekly ``spec-update-check``.
-
-Both directions are pinned: a spec code missing from the overlay enum drops it
-from the generated ``Literal`` (``ResponseValidationError`` at runtime), and an
-overlay value the spec never lists is rot — except ``validation_type``, the
-intentional extra the overlay adds.
+``verify_overlay`` (run by ``test_spec_diff.py`` against the pinned spec)
+already fails PRs when an overlay enum drops a code the spec's ``anyOf``
+union carries. This file adds what that one-way check deliberately omits:
+overlay values the spec never lists (rot, unless it is the intentional
+``validation_type`` extra), a guard that every enum action still lands on a
+union, and a paste-ready fix message. The comparison itself lives in
+``ci/spec_diff.py:_check_error_code_sync`` so the two gates cannot drift.
 """
 
 from __future__ import annotations
@@ -35,29 +33,18 @@ SD = _load_module()
 
 
 def union_sync_problems(spec: dict, enum_actions: dict[str, list[str]]) -> list[str]:
-    """Return one message per overlay enum that disagrees with its spec union."""
-    problems: list[str] = []
-    for target, overlay_values in enum_actions.items():
-        for node in SD.resolve_jsonpath(spec, target):
-            spec_values = SD._union_error_codes(node)  # noqa: SLF001
-            if spec_values is None:
-                continue
-            missing = [v for v in dict.fromkeys(spec_values) if v not in overlay_values]
-            extra = [
-                v
-                for v in dict.fromkeys(overlay_values)
-                if v not in spec_values and v not in INTENTIONAL_EXTRAS
-            ]
-            if not (missing or extra):
-                continue
-            fixed = list(dict.fromkeys(spec_values))
-            if any(v in overlay_values for v in INTENTIONAL_EXTRAS):
-                fixed += sorted(INTENTIONAL_EXTRAS & set(overlay_values))
-            problems.append(
-                f"{target}: missing from overlay {missing}, "
-                f"not in spec union {extra}. Fix: set the overlay enum to {fixed}",
-            )
-    return problems
+    return SD._check_error_code_sync(spec, enum_actions, INTENTIONAL_EXTRAS)  # noqa: SLF001
+
+
+def targets_without_union(spec: dict, enum_actions: dict[str, list[str]]) -> list[str]:
+    """Enum-action targets that resolve to no union node (misdirected)."""
+    return [
+        t
+        for t in enum_actions
+        if not any(
+            SD._union_error_codes(n) for n in SD.resolve_jsonpath(spec, t)  # noqa: SLF001
+        )
+    ]
 
 
 @pytest.fixture(scope="module")
@@ -75,13 +62,13 @@ def test_overlay_enums_match_spec_unions(spec, enum_actions):
     assert not problems, "overlay enum drifted from spec union:\n" + "\n".join(problems)
 
 
-def test_enum_actions_actually_hit_unions(spec, enum_actions):
-    hits = [
-        t
-        for t in enum_actions
-        if any(SD._union_error_codes(n) for n in SD.resolve_jsonpath(spec, t))  # noqa: SLF001
-    ]
-    assert hits, "no overlay enum action resolves to a spec union; the sync test is vacuous"
+def test_every_enum_action_hits_a_union(spec, enum_actions):
+    assert enum_actions, "overlay has no enum actions; the sync test is vacuous"
+    misdirected = targets_without_union(spec, enum_actions)
+    assert not misdirected, (
+        "overlay enum action(s) no longer resolve to a spec anyOf/oneOf union:\n"
+        + "\n".join(misdirected)
+    )
 
 
 _SYNTH_SPEC = {"a": {"code": {"anyOf": [{"enum": ["x"]}, {"enum": ["y"]}]}}}
@@ -95,7 +82,20 @@ def test_reports_dropped_code():
 
 
 def test_reports_unknown_extra_but_allows_validation_type():
-    assert union_sync_problems(_SYNTH_SPEC, {"$.a.code": ["x", "y", "validation_type"]}) == []
+    ok = {"$.a.code": ["x", "y", "validation_type"]}
+    assert union_sync_problems(_SYNTH_SPEC, ok) == []
     problems = union_sync_problems(_SYNTH_SPEC, {"$.a.code": ["x", "y", "bogus"]})
     assert len(problems) == 1
     assert "['bogus']" in problems[0]
+
+
+def test_fix_message_does_not_duplicate_validation_type():
+    spec = {"a": {"code": {"anyOf": [{"enum": ["x"]}, {"enum": ["validation_type"]}]}}}
+    problems = union_sync_problems(spec, {"$.a.code": ["validation_type"]})
+    assert len(problems) == 1
+    assert "['x', 'validation_type']" in problems[0]
+
+
+def test_flags_target_that_is_not_a_union():
+    spec = {"a": {"code": {"enum": ["x"]}}}
+    assert targets_without_union(spec, {"$.a.code": ["x"]}) == ["$.a.code"]

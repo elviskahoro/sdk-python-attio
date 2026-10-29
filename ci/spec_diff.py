@@ -783,14 +783,19 @@ def _resolve_targets(
 def _check_error_code_sync(
     spec: dict[str, Any],
     enum_actions: dict[str, list[str]] | None,
+    intentional_extras: frozenset[str] | None = None,
 ) -> list[str]:
     """Report overlay enums that drop values the spec's unions still carry.
 
-    Deliberately one-way: overlay enums may carry intentional extras the
+    By default one-way: overlay enums may carry intentional extras the
     spec does not list (``validation_type`` is exactly that), so values
     present only in the overlay are not reported. The reverse — a spec
     value missing from the overlay — is the case that drops codes from the
     generated Literal.
+
+    Passing ``intentional_extras`` (even an empty set) also reports overlay
+    values absent from the spec union, except those listed, and appends a
+    paste-ready replacement enum to each message.
     """
     dropped: list[str] = []
     for target, overlay_values in (enum_actions or {}).items():
@@ -804,10 +809,27 @@ def _check_error_code_sync(
             if spec_values is None:
                 continue
             missing = [v for v in spec_values if v not in overlay_values]
-            if missing:
+            if intentional_extras is None:
+                if missing:
+                    dropped.append(
+                        f"{target} drops spec error code(s) {', '.join(missing)}"
+                        " - add them to the overlay enum",
+                    )
+                continue
+            extra = [
+                v
+                for v in dict.fromkeys(overlay_values)
+                if v not in spec_values and v not in intentional_extras
+            ]
+            if missing or extra:
+                fixed = list(dict.fromkeys(spec_values))
+                fixed += sorted(
+                    (intentional_extras & set(overlay_values)) - set(spec_values),
+                )
                 dropped.append(
-                    f"{target} drops spec error code(s) {', '.join(missing)}"
-                    " - add them to the overlay enum",
+                    f"{target}: missing from overlay {missing}, "
+                    f"not in spec union {extra}. "
+                    f"Fix: set the overlay enum to {fixed}",
                 )
     return dropped
 
