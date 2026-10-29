@@ -17,7 +17,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 RWX_DIR = REPO_ROOT / ".rwx"
 TRUNK_YAML = REPO_ROOT / ".trunk" / "trunk.yaml"
 INTEGRATION_WORKFLOW = RWX_DIR / "integration.yml"
-LOCKED_VAULT_TOKEN = "vaults.sdk-python-attio.secrets.ATTIO_API_KEY"  # nosec B105 - vault reference, not a credential
+VAULT_TOKEN = "vaults.sdk-python-attio-it.secrets.ATTIO_API_KEY"  # nosec B105 - vault reference, not a credential
 
 
 def _load(path: Path) -> dict:
@@ -102,14 +102,13 @@ def test_required_workflows_declare_one_name_across_triggers(
         )
 
 
-def test_integration_gates_pull_requests_behind_vault_approval(
+def test_integration_runs_on_pull_requests_without_approval(
     required_statuses: list[str],
 ) -> None:
-    """The sdk-python-attio vault is locked to main with approvals enabled, so
-    a pull_request run waits for an approver instead of reading the token.
+    """The sdk-python-attio-it vault holds a throwaway sandbox key with
+    approvals disabled, so pull_request runs read it without an approver.
     trunk-merge/** and trunk-merge-beta/** refs get no trigger in either queue
-    mode — nobody should be asked to approve a queued merge, and the queue
-    must never depend on this status."""
+    mode, and the queue must never depend on this status."""
     gh = _github_triggers(_load(INTEGRATION_WORKFLOW))
     pull_request = gh["pull_request"]
     assert pull_request["status-checks"]["name"] == "integration"
@@ -133,7 +132,7 @@ def test_integration_is_uncached_and_token_stays_scoped() -> None:
     holders = [
         key
         for key, task in tasks.items()
-        if LOCKED_VAULT_TOKEN in str(task.get("env", {}))
+        if VAULT_TOKEN in str(task.get("env", {}))
     ]
     assert holders == ["integration"]
 
