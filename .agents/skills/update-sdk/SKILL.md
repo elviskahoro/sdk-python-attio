@@ -68,7 +68,7 @@ hooks-package re-export in `generated/src/attio/_hooks/sdkhooks.py` and
 `generated/src/attio/_hooks/__init__.py`, the 0.26.1 model rename aliases
 in `generated/src/attio/models/__init__.py` and the renamed activity/list
 operation modules, and the unused `OpenEnumMeta` metaclass removal from
-`generated/src/attio/utils/enums.py` and `generated/src/attio/utils/__init__.py`.
+`generated/src/attio/utils/enums.py` and `generated/src/attio/utils/__init__.py`, plus the empty-value guard in `generated/src/attio/utils/security.py`.
 Re-apply them right after regenerating so the
 tree the tests run against carries the invariant:
 

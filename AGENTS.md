@@ -127,7 +127,8 @@ never set it in CI or automation, and fix the overlay afterwards.
    aliases in `generated/src/attio/models/__init__.py` and the renamed
    activity/list operation modules, and the unused `OpenEnumMeta` metaclass
    removal from `generated/src/attio/utils/enums.py` and
-   `generated/src/attio/utils/__init__.py`). Drop `--no-fetch` to also
+   `generated/src/attio/utils/__init__.py`, and the empty-value guard in
+   `generated/src/attio/utils/security.py`). Drop `--no-fetch` to also
    adopt a freshly fetched spec. Note the Dagger path exports only `generated/`
    back to the host — docs/, README, pyproject and USAGE refresh on the
    host-CLI path (the default) — and it logs that when chosen.

@@ -191,7 +191,8 @@ tasks:
       # in generated/src/attio/models/__init__.py and the renamed
       # activity/list operation modules; the unused OpenEnumMeta metaclass
       # removal from generated/src/attio/utils/enums.py and
-      # generated/src/attio/utils/__init__.py).
+      # generated/src/attio/utils/__init__.py, and the empty-value guard in
+      # generated/src/attio/utils/security.py).
       uv run python ci/pipeline.py generate --no-fetch
       echo true > "$RWX_VALUES/ready"
 

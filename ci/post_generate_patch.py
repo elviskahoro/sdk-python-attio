@@ -99,6 +99,16 @@ Patch: ``generated/src/attio/utils/enums.py`` and ``generated/src/attio/utils/__
     ``metaclass=OpenEnumMeta`` (i.e. some module outside ``utils/enums.py``
     references it as a metaclass), this raises ``RuntimeError`` rather than
     deleting a file the SDK then needs.
+
+Patch: ``generated/src/attio/utils/security.py`` empty-value guard
+
+    The 0.26.4 template (2.952.5) returned early from ``security
+    value handling when a security value is the empty string, so
+    ``oauth2=""`` left the ``Authorization`` header absent and a custom HTTP
+    client's own auth survived. The pinned 1.800.1 CLI emits the older
+    template without the guard, so this patch re-inserts ``if value == "":
+    return`` before ``header_name`` is resolved in ``handle_security_scheme``.
+    It is idempotent and raises ``RuntimeError`` if the anchor drifts.
 """
 
 from __future__ import annotations
@@ -820,6 +830,20 @@ def remove_open_enum_meta() -> list[str]:
     return touched
 
 
+def ensure_security_empty_guard(path: Path) -> bool:
+    """Re-insert the empty-string early-return in ``utils/security.py``."""
+    text = path.read_text(encoding="utf-8")
+    guard = '    if value == "":\n        return\n\n'
+    anchor = "    header_name = security_metadata.get_field_name(field_name)\n"
+    if guard + anchor in text:
+        return False
+    if text.count(anchor) != 1:
+        msg = f"cannot locate empty-value guard anchor in {path}"
+        raise RuntimeError(msg)
+    path.write_text(text.replace(anchor, guard + anchor), encoding="utf-8")
+    return True
+
+
 def main() -> int:
     messages: list[str] = []
 
@@ -858,6 +882,11 @@ def main() -> int:
     ):
         if ensure(path):
             messages.append(f"post_generate_patch: restored {name}")
+
+    if ensure_security_empty_guard(
+        GENERATED_SRC_DIR / "utils" / "security.py",
+    ):
+        messages.append("post_generate_patch: restored security empty-value guard")
 
     for target in ensure_model_rename_aliases():
         messages.append(
