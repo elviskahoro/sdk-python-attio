@@ -1,6 +1,10 @@
 # Live-API integration check against a sandbox Attio workspace (ATTIO_API_KEY
 # from the sdk-python-attio-it vault: a throwaway key, approvals disabled,
-# readable from main and pull request refs). The production-token vault
+# readable from main and pull request refs). A pull_request run's git ref is
+# refs/heads/<pr-branch> — never GitHub's refs/pull/N/head — and refs/pull/**
+# matches no documented vault pattern, so the vault must allow refs/heads/**
+# (or stay unlocked); with approvals off and no matching pattern the run dies
+# at secret resolution before any task. The production-token vault
 # sdk-python-attio stays locked to main with approvals and is not used here.
 # Runs on main pushes and on pull requests. Not a required status, so a
 # failed or skipped run cannot stall the merge queue. Queue test branches
