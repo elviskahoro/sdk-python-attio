@@ -246,6 +246,17 @@ pin/checksum in sync with `.rwx/regenerate.yml`.
 - Commit only `generated/`, `openapi/`, `.speakeasy/`, `pyproject.toml`,
   `uv.lock`, `README.md`, as the RWX patch allowlist does.
 
+### Always regenerate before opening a PR
+
+Any change to `overlay.yaml`, `ci/post_generate_patch.py`, `.speakeasy/`, or
+`openapi/` MUST be accompanied by a regeneration in the same PR, with the
+resulting `generated/`, `.speakeasy/`, `pyproject.toml`, `uv.lock` and
+`README.md` changes committed. Overlay-only PRs that leave the SDK stale are
+not acceptable: reviewers need the SDK diff next to the overlay change. When in
+doubt, regenerate anyway (`ci/regenerate_host.sh`, or the Dagger path above); a
+no-op run still bumps the version, which must be kept in sync across
+`.speakeasy/gen.yaml`, `pyproject.toml` and `generated/src/attio/_version.py`.
+
 ### Important Notes
 
 - The SDK is fully generated code — manual edits to `generated/src/attio/` will be overwritten on next generation.
