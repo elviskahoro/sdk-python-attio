@@ -22,6 +22,7 @@ targets:
         sourceBlobDigest: sha256:965bf605798a6757dbbd331a18f5373d9e721d6c5f17c5217551c3a43ea6aa87
 workflow:
     workflowVersion: 1.0.0
+    speakeasyVersion: 1.804.0
     sources:
         attio:
             inputs:

@@ -253,7 +253,7 @@ def test_speakeasy_installer_is_pinned(tasks: dict[str, dict]) -> None:
     assert "89688fa0cfc3c959f4ac370329325d1b274db551/install.sh" in script
     assert "9e2c4f1054e214d05352597cfd9ed1ab117a089e9442f532dd4a0d168665d757" in script
     assert "sha256sum -c -" in script
-    assert "VERSION=1.800.1" in script
+    assert "VERSION=1.804.0" in script
 
     # The workflow's CLI pin and the pipeline's version-drift warning must
     # agree, or the warning compares against the wrong version.
@@ -270,6 +270,13 @@ def test_speakeasy_installer_is_pinned(tasks: dict[str, dict]) -> None:
         (REPO_ROOT / ".speakeasy" / "workflow.yaml").read_text(encoding="utf-8")
     )
     assert str(speakeasy_workflow["speakeasyVersion"]) == pipeline._SPEAKEASY_CLI_PIN
+
+    # The pin must never sit below the generator that produced the committed
+    # tree, or a pinned regeneration downgrades the template output.
+    gen_lock = yaml.safe_load(
+        (REPO_ROOT / "generated" / ".speakeasy" / "gen.lock").read_text(encoding="utf-8")
+    )
+    assert str(gen_lock["management"]["speakeasyVersion"]) == pipeline._SPEAKEASY_CLI_PIN
 
 
 def test_every_jq_program_runs_clean_against_a_sample_report() -> None:

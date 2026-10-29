@@ -78,7 +78,7 @@ tasks:
         https://raw.githubusercontent.com/speakeasy-api/speakeasy/89688fa0cfc3c959f4ac370329325d1b274db551/install.sh
       echo "9e2c4f1054e214d05352597cfd9ed1ab117a089e9442f532dd4a0d168665d757  /tmp/speakeasy-install.sh" \
         | sha256sum -c -
-      VERSION=1.800.1 sh /tmp/speakeasy-install.sh
+      VERSION=1.804.0 sh /tmp/speakeasy-install.sh
 
   # Uncached: the output depends on the Speakeasy service and the key, not
   # only on repo content.
