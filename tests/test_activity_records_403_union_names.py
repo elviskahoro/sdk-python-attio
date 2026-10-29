@@ -1,7 +1,7 @@
-"""Pin the activity-record 401 ``code`` union names (issue #88).
+"""Pin the activity-record 403 ``code`` union names (issue #88).
 
 Speakeasy can drop the response-class prefix on a ``code`` union that only
-has 401 members (``ForbiddenCodeUnion`` -> ``CodeUnion``). A regeneration that
+has 403 members (``ForbiddenCodeUnion`` -> ``CodeUnion``). A regeneration that
 does so silently renames shipped public models, so fail loudly here.
 """
 
