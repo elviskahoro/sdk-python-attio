@@ -7,22 +7,42 @@ on:
     pull_request:
       init:
         commit-sha: ${{ event.git.sha }}
+        branch: ${{ event.git.branch }}
+        repository: https://github.com/elviskahoro/sdk-python-attio.git
+        event-type: pull_request
+        pr-author: ${{ event.github.pull_request.pull_request.user.login }}
+        pr-number: ${{ event.github.pull_request.number }}
       status-checks:
         name: pytest
     push:
       - if: ${{ event.git.branch == 'main' }}
         init:
           commit-sha: ${{ event.git.sha }}
+          branch: ${{ event.git.branch }}
+          repository: https://github.com/elviskahoro/sdk-python-attio.git
+          event-type: push
+          pr-author: ""
+          pr-number: ""
         status-checks:
           name: pytest
       - if: ${{ starts-with(event.git.branch, 'trunk-merge/') || starts-with(event.git.branch, 'trunk-merge-beta/') }}
         init:
           commit-sha: ${{ event.git.sha }}
+          branch: ${{ event.git.branch }}
+          repository: https://github.com/elviskahoro/sdk-python-attio.git
+          event-type: push
+          pr-author: ""
+          pr-number: ""
         status-checks:
           name: pytest
   cli:
     init:
       commit-sha: ${{ event.git.sha }}
+      branch: ${{ event.git.branch }}
+      repository: https://github.com/elviskahoro/sdk-python-attio.git
+      event-type: push
+      pr-author: ""
+      pr-number: ""
 
 base:
   image: ubuntu:24.04
@@ -61,11 +81,110 @@ tasks:
   - key: captain
     call: rwx/install-captain 1.2.0
 
-  - key: pytest
+  # Split in three so failing and flaky runs still reach Trunk: `pytest-run`
+  # records captain's exit code instead of failing, `trunk-upload` uploads the
+  # JUnit files, and `pytest` re-fails on the saved code.
+  - key: pytest-run
     use: [sync, captain]
     # Uncached: captain run uploads test insights and reads cloud-side
     # quarantines at run time; a cache hit on a same-commit re-run (PR
     # reopen, rwx retry) would replay the recorded output and skip both,
     # so a quarantine granted after the original run never applies.
     cache: false
-    run: captain run sdk-python-attio-pytest
+    run: |
+      mkdir -p tmp
+      set +e
+      captain run sdk-python-attio-pytest
+      echo "$?" > tmp/pytest-exit-code
+
+  # Uploads to Trunk Flaky Tests. TRUNK_API_TOKEN is the org-wide Trunk API
+  # token (the Analytics CLI accepts no scoped key), so it lives in its own
+  # `sdk-python-attio-trunk` vault; never add another secret to it. The `if:`
+  # is the only author gate (vault grants match repo + ref, never author).
+  # RWX documents no ordering between a task's `if:` and its `env:` secret
+  # resolution, so whether a skipped task touches the vault is unverifiable;
+  # what holds regardless: a skipped task never executes its script, so the
+  # token cannot reach code on skipped legs (and fork PRs never run at all).
+  # Vault grants must include `elviskahoro/sdk-python-attio:**`, `*/*` and
+  # `:main` (branch patterns do not cross `/`); the repository scope of the
+  # repo-less grants is undocumented, so only `rwx vaults list` can confirm
+  # whether `*/*` reaches other org repos. cache: false + cache-key: excluded
+  # keep the token out of the content-cache fingerprint and make every run
+  # actually upload. RWX is not a CI provider Trunk auto-detects, so
+  # CUSTOM=true plus the job/branch/PR variables attribute the run. Captain's
+  # retry command writes a separate -retry.xml (see .captain/config.yml); the
+  # glob uploads both. The launcher sha256 pins only the bash bootstrap
+  # (trunk.io/releases/trunk is latest-only); TRUNK_ANALYTICS_CLI_VERSION
+  # pins the trunk-analytics-cli binary that the bootstrap downloads and
+  # runs. The launcher verifies no tarball digest either way, so that version
+  # pin is the only control on the executed CLI (the lint gate pins its CLI
+  # the same way, `cli.version` in .trunk/trunk.yaml). Bump the checksum and
+  # the version deliberately.
+  - key: trunk-upload
+    use: [pytest-run]
+    if: ${{ init.event-type != 'pull_request' || init.pr-author == 'elviskahoro' }}
+    cache: false
+    env:
+      TRUNK_API_TOKEN:
+        value: ${{ vaults.sdk-python-attio-trunk.secrets.TRUNK_API_TOKEN }}
+        cache-key: excluded
+      TRUNK_ORG_SLUG: sanhedrin
+      TRUNK_TEST_COLLECTION_ID: xw7SIPox
+      # Bare semver (no `v` prefix); the launcher rejects non-semver values.
+      TRUNK_ANALYTICS_CLI_VERSION: "0.16.1"
+      CUSTOM: "true"
+      BRANCH: ${{ init.branch }}
+      PR_NUMBER: ${{ init.pr-number }}
+      COMMIT_BRANCH: ${{ init.branch }}
+      COMMIT_SHA: ${{ init.commit-sha }}
+      REPO: ${{ init.repository }}
+    run: |
+      set -euo pipefail
+      # RWX auto-exposes RWX_RUN_URL (www.rwx.com/docs/environment-variables).
+      export JOB_URL="${RWX_RUN_URL}"
+      trunk_launcher="$(mktemp)"
+      if ! curl -fsSL https://trunk.io/releases/trunk -o "${trunk_launcher}" ||
+        ! echo "700f8bbedfd226595999ea2202b9a7af75ba8398dd711f5f159f5bbba6cbf322  ${trunk_launcher}" | sha256sum -c -; then
+        rm -f "${trunk_launcher}"
+        echo "error: trunk launcher download or checksum failed" >&2
+        exit 1
+      fi
+      chmod 0755 "${trunk_launcher}"
+      # Guard against a run that uploaded nothing going green: pipefail
+      # carries the CLI's exit code through tee, the grep catches its error
+      # banner under the quarantining exit code, and
+      # --allow-empty-test-results=false catches a glob matching no files.
+      # --pr-number is only valid when non-empty (push legs set it to "").
+      upload_log="$(mktemp)"
+      pr_args=()
+      if [ -n "${PR_NUMBER}" ]; then
+        pr_args=(--pr-number "${PR_NUMBER}")
+      fi
+      # The head commit's time, not upload time, so reruns of old commits
+      # keep Trunk's history ordered; fall back if the checkout lacks it.
+      commit_epoch="$(git show -s --format=%ct "${COMMIT_SHA}" 2>/dev/null || date +%s)"
+      "${trunk_launcher}" flakytests upload \
+        --junit-paths "tmp/junit-*.xml" \
+        --allow-empty-test-results=false \
+        --org-url-slug "${TRUNK_ORG_SLUG}" \
+        --use-uncloned-repo \
+        --repo-url "${REPO}" \
+        --repo-head-sha "${COMMIT_SHA}" \
+        --repo-head-branch "${BRANCH}" \
+        --repo-head-author-name rwx \
+        --repo-head-commit-epoch "${commit_epoch}" \
+        "${pr_args[@]}" < /dev/null 2>&1 | tee "${upload_log}"
+      if grep -q "Error Encountered" "${upload_log}"; then
+        echo "error: trunk upload reported an error" >&2
+        exit 1
+      fi
+      rm -f "${trunk_launcher}" "${upload_log}"
+
+  # `after` is an expression, not a list: a list-form `after:` skips the task
+  # when a listed task is skipped (https://www.rwx.com/docs/after), which
+  # would hand non-owner PR legs a green required status without a pytest
+  # verdict. This gate re-fails on the exit code saved by `pytest-run`.
+  - key: pytest
+    use: [pytest-run]
+    after: ${{ trunk-upload.succeeded || trunk-upload.skipped }}
+    run: exit "$(cat tmp/pytest-exit-code)"
