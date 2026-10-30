@@ -1,14 +1,15 @@
 [project]
 name = "attio"
-version = "0.28.0"
+version = "0.28.2"
 description = "Attio API client library from elviskahoro"
 authors = [{ name = "elviskahoro" }]
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = ["httpcore >=1.0.9", "httpx >=0.28.1", "pydantic >=2.11.2"]
-urls.homepage = "https://github.com/elviskahoro/attio-sdk-python"
+urls.homepage = "https://github.com/elviskahoro/sdk-python-attio"
 
 [project.scripts]
+attio = "attio_cli.main:main"
 gtm-attio = "attio_cli.main:main"
 
 [dependency-groups]

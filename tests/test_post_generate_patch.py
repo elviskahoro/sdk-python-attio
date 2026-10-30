@@ -32,6 +32,7 @@ from pathlib import Path
 
 import pydantic
 import pytest
+import yaml
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 PATCH_SCRIPT = REPO_ROOT / "ci" / "post_generate_patch.py"
@@ -130,12 +131,18 @@ def test_patch_is_idempotent_after_application(tmp_path: Path) -> None:
     assert target.read_text() == first_text
 
 
+SCRIPTS_BLOCK = (
+    '[project.scripts]\nattio = "attio_cli.main:main"\n'
+    'gtm-attio = "attio_cli.main:main"\n'
+)
+
+
 def test_project_script_is_restored_idempotently(tmp_path: Path) -> None:
     target = tmp_path / "pyproject.toml"
     target.write_text('[project]\nname = "attio"\n\n[tool.test]\n')
 
     assert PGP.ensure_project_script(target) is True
-    assert 'gtm-attio = "attio_cli.main:main"' in target.read_text()
+    assert SCRIPTS_BLOCK in target.read_text()
     assert PGP.ensure_project_script(target) is False
 
 
@@ -146,8 +153,56 @@ def test_existing_project_script_is_corrected(tmp_path: Path) -> None:
     )
 
     assert PGP.ensure_project_script(target) is True
-    assert target.read_text().count("gtm-attio =") == 1
-    assert 'gtm-attio = "attio_cli.main:main"' in target.read_text()
+    text = target.read_text()
+    assert text.count("gtm-attio =") == 1
+    assert text.count("\nattio =") == 1
+    assert SCRIPTS_BLOCK + "\n[tool.test]\n" in text
+    assert PGP.ensure_project_script(target) is False
+
+
+def test_stale_attio_script_is_corrected(tmp_path: Path) -> None:
+    target = tmp_path / "pyproject.toml"
+    target.write_text(
+        '[project.scripts]\nattio = "old.module:main"\n'
+        'gtm-attio = "attio_cli.main:main"\n'
+    )
+
+    assert PGP.ensure_project_script(target) is True
+    assert target.read_text() == SCRIPTS_BLOCK
+
+
+def test_committed_pyproject_has_both_cli_scripts() -> None:
+    assert SCRIPTS_BLOCK in (REPO_ROOT / "pyproject.toml").read_text()
+
+
+def test_project_version_is_synced_from_generated_version(tmp_path: Path) -> None:
+    pyproject = tmp_path / "pyproject.toml"
+    pyproject.write_text('[project]\nname = "attio"\nversion = "0.1.0"\n')
+    version_file = tmp_path / "_version.py"
+    version_file.write_text('__title__: str = "attio"\n__version__: str = "0.2.3"\n')
+
+    assert PGP.ensure_project_version(pyproject, version_file) is True
+    assert pyproject.read_text() == '[project]\nname = "attio"\nversion = "0.2.3"\n'
+    assert PGP.ensure_project_version(pyproject, version_file) is False
+
+
+def test_project_version_sync_fails_loudly_without_anchor(tmp_path: Path) -> None:
+    pyproject = tmp_path / "pyproject.toml"
+    pyproject.write_text('[project]\nname = "attio"\n')
+    version_file = tmp_path / "_version.py"
+    version_file.write_text('__version__: str = "0.2.3"\n')
+
+    with pytest.raises(RuntimeError, match="no `version"):
+        PGP.ensure_project_version(pyproject, version_file)
+
+
+def test_committed_versions_are_in_lockstep() -> None:
+    gen_yaml = yaml.safe_load((REPO_ROOT / ".speakeasy" / "gen.yaml").read_text())
+    expected = gen_yaml["python"]["version"]
+    pyproject = (REPO_ROOT / "pyproject.toml").read_text()
+    version_py = PGP.VERSION_PATH.read_text()
+    assert f'\nversion = "{expected}"\n' in pyproject
+    assert f'__version__: str = "{expected}"' in version_py
 
 
 def test_readme_cli_section_is_restored_idempotently(tmp_path: Path) -> None:

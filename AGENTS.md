@@ -120,17 +120,28 @@ never set it in CI or automation, and fix the overlay afterwards.
    `ci/post_generate_patch.py` (manual patches `overlay.yaml` cannot
    express, e.g. the GET /v2/self `active` value discriminators in
    `generated/src/attio/models/get_v2_selfop.py`, the `scripts/publish.sh` and
-   `scripts/release.sh` wrappers, the standalone CLI entry point/docs in
-   `pyproject.toml` and `README.md`, SDKHooks `init_hooks` wiring plus
+   `scripts/release.sh` wrappers, the `attio`/`gtm-attio` CLI entry points,
+   the CLI docs and the synced `version` in `pyproject.toml` and
+   `README.md`, SDKHooks `init_hooks` wiring plus
    the hooks-package re-export in `generated/src/attio/_hooks/sdkhooks.py` and
    `generated/src/attio/_hooks/__init__.py`, the 0.26.1 model rename
    aliases in `generated/src/attio/models/__init__.py` and the renamed
    activity/list operation modules, and the unused `OpenEnumMeta` metaclass
    removal from `generated/src/attio/utils/enums.py` and
    `generated/src/attio/utils/__init__.py`). Drop `--no-fetch` to also
-   adopt a freshly fetched spec. Note the Dagger path exports only `generated/`
-   back to the host — docs/, README, pyproject and USAGE refresh on the
-   host-CLI path (the default) — and it logs that when chosen.
+   adopt a freshly fetched spec.
+
+   What generation writes: Speakeasy writes only `generated/` (SDK source,
+   `generated/docs/`, `generated/USAGE.md`, `generated/.speakeasy/gen.lock`)
+   and `.speakeasy/` (the `python.version` bump in `gen.yaml`). It never
+   writes the root `README.md` or `pyproject.toml`, because
+   `generated/.genignore` blocks the copies it would emit, so both are
+   hand-maintained. `ci/post_generate_patch.py` re-applies only the CLI
+   entry points, the README CLI section, and the `pyproject.toml` `version`
+   (copied from `generated/src/attio/_version.py`). The Dagger path exports
+   only `generated/` back to the host, so it also drops the `.speakeasy/`
+   updates; it logs that when chosen. The host-CLI path (the default) keeps
+   them.
 
 6. **Review generated changes**:
    - Check `git diff` for new/modified SDK methods in `generated/src/attio/`
@@ -138,15 +149,22 @@ never set it in CI or automation, and fix the overlay afterwards.
    - Check for any type errors: `uv run mypy generated/src/ attio_cli/`
    - Run tests: `uv run pytest -q`
    - Ensure the package still builds: `uv build`
-   - Confirm `pyproject.toml`'s dev group still contains `dagger-io`,
-     `pytest`, `pytest-asyncio` — speakeasy rewrites `pyproject.toml` from
-     `.speakeasy/gen.yaml`, and they only survive because they are declared
-     in `gen.yaml` `python.additionalDependencies.dev`. If they vanish,
-     restore them and run `uv lock && uv sync`.
+   - Edit dependencies in the root `pyproject.toml` by hand; Speakeasy never
+     rewrites it. Keep `gen.yaml` `python.additionalDependencies.dev` matching
+     its dev group (`dagger-io`, `pytest`, `pytest-asyncio`, ...): that block
+     only feeds the `pyproject.toml` that `generated/.genignore` discards, but
+     matching it stops the two from drifting. Run `uv lock && uv sync` after
+     any edit.
 
 7. **Verify the version** in `.speakeasy/gen.yaml` (`python.version`) matches
-   `pyproject.toml` and `generated/src/attio/_version.py` (speakeasy auto-bumps the
-   patch version on each regeneration with changes).
+   `pyproject.toml` and `generated/src/attio/_version.py`.
+   - Speakeasy auto-bumps the patch version on each regeneration with changes,
+     in `gen.yaml`, `gen.lock` and `_version.py`.
+   - `ci/post_generate_patch.py` copies that version into `pyproject.toml`.
+   - Run `uv lock` so `uv.lock` follows. `ci/regenerate_host.sh` and the RWX
+     workflows already do this.
+   - `tests/test_post_generate_patch.py::test_committed_versions_are_in_lockstep`
+     fails on drift.
 
 ### RWX CLI Authentication
 

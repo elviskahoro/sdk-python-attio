@@ -66,8 +66,10 @@ This applies the overlay to the spec and regenerates all SDK code under `generat
 that `overlay.yaml` cannot express, e.g. the GET /v2/self `active` value
 discriminators on `AttioCom` and `ResponseBody` in
 `generated/src/attio/models/get_v2_selfop.py`, the `scripts/publish.sh` and
-`scripts/release.sh` wrappers, the standalone CLI entry point/docs in
-`pyproject.toml` and `README.md`, the SDKHooks `init_hooks` wiring and
+`scripts/release.sh` wrappers, the `attio`/`gtm-attio` CLI entry points, CLI
+docs and synced `version` in `pyproject.toml` and `README.md` (Speakeasy never
+writes those root files; `generated/.genignore` blocks its copies), the SDKHooks
+`init_hooks` wiring and
 hooks-package re-export in `generated/src/attio/_hooks/sdkhooks.py` and
 `generated/src/attio/_hooks/__init__.py`, the 0.26.1 model rename aliases
 in `generated/src/attio/models/__init__.py` and the renamed activity/list
@@ -91,7 +93,7 @@ Check what changed in the generated code:
 
 ```bash
 git diff generated/src/attio/
-git diff docs/
+git diff generated/docs/
 ```
 
 Look for:
@@ -107,7 +109,7 @@ uv run pytest
 
 ### 7. Update version if needed
 
-The SDK version is in `.speakeasy/gen.yaml` under `python.version`. Speakeasy may bump this automatically, or you can set it manually.
+The SDK version is in `.speakeasy/gen.yaml` under `python.version`. Speakeasy bumps it automatically, along with `generated/src/attio/_version.py`. You can also set it with `--set-version`. `ci/post_generate_patch.py` copies the version into the root `pyproject.toml`; run `uv lock` afterwards so `uv.lock` follows.
 
 ### 8. Clean up old spec files
 
