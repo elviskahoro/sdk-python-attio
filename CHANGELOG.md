@@ -74,6 +74,16 @@ Regenerates the SDK (0.27.4) against the unchanged spec — the overlay moves
 to Overlay Specification 1.1.0, formalizing the RFC 9535 JSONPath migration;
 no model or API-surface changes.
 
+Regenerates the SDK (0.28.0) against the 2026-10-30 spec
+(`api-202610260512.json` → `api-202610300025.json`): the
+`POST /v2/meetings/{meeting_id}/call_recordings` request `data` now
+requires `transcript` (added to `data.required`, with
+`transcript.minItems: 1`). **Breaking changes** (the 0.x minor bump is the
+signal; 0.26.2–0.27.5 were never published, so 0.28.0 is the first release
+after 0.26.1) — the published 0.26.1 wheel generated `transcript` as
+`Optional[...] = None`, so payloads omitting it now fail pydantic
+validation client-side before any HTTP call.
+
 ## 0.25.1 — 2026-10-03
 
 Adopts Attio's 2026-10-03 OpenAPI spec and repairs the Speakeasy overlay.

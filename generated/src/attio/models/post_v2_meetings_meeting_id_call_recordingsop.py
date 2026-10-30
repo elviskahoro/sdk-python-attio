@@ -63,6 +63,8 @@ class PostV2MeetingsMeetingIDCallRecordingsTranscript(BaseModel):
 
 
 class PostV2MeetingsMeetingIDCallRecordingsDataRequestTypedDict(TypedDict):
+    transcript: List[PostV2MeetingsMeetingIDCallRecordingsTranscriptTypedDict]
+    r"""The call recording's transcript. It must contain at least one transcript segment."""
     video_url: NotRequired[str]
     r"""A publicly accessible URL to a video file of the call recording. Attio will download the video from this URL asynchronously.
 
@@ -74,16 +76,12 @@ class PostV2MeetingsMeetingIDCallRecordingsDataRequestTypedDict(TypedDict):
     - **File size:** The file must not exceed 1GB in size.
     - **Accessibility:** For the request to be accepted, the URL must be publicly accessible. Attio will make a `HEAD` request to the URL to verify its accessibility and retrieve file metadata. The response to this request must include a `Content-Length` header.
     """
-    transcript: NotRequired[
-        List[PostV2MeetingsMeetingIDCallRecordingsTranscriptTypedDict]
-    ]
-    r"""The call recording's transcript.
-
-    This field is technically optional for backwards compatibility, but you should always provide it — a call recording created without a transcript will be missing summaries and other transcript-derived features. This field will become required in a future version of this endpoint.
-    """
 
 
 class PostV2MeetingsMeetingIDCallRecordingsDataRequest(BaseModel):
+    transcript: List[PostV2MeetingsMeetingIDCallRecordingsTranscript]
+    r"""The call recording's transcript. It must contain at least one transcript segment."""
+
     video_url: Optional[str] = None
     r"""A publicly accessible URL to a video file of the call recording. Attio will download the video from this URL asynchronously.
 
@@ -96,15 +94,9 @@ class PostV2MeetingsMeetingIDCallRecordingsDataRequest(BaseModel):
     - **Accessibility:** For the request to be accepted, the URL must be publicly accessible. Attio will make a `HEAD` request to the URL to verify its accessibility and retrieve file metadata. The response to this request must include a `Content-Length` header.
     """
 
-    transcript: Optional[List[PostV2MeetingsMeetingIDCallRecordingsTranscript]] = None
-    r"""The call recording's transcript.
-
-    This field is technically optional for backwards compatibility, but you should always provide it — a call recording created without a transcript will be missing summaries and other transcript-derived features. This field will become required in a future version of this endpoint.
-    """
-
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["video_url", "transcript"])
+        optional_fields = set(["video_url"])
         serialized = handler(self)
         m = {}
 

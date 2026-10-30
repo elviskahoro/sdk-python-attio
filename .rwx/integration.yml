@@ -53,9 +53,14 @@ tasks:
   - key: sync
     use: [code, uv]
     run: uv sync
+    # The project installs editable from generated/src, so the sources must be
+    # in the workspace or `import attio` fails on a fresh (uncached) sync.
     filter:
       - pyproject.toml
       - uv.lock
+      - README.md
+      - generated/src
+      - attio_cli
 
   # Uncached: the verdict depends on the live Attio API, not only on repo
   # content; a cache hit on a re-triggered run would replay the old verdict.
