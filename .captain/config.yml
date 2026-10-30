@@ -1,10 +1,10 @@
 test-suites:
   sdk-python-attio-pytest:
-    command: uv run pytest -q --report-log=tmp/log.json
+    command: uv run pytest -q -o junit_family=xunit1 --junit-xml=tmp/junit-sdk-python-attio-pytest.xml --report-log=tmp/log.json
     results:
       path: tmp/log.json
     output:
       print-summary: true
     retries:
       attempts: 2
-      command: uv run pytest -q --report-log=tmp/log.json {{ tests }}
+      command: uv run pytest -q -o junit_family=xunit1 --junit-xml=tmp/junit-sdk-python-attio-pytest-retry.xml --report-log=tmp/log.json {{ tests }}

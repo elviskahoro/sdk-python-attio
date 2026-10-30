@@ -180,6 +180,20 @@ rwx logs <task-id> --output /tmp/rwxlogs  # task ids are listed by `rwx results`
   `.rwx/integration.yml` instead reads the `sdk-python-attio-it` vault (a
   throwaway sandbox key, approvals off, unlocked), so PR runs need no approver.
 
+### Trunk Flaky Tests uploads (`.rwx/pytest.yml`)
+
+`pytest-run` records captain's exit code, `trunk-upload` uploads
+`tmp/junit-*.xml` (including failed runs) and `pytest` re-fails on the saved
+code. Uploads run on main, merge-queue, manual and `elviskahoro` PRs only.
+
+- `TRUNK_API_TOKEN` is the org-wide Trunk token, so it lives alone in the
+  `sdk-python-attio-trunk` vault (grants `:**`, `:*/*`, `:main`; approvals
+  off; "Allow public repositories" on). Never add another secret to it.
+- The org slug and collection ID in `trunk-upload` mirror
+  sdk-python-linear; confirm them for this repo's Trunk collection.
+- The trunk launcher sha256 is the only pin (latest-only URL); on mismatch,
+  re-hash deliberately.
+
 ### Regenerating on RWX (`.rwx/regenerate.yml`)
 
 Use this when you have no Speakeasy CLI or container runtime locally. It
