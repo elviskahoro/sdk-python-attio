@@ -47,7 +47,7 @@
 #         type: string
 #         enum: ["<every spec value>", "validation_type"]
 #
-overlay: 1.0.0
+overlay: 1.1.0
 x-speakeasy-jsonpath: rfc9535
 info:
   title: Fix timestamp value field format to generate as string type

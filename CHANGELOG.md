@@ -62,6 +62,18 @@ that shipped in 0.26.1 are renamed or removed, without aliases:
   `type`/`value` pairs survive serialization (#106);
   `PostV2SQLBadRequestType` is new for 400 responses.
 
+Regenerates the SDK (0.27.1) against the unchanged spec — a content-empty
+bump confirming the committed tree already matched the new Speakeasy
+1.804.0 pin; no model or API-surface changes.
+
+Regenerates the SDK (0.27.3) against the unchanged spec — a content-empty
+bump landing with the overlay enum-drift guards (an intra-PR 0.27.2 bump
+was superseded before merge); no model or API-surface changes.
+
+Regenerates the SDK (0.27.4) against the unchanged spec — the overlay moves
+to Overlay Specification 1.1.0, formalizing the RFC 9535 JSONPath migration;
+no model or API-surface changes.
+
 ## 0.25.1 — 2026-10-03
 
 Adopts Attio's 2026-10-03 OpenAPI spec and repairs the Speakeasy overlay.
