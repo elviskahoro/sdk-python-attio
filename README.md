@@ -719,7 +719,7 @@ with SDK(oauth2=os.environ["ATTIO_API_KEY"]) as sdk:
 | `errors.ResponseValidationError` | The response didn't match the SDK's model. The Pydantic error is in `e.cause`. |
 | `httpx.RequestError` (`ConnectError`, `TimeoutException`) | Network failure. Not an `SDKError`. |
 
-The typed classes are long and specific to one endpoint. Catch `errors.SDKError` and branch on `e.status_code` (404, 409, 429, …), or on `e.data.code` when the class has one. Each method's reference page lists its error classes under "Errors", and the classes themselves live in [`generated/src/attio/errors/`](https://github.com/elviskahoro/sdk-python-attio/tree/main/generated/src/attio/errors).
+The typed classes are long and specific to one endpoint. Catch `errors.SDKError` and branch on `e.status_code` (404, 409, 429, …), or on `e.data.code` when the class has one. Each method's reference page lists its error classes under "Errors", but a few of those tables still use older class names. Before you catch a class, confirm it exists in `attio.errors`; the definitions live in [`generated/src/attio/errors/`](https://github.com/elviskahoro/sdk-python-attio/tree/main/generated/src/attio/errors).
 
 ## Server Selection
 
