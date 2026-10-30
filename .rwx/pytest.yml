@@ -160,6 +160,9 @@ tasks:
       if [ -n "${PR_NUMBER}" ]; then
         pr_args=(--pr-number "${PR_NUMBER}")
       fi
+      # The head commit's time, not upload time, so reruns of old commits
+      # keep Trunk's history ordered; fall back if the checkout lacks it.
+      commit_epoch="$(git show -s --format=%ct "${COMMIT_SHA}" 2>/dev/null || date +%s)"
       "${trunk_launcher}" flakytests upload \
         --junit-paths "tmp/junit-*.xml" \
         --allow-empty-test-results=false \
@@ -169,7 +172,7 @@ tasks:
         --repo-head-sha "${COMMIT_SHA}" \
         --repo-head-branch "${BRANCH}" \
         --repo-head-author-name rwx \
-        --repo-head-commit-epoch "$(date +%s)" \
+        --repo-head-commit-epoch "${commit_epoch}" \
         "${pr_args[@]}" < /dev/null 2>&1 | tee "${upload_log}"
       if grep -q "Error Encountered" "${upload_log}"; then
         echo "error: trunk upload reported an error" >&2
