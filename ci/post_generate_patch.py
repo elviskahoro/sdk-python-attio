@@ -152,7 +152,7 @@ exec bash "$(dirname "$0")/../{impl}" "$@"
 """
 
 # ``attio`` makes ``uvx attio`` work; ``gtm-attio`` is the original name and
-# the only command shipped before 0.28.2.
+# the only command shipped before 0.28.3.
 CLI_SCRIPT_LINES = (
     'attio = "attio_cli.main:main"',
     'gtm-attio = "attio_cli.main:main"',
@@ -175,7 +175,7 @@ uvx gtm-attio people upsert person@example.com \\
 | Form | Use it when |
 | --- | --- |
 | `uvx gtm-attio …` | Always. This name works on every published version. |
-| `uvx attio …` | You want the shorter name. Needs 0.28.2+; on older releases use `uvx --from attio gtm-attio …`. |
+| `uvx attio …` | You want the shorter name. Needs 0.28.3+; on older releases use `uvx --from attio gtm-attio …`. |
 | `uvx gtm-attio@0.28.0 …` | You need reproducible runs pinned to one version. |
 | `uvx gtm-attio@latest …` | You want a new release. Plain `uvx` reuses a version it already cached. |
 | `uvx --from git+https://github.com/elviskahoro/sdk-python-attio gtm-attio …` | You need unreleased code from `main`. |

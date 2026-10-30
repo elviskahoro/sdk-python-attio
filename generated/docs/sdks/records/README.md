@@ -110,9 +110,9 @@ Required scopes: `record_permission:read-write`, `object_configuration:read`.
 
 Supported token levels: `workspace`, `user`.
 
-### Example Usage
+### Example Usage: Attribute values
 
-<!-- UsageSnippet language="python" operationID="post_/v2/objects/{object}/records" method="post" path="/v2/objects/{object}/records" -->
+<!-- UsageSnippet language="python" operationID="post_/v2/objects/{object}/records" method="post" path="/v2/objects/{object}/records" example="Attribute values" -->
 ```python
 from attio import SDK
 
@@ -123,12 +123,53 @@ with SDK(
 
     res = sdk.records.post_v2_objects_object_records(object="people", data={
         "values": {
-            "41252299-f8c7-4b5e-99c9-4ff8321d2f96": [
-                "Text value",
+            "name": [
+                "Alice Adams",
             ],
-            "multiselect_attribute": [
-                "Select option 1",
-                "Select option 2",
+            "email_addresses": [
+                "alice@app.attio.com",
+            ],
+        },
+    })
+
+    # Handle response
+    print(res)
+
+```
+### Example Usage: Reference a record by a matching attribute
+
+<!-- UsageSnippet language="python" operationID="post_/v2/objects/{object}/records" method="post" path="/v2/objects/{object}/records" example="Reference a record by a matching attribute" -->
+```python
+from attio import SDK
+
+
+with SDK(
+    oauth2="<YOUR_OAUTH2_HERE>",
+) as sdk:
+
+    res = sdk.records.post_v2_objects_object_records(object="people", data={
+        "values": {
+            "name": [
+                "Alice Adams",
+            ],
+            "company": [
+                {
+                    "target_object": "companies",
+                    "target_record_reference": {
+                        "match": {
+                            "domains": [
+                                {
+                                    "domain": "app.attio.com",
+                                },
+                            ],
+                        },
+                        "if_unmatched": "create",
+                        "if_multiple_matches": "error",
+                        "create": {
+                            "name": "Attio",
+                        },
+                    },
+                },
             ],
         },
     })
@@ -152,13 +193,13 @@ with SDK(
 
 ### Errors
 
-| Error Type                                                    | Status Code                                                   | Content Type                                                  |
-| ------------------------------------------------------------- | ------------------------------------------------------------- | ------------------------------------------------------------- |
-| errors.PostV2ObjectsObjectRecordsInvalidRequestError          | 400                                                           | application/json                                              |
-| errors.PostV2ObjectsObjectRecordsUnauthorizedError            | 403                                                           | application/json                                              |
-| errors.PostV2ObjectsObjectRecordsNotFoundError                | 404                                                           | application/json                                              |
-| errors.PostV2ObjectsObjectRecordsConcurrentWriteConflictError | 409                                                           | application/json                                              |
-| errors.SDKDefaultError                                        | 4XX, 5XX                                                      | \*/\*                                                         |
+| Error Type                                                     | Status Code                                                    | Content Type                                                   |
+| -------------------------------------------------------------- | -------------------------------------------------------------- | -------------------------------------------------------------- |
+| errors.PostV2ObjectsObjectRecordsBadRequestInvalidRequestError | 400                                                            | application/json                                               |
+| errors.PostV2ObjectsObjectRecordsUnauthorizedError             | 403                                                            | application/json                                               |
+| errors.PostV2ObjectsObjectRecordsNotFoundError                 | 404                                                            | application/json                                               |
+| errors.PostV2ObjectsObjectRecordsConflictInvalidRequestError   | 409                                                            | application/json                                               |
+| errors.SDKDefaultError                                         | 4XX, 5XX                                                       | \*/\*                                                          |
 
 ## put_v2_objects_object_records
 
@@ -170,9 +211,9 @@ Required scopes: `record_permission:read-write`, `object_configuration:read`.
 
 Supported token levels: `workspace`, `user`.
 
-### Example Usage
+### Example Usage: Attribute values
 
-<!-- UsageSnippet language="python" operationID="put_/v2/objects/{object}/records" method="put" path="/v2/objects/{object}/records" -->
+<!-- UsageSnippet language="python" operationID="put_/v2/objects/{object}/records" method="put" path="/v2/objects/{object}/records" example="Attribute values" -->
 ```python
 from attio import SDK
 
@@ -183,12 +224,53 @@ with SDK(
 
     res = sdk.records.put_v2_objects_object_records(object="people", matching_attribute="41252299-f8c7-4b5e-99c9-4ff8321d2f96", data={
         "values": {
-            "41252299-f8c7-4b5e-99c9-4ff8321d2f96": [
-                "Text value",
+            "name": [
+                "Alice Adams",
             ],
-            "multiselect_attribute": [
-                "Select option 1",
-                "Select option 2",
+            "email_addresses": [
+                "alice@app.attio.com",
+            ],
+        },
+    })
+
+    # Handle response
+    print(res)
+
+```
+### Example Usage: Reference a record by a matching attribute
+
+<!-- UsageSnippet language="python" operationID="put_/v2/objects/{object}/records" method="put" path="/v2/objects/{object}/records" example="Reference a record by a matching attribute" -->
+```python
+from attio import SDK
+
+
+with SDK(
+    oauth2="<YOUR_OAUTH2_HERE>",
+) as sdk:
+
+    res = sdk.records.put_v2_objects_object_records(object="people", matching_attribute="41252299-f8c7-4b5e-99c9-4ff8321d2f96", data={
+        "values": {
+            "name": [
+                "Alice Adams",
+            ],
+            "company": [
+                {
+                    "target_object": "companies",
+                    "target_record_reference": {
+                        "match": {
+                            "domains": [
+                                {
+                                    "domain": "app.attio.com",
+                                },
+                            ],
+                        },
+                        "if_unmatched": "create",
+                        "if_multiple_matches": "error",
+                        "create": {
+                            "name": "Attio",
+                        },
+                    },
+                },
             ],
         },
     })
@@ -213,13 +295,13 @@ with SDK(
 
 ### Errors
 
-| Error Type                                                   | Status Code                                                  | Content Type                                                 |
-| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| errors.PutV2ObjectsObjectRecordsInvalidRequestError          | 400                                                          | application/json                                             |
-| errors.PutV2ObjectsObjectRecordsUnauthorizedError            | 403                                                          | application/json                                             |
-| errors.PutV2ObjectsObjectRecordsNotFoundError                | 404                                                          | application/json                                             |
-| errors.PutV2ObjectsObjectRecordsConcurrentWriteConflictError | 409                                                          | application/json                                             |
-| errors.SDKDefaultError                                       | 4XX, 5XX                                                     | \*/\*                                                        |
+| Error Type                                                    | Status Code                                                   | Content Type                                                  |
+| ------------------------------------------------------------- | ------------------------------------------------------------- | ------------------------------------------------------------- |
+| errors.PutV2ObjectsObjectRecordsBadRequestInvalidRequestError | 400                                                           | application/json                                              |
+| errors.PutV2ObjectsObjectRecordsUnauthorizedError             | 403                                                           | application/json                                              |
+| errors.PutV2ObjectsObjectRecordsNotFoundError                 | 404                                                           | application/json                                              |
+| errors.PutV2ObjectsObjectRecordsConflictInvalidRequestError   | 409                                                           | application/json                                              |
+| errors.SDKDefaultError                                        | 4XX, 5XX                                                      | \*/\*                                                         |
 
 ## get_v2_objects_object_records_record_id_
 
@@ -274,9 +356,9 @@ Required scopes: `record_permission:read-write`, `object_configuration:read`.
 
 Supported token levels: `workspace`, `user`.
 
-### Example Usage
+### Example Usage: Attribute values
 
-<!-- UsageSnippet language="python" operationID="patch_/v2/objects/{object}/records/{record_id}" method="patch" path="/v2/objects/{object}/records/{record_id}" -->
+<!-- UsageSnippet language="python" operationID="patch_/v2/objects/{object}/records/{record_id}" method="patch" path="/v2/objects/{object}/records/{record_id}" example="Attribute values" -->
 ```python
 from attio import SDK
 
@@ -287,12 +369,53 @@ with SDK(
 
     res = sdk.records.patch_v2_objects_object_records_record_id_(object="people", record_id="891dcbfc-9141-415d-9b2a-2238a6cc012d", data={
         "values": {
-            "41252299-f8c7-4b5e-99c9-4ff8321d2f96": [
-                "Text value",
+            "name": [
+                "Alice Adams",
             ],
-            "multiselect_attribute": [
-                "Select option 1",
-                "Select option 2",
+            "email_addresses": [
+                "alice@app.attio.com",
+            ],
+        },
+    })
+
+    # Handle response
+    print(res)
+
+```
+### Example Usage: Reference a record by a matching attribute
+
+<!-- UsageSnippet language="python" operationID="patch_/v2/objects/{object}/records/{record_id}" method="patch" path="/v2/objects/{object}/records/{record_id}" example="Reference a record by a matching attribute" -->
+```python
+from attio import SDK
+
+
+with SDK(
+    oauth2="<YOUR_OAUTH2_HERE>",
+) as sdk:
+
+    res = sdk.records.patch_v2_objects_object_records_record_id_(object="people", record_id="891dcbfc-9141-415d-9b2a-2238a6cc012d", data={
+        "values": {
+            "name": [
+                "Alice Adams",
+            ],
+            "company": [
+                {
+                    "target_object": "companies",
+                    "target_record_reference": {
+                        "match": {
+                            "domains": [
+                                {
+                                    "domain": "app.attio.com",
+                                },
+                            ],
+                        },
+                        "if_unmatched": "create",
+                        "if_multiple_matches": "error",
+                        "create": {
+                            "name": "Attio",
+                        },
+                    },
+                },
             ],
         },
     })
@@ -317,13 +440,13 @@ with SDK(
 
 ### Errors
 
-| Error Type                                                             | Status Code                                                            | Content Type                                                           |
-| ---------------------------------------------------------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| errors.PatchV2ObjectsObjectRecordsRecordIDInvalidRequestError          | 400                                                                    | application/json                                                       |
-| errors.PatchV2ObjectsObjectRecordsRecordIDUnauthorizedError            | 403                                                                    | application/json                                                       |
-| errors.PatchV2ObjectsObjectRecordsRecordIDNotFoundError                | 404                                                                    | application/json                                                       |
-| errors.PatchV2ObjectsObjectRecordsRecordIDConcurrentWriteConflictError | 409                                                                    | application/json                                                       |
-| errors.SDKDefaultError                                                 | 4XX, 5XX                                                               | \*/\*                                                                  |
+| Error Type                                                              | Status Code                                                             | Content Type                                                            |
+| ----------------------------------------------------------------------- | ----------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| errors.PatchV2ObjectsObjectRecordsRecordIDBadRequestInvalidRequestError | 400                                                                     | application/json                                                        |
+| errors.PatchV2ObjectsObjectRecordsRecordIDUnauthorizedError             | 403                                                                     | application/json                                                        |
+| errors.PatchV2ObjectsObjectRecordsRecordIDNotFoundError                 | 404                                                                     | application/json                                                        |
+| errors.PatchV2ObjectsObjectRecordsRecordIDConflictInvalidRequestError   | 409                                                                     | application/json                                                        |
+| errors.SDKDefaultError                                                  | 4XX, 5XX                                                                | \*/\*                                                                   |
 
 ## put_v2_objects_object_records_record_id_
 
@@ -333,9 +456,9 @@ Required scopes: `record_permission:read-write`, `object_configuration:read`.
 
 Supported token levels: `workspace`, `user`.
 
-### Example Usage
+### Example Usage: Attribute values
 
-<!-- UsageSnippet language="python" operationID="put_/v2/objects/{object}/records/{record_id}" method="put" path="/v2/objects/{object}/records/{record_id}" -->
+<!-- UsageSnippet language="python" operationID="put_/v2/objects/{object}/records/{record_id}" method="put" path="/v2/objects/{object}/records/{record_id}" example="Attribute values" -->
 ```python
 from attio import SDK
 
@@ -346,12 +469,53 @@ with SDK(
 
     res = sdk.records.put_v2_objects_object_records_record_id_(object="people", record_id="891dcbfc-9141-415d-9b2a-2238a6cc012d", data={
         "values": {
-            "41252299-f8c7-4b5e-99c9-4ff8321d2f96": [
-                "Text value",
+            "name": [
+                "Alice Adams",
             ],
-            "multiselect_attribute": [
-                "Select option 1",
-                "Select option 2",
+            "email_addresses": [
+                "alice@app.attio.com",
+            ],
+        },
+    })
+
+    # Handle response
+    print(res)
+
+```
+### Example Usage: Reference a record by a matching attribute
+
+<!-- UsageSnippet language="python" operationID="put_/v2/objects/{object}/records/{record_id}" method="put" path="/v2/objects/{object}/records/{record_id}" example="Reference a record by a matching attribute" -->
+```python
+from attio import SDK
+
+
+with SDK(
+    oauth2="<YOUR_OAUTH2_HERE>",
+) as sdk:
+
+    res = sdk.records.put_v2_objects_object_records_record_id_(object="people", record_id="891dcbfc-9141-415d-9b2a-2238a6cc012d", data={
+        "values": {
+            "name": [
+                "Alice Adams",
+            ],
+            "company": [
+                {
+                    "target_object": "companies",
+                    "target_record_reference": {
+                        "match": {
+                            "domains": [
+                                {
+                                    "domain": "app.attio.com",
+                                },
+                            ],
+                        },
+                        "if_unmatched": "create",
+                        "if_multiple_matches": "error",
+                        "create": {
+                            "name": "Attio",
+                        },
+                    },
+                },
             ],
         },
     })
@@ -376,13 +540,13 @@ with SDK(
 
 ### Errors
 
-| Error Type                                                           | Status Code                                                          | Content Type                                                         |
-| -------------------------------------------------------------------- | -------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| errors.PutV2ObjectsObjectRecordsRecordIDInvalidRequestError          | 400                                                                  | application/json                                                     |
-| errors.PutV2ObjectsObjectRecordsRecordIDUnauthorizedError            | 403                                                                  | application/json                                                     |
-| errors.PutV2ObjectsObjectRecordsRecordIDNotFoundError                | 404                                                                  | application/json                                                     |
-| errors.PutV2ObjectsObjectRecordsRecordIDConcurrentWriteConflictError | 409                                                                  | application/json                                                     |
-| errors.SDKDefaultError                                               | 4XX, 5XX                                                             | \*/\*                                                                |
+| Error Type                                                            | Status Code                                                           | Content Type                                                          |
+| --------------------------------------------------------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| errors.PutV2ObjectsObjectRecordsRecordIDBadRequestInvalidRequestError | 400                                                                   | application/json                                                      |
+| errors.PutV2ObjectsObjectRecordsRecordIDUnauthorizedError             | 403                                                                   | application/json                                                      |
+| errors.PutV2ObjectsObjectRecordsRecordIDNotFoundError                 | 404                                                                   | application/json                                                      |
+| errors.PutV2ObjectsObjectRecordsRecordIDConflictInvalidRequestError   | 409                                                                   | application/json                                                      |
+| errors.SDKDefaultError                                                | 4XX, 5XX                                                              | \*/\*                                                                 |
 
 ## delete_v2_objects_object_records_record_id_
 

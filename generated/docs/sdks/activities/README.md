@@ -2,6 +2,8 @@
 
 ## Overview
 
+Activities model event-based data that can be logged against a record, for example a phone call. Each activity extends a schema, which supplies the attributes that every activity of that kind shares.
+
 ### Available Operations
 
 * [get_v2_activities](#get_v2_activities) - List activities
@@ -14,7 +16,7 @@
 
 Lists all system-defined and user-defined activities in your workspace.
 
-This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
 Required scopes: `activity_configuration:read`.
 
@@ -60,7 +62,7 @@ with SDK(
 
 Creates a new custom activity in your workspace. Your workspace must have the custom activities billing feature enabled. Public apps may instead create activities with the integration activities billing feature.
 
-This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
 Required scopes: `activity_configuration:read-write`.
 
@@ -112,7 +114,7 @@ with SDK(
 
 Gets a single activity by its `activity_id` or slug.
 
-This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
 Required scopes: `activity_configuration:read`.
 
@@ -158,7 +160,7 @@ with SDK(
 
 Updates a single activity by its `activity_id` or slug. The schema an activity extends is fixed after creation, so `extends` cannot be changed.
 
-This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
 Required scopes: `activity_configuration:read-write`.
 
@@ -214,7 +216,7 @@ Deletes a single activity by its `activity_id` or slug, along with all of its re
 
 This endpoint should be used with caution as it has the potential to remove a large amount of potentially valuable data.
 
-This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
 Required scopes: `activity_configuration:read-write`, `activity_record:read-write`.
 

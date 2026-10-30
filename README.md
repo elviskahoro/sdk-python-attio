@@ -14,7 +14,7 @@ A type-safe Python client for the [Attio REST API](https://docs.attio.com/rest-a
 | Goal | Command |
 | --- | --- |
 | List the CLI commands (no install) | `uvx gtm-attio --help` |
-| The same, with the shorter name (0.28.2+) | `uvx attio --help` |
+| The same, with the shorter name (0.28.3+) | `uvx attio --help` |
 | Pin an exact version | `uvx gtm-attio@0.28.0 --help` |
 | Force the newest release | `uvx gtm-attio@latest --help` |
 | Run unreleased code from `main` | `uvx --from git+https://github.com/elviskahoro/sdk-python-attio gtm-attio --help` |
@@ -58,7 +58,7 @@ Rules of thumb:
 uv add attio        # or: pip install attio / poetry add attio
 ```
 
-Install `attio` *or* `gtm-attio`, not both. They are the same code under two distribution names, and each installs the `attio` import package and the `attio` and `gtm-attio` commands. Releases before 0.28.2 install only `gtm-attio`.
+Install `attio` *or* `gtm-attio`, not both. They are the same code under two distribution names, and each installs the `attio` import package and the `attio` and `gtm-attio` commands. Releases before 0.28.3 install only `gtm-attio`.
 
 Minimum Python: once a Python version reaches its [end of life](https://devguide.python.org/versions/), the SDK keeps supporting it for 3 more months and then raises the minimum.
 
@@ -99,7 +99,7 @@ uvx gtm-attio people upsert person@example.com \
 | Form | Use it when |
 | --- | --- |
 | `uvx gtm-attio …` | Always. This name works on every published version. |
-| `uvx attio …` | You want the shorter name. Needs 0.28.2+; on older releases use `uvx --from attio gtm-attio …`. |
+| `uvx attio …` | You want the shorter name. Needs 0.28.3+; on older releases use `uvx --from attio gtm-attio …`. |
 | `uvx gtm-attio@0.28.0 …` | You need reproducible runs pinned to one version. |
 | `uvx gtm-attio@latest …` | You want a new release. Plain `uvx` reuses a version it already cached. |
 | `uvx --from git+https://github.com/elviskahoro/sdk-python-attio gtm-attio …` | You need unreleased code from `main`. |
@@ -719,7 +719,7 @@ with SDK(oauth2=os.environ["ATTIO_API_KEY"]) as sdk:
 | `errors.ResponseValidationError` | The response didn't match the SDK's model. The Pydantic error is in `e.cause`. |
 | `httpx.RequestError` (`ConnectError`, `TimeoutException`) | Network failure. Not an `SDKError`. |
 
-The typed classes are long and specific to one endpoint. Catch `errors.SDKError` and branch on `e.status_code` (404, 409, 429, …), or on `e.data.code` when the class has one. Each method's reference page lists its error classes under "Errors", but a few of those tables still use older class names. Before you catch a class, confirm it exists in `attio.errors`; the definitions live in [`generated/src/attio/errors/`](https://github.com/elviskahoro/sdk-python-attio/tree/main/generated/src/attio/errors).
+The typed classes are long and specific to one endpoint. Catch `errors.SDKError` and branch on `e.status_code` (404, 409, 429, …), or on `e.data.code` when the class has one. Each method's reference page lists its error classes under "Errors", and the classes themselves live in [`generated/src/attio/errors/`](https://github.com/elviskahoro/sdk-python-attio/tree/main/generated/src/attio/errors).
 
 ## Server Selection
 
@@ -814,7 +814,7 @@ The debug logger records each request's method, URL, **headers** and body, and e
 
 ### `uvx attio`: "An executable named `attio` is not provided by package `attio`"
 
-The resolved release predates 0.28.2, so it ships only `gtm-attio`. Run `uvx gtm-attio …`, `uvx attio@latest …` or `uvx --from attio gtm-attio …`.
+The resolved release predates 0.28.3, so it ships only `gtm-attio`. Run `uvx gtm-attio …`, `uvx attio@latest …` or `uvx --from attio gtm-attio …`.
 
 ### `uvx: command not found`
 

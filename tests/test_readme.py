@@ -63,6 +63,17 @@ def test_error_classes_in_readme_exist() -> None:
     assert not missing, f"README references error classes that do not exist: {missing}"
 
 
+def test_generated_docs_error_classes_exist() -> None:
+    # A frozen docs tree (e.g. an over-broad generated/.genignore entry) shows
+    # up as error tables naming classes the regenerated SDK no longer has.
+    names: set[str] = set()
+    for page in (REPO_ROOT / "generated" / "docs" / "sdks").glob("*/README.md"):
+        names |= set(re.findall(r"\| errors\.(\w+)\s", page.read_text(encoding="utf-8")))
+    assert names
+    missing = sorted(name for name in names if not hasattr(errors, name))
+    assert not missing, f"generated docs name error classes that do not exist: {missing}"
+
+
 @pytest.mark.parametrize("command", _cli_examples())
 def test_cli_examples_parse(command: str) -> None:
     argv = shlex.split(command)[2:]

@@ -2,6 +2,8 @@
 
 ## Overview
 
+Activity records are individual instances of activities, for example one specific phone call.
+
 ### Available Operations
 
 * [post_v2_activities_activity_records_query](#post_v2_activities_activity_records_query) - List activity records
@@ -16,7 +18,7 @@
 
 Lists activity records, with the option to filter and sort results.
 
-This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
 Required scopes: `activity_record:read`, `activity_configuration:read`, `object_configuration:read`, `record_permission:read`.
 
@@ -74,15 +76,15 @@ with SDK(
 
 Creates a new activity record, for example one specific phone call.
 
-This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
 Required scopes: `activity_record:read-write`, `activity_configuration:read`, `object_configuration:read`, `record_permission:read`.
 
 Supported token levels: `workspace`, `user`.
 
-### Example Usage
+### Example Usage: Attribute values
 
-<!-- UsageSnippet language="python" operationID="post_/v2/activities/{activity}/records" method="post" path="/v2/activities/{activity}/records" -->
+<!-- UsageSnippet language="python" operationID="post_/v2/activities/{activity}/records" method="post" path="/v2/activities/{activity}/records" example="Attribute values" -->
 ```python
 from attio import SDK
 
@@ -93,12 +95,47 @@ with SDK(
 
     res = sdk.activity_records.post_v2_activities_activity_records(activity="phone_calls", data={
         "values": {
-            "41252299-f8c7-4b5e-99c9-4ff8321d2f96": [
-                "Text value",
+            "direction": [
+                "Outbound",
             ],
-            "multiselect_attribute": [
-                "Select option 1",
-                "Select option 2",
+        },
+    })
+
+    # Handle response
+    print(res)
+
+```
+### Example Usage: Reference a record by a matching attribute
+
+<!-- UsageSnippet language="python" operationID="post_/v2/activities/{activity}/records" method="post" path="/v2/activities/{activity}/records" example="Reference a record by a matching attribute" -->
+```python
+from attio import SDK
+
+
+with SDK(
+    oauth2="<YOUR_OAUTH2_HERE>",
+) as sdk:
+
+    res = sdk.activity_records.post_v2_activities_activity_records(activity="phone_calls", data={
+        "values": {
+            "direction": [
+                "Outbound",
+            ],
+            "participant": [
+                {
+                    "target_object": "people",
+                    "target_record_reference": {
+                        "match": {
+                            "email_addresses": [
+                                {
+                                    "email_address": "alice@app.attio.com",
+                                },
+                            ],
+                        },
+                        "if_unmatched": "ignore",
+                        "if_multiple_matches": "match_all",
+                    },
+                },
             ],
         },
     })
@@ -122,29 +159,29 @@ with SDK(
 
 ### Errors
 
-| Error Type                                                         | Status Code                                                        | Content Type                                                       |
-| ------------------------------------------------------------------ | ------------------------------------------------------------------ | ------------------------------------------------------------------ |
-| errors.PostV2ActivitiesActivityRecordsInvalidRequestError          | 400                                                                | application/json                                                   |
-| errors.PostV2ActivitiesActivityRecordsAuthError                    | 403                                                                | application/json                                                   |
-| errors.PostV2ActivitiesActivityRecordsNotFoundError                | 404                                                                | application/json                                                   |
-| errors.PostV2ActivitiesActivityRecordsConcurrentWriteConflictError | 409                                                                | application/json                                                   |
-| errors.SDKDefaultError                                             | 4XX, 5XX                                                           | \*/\*                                                              |
+| Error Type                                                          | Status Code                                                         | Content Type                                                        |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| errors.PostV2ActivitiesActivityRecordsBadRequestInvalidRequestError | 400                                                                 | application/json                                                    |
+| errors.PostV2ActivitiesActivityRecordsAuthError                     | 403                                                                 | application/json                                                    |
+| errors.PostV2ActivitiesActivityRecordsNotFoundError                 | 404                                                                 | application/json                                                    |
+| errors.PostV2ActivitiesActivityRecordsConflictInvalidRequestError   | 409                                                                 | application/json                                                    |
+| errors.SDKDefaultError                                              | 4XX, 5XX                                                            | \*/\*                                                               |
 
 ## put_v2_activities_activity_records
 
-Use this endpoint to create or update an activity record. A matching attribute is used to search for existing activity records. If a record is found with the same value for the matching attribute, that record will be updated. If no record with the same value for the matching attribute is found, a new record will be created instead. If you would like to avoid matching, please use the create activity record endpoint.
+Use this endpoint to create or update an activity record. A matching attribute is used to search for existing activity records. If a record is found with the same value for the matching attribute, that record will be updated. If no record with the same value for the matching attribute is found, a new record will be created instead. If you would like to avoid matching, please use the [Create activity record endpoint](/rest-api/endpoint-reference/activity-records/create-an-activity-record).
 
 If the matching attribute is a multiselect attribute, new values will be added and existing values will not be deleted. For any other multiselect attribute, all values will be either created or deleted as necessary to match the list of supplied values.
 
-This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
 Required scopes: `activity_record:read-write`, `activity_configuration:read`, `object_configuration:read`, `record_permission:read`.
 
 Supported token levels: `workspace`, `user`.
 
-### Example Usage
+### Example Usage: Attribute values
 
-<!-- UsageSnippet language="python" operationID="put_/v2/activities/{activity}/records" method="put" path="/v2/activities/{activity}/records" -->
+<!-- UsageSnippet language="python" operationID="put_/v2/activities/{activity}/records" method="put" path="/v2/activities/{activity}/records" example="Attribute values" -->
 ```python
 from attio import SDK
 
@@ -155,12 +192,47 @@ with SDK(
 
     res = sdk.activity_records.put_v2_activities_activity_records(activity="phone_calls", matching_attribute="41252299-f8c7-4b5e-99c9-4ff8321d2f96", data={
         "values": {
-            "41252299-f8c7-4b5e-99c9-4ff8321d2f96": [
-                "Text value",
+            "direction": [
+                "Outbound",
             ],
-            "multiselect_attribute": [
-                "Select option 1",
-                "Select option 2",
+        },
+    })
+
+    # Handle response
+    print(res)
+
+```
+### Example Usage: Reference a record by a matching attribute
+
+<!-- UsageSnippet language="python" operationID="put_/v2/activities/{activity}/records" method="put" path="/v2/activities/{activity}/records" example="Reference a record by a matching attribute" -->
+```python
+from attio import SDK
+
+
+with SDK(
+    oauth2="<YOUR_OAUTH2_HERE>",
+) as sdk:
+
+    res = sdk.activity_records.put_v2_activities_activity_records(activity="phone_calls", matching_attribute="41252299-f8c7-4b5e-99c9-4ff8321d2f96", data={
+        "values": {
+            "direction": [
+                "Outbound",
+            ],
+            "participant": [
+                {
+                    "target_object": "people",
+                    "target_record_reference": {
+                        "match": {
+                            "email_addresses": [
+                                {
+                                    "email_address": "alice@app.attio.com",
+                                },
+                            ],
+                        },
+                        "if_unmatched": "ignore",
+                        "if_multiple_matches": "match_all",
+                    },
+                },
             ],
         },
     })
@@ -185,19 +257,19 @@ with SDK(
 
 ### Errors
 
-| Error Type                                                        | Status Code                                                       | Content Type                                                      |
-| ----------------------------------------------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------- |
-| errors.PutV2ActivitiesActivityRecordsInvalidRequestError          | 400                                                               | application/json                                                  |
-| errors.PutV2ActivitiesActivityRecordsAuthError                    | 403                                                               | application/json                                                  |
-| errors.PutV2ActivitiesActivityRecordsNotFoundError                | 404                                                               | application/json                                                  |
-| errors.PutV2ActivitiesActivityRecordsConcurrentWriteConflictError | 409                                                               | application/json                                                  |
-| errors.SDKDefaultError                                            | 4XX, 5XX                                                          | \*/\*                                                             |
+| Error Type                                                         | Status Code                                                        | Content Type                                                       |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------ | ------------------------------------------------------------------ |
+| errors.PutV2ActivitiesActivityRecordsBadRequestInvalidRequestError | 400                                                                | application/json                                                   |
+| errors.PutV2ActivitiesActivityRecordsAuthError                     | 403                                                                | application/json                                                   |
+| errors.PutV2ActivitiesActivityRecordsNotFoundError                 | 404                                                                | application/json                                                   |
+| errors.PutV2ActivitiesActivityRecordsConflictInvalidRequestError   | 409                                                                | application/json                                                   |
+| errors.SDKDefaultError                                             | 4XX, 5XX                                                           | \*/\*                                                              |
 
 ## get_v2_activities_activity_records_record_id_
 
 Gets a single activity record by its `record_id`.
 
-This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
 Required scopes: `activity_record:read`, `activity_configuration:read`, `object_configuration:read`, `record_permission:read`.
 
@@ -244,15 +316,15 @@ with SDK(
 
 Use this endpoint to update activity records by `record_id`. If the update payload includes multiselect attributes, the values supplied will be created and prepended to the list of values that already exist (if any). Use the `PUT` endpoint to overwrite or remove multiselect attribute values.
 
-This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
 Required scopes: `activity_record:read-write`, `activity_configuration:read`, `object_configuration:read`, `record_permission:read`.
 
 Supported token levels: `workspace`, `user`.
 
-### Example Usage
+### Example Usage: Attribute values
 
-<!-- UsageSnippet language="python" operationID="patch_/v2/activities/{activity}/records/{record_id}" method="patch" path="/v2/activities/{activity}/records/{record_id}" -->
+<!-- UsageSnippet language="python" operationID="patch_/v2/activities/{activity}/records/{record_id}" method="patch" path="/v2/activities/{activity}/records/{record_id}" example="Attribute values" -->
 ```python
 from attio import SDK
 
@@ -263,12 +335,47 @@ with SDK(
 
     res = sdk.activity_records.patch_v2_activities_activity_records_record_id_(activity="phone_calls", record_id="5f4f2d9c-2b3e-4a83-9c76-1de3a3f14f26", data={
         "values": {
-            "41252299-f8c7-4b5e-99c9-4ff8321d2f96": [
-                "Text value",
+            "direction": [
+                "Outbound",
             ],
-            "multiselect_attribute": [
-                "Select option 1",
-                "Select option 2",
+        },
+    })
+
+    # Handle response
+    print(res)
+
+```
+### Example Usage: Reference a record by a matching attribute
+
+<!-- UsageSnippet language="python" operationID="patch_/v2/activities/{activity}/records/{record_id}" method="patch" path="/v2/activities/{activity}/records/{record_id}" example="Reference a record by a matching attribute" -->
+```python
+from attio import SDK
+
+
+with SDK(
+    oauth2="<YOUR_OAUTH2_HERE>",
+) as sdk:
+
+    res = sdk.activity_records.patch_v2_activities_activity_records_record_id_(activity="phone_calls", record_id="5f4f2d9c-2b3e-4a83-9c76-1de3a3f14f26", data={
+        "values": {
+            "direction": [
+                "Outbound",
+            ],
+            "participant": [
+                {
+                    "target_object": "people",
+                    "target_record_reference": {
+                        "match": {
+                            "email_addresses": [
+                                {
+                                    "email_address": "alice@app.attio.com",
+                                },
+                            ],
+                        },
+                        "if_unmatched": "ignore",
+                        "if_multiple_matches": "match_all",
+                    },
+                },
             ],
         },
     })
@@ -293,27 +400,27 @@ with SDK(
 
 ### Errors
 
-| Error Type                                                                  | Status Code                                                                 | Content Type                                                                |
-| --------------------------------------------------------------------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| errors.PatchV2ActivitiesActivityRecordsRecordIDInvalidRequestError          | 400                                                                         | application/json                                                            |
-| errors.PatchV2ActivitiesActivityRecordsRecordIDUnauthorizedError            | 403                                                                         | application/json                                                            |
-| errors.PatchV2ActivitiesActivityRecordsRecordIDNotFoundError                | 404                                                                         | application/json                                                            |
-| errors.PatchV2ActivitiesActivityRecordsRecordIDConcurrentWriteConflictError | 409                                                                         | application/json                                                            |
-| errors.SDKDefaultError                                                      | 4XX, 5XX                                                                    | \*/\*                                                                       |
+| Error Type                                                                   | Status Code                                                                  | Content Type                                                                 |
+| ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| errors.PatchV2ActivitiesActivityRecordsRecordIDBadRequestInvalidRequestError | 400                                                                          | application/json                                                             |
+| errors.PatchV2ActivitiesActivityRecordsRecordIDUnauthorizedError             | 403                                                                          | application/json                                                             |
+| errors.PatchV2ActivitiesActivityRecordsRecordIDNotFoundError                 | 404                                                                          | application/json                                                             |
+| errors.PatchV2ActivitiesActivityRecordsRecordIDConflictInvalidRequestError   | 409                                                                          | application/json                                                             |
+| errors.SDKDefaultError                                                       | 4XX, 5XX                                                                     | \*/\*                                                                        |
 
 ## put_v2_activities_activity_records_record_id_
 
 Use this endpoint to update activity records by `record_id`. If the update payload includes multiselect attributes, the values supplied will overwrite/remove the list of values that already exist (if any). Use the `PATCH` endpoint to append multiselect values without removing those that already exist.
 
-This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
 Required scopes: `activity_record:read-write`, `activity_configuration:read`, `object_configuration:read`, `record_permission:read`.
 
 Supported token levels: `workspace`, `user`.
 
-### Example Usage
+### Example Usage: Attribute values
 
-<!-- UsageSnippet language="python" operationID="put_/v2/activities/{activity}/records/{record_id}" method="put" path="/v2/activities/{activity}/records/{record_id}" -->
+<!-- UsageSnippet language="python" operationID="put_/v2/activities/{activity}/records/{record_id}" method="put" path="/v2/activities/{activity}/records/{record_id}" example="Attribute values" -->
 ```python
 from attio import SDK
 
@@ -324,12 +431,47 @@ with SDK(
 
     res = sdk.activity_records.put_v2_activities_activity_records_record_id_(activity="phone_calls", record_id="5f4f2d9c-2b3e-4a83-9c76-1de3a3f14f26", data={
         "values": {
-            "41252299-f8c7-4b5e-99c9-4ff8321d2f96": [
-                "Text value",
+            "direction": [
+                "Outbound",
             ],
-            "multiselect_attribute": [
-                "Select option 1",
-                "Select option 2",
+        },
+    })
+
+    # Handle response
+    print(res)
+
+```
+### Example Usage: Reference a record by a matching attribute
+
+<!-- UsageSnippet language="python" operationID="put_/v2/activities/{activity}/records/{record_id}" method="put" path="/v2/activities/{activity}/records/{record_id}" example="Reference a record by a matching attribute" -->
+```python
+from attio import SDK
+
+
+with SDK(
+    oauth2="<YOUR_OAUTH2_HERE>",
+) as sdk:
+
+    res = sdk.activity_records.put_v2_activities_activity_records_record_id_(activity="phone_calls", record_id="5f4f2d9c-2b3e-4a83-9c76-1de3a3f14f26", data={
+        "values": {
+            "direction": [
+                "Outbound",
+            ],
+            "participant": [
+                {
+                    "target_object": "people",
+                    "target_record_reference": {
+                        "match": {
+                            "email_addresses": [
+                                {
+                                    "email_address": "alice@app.attio.com",
+                                },
+                            ],
+                        },
+                        "if_unmatched": "ignore",
+                        "if_multiple_matches": "match_all",
+                    },
+                },
             ],
         },
     })
@@ -354,19 +496,19 @@ with SDK(
 
 ### Errors
 
-| Error Type                                                                | Status Code                                                               | Content Type                                                              |
-| ------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| errors.PutV2ActivitiesActivityRecordsRecordIDInvalidRequestError          | 400                                                                       | application/json                                                          |
-| errors.PutV2ActivitiesActivityRecordsRecordIDUnauthorizedError            | 403                                                                       | application/json                                                          |
-| errors.PutV2ActivitiesActivityRecordsRecordIDNotFoundError                | 404                                                                       | application/json                                                          |
-| errors.PutV2ActivitiesActivityRecordsRecordIDConcurrentWriteConflictError | 409                                                                       | application/json                                                          |
-| errors.SDKDefaultError                                                    | 4XX, 5XX                                                                  | \*/\*                                                                     |
+| Error Type                                                                 | Status Code                                                                | Content Type                                                               |
+| -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| errors.PutV2ActivitiesActivityRecordsRecordIDBadRequestInvalidRequestError | 400                                                                        | application/json                                                           |
+| errors.PutV2ActivitiesActivityRecordsRecordIDUnauthorizedError             | 403                                                                        | application/json                                                           |
+| errors.PutV2ActivitiesActivityRecordsRecordIDNotFoundError                 | 404                                                                        | application/json                                                           |
+| errors.PutV2ActivitiesActivityRecordsRecordIDConflictInvalidRequestError   | 409                                                                        | application/json                                                           |
+| errors.SDKDefaultError                                                     | 4XX, 5XX                                                                   | \*/\*                                                                      |
 
 ## delete_v2_activities_activity_records_record_id_
 
 Deletes a single activity record by its `record_id`.
 
-This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
 Required scopes: `activity_record:read-write`, `activity_configuration:read`, `object_configuration:read`, `record_permission:read`.
 

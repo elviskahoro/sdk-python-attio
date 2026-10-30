@@ -84,8 +84,8 @@ after 0.26.1) — the published 0.26.1 wheel generated `transcript` as
 `Optional[...] = None`, so payloads omitting it now fail pydantic
 validation client-side before any HTTP call.
 
-Regenerates the SDK (0.28.2) against the unchanged spec, with no model or
-API-surface changes. An intra-PR 0.28.1 bump was never published.
+Regenerates the SDK (0.28.3) against the unchanged spec, with no model or
+API-surface changes. Intra-PR 0.28.1 and 0.28.2 bumps were never published.
 
 - **New `attio` command.** It runs the same CLI as `gtm-attio`, so
   `uvx attio …` works as well as `uvx gtm-attio …`. `usage:` and `--version`
@@ -103,6 +103,12 @@ API-surface changes. An intra-PR 0.28.1 bump was never published.
 - **Root `pyproject.toml` version synced.** `ci/post_generate_patch.py` now
   copies the version from the generated `_version.py`, because Speakeasy's
   patch bump never reaches the root file.
+- **Per-method docs regenerate again.** `generated/.genignore` listed a bare
+  `README.md` to keep Speakeasy from writing `generated/README.md`. In
+  gitignore syntax that matched every `generated/docs/sdks/*/README.md` too,
+  so the per-method pages had been frozen since the move to `generated/`, and
+  16 of their error-class names no longer existed. The entries are now
+  anchored with `/`.
 - **Repository URLs.** `homepage`/`repoURL` now point at
   `elviskahoro/sdk-python-attio`.
 

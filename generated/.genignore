@@ -12,11 +12,13 @@ scripts/
 
 # With the target rooted at generated/, Speakeasy also emits project scaffolding
 # next to src/. The real pyproject.toml, README.md, CONTRIBUTING.md and .gitignore
-# are hand-maintained at the repo root, so never write them here.
-pyproject.toml
-README.md
-CONTRIBUTING.md
-.gitignore
+# are hand-maintained at the repo root, so never write them here. The leading
+# `/` anchors each entry to generated/ itself: a bare `README.md` also matched
+# every generated/docs/sdks/*/README.md and froze the per-method docs.
+/pyproject.toml
+/README.md
+/CONTRIBUTING.md
+/.gitignore
 
 # Speakeasy's compile step runs mypy with cwd=generated/, where the root
 # pyproject.toml mypy config is not read; this file stands in for it.
