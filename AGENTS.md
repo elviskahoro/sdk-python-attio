@@ -187,12 +187,18 @@ rwx logs <task-id> --output /tmp/rwxlogs  # task ids are listed by `rwx results`
 code. Uploads run on main, merge-queue, manual and `elviskahoro` PRs only.
 
 - `TRUNK_API_TOKEN` is the org-wide Trunk token, so it lives alone in the
-  `sdk-python-attio-trunk` vault (grants `:**`, `:*/*`, `:main`; approvals
-  off; "Allow public repositories" on). Never add another secret to it.
-- The org slug and collection ID in `trunk-upload` mirror
-  sdk-python-linear; confirm them for this repo's Trunk collection.
-- The trunk launcher sha256 is the only pin (latest-only URL); on mismatch,
-  re-hash deliberately.
+  `sdk-python-attio-trunk` vault (grants `elviskahoro/sdk-python-attio:**`,
+  `*/*`, `:main`; approvals off; "Allow public repositories" on). Never add
+  another secret to it. The repository scope of the repo-less grants is
+  undocumented; `rwx vaults list` is the only way to confirm whether `*/*`
+  reaches other org repos.
+- The org slug (`sanhedrin`) mirrors sdk-python-linear; the collection ID
+  (`xw7SIPox`) is this repo's own Trunk collection, verified by the first
+  green upload.
+- The trunk launcher sha256 pins only the bash bootstrap;
+  `TRUNK_ANALYTICS_CLI_VERSION` in the task env pins the trunk-analytics-cli
+  binary that actually runs (no tarball digest is verified either way). Bump
+  both deliberately.
 
 ### Regenerating on RWX (`.rwx/regenerate.yml`)
 

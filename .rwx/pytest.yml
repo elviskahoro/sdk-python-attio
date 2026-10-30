@@ -11,7 +11,7 @@ on:
         repository: https://github.com/elviskahoro/sdk-python-attio.git
         event-type: pull_request
         pr-author: ${{ event.github.pull_request.pull_request.user.login }}
-        pr-number: ${{ event.github.pull_request.pull_request.number }}
+        pr-number: ${{ event.github.pull_request.number }}
       status-checks:
         name: pytest
     push:
@@ -100,17 +100,26 @@ tasks:
   # Uploads to Trunk Flaky Tests. TRUNK_API_TOKEN is the org-wide Trunk API
   # token (the Analytics CLI accepts no scoped key), so it lives in its own
   # `sdk-python-attio-trunk` vault; never add another secret to it. The `if:`
-  # is the only author gate (vault grants match repo + ref, never author) and
-  # is evaluated before `env:` resolves the secret, so skipped PRs (forks,
-  # other authors) never touch the vault. Vault grants must include
-  # `elviskahoro/sdk-python-attio:**`, `*/*` and `:main` (branch patterns do
-  # not cross `/`). cache: false + cache-key: excluded keep the token out of
-  # the content-cache fingerprint and make every run actually upload. RWX is
-  # not a CI provider Trunk auto-detects, so CUSTOM=true plus the
-  # job/branch/PR variables attribute the run. Captain's retry command writes
-  # a separate -retry.xml (see .captain/config.yml); the glob uploads both.
-  # The launcher checksum is the only pin (trunk.io/releases/trunk is
-  # latest-only); a mismatch means it rolled upstream, so re-hash deliberately.
+  # is the only author gate (vault grants match repo + ref, never author).
+  # RWX documents no ordering between a task's `if:` and its `env:` secret
+  # resolution, so whether a skipped task touches the vault is unverifiable;
+  # what holds regardless: a skipped task never executes its script, so the
+  # token cannot reach code on skipped legs (and fork PRs never run at all).
+  # Vault grants must include `elviskahoro/sdk-python-attio:**`, `*/*` and
+  # `:main` (branch patterns do not cross `/`); the repository scope of the
+  # repo-less grants is undocumented, so only `rwx vaults list` can confirm
+  # whether `*/*` reaches other org repos. cache: false + cache-key: excluded
+  # keep the token out of the content-cache fingerprint and make every run
+  # actually upload. RWX is not a CI provider Trunk auto-detects, so
+  # CUSTOM=true plus the job/branch/PR variables attribute the run. Captain's
+  # retry command writes a separate -retry.xml (see .captain/config.yml); the
+  # glob uploads both. The launcher sha256 pins only the bash bootstrap
+  # (trunk.io/releases/trunk is latest-only); TRUNK_ANALYTICS_CLI_VERSION
+  # pins the trunk-analytics-cli binary that the bootstrap downloads and
+  # runs. The launcher verifies no tarball digest either way, so that version
+  # pin is the only control on the executed CLI (the lint gate pins its CLI
+  # the same way, `cli.version` in .trunk/trunk.yaml). Bump the checksum and
+  # the version deliberately.
   - key: trunk-upload
     use: [pytest-run]
     if: ${{ init.event-type != 'pull_request' || init.pr-author == 'elviskahoro' }}
@@ -121,8 +130,9 @@ tasks:
         cache-key: excluded
       TRUNK_ORG_SLUG: sanhedrin
       TRUNK_TEST_COLLECTION_ID: xw7SIPox
+      # Bare semver (no `v` prefix); the launcher rejects non-semver values.
+      TRUNK_ANALYTICS_CLI_VERSION: "0.16.1"
       CUSTOM: "true"
-      JOB_URL: https://cloud.rwx.com/mint/elviskahoro/runs/${{ run.id }}
       BRANCH: ${{ init.branch }}
       PR_NUMBER: ${{ init.pr-number }}
       COMMIT_BRANCH: ${{ init.branch }}
@@ -130,6 +140,8 @@ tasks:
       REPO: ${{ init.repository }}
     run: |
       set -euo pipefail
+      # RWX auto-exposes RWX_RUN_URL (www.rwx.com/docs/environment-variables).
+      export JOB_URL="${RWX_RUN_URL}"
       trunk_launcher="$(mktemp)"
       if ! curl -fsSL https://trunk.io/releases/trunk -o "${trunk_launcher}" ||
         ! echo "700f8bbedfd226595999ea2202b9a7af75ba8398dd711f5f159f5bbba6cbf322  ${trunk_launcher}" | sha256sum -c -; then
