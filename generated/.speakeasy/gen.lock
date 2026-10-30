@@ -1,16 +1,16 @@
 lockVersion: 2.0.0
 id: 8dc93348-09a5-472d-90a9-8d558c23be86
 management:
-  docChecksum: c96fbc6dca304479701dc3fbba459316
+  docChecksum: 1a8fd0087d8727bb5b3f9e8fa8f0d8b4
   docVersion: 2.0.0
   speakeasyVersion: 1.804.0
   generationVersion: 2.952.5
-  releaseVersion: 0.27.4
-  configChecksum: d12fa4f3bf6648146c1eff2ce4070bb8
+  releaseVersion: 0.27.5
+  configChecksum: 9e6f382e58d7f412113d372b9352504c
 persistentEdits:
-  generation_id: 7002a2d4-ba32-4074-a9b1-62034ba25a64
-  pristine_commit_hash: dc4476c29235710c8a5a225833cbec59683d5073
-  pristine_tree_hash: a319b53303d1923f12956699949f0c006475998d
+  generation_id: 53d69f34-7f72-415f-8508-7a5c28a5f283
+  pristine_commit_hash: d07b69aa6d71b4708f774b5c10aaeed557b48747
+  pristine_tree_hash: ccee22ceb162dd5c08da6f9e0048e30caf003529
 features:
   python:
     additionalDependencies: 1.1.0
@@ -7605,8 +7605,8 @@ trackedFiles:
     pristine_git_object: 8dd9bea89f7e6f732c2198e0feded90af90862ab
   docs/models/postv2meetingsmeetingidcallrecordingsdatarequest.md:
     id: 47b69fb3c703
-    last_write_checksum: sha1:ad73f0354320d2665453daf97814c934cca189cd
-    pristine_git_object: 92c50b774b5ace836b3e0454dfb51cbe30a2fbf4
+    last_write_checksum: sha1:43c12985e0521cb2533adb2bb6a4557475b08a85
+    pristine_git_object: 13fa69ec5752a7f908004d2c3df0a0c1380642fc
   docs/models/postv2meetingsmeetingidcallrecordingsdataresponse.md:
     id: 47081caaaa36
     last_write_checksum: sha1:681b08731367db097daf5b9a925758c9eb20fa8a
@@ -12397,8 +12397,8 @@ trackedFiles:
     pristine_git_object: 07fce86de71e75fc33b319175a2b1e576d7ca370
   src/attio/_version.py:
     id: 601b0c828c8d
-    last_write_checksum: sha1:ca983c6d5a4afddf333cf14ea1a84e0f9530f41f
-    pristine_git_object: d797e2fe5ed3b1567408e864ca2be572cd0bfce3
+    last_write_checksum: sha1:5bac672fd7412804ab7ba1114066f9dbf373c15e
+    pristine_git_object: eea2f9c291db6f78d760adf5d259046eed08bb1e
   src/attio/activities.py:
     id: b43e8ae24d8e
     last_write_checksum: sha1:e697e2847c81186670fd69e63f040a0866970d4c
@@ -12417,8 +12417,8 @@ trackedFiles:
     pristine_git_object: 4df460a3cf9081d6c116207d0e8347914fbf8767
   src/attio/call_recordings.py:
     id: 303c4e6554a8
-    last_write_checksum: sha1:4ceaf8b4c4620fd0210879cc53ed46b9dacb6d02
-    pristine_git_object: ee4e8f45fa2827b534bdb06e06c9df014fc8299c
+    last_write_checksum: sha1:17d41983dfbbe6f730bb63f20fdda32596447770
+    pristine_git_object: 4a6d793a04c5c90f969fc39d016f33ee44309ef2
   src/attio/comments.py:
     id: 3c530aebdd58
     last_write_checksum: sha1:04ddf3c8c0e5515b2b9f52eaa4b80af79a049e00
@@ -13153,8 +13153,8 @@ trackedFiles:
     pristine_git_object: 334cde3862a2cc31bb8ab2efc801fa425d88a77e
   src/attio/models/post_v2_meetings_meeting_id_call_recordingsop.py:
     id: 003b151c1932
-    last_write_checksum: sha1:0389c8293224df256a42ffd431511a03a9d4002a
-    pristine_git_object: 8ffc81c40dfb8aaf0af8fc38d82b72bf980abc58
+    last_write_checksum: sha1:83cf102eb699c3c136692a8d95cb790a3eb14d75
+    pristine_git_object: 439ffff20613d9417279b0e5b30a091f643b27cd
   src/attio/models/post_v2_meetingsop.py:
     id: c01b1f827dab
     last_write_checksum: sha1:b87b50193cfaf6595b7e0da3b138b4434c1c76ec

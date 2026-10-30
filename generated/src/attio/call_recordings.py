@@ -224,7 +224,7 @@ class CallRecordings(BaseSDK):
 
         Create a call recording for a meeting. This endpoint is rate limited to 1 request per second.
 
-        A `transcript` should always be provided — it is technically optional for backwards compatibility, but a call recording created without one will be missing summaries and other transcript-derived features. `video_url` is optional, and a transcript-only call recording (with no video) is fully supported.
+        A `transcript` is required. `video_url` is optional, and a transcript-only call recording (with no video) is fully supported.
 
         This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
@@ -358,7 +358,7 @@ class CallRecordings(BaseSDK):
 
         Create a call recording for a meeting. This endpoint is rate limited to 1 request per second.
 
-        A `transcript` should always be provided — it is technically optional for backwards compatibility, but a call recording created without one will be missing summaries and other transcript-derived features. `video_url` is optional, and a transcript-only call recording (with no video) is fully supported.
+        A `transcript` is required. `video_url` is optional, and a transcript-only call recording (with no video) is fully supported.
 
         This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
