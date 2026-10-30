@@ -24,14 +24,15 @@ review_guidelines = """
   avoid shadowing Python's built-in `list`. Do not flag the resulting
   parameter names as inconsistent with the API docs.
 
-- pyproject.toml is rewritten by speakeasy on every regeneration. The dev
-  dependencies (dagger-io, pytest, pytest-asyncio) survive only because they
-  are declared in .speakeasy/gen.yaml under
-  python.additionalDependencies.dev. If they vanish from pyproject.toml, the
-  fix is to confirm the gen.yaml declaration and run `uv lock && uv sync` —
-  not a one-off manual pyproject edit.
+- The root pyproject.toml and README.md are hand-maintained: speakeasy never
+  writes them (generated/.genignore blocks its copies). ci/post_generate_patch.py
+  re-applies the `attio`/`gtm-attio` entry points, the README Standalone CLI
+  section (README_CLI_SECTION must match README.md byte for byte) and the
+  pyproject `version`. Manual edits to dependencies there are expected; keep
+  gen.yaml python.additionalDependencies.dev in step with the dev group.
 
-- The patch version in .speakeasy/gen.yaml (python.version), pyproject.toml,
-  and generated/src/attio/_version.py is auto-bumped by speakeasy on regenerations that
-  produce changes. Do not flag version-bump-only hunks as suspicious.
+- The patch version in .speakeasy/gen.yaml (python.version) and
+  generated/src/attio/_version.py is auto-bumped by speakeasy on every
+  regeneration, and ci/post_generate_patch.py copies it into pyproject.toml.
+  Do not flag version-bump-only hunks as suspicious.
 """

@@ -45,8 +45,16 @@ Patch: ``scripts/publish.sh`` and ``scripts/release.sh`` wrappers
 
 Patch: ``pyproject.toml`` and ``README.md``
 
-    Speakeasy owns both files, so this script also restores the standalone
-    ``gtm-attio`` console entry point and its user-facing CLI documentation.
+    Speakeasy never writes the root copies of these files
+    (``generated/.genignore`` blocks the ones it would emit next to
+    ``generated/src``), so they are hand-maintained and nothing regenerates
+    them. This script keeps the parts a regeneration must still update: the
+    ``attio`` and ``gtm-attio`` console entry points (both run
+    ``attio_cli.main:main``, so ``uvx attio`` and ``uvx gtm-attio`` work),
+    the README's Standalone CLI section, and the ``pyproject.toml``
+    ``version``, which is synced from the regenerated
+    ``generated/src/attio/_version.py`` because Speakeasy's patch bump never
+    reaches the root file. Run ``uv lock`` afterwards so ``uv.lock`` follows.
 
 Patch: ``generated/src/attio/_hooks/sdkhooks.py`` and ``generated/src/attio/_hooks/__init__.py``
 
@@ -103,6 +111,7 @@ Patch: ``generated/src/attio/utils/enums.py`` and ``generated/src/attio/utils/__
 
 from __future__ import annotations
 
+import re
 import sys
 from pathlib import Path
 
@@ -115,6 +124,7 @@ MODELS_INIT_PATH = MODELS_DIR / "__init__.py"
 GENERATED_SRC_DIR = REPO_ROOT / "generated" / "src" / "attio"
 UTILS_INIT_PATH = REPO_ROOT / "generated" / "src" / "attio" / "utils" / "__init__.py"
 UTILS_ENUMS_PATH = REPO_ROOT / "generated" / "src" / "attio" / "utils" / "enums.py"
+VERSION_PATH = GENERATED_SRC_DIR / "_version.py"
 
 # Anchors and lines for the SDKHooks init_hooks wiring patch (see
 # ``ensure_init_hooks_wiring`` / ``ensure_hooks_package_reexport``).
@@ -141,13 +151,18 @@ set -euo pipefail
 exec bash "$(dirname "$0")/../{impl}" "$@"
 """
 
-CLI_SCRIPT_LINE = 'gtm-attio = "attio_cli.main:main"'
+# ``attio`` makes ``uvx attio`` work; ``gtm-attio`` is the original name and
+# the only command shipped before 0.28.2.
+CLI_SCRIPT_LINES = (
+    'attio = "attio_cli.main:main"',
+    'gtm-attio = "attio_cli.main:main"',
+)
 README_CLI_START = "<!-- Start Standalone CLI [cli] -->"
 README_CLI_END = "<!-- End Standalone CLI [cli] -->"
 README_CLI_SECTION = """<!-- Start Standalone CLI [cli] -->
 ## Standalone CLI
 
-Install and run the agent-friendly CLI without cloning this repository:
+The `attio` command, also installed as `gtm-attio`, wraps the SDK in people, company and note commands. Each command identifies records by email, domain or ID, and prints one JSON envelope. You can run it without cloning or installing anything:
 
 ```bash
 export ATTIO_API_KEY="your-attio-api-key"
@@ -155,39 +170,84 @@ uvx gtm-attio people upsert person@example.com \\
   --first-name Ada --last-name Lovelace
 ```
 
-The CLI also reads `ATTIO_API_KEY` from `.env.local` or `.env` in the current
-directory. Environment variables take precedence. Search/list commands are
-read-only. Add, update, and upsert commands write directly to Attio without a
-confirmation prompt; every command prints a JSON reliability envelope.
+### Running on demand with uvx
 
-Both the `attio` and `gtm-attio` distribution artifacts expose the
-`gtm-attio` command for compatibility. They are alternate names for packages
-that provide the same `attio` import namespace; install only one distribution
-in a Python environment.
+| Form | Use it when |
+| --- | --- |
+| `uvx gtm-attio …` | Always. This name works on every published version. |
+| `uvx attio …` | You want the shorter name. Needs 0.28.2+; on older releases use `uvx --from attio gtm-attio …`. |
+| `uvx gtm-attio@0.28.0 …` | You need reproducible runs pinned to one version. |
+| `uvx gtm-attio@latest …` | You want a new release. Plain `uvx` reuses a version it already cached. |
+| `uvx --from git+https://github.com/elviskahoro/sdk-python-attio gtm-attio …` | You need unreleased code from `main`. |
+| `uv tool run gtm-attio …` | Only `uv` is on PATH. It's identical to `uvx`. |
 
-People commands use email as their identity key. `search` is read-only; `add`
-fails if the email already exists; `update` requires exactly one matching
-person. `upsert` creates or updates as before. Common write options include
-repeatable `--add-email`, `--replace-emails`, `--job-title`, `--phone`,
-`--phone-country-code`, `--linkedin`, `--company` (company domain), `--notes`,
-and `--strict`. Prefix international phone numbers with `+`; local numbers
-require `--phone-country-code` (ISO-3166-1 alpha-2). Pair `--location` with
-`--country-code`; `--location-mode city|raw` controls its mapping.
+Run `uvx gtm-attio <resource> <command> --help` for the full flag list of any command.
 
-```bash
-uvx gtm-attio people upsert --json '{"email":"person@example.com","first_name":"Ada","job_title":"Mathematician"}'
-```
+### Credentials
+
+The CLI reads only `ATTIO_API_KEY`. It looks in the process environment first, then in `.env.local`, then in `.env` in the current directory. Without a key, the CLI returns the `missing_api_key` envelope. If Attio rejects the key (HTTP 401/403), the CLI returns `invalid_api_key`. The key needs record read/write scopes for `people` and `companies` commands, and note scopes for `notes`.
+
+### Commands
+
+| Command | Effect | Identity |
+| --- | --- | --- |
+| `people search EMAIL` | Read-only | Exact email |
+| `people add EMAIL [flags]` | Creates a person; `duplicate_identity` if the email already exists | Email |
+| `people update EMAIL [flags]` | Updates exactly one match; `record_not_found` or `multiple_matches` otherwise | Email |
+| `people upsert EMAIL [flags]` | Creates a person, or updates the match | Email |
+| `companies search --json PAYLOAD` | Read-only | Exact domain |
+| `companies add --json PAYLOAD` | Creates a company; `duplicate_identity` if the domain already exists | Domain |
+| `companies update --json PAYLOAD` | Updates exactly one match; `record_not_found` or `multiple_matches` otherwise | Domain |
+| `notes list --json PAYLOAD` | Read-only | Parent record |
+| `notes add --json PAYLOAD` | Creates a note on an existing record | Parent record |
+| `notes update --json PAYLOAD` | Replaces only the fields you supply | Note ID |
+
+### People
+
+Every flag has a matching JSON key for `--json`:
+
+| Flag | JSON key | Notes |
+| --- | --- | --- |
+| `EMAIL` (positional) | `email` | Identity key; required |
+| `--add-email` (repeatable) | `additional_emails` (list) | Extra addresses to store |
+| `--replace-emails` | `replace_emails` | `update`/`upsert` only: replace the stored emails with the identity email plus `--add-email` values |
+| `--first-name`, `--last-name` | `first_name`, `last_name` | |
+| `--job-title` | `job_title` | |
+| `--phone` | `phone` | Start with `+` and the country code, or pair with `--phone-country-code` |
+| `--phone-country-code` | `phone_country_code` | ISO-3166-1 alpha-2, e.g. `US` |
+| `--linkedin` | `linkedin` | Profile URL or handle |
+| `--location` | `location` | Needs `--country-code` |
+| `--country-code` | `country_code` | ISO-3166-1 alpha-2 |
+| `--location-mode city\\|raw` | `location_mode` | How `--location` splits: `city` reads `locality, region` (the default); `raw` reads `street, locality, region` |
+| `--company` | `company_domain` | Links the person to the company with this domain |
+| `--notes` | `notes` | Writes the person's `notes` attribute |
+| `--strict` | `strict` | Turns the cases below into errors |
+
+`--json` replaces every flag, including the positional email, and rejects unknown keys.
+
+Without `--strict`, the CLI keeps going in three cases, and reports each one in `warnings` and `skipped_fields`:
+
+- **Invalid optional value** (a phone number, LinkedIn handle or domain): skipped.
+- **Optional attribute your workspace doesn't have:** the write is retried without it.
+- **`upsert` matches several people:** the CLI writes to the lexicographically smallest `record_id`, sets `partial_success`, and adds an `upsert_multi_match_selected_record` warning.
+
+With `--strict`, these fail with `invalid_value`, `schema_mismatch` or `multiple_matches` instead. `update` and `add` never pick between duplicates.
 
 ```bash
 uvx gtm-attio people search person@example.com
 uvx gtm-attio people add person@example.com --first-name Ada --last-name Lovelace
 uvx gtm-attio people update person@example.com --job-title Mathematician
+uvx gtm-attio people upsert person@example.com --company example.com --strict
+uvx gtm-attio people upsert --json '{"email":"person@example.com","first_name":"Ada","job_title":"Mathematician"}'
 ```
 
-Company commands use validated JSON. The `domain` is the exact identity and is
-written to Attio's `domains` attribute; `values` contains other Attio record
-attribute values in the API's `{attribute_slug: [value, ...]}` format. Add
-rejects an existing domain and update requires exactly one match:
+### Companies
+
+`--json` is required and has the form `{"domain": "example.com", "values": {...}}`:
+
+- `domain` is the identity. The CLI writes it to Attio's `domains` attribute, so it rejects `values.domains`.
+- `values` uses the API's record format, `{"attribute_slug": [value, ...]}`. See [Record values](#record-values).
+- `update` overwrites only the attributes you supply. Multi-select values are replaced, not appended.
 
 ```bash
 uvx gtm-attio companies search --json '{"domain":"example.com"}'
@@ -195,8 +255,15 @@ uvx gtm-attio companies add --json '{"domain":"example.com","values":{"name":[{"
 uvx gtm-attio companies update --json '{"domain":"example.com","values":{"description":["Prospect"]}}'
 ```
 
-Notes attach to one existing record. List is read-only; add and update write
-immediately. Updates target a note ID and only replace the supplied fields:
+### Notes
+
+| Command | JSON fields |
+| --- | --- |
+| `notes list` | `parent_object`, `parent_record_id`, and optionally `limit` (1-500, default 100) and `offset` (default 0) |
+| `notes add` | `parent_object`, `parent_record_id`, `title`, `content`, and optionally `format` (`plaintext` by default, or `markdown`) |
+| `notes update` | `note_id`, plus at least one of `title`, `content` and `format` |
+
+`parent_object` is an object slug such as `people` or `companies`. `parent_record_id` is that record's ID, which you can read from the `record_id` of a people or company envelope.
 
 ```bash
 uvx gtm-attio notes list --json '{"parent_object":"people","parent_record_id":"RECORD_ID"}'
@@ -204,15 +271,86 @@ uvx gtm-attio notes add --json '{"parent_object":"people","parent_record_id":"RE
 uvx gtm-attio notes update --json '{"note_id":"NOTE_ID","content":"Updated call notes."}'
 ```
 
-The output envelope reports `success`, `partial_success`, `action`,
-`record_id`, `warnings`, `skipped_fields`, `errors`, and `meta`. Missing
-optional workspace attributes are retried without that field and reported as
-warnings for people writes. Search/list results are in `meta.results`. Invalid
-optional person values are skipped and reported; `--strict` turns those
-mismatches and invalid values into errors. Ambiguous person/company writes
-always fail without modifying a record.
-Successful and partial-success operations exit 0, runtime failures exit 1,
-and command-line usage errors exit 2.
+### Output envelope
+
+Every run that gets past argument parsing prints exactly one JSON object to stdout:
+
+```json
+{
+  "success": true,
+  "partial_success": false,
+  "action": "created",
+  "record_id": "bf071e1f-6035-429d-b874-d83ea64ea13b",
+  "warnings": [],
+  "skipped_fields": [],
+  "errors": [],
+  "meta": {
+    "output_schema_version": "v1",
+    "person": {
+      "record_id": "bf071e1f-6035-429d-b874-d83ea64ea13b",
+      "email_addresses": ["person@example.com"],
+      "name": "Ada Lovelace",
+      "created": true,
+      "raw": {}
+    }
+  }
+}
+```
+
+| Field | Contents |
+| --- | --- |
+| `action` | `created`, `updated`, `searched`, `listed` or `failed` |
+| `record_id` | The ID of the person or company written (the note ID for notes); `null` for search, list and failures |
+| `meta.results` | The matching records or notes from `search` or `list`. A people or company search returns at most 50, and adds a `search_result_limit_reached` warning when it hits that cap. |
+| `meta.person`, `meta.company`, `meta.note` | The object that was written |
+| `warnings[]` | Objects with `code`, `message`, `field` and `retryable` |
+| `skipped_fields[]` | Objects with `field` and `reason` (`invalid_value` or `schema_mismatch`) |
+
+A failure has the same shape, with `success: false` and the details in `errors`:
+
+```json
+{
+  "success": false,
+  "partial_success": false,
+  "action": "failed",
+  "record_id": null,
+  "warnings": [],
+  "skipped_fields": [],
+  "errors": [
+    {
+      "code": "missing_api_key",
+      "message": "ATTIO_API_KEY is not set. Export it or add it to .env.local or .env in the current directory.",
+      "error_type": "CLIError",
+      "fatal": true,
+      "field": null,
+      "status_code": null,
+      "type": null,
+      "details": {}
+    }
+  ],
+  "meta": {"output_schema_version": "v1"}
+}
+```
+
+| `errors[].code` | Meaning |
+| --- | --- |
+| `missing_api_key` | No `ATTIO_API_KEY` in the environment, `.env.local` or `.env` |
+| `invalid_api_key` | Attio returned 401/403: a wrong key, or a missing scope |
+| `invalid_json`, `validation_error` | `--json` isn't valid JSON, or a value failed validation; `message` names the field |
+| `duplicate_identity` | `add` found an existing person or company with that email or domain |
+| `record_not_found` | `update` matched nothing |
+| `multiple_matches` | `update`, or `upsert --strict`, matched more than one record |
+| `invalid_value`, `schema_mismatch` | With `--strict`: a value was invalid, or the workspace lacks the attribute |
+| `uniqueness_conflict` | A person write included an email address that already belongs to another person |
+| anything else | Attio's own error `code`, passed through with `status_code` and `details` from the API response |
+
+Exit codes:
+
+| Code | Meaning |
+| --- | --- |
+| `0` | Success, including `partial_success` |
+| `1` | A failure, reported in a `success: false` envelope |
+| `2` | A command-line usage error. argparse prints it to stderr and no JSON is emitted. |
 <!-- End Standalone CLI [cli] -->"""
 
 # Public model symbols renamed after they shipped, as ``{module: {old: new}}``.
@@ -226,40 +364,78 @@ MODEL_RENAME_ALIASES: dict[str, dict[str, str]] = {}
 
 
 def ensure_project_script(path: Path) -> bool:
-    """Ensure the ``gtm-attio`` console entry point exists in pyproject.toml."""
+    """Ensure the ``attio`` and ``gtm-attio`` entry points exist in pyproject.toml."""
     text = path.read_text()
     lines = text.splitlines(keepends=True)
     header = "[project.scripts]"
     try:
         header_index = next(i for i, line in enumerate(lines) if line.strip() == header)
     except StopIteration:
-        updated = text.rstrip() + "\n\n[project.scripts]\n" + CLI_SCRIPT_LINE + "\n"
-        path.write_text(updated)
+        scripts = "\n".join(CLI_SCRIPT_LINES)
+        path.write_text(text.rstrip() + "\n\n[project.scripts]\n" + scripts + "\n")
         return True
 
-    next_header = next(
-        (
-            i
-            for i in range(header_index + 1, len(lines))
-            if lines[i].lstrip().startswith("[")
-        ),
-        len(lines),
-    )
-    existing = next(
-        (
-            i
-            for i in range(header_index + 1, next_header)
-            if lines[i].lstrip().startswith("gtm-attio =")
-        ),
-        None,
-    )
-    if existing is not None and lines[existing].strip() == CLI_SCRIPT_LINE:
+    changed = False
+    insert_at = header_index + 1
+    for script_line in CLI_SCRIPT_LINES:
+        name = script_line.split("=", 1)[0].strip()
+        next_header = next(
+            (
+                i
+                for i in range(header_index + 1, len(lines))
+                if lines[i].lstrip().startswith("[")
+            ),
+            len(lines),
+        )
+        existing = next(
+            (
+                i
+                for i in range(header_index + 1, next_header)
+                if lines[i].split("=", 1)[0].strip() == name
+            ),
+            None,
+        )
+        if existing is None:
+            lines.insert(insert_at, script_line + "\n")
+            existing = insert_at
+            changed = True
+        elif lines[existing].strip() != script_line:
+            lines[existing] = script_line + "\n"
+            changed = True
+        insert_at = existing + 1
+    if not changed:
         return False
-    if existing is not None:
-        lines[existing] = CLI_SCRIPT_LINE + "\n"
-    else:
-        lines.insert(header_index + 1, CLI_SCRIPT_LINE + "\n")
     path.write_text("".join(lines))
+    return True
+
+
+def ensure_project_version(path: Path, version_path: Path = VERSION_PATH) -> bool:
+    """Set pyproject.toml's ``version`` to the generated ``__version__``."""
+    match = re.search(
+        r'^__version__: str = "([^"]+)"$',
+        version_path.read_text(),
+        re.MULTILINE,
+    )
+    if match is None:
+        msg = (
+            f"{version_path.name} no longer defines `__version__: str = "
+            '"..."`; the post-generation patch must be updated.'
+        )
+        raise RuntimeError(msg)
+    text = path.read_text()
+    updated, count = re.subn(
+        r'^(version\s*=\s*)"[^"]+"',
+        rf'\g<1>"{match.group(1)}"',
+        text,
+        count=1,
+        flags=re.MULTILINE,
+    )
+    if count == 0:
+        msg = f'{path.name} has no `version = "..."` line to sync'
+        raise RuntimeError(msg)
+    if updated == text:
+        return False
+    path.write_text(updated)
     return True
 
 
@@ -827,7 +1003,12 @@ def main() -> int:
         (
             REPO_ROOT / "pyproject.toml",
             ensure_project_script,
-            "pyproject.toml CLI entry point",
+            "pyproject.toml CLI entry points",
+        ),
+        (
+            REPO_ROOT / "pyproject.toml",
+            ensure_project_version,
+            "pyproject.toml version from _version.py",
         ),
         (REPO_ROOT / "README.md", ensure_readme_cli_section, "README CLI section"),
     ):

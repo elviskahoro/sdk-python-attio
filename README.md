@@ -1,112 +1,92 @@
-# Attio Python SDK
+# Attio Python SDK and CLI
 
-<div align="left">
-    <a href="https://opensource.org/licenses/MIT">
-        <img alt="MIT License" src="https://img.shields.io/badge/License-MIT-blue.svg" style="width: 100px; height: 28px;" />
-    </a>
-</div>
+[![PyPI](https://img.shields.io/pypi/v/attio)](https://pypi.org/project/attio/)
+[![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-<br /><br />
+A type-safe Python client for the [Attio REST API](https://docs.attio.com/rest-api/overview) (v2), with a sync and an async variant of every method. It also ships the standalone `attio` CLI, installed under a second name as `gtm-attio`, for people, company and note workflows. The CLI prints JSON for agents and scripts.
 
-Type-safe Python client for the [Attio API](https://developers.attio.com/), with support for sync and async usage.
+- **Package:** `attio` on PyPI. `gtm-attio` is the same code under another distribution name. Requires Python 3.10+.
+- **Credentials:** an Attio API key, in `ATTIO_API_KEY`.
+- **Where the SDK comes from:** [Speakeasy](https://www.speakeasy.com/) generates it from Attio's OpenAPI spec into `generated/`. Every method has a reference page under [`generated/docs/sdks/`](https://github.com/elviskahoro/sdk-python-attio/tree/main/generated/docs/sdks).
 
-<!-- Start Summary [summary] -->
-## Summary
+## Quick start for agents
 
-<!-- End Summary [summary] -->
+| Goal | Command |
+| --- | --- |
+| List the CLI commands (no install) | `uvx gtm-attio --help` |
+| The same, with the shorter name (0.28.2+) | `uvx attio --help` |
+| Pin an exact version | `uvx gtm-attio@0.28.0 --help` |
+| Force the newest release | `uvx gtm-attio@latest --help` |
+| Run unreleased code from `main` | `uvx --from git+https://github.com/elviskahoro/sdk-python-attio gtm-attio --help` |
+| Install the CLI on PATH | `uv tool install attio` |
+| Run a script that imports the SDK | `uv run --with attio script.py` |
+| Open a Python REPL with the SDK | `uvx --from attio python` |
+| Add the SDK to a project | `uv add attio` (or `pip install attio`) |
 
-<!-- Start Table of Contents [toc] -->
+Rules of thumb:
+
+1. **Credentials.** Put the Attio API key in `ATTIO_API_KEY`. The CLI also reads it from `.env.local` or `.env` in the working directory. Never pass the key as a command-line argument.
+2. **CLI output.** The CLI prints exactly one JSON envelope on stdout. Branch on `success`, `errors[].code` and the exit code, not on message text. The one exception is a usage error (exit 2), which goes to stderr as plain text.
+3. **CLI writes.** `add`, `update` and `upsert` write to Attio immediately. There is no confirmation prompt and no dry run, so run `search` or `list` first when unsure.
+4. **CLI or SDK?** Use the CLI for people, companies and notes keyed by email, domain or record ID. Use the SDK for everything else: lists, entries, tasks, attributes, webhooks, meetings, SQL and so on.
+5. **Finding an SDK method.** Derive its name with [Finding the right method](#finding-the-right-method), then open the resource page under [Available Resources and Operations](#available-resources-and-operations). That page has every parameter, an example, the response model and the errors the method raises.
+
 ## Table of Contents
-<!-- $toc-max-depth=2 -->
-* [Attio Python SDK](#attio-python-sdk)
-  * [SDK Installation](#sdk-installation)
-  * [Standalone CLI](#standalone-cli)
-  * [IDE Support](#ide-support)
-  * [SDK Example Usage](#sdk-example-usage)
-  * [Authentication](#authentication)
-  * [Common Workflows](#common-workflows)
-  * [Available Resources and Operations](#available-resources-and-operations)
-  * [File uploads](#file-uploads)
-  * [Retries](#retries)
-  * [Error Handling](#error-handling)
-  * [Server Selection](#server-selection)
-  * [Custom HTTP Client](#custom-http-client)
-  * [Resource Management](#resource-management)
-  * [Debugging](#debugging)
-  * [Troubleshooting](#troubleshooting)
 
-<!-- End Table of Contents [toc] -->
-<!-- Start SDK Installation [installation] -->
+* [Quick start for agents](#quick-start-for-agents)
+* [SDK Installation](#sdk-installation)
+* [Standalone CLI](#standalone-cli)
+* [Authentication](#authentication)
+* [SDK Example Usage](#sdk-example-usage)
+  * [Finding the right method](#finding-the-right-method)
+  * [Record values](#record-values)
+* [Common Workflows](#common-workflows)
+* [Available Resources and Operations](#available-resources-and-operations)
+* [File uploads](#file-uploads)
+* [Retries and timeouts](#retries-and-timeouts)
+* [Error Handling](#error-handling)
+* [Server Selection](#server-selection)
+* [Custom HTTP Client](#custom-http-client)
+* [Resource Management](#resource-management)
+* [Debugging](#debugging)
+* [Troubleshooting](#troubleshooting)
+* [Maintaining this repository](#maintaining-this-repository)
+
 ## SDK Installation
 
-> [!TIP]
-> To finish publishing your SDK to PyPI you must [run your first generation action](https://www.speakeasy.com/docs/github-setup#step-by-step-guide).
->
-> [!NOTE]
-> **Python version upgrade policy**: Once a Python version reaches its [official end of life date](https://devguide.python.org/versions/), a 3-month grace period is provided for users to upgrade. Following this grace period, the minimum python version supported in the SDK will be updated.
-
-The SDK can be installed with *uv*, *pip*, or *poetry* package managers.
-
-### uv
-
-*uv* is a fast Python package installer and resolver, designed as a drop-in replacement for pip and pip-tools. It's recommended for its speed and modern Python tooling capabilities.
-
 ```bash
-uv add git+<UNSET>.git
+uv add attio        # or: pip install attio / poetry add attio
 ```
 
-### PIP
+Install `attio` *or* `gtm-attio`, not both. They are the same code under two distribution names, and each installs the `attio` import package and the `attio` and `gtm-attio` commands. Releases before 0.28.2 install only `gtm-attio`.
 
-*PIP* is the default package installer for Python, enabling easy installation and management of packages from PyPI via the command line.
+Minimum Python: once a Python version reaches its [end of life](https://devguide.python.org/versions/), the SDK keeps supporting it for 3 more months and then raises the minimum.
 
-```bash
-pip install git+<UNSET>.git
-```
+### Scripts without a project
 
-### Poetry
-
-*Poetry* is a modern tool that simplifies dependency management and package publishing by using a single `pyproject.toml` file to handle project metadata and dependencies.
-
-```bash
-poetry add git+<UNSET>.git
-```
-
-### Shell and script usage with `uv`
-
-You can use this SDK in a Python shell with [uv](https://docs.astral.sh/uv/) and the `uvx` command that comes with it like so:
-
-```shell
-uvx --from attio python
-```
-
-It's also possible to write a standalone Python script without needing to set up a whole project like so:
+Use a [PEP 723](https://peps.python.org/pep-0723/) inline script, and `uv` installs the SDK on the fly:
 
 ```python
 #!/usr/bin/env -S uv run --script
 # /// script
 # requires-python = ">=3.10"
-# dependencies = [
-#     "attio",
-# ]
+# dependencies = ["attio"]
 # ///
+import os
 
 from attio import SDK
 
-sdk = SDK(
-  # SDK arguments
-)
-
-# Rest of script here...
+with SDK(oauth2=os.environ["ATTIO_API_KEY"]) as sdk:
+    for obj in sdk.objects.get_v2_objects().data:
+        print(obj.api_slug)
 ```
 
-Once that is saved to a file, you can run it with `uv run script.py` where
-`script.py` can be replaced with the actual file name.
-<!-- End SDK Installation [installation] -->
+Run it with `uv run script.py`, or make it executable. A script without the metadata block runs with `uv run --with attio script.py`. For an interactive session, use `uvx --from attio python`.
 
 <!-- Start Standalone CLI [cli] -->
 ## Standalone CLI
 
-Install and run the agent-friendly CLI without cloning this repository:
+The `attio` command, also installed as `gtm-attio`, wraps the SDK in people, company and note commands. Each command identifies records by email, domain or ID, and prints one JSON envelope. You can run it without cloning or installing anything:
 
 ```bash
 export ATTIO_API_KEY="your-attio-api-key"
@@ -114,39 +94,84 @@ uvx gtm-attio people upsert person@example.com \
   --first-name Ada --last-name Lovelace
 ```
 
-The CLI also reads `ATTIO_API_KEY` from `.env.local` or `.env` in the current
-directory. Environment variables take precedence. Search/list commands are
-read-only. Add, update, and upsert commands write directly to Attio without a
-confirmation prompt; every command prints a JSON reliability envelope.
+### Running on demand with uvx
 
-Both the `attio` and `gtm-attio` distribution artifacts expose the
-`gtm-attio` command for compatibility. They are alternate names for packages
-that provide the same `attio` import namespace; install only one distribution
-in a Python environment.
+| Form | Use it when |
+| --- | --- |
+| `uvx gtm-attio …` | Always. This name works on every published version. |
+| `uvx attio …` | You want the shorter name. Needs 0.28.2+; on older releases use `uvx --from attio gtm-attio …`. |
+| `uvx gtm-attio@0.28.0 …` | You need reproducible runs pinned to one version. |
+| `uvx gtm-attio@latest …` | You want a new release. Plain `uvx` reuses a version it already cached. |
+| `uvx --from git+https://github.com/elviskahoro/sdk-python-attio gtm-attio …` | You need unreleased code from `main`. |
+| `uv tool run gtm-attio …` | Only `uv` is on PATH. It's identical to `uvx`. |
 
-People commands use email as their identity key. `search` is read-only; `add`
-fails if the email already exists; `update` requires exactly one matching
-person. `upsert` creates or updates as before. Common write options include
-repeatable `--add-email`, `--replace-emails`, `--job-title`, `--phone`,
-`--phone-country-code`, `--linkedin`, `--company` (company domain), `--notes`,
-and `--strict`. Prefix international phone numbers with `+`; local numbers
-require `--phone-country-code` (ISO-3166-1 alpha-2). Pair `--location` with
-`--country-code`; `--location-mode city|raw` controls its mapping.
+Run `uvx gtm-attio <resource> <command> --help` for the full flag list of any command.
 
-```bash
-uvx gtm-attio people upsert --json '{"email":"person@example.com","first_name":"Ada","job_title":"Mathematician"}'
-```
+### Credentials
+
+The CLI reads only `ATTIO_API_KEY`. It looks in the process environment first, then in `.env.local`, then in `.env` in the current directory. Without a key, the CLI returns the `missing_api_key` envelope. If Attio rejects the key (HTTP 401/403), the CLI returns `invalid_api_key`. The key needs record read/write scopes for `people` and `companies` commands, and note scopes for `notes`.
+
+### Commands
+
+| Command | Effect | Identity |
+| --- | --- | --- |
+| `people search EMAIL` | Read-only | Exact email |
+| `people add EMAIL [flags]` | Creates a person; `duplicate_identity` if the email already exists | Email |
+| `people update EMAIL [flags]` | Updates exactly one match; `record_not_found` or `multiple_matches` otherwise | Email |
+| `people upsert EMAIL [flags]` | Creates a person, or updates the match | Email |
+| `companies search --json PAYLOAD` | Read-only | Exact domain |
+| `companies add --json PAYLOAD` | Creates a company; `duplicate_identity` if the domain already exists | Domain |
+| `companies update --json PAYLOAD` | Updates exactly one match; `record_not_found` or `multiple_matches` otherwise | Domain |
+| `notes list --json PAYLOAD` | Read-only | Parent record |
+| `notes add --json PAYLOAD` | Creates a note on an existing record | Parent record |
+| `notes update --json PAYLOAD` | Replaces only the fields you supply | Note ID |
+
+### People
+
+Every flag has a matching JSON key for `--json`:
+
+| Flag | JSON key | Notes |
+| --- | --- | --- |
+| `EMAIL` (positional) | `email` | Identity key; required |
+| `--add-email` (repeatable) | `additional_emails` (list) | Extra addresses to store |
+| `--replace-emails` | `replace_emails` | `update`/`upsert` only: replace the stored emails with the identity email plus `--add-email` values |
+| `--first-name`, `--last-name` | `first_name`, `last_name` | |
+| `--job-title` | `job_title` | |
+| `--phone` | `phone` | Start with `+` and the country code, or pair with `--phone-country-code` |
+| `--phone-country-code` | `phone_country_code` | ISO-3166-1 alpha-2, e.g. `US` |
+| `--linkedin` | `linkedin` | Profile URL or handle |
+| `--location` | `location` | Needs `--country-code` |
+| `--country-code` | `country_code` | ISO-3166-1 alpha-2 |
+| `--location-mode city\|raw` | `location_mode` | How `--location` splits: `city` reads `locality, region` (the default); `raw` reads `street, locality, region` |
+| `--company` | `company_domain` | Links the person to the company with this domain |
+| `--notes` | `notes` | Writes the person's `notes` attribute |
+| `--strict` | `strict` | Turns the cases below into errors |
+
+`--json` replaces every flag, including the positional email, and rejects unknown keys.
+
+Without `--strict`, the CLI keeps going in three cases, and reports each one in `warnings` and `skipped_fields`:
+
+- **Invalid optional value** (a phone number, LinkedIn handle or domain): skipped.
+- **Optional attribute your workspace doesn't have:** the write is retried without it.
+- **`upsert` matches several people:** the CLI writes to the lexicographically smallest `record_id`, sets `partial_success`, and adds an `upsert_multi_match_selected_record` warning.
+
+With `--strict`, these fail with `invalid_value`, `schema_mismatch` or `multiple_matches` instead. `update` and `add` never pick between duplicates.
 
 ```bash
 uvx gtm-attio people search person@example.com
 uvx gtm-attio people add person@example.com --first-name Ada --last-name Lovelace
 uvx gtm-attio people update person@example.com --job-title Mathematician
+uvx gtm-attio people upsert person@example.com --company example.com --strict
+uvx gtm-attio people upsert --json '{"email":"person@example.com","first_name":"Ada","job_title":"Mathematician"}'
 ```
 
-Company commands use validated JSON. The `domain` is the exact identity and is
-written to Attio's `domains` attribute; `values` contains other Attio record
-attribute values in the API's `{attribute_slug: [value, ...]}` format. Add
-rejects an existing domain and update requires exactly one match:
+### Companies
+
+`--json` is required and has the form `{"domain": "example.com", "values": {...}}`:
+
+- `domain` is the identity. The CLI writes it to Attio's `domains` attribute, so it rejects `values.domains`.
+- `values` uses the API's record format, `{"attribute_slug": [value, ...]}`. See [Record values](#record-values).
+- `update` overwrites only the attributes you supply. Multi-select values are replaced, not appended.
 
 ```bash
 uvx gtm-attio companies search --json '{"domain":"example.com"}'
@@ -154,8 +179,15 @@ uvx gtm-attio companies add --json '{"domain":"example.com","values":{"name":[{"
 uvx gtm-attio companies update --json '{"domain":"example.com","values":{"description":["Prospect"]}}'
 ```
 
-Notes attach to one existing record. List is read-only; add and update write
-immediately. Updates target a note ID and only replace the supplied fields:
+### Notes
+
+| Command | JSON fields |
+| --- | --- |
+| `notes list` | `parent_object`, `parent_record_id`, and optionally `limit` (1-500, default 100) and `offset` (default 0) |
+| `notes add` | `parent_object`, `parent_record_id`, `title`, `content`, and optionally `format` (`plaintext` by default, or `markdown`) |
+| `notes update` | `note_id`, plus at least one of `title`, `content` and `format` |
+
+`parent_object` is an object slug such as `people` or `companies`. `parent_record_id` is that record's ID, which you can read from the `record_id` of a people or company envelope.
 
 ```bash
 uvx gtm-attio notes list --json '{"parent_object":"people","parent_record_id":"RECORD_ID"}'
@@ -163,812 +195,636 @@ uvx gtm-attio notes add --json '{"parent_object":"people","parent_record_id":"RE
 uvx gtm-attio notes update --json '{"note_id":"NOTE_ID","content":"Updated call notes."}'
 ```
 
-The output envelope reports `success`, `partial_success`, `action`,
-`record_id`, `warnings`, `skipped_fields`, `errors`, and `meta`. Missing
-optional workspace attributes are retried without that field and reported as
-warnings for people writes. Search/list results are in `meta.results`. Invalid
-optional person values are skipped and reported; `--strict` turns those
-mismatches and invalid values into errors. Ambiguous person/company writes
-always fail without modifying a record.
-Successful and partial-success operations exit 0, runtime failures exit 1,
-and command-line usage errors exit 2.
-<!-- End Standalone CLI [cli] -->
+### Output envelope
 
-<!-- Start IDE Support [idesupport] -->
-## IDE Support
+Every run that gets past argument parsing prints exactly one JSON object to stdout:
 
-### PyCharm
-
-Generally, the SDK will work well with most IDEs out of the box. However, when using PyCharm, you can enjoy much better integration with Pydantic by installing an additional plugin.
-
-- [PyCharm Pydantic Plugin](https://docs.pydantic.dev/latest/integrations/pycharm/)
-<!-- End IDE Support [idesupport] -->
-
-<!-- Start SDK Example Usage [usage] -->
-## SDK Example Usage
-
-### Example
-
-```python
-# Synchronous Example
-from attio import SDK
-
-
-with SDK(
-    oauth2="<YOUR_OAUTH2_HERE>",
-) as sdk:
-
-    res = sdk.objects.get_v2_objects()
-
-    # Handle response
-    print(res)
+```json
+{
+  "success": true,
+  "partial_success": false,
+  "action": "created",
+  "record_id": "bf071e1f-6035-429d-b874-d83ea64ea13b",
+  "warnings": [],
+  "skipped_fields": [],
+  "errors": [],
+  "meta": {
+    "output_schema_version": "v1",
+    "person": {
+      "record_id": "bf071e1f-6035-429d-b874-d83ea64ea13b",
+      "email_addresses": ["person@example.com"],
+      "name": "Ada Lovelace",
+      "created": true,
+      "raw": {}
+    }
+  }
+}
 ```
 
-</br>
+| Field | Contents |
+| --- | --- |
+| `action` | `created`, `updated`, `searched`, `listed` or `failed` |
+| `record_id` | The ID of the person or company written (the note ID for notes); `null` for search, list and failures |
+| `meta.results` | The matching records or notes from `search` or `list`. A people or company search returns at most 50, and adds a `search_result_limit_reached` warning when it hits that cap. |
+| `meta.person`, `meta.company`, `meta.note` | The object that was written |
+| `warnings[]` | Objects with `code`, `message`, `field` and `retryable` |
+| `skipped_fields[]` | Objects with `field` and `reason` (`invalid_value` or `schema_mismatch`) |
 
-The same SDK client can also be used to make asynchronous requests by importing asyncio.
+A failure has the same shape, with `success: false` and the details in `errors`:
+
+```json
+{
+  "success": false,
+  "partial_success": false,
+  "action": "failed",
+  "record_id": null,
+  "warnings": [],
+  "skipped_fields": [],
+  "errors": [
+    {
+      "code": "missing_api_key",
+      "message": "ATTIO_API_KEY is not set. Export it or add it to .env.local or .env in the current directory.",
+      "error_type": "CLIError",
+      "fatal": true,
+      "field": null,
+      "status_code": null,
+      "type": null,
+      "details": {}
+    }
+  ],
+  "meta": {"output_schema_version": "v1"}
+}
+```
+
+| `errors[].code` | Meaning |
+| --- | --- |
+| `missing_api_key` | No `ATTIO_API_KEY` in the environment, `.env.local` or `.env` |
+| `invalid_api_key` | Attio returned 401/403: a wrong key, or a missing scope |
+| `invalid_json`, `validation_error` | `--json` isn't valid JSON, or a value failed validation; `message` names the field |
+| `duplicate_identity` | `add` found an existing person or company with that email or domain |
+| `record_not_found` | `update` matched nothing |
+| `multiple_matches` | `update`, or `upsert --strict`, matched more than one record |
+| `invalid_value`, `schema_mismatch` | With `--strict`: a value was invalid, or the workspace lacks the attribute |
+| `uniqueness_conflict` | A person write included an email address that already belongs to another person |
+| anything else | Attio's own error `code`, passed through with `status_code` and `details` from the API response |
+
+Exit codes:
+
+| Code | Meaning |
+| --- | --- |
+| `0` | Success, including `partial_success` |
+| `1` | A failure, reported in a `success: false` envelope |
+| `2` | A command-line usage error. argparse prints it to stderr and no JSON is emitted. |
+<!-- End Standalone CLI [cli] -->
+
+## Authentication
+
+Every request needs an Attio access token, which you pass as `oauth2`. Despite the parameter name, it accepts either kind of [Attio access token](https://docs.attio.com/rest-api/guides/authentication):
+
+- **API key:** a single-workspace token. Generate it in the developer settings of an app in your workspace.
+- **OAuth 2.0 access token:** for an app installed in several workspaces.
 
 ```python
-# Asynchronous Example
-import asyncio
+import os
+
 from attio import SDK
 
-async def main():
+with SDK(oauth2=os.environ["ATTIO_API_KEY"]) as sdk:
+    print(sdk.meta.get_v2_self())  # which workspace and scopes the token has
+```
 
-    async with SDK(
-        oauth2="<YOUR_OAUTH2_HERE>",
-    ) as sdk:
+Tokens carry scopes. Each method's reference page lists the scopes it needs under "Required scopes", and a 403 usually means one of them is missing.
 
+## SDK Example Usage
+
+```python
+# Synchronous
+import os
+
+from attio import SDK
+
+with SDK(oauth2=os.environ["ATTIO_API_KEY"]) as sdk:
+    res = sdk.objects.get_v2_objects()
+    for obj in res.data:
+        print(obj.api_slug, obj.singular_noun)
+```
+
+Every method has an `_async` twin:
+
+```python
+# Asynchronous
+import asyncio
+import os
+
+from attio import SDK
+
+
+async def main() -> None:
+    async with SDK(oauth2=os.environ["ATTIO_API_KEY"]) as sdk:
         res = await sdk.objects.get_v2_objects_async()
+        print([obj.api_slug for obj in res.data])
 
-        # Handle response
-        print(res)
 
 asyncio.run(main())
 ```
-<!-- End SDK Example Usage [usage] -->
 
-<!-- Start Authentication [security] -->
-## Authentication
+### Finding the right method
 
-### Per-Client Security Schemes
+Method names come mechanically from the HTTP verb and the path of the [Attio endpoint](https://docs.attio.com/rest-api/overview):
 
-This SDK supports the following security scheme globally:
+| Rule | Example |
+| --- | --- |
+| Name: `sdk.<resource>.<verb>_<path>`, where `/`, `{` and `}` become `_` | `POST /v2/objects/{object}/records/query` → `sdk.records.post_v2_objects_object_records_query` |
+| A path that ends in a parameter gets a trailing `_` | `GET /v2/objects/{object}/records/{record_id}` → `sdk.records.get_v2_objects_object_records_record_id_` |
+| Async: append `_async` and `await` the call | `await sdk.records.post_v2_objects_object_records_query_async(...)` |
+| Arguments are keyword-only. Path params, query params and top-level body fields are all flattened into arguments; most write endpoints take one body argument, `data=` | `sdk.records.post_v2_objects_object_records(object="people", data={"values": {...}})` |
+| Names that clash with Python builtins get a trailing `_` | `filter_=` on query methods; the `format_` key in a note body |
+| A `{list}` path parameter is named `list_id` | `sdk.entries.post_v2_lists_list_entries_query(list_id="sales")` |
+| Every method also accepts `retries=`, `timeout_ms=`, `server_url=` and `http_headers=` | See [Retries and timeouts](#retries-and-timeouts) |
 
-| Name     | Type   | Scheme       |
-| -------- | ------ | ------------ |
-| `oauth2` | oauth2 | OAuth2 token |
+Request bodies accept plain dicts (typed as `TypedDict`) or model instances from `attio.models`. Responses are Pydantic models with the payload under `.data`. `res.model_dump(mode="json", by_alias=True)` turns a response into plain JSON-compatible data.
 
-To authenticate with the API the `oauth2` parameter must be set when initializing the SDK client instance. For example:
+The resource pages in [Available Resources and Operations](#available-resources-and-operations) document each method's parameters, an example, the response model and its errors. In a checkout, they live at `generated/docs/sdks/<resource>/README.md`, and the models at `generated/docs/models/`.
 
-```python
-from attio import SDK
+### Record values
 
+Attio record attributes are written as `{attribute_slug: [value, ...]}`. The value is always a list, even for a single-value attribute. Common shapes (the CLI writes these):
 
-with SDK(
-    oauth2="<YOUR_OAUTH2_HERE>",
-) as sdk:
+| Attribute | Value |
+| --- | --- |
+| `email_addresses` (people) | `[{"email_address": "ada@example.com"}]` |
+| `name` (people) | `[{"first_name": "Ada", "last_name": "Lovelace", "full_name": "Ada Lovelace"}]` |
+| `job_title`, `description` (text) | `["Mathematician"]` |
+| `phone_numbers` (people) | `[{"original_phone_number": "+14155550100"}]` |
+| `domains` (companies) | `[{"domain": "example.com"}]` |
+| `name` (companies) | `[{"value": "Example Inc"}]` |
+| `associated_company` (person → company) | `[{"target_object": "companies", "domains": [{"domain": "example.com"}]}]` |
 
-    res = sdk.objects.get_v2_objects()
-
-    # Handle response
-    print(res)
-
-```
-<!-- End Authentication [security] -->
+Attribute slugs and types differ between workspaces. List them with `sdk.attributes.get_v2_target_identifier_attributes(target="objects", identifier="people")`, and see Attio's [attribute types](https://docs.attio.com/rest-api/attribute-types/attribute-types) reference for every value shape.
 
 ## Common Workflows
 
-### List objects
+### Query people, with a filter and pagination
 
 ```python
+import os
+
 from attio import SDK
 
-with SDK(oauth2="<YOUR_OAUTH2_HERE>") as sdk:
-    res = sdk.objects.get_v2_objects()
-    print(res)
+PAGE = 100
+
+with SDK(oauth2=os.environ["ATTIO_API_KEY"]) as sdk:
+    offset = 0
+    while True:
+        page = sdk.records.post_v2_objects_object_records_query(
+            object="people",
+            filter_={"email_addresses": "ada@example.com"},
+            limit=PAGE,
+            offset=offset,
+        )
+        for record in page.data:
+            print(record.id.record_id, record.values.get("name"))
+        if len(page.data) < PAGE:
+            break
+        offset += PAGE
 ```
 
-### Create a record (people)
+### Create a person
 
 ```python
+import os
+
 from attio import SDK
 
-with SDK(oauth2="<YOUR_OAUTH2_HERE>") as sdk:
+with SDK(oauth2=os.environ["ATTIO_API_KEY"]) as sdk:
     res = sdk.records.post_v2_objects_object_records(
         object="people",
         data={
             "values": {
-                "<ATTRIBUTE_SLUG_OR_ID>": ["Ada Lovelace"],
+                "email_addresses": [{"email_address": "ada@example.com"}],
+                "name": [
+                    {
+                        "first_name": "Ada",
+                        "last_name": "Lovelace",
+                        "full_name": "Ada Lovelace",
+                    },
+                ],
+                "job_title": ["Mathematician"],
             },
         },
     )
-    print(res)
+    print(res.data.id.record_id)
 ```
 
-### Query records (people)
+### Upsert a person by email
+
+This creates the person, or updates the one record whose `matching_attribute` matches:
 
 ```python
+import os
+
 from attio import SDK
 
-with SDK(oauth2="<YOUR_OAUTH2_HERE>") as sdk:
-    res = sdk.records.post_v2_objects_object_records_query(
+with SDK(oauth2=os.environ["ATTIO_API_KEY"]) as sdk:
+    res = sdk.records.put_v2_objects_object_records(
         object="people",
-        limit=25,
-        offset=0,
+        matching_attribute="email_addresses",
+        data={
+            "values": {
+                "email_addresses": [{"email_address": "ada@example.com"}],
+                "job_title": ["Mathematician"],
+            },
+        },
     )
-    print(res)
+    print(res.data.id.record_id)
 ```
 
-<!-- Start Available Resources and Operations [operations] -->
+### Add a note to a record
+
+```python
+import os
+
+from attio import SDK
+
+with SDK(oauth2=os.environ["ATTIO_API_KEY"]) as sdk:
+    res = sdk.notes.post_v2_notes(
+        data={
+            "parent_object": "people",
+            "parent_record_id": "bf071e1f-6035-429d-b874-d83ea64ea13b",
+            "title": "Discovery call",
+            "format_": "plaintext",
+            "content": "Discussed the launch plan.",
+        },
+    )
+    print(res.data.id.note_id)
+```
+
+### Fuzzy search across objects
+
+```python
+import os
+
+from attio import SDK
+
+with SDK(oauth2=os.environ["ATTIO_API_KEY"]) as sdk:
+    res = sdk.records.post_v2_objects_records_search(
+        query="ada",
+        objects=["people", "companies"],
+        request_as={"type": "workspace"},
+        limit=10,
+    )
+    print(res.data)
+```
+
+Search is eventually consistent. When you need up-to-date results, use `post_v2_objects_object_records_query`.
+
 ## Available Resources and Operations
 
-<details open>
-<summary>Available methods</summary>
+Each heading links to the resource's reference page and shows the attribute it lives on. Each method links to its section on that page.
 
-### [Activities](docs/sdks/activities/README.md)
+### [Activities](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/activities/README.md): `sdk.activities`
 
-* [get_v2_activities](docs/sdks/activities/README.md#get_v2_activities) - List activities
-* [post_v2_activities](docs/sdks/activities/README.md#post_v2_activities) - Create an activity
-* [get_v2_activities_activity_](docs/sdks/activities/README.md#get_v2_activities_activity_) - Get an activity
-* [patch_v2_activities_activity_](docs/sdks/activities/README.md#patch_v2_activities_activity_) - Update an activity
-* [delete_v2_activities_activity_](docs/sdks/activities/README.md#delete_v2_activities_activity_) - Delete an activity
+* [get_v2_activities](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/activities/README.md#get_v2_activities) - List activities
+* [post_v2_activities](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/activities/README.md#post_v2_activities) - Create an activity
+* [get_v2_activities_activity_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/activities/README.md#get_v2_activities_activity_) - Get an activity
+* [patch_v2_activities_activity_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/activities/README.md#patch_v2_activities_activity_) - Update an activity
+* [delete_v2_activities_activity_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/activities/README.md#delete_v2_activities_activity_) - Delete an activity
 
-### [ActivityRecords](docs/sdks/activityrecords/README.md)
+### [ActivityRecords](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/activityrecords/README.md): `sdk.activity_records`
 
-* [post_v2_activities_activity_records_query](docs/sdks/activityrecords/README.md#post_v2_activities_activity_records_query) - List activity records
-* [post_v2_activities_activity_records](docs/sdks/activityrecords/README.md#post_v2_activities_activity_records) - Create an activity record
-* [put_v2_activities_activity_records](docs/sdks/activityrecords/README.md#put_v2_activities_activity_records) - Upsert an activity record
-* [get_v2_activities_activity_records_record_id_](docs/sdks/activityrecords/README.md#get_v2_activities_activity_records_record_id_) - Get an activity record
-* [patch_v2_activities_activity_records_record_id_](docs/sdks/activityrecords/README.md#patch_v2_activities_activity_records_record_id_) - Update an activity record (append multiselect values)
-* [put_v2_activities_activity_records_record_id_](docs/sdks/activityrecords/README.md#put_v2_activities_activity_records_record_id_) - Update an activity record (overwrite multiselect values)
-* [delete_v2_activities_activity_records_record_id_](docs/sdks/activityrecords/README.md#delete_v2_activities_activity_records_record_id_) - Delete an activity record
+* [post_v2_activities_activity_records_query](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/activityrecords/README.md#post_v2_activities_activity_records_query) - List activity records
+* [post_v2_activities_activity_records](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/activityrecords/README.md#post_v2_activities_activity_records) - Create an activity record
+* [put_v2_activities_activity_records](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/activityrecords/README.md#put_v2_activities_activity_records) - Upsert an activity record
+* [get_v2_activities_activity_records_record_id_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/activityrecords/README.md#get_v2_activities_activity_records_record_id_) - Get an activity record
+* [patch_v2_activities_activity_records_record_id_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/activityrecords/README.md#patch_v2_activities_activity_records_record_id_) - Update an activity record (append multiselect values)
+* [put_v2_activities_activity_records_record_id_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/activityrecords/README.md#put_v2_activities_activity_records_record_id_) - Update an activity record (overwrite multiselect values)
+* [delete_v2_activities_activity_records_record_id_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/activityrecords/README.md#delete_v2_activities_activity_records_record_id_) - Delete an activity record
 
-### [Attributes](docs/sdks/attributes/README.md)
+### [Attributes](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/attributes/README.md): `sdk.attributes`
 
-* [get_v2_target_identifier_attributes](docs/sdks/attributes/README.md#get_v2_target_identifier_attributes) - List attributes
-* [post_v2_target_identifier_attributes](docs/sdks/attributes/README.md#post_v2_target_identifier_attributes) - Create an attribute
-* [get_v2_target_identifier_attributes_attribute_](docs/sdks/attributes/README.md#get_v2_target_identifier_attributes_attribute_) - Get an attribute
-* [patch_v2_target_identifier_attributes_attribute_](docs/sdks/attributes/README.md#patch_v2_target_identifier_attributes_attribute_) - Update an attribute
-* [get_v2_target_identifier_attributes_attribute_options](docs/sdks/attributes/README.md#get_v2_target_identifier_attributes_attribute_options) - List select options
-* [post_v2_target_identifier_attributes_attribute_options](docs/sdks/attributes/README.md#post_v2_target_identifier_attributes_attribute_options) - Create a select option
-* [patch_v2_target_identifier_attributes_attribute_options_option_](docs/sdks/attributes/README.md#patch_v2_target_identifier_attributes_attribute_options_option_) - Update a select option
-* [get_v2_target_identifier_attributes_attribute_statuses](docs/sdks/attributes/README.md#get_v2_target_identifier_attributes_attribute_statuses) - List statuses
-* [post_v2_target_identifier_attributes_attribute_statuses](docs/sdks/attributes/README.md#post_v2_target_identifier_attributes_attribute_statuses) - Create a status
-* [patch_v2_target_identifier_attributes_attribute_statuses_status_](docs/sdks/attributes/README.md#patch_v2_target_identifier_attributes_attribute_statuses_status_) - Update a status
+* [get_v2_target_identifier_attributes](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/attributes/README.md#get_v2_target_identifier_attributes) - List attributes
+* [post_v2_target_identifier_attributes](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/attributes/README.md#post_v2_target_identifier_attributes) - Create an attribute
+* [get_v2_target_identifier_attributes_attribute_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/attributes/README.md#get_v2_target_identifier_attributes_attribute_) - Get an attribute
+* [patch_v2_target_identifier_attributes_attribute_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/attributes/README.md#patch_v2_target_identifier_attributes_attribute_) - Update an attribute
+* [get_v2_target_identifier_attributes_attribute_options](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/attributes/README.md#get_v2_target_identifier_attributes_attribute_options) - List select options
+* [post_v2_target_identifier_attributes_attribute_options](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/attributes/README.md#post_v2_target_identifier_attributes_attribute_options) - Create a select option
+* [patch_v2_target_identifier_attributes_attribute_options_option_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/attributes/README.md#patch_v2_target_identifier_attributes_attribute_options_option_) - Update a select option
+* [get_v2_target_identifier_attributes_attribute_statuses](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/attributes/README.md#get_v2_target_identifier_attributes_attribute_statuses) - List statuses
+* [post_v2_target_identifier_attributes_attribute_statuses](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/attributes/README.md#post_v2_target_identifier_attributes_attribute_statuses) - Create a status
+* [patch_v2_target_identifier_attributes_attribute_statuses_status_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/attributes/README.md#patch_v2_target_identifier_attributes_attribute_statuses_status_) - Update a status
 
-### [CallRecordings](docs/sdks/callrecordings/README.md)
+### [CallRecordings](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/callrecordings/README.md): `sdk.call_recordings`
 
-* [get_v2_meetings_meeting_id_call_recordings](docs/sdks/callrecordings/README.md#get_v2_meetings_meeting_id_call_recordings) - List call recordings
-* [post_v2_meetings_meeting_id_call_recordings](docs/sdks/callrecordings/README.md#post_v2_meetings_meeting_id_call_recordings) - Create call recording
-* [get_v2_meetings_meeting_id_call_recordings_call_recording_id_](docs/sdks/callrecordings/README.md#get_v2_meetings_meeting_id_call_recordings_call_recording_id_) - Get call recording
-* [delete_v2_meetings_meeting_id_call_recordings_call_recording_id_](docs/sdks/callrecordings/README.md#delete_v2_meetings_meeting_id_call_recordings_call_recording_id_) - Delete call recording
+* [get_v2_meetings_meeting_id_call_recordings](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/callrecordings/README.md#get_v2_meetings_meeting_id_call_recordings) - List call recordings
+* [post_v2_meetings_meeting_id_call_recordings](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/callrecordings/README.md#post_v2_meetings_meeting_id_call_recordings) - Create call recording
+* [get_v2_meetings_meeting_id_call_recordings_call_recording_id_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/callrecordings/README.md#get_v2_meetings_meeting_id_call_recordings_call_recording_id_) - Get call recording
+* [delete_v2_meetings_meeting_id_call_recordings_call_recording_id_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/callrecordings/README.md#delete_v2_meetings_meeting_id_call_recordings_call_recording_id_) - Delete call recording
 
-### [Comments](docs/sdks/comments/README.md)
+### [Comments](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/comments/README.md): `sdk.comments`
 
-* [post_v2_comments](docs/sdks/comments/README.md#post_v2_comments) - Create a comment
-* [get_v2_comments_comment_id_](docs/sdks/comments/README.md#get_v2_comments_comment_id_) - Get a comment
-* [delete_v2_comments_comment_id_](docs/sdks/comments/README.md#delete_v2_comments_comment_id_) - Delete a comment
+* [post_v2_comments](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/comments/README.md#post_v2_comments) - Create a comment
+* [get_v2_comments_comment_id_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/comments/README.md#get_v2_comments_comment_id_) - Get a comment
+* [delete_v2_comments_comment_id_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/comments/README.md#delete_v2_comments_comment_id_) - Delete a comment
 
-### [Emails](docs/sdks/emails/README.md)
+### [Emails](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/emails/README.md): `sdk.emails`
 
-* [get_v2_emails](docs/sdks/emails/README.md#get_v2_emails) - List emails
+* [get_v2_emails](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/emails/README.md#get_v2_emails) - List emails
 
-### [Entries](docs/sdks/entries/README.md)
+### [Entries](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/entries/README.md): `sdk.entries`
 
-* [post_v2_lists_list_entries_query](docs/sdks/entries/README.md#post_v2_lists_list_entries_query) - List entries
-* [post_v2_lists_list_entries](docs/sdks/entries/README.md#post_v2_lists_list_entries) - Create an entry (add record to list)
-* [put_v2_lists_list_entries](docs/sdks/entries/README.md#put_v2_lists_list_entries) - Upsert a list entry by parent
-* [get_v2_lists_list_entries_entry_id_](docs/sdks/entries/README.md#get_v2_lists_list_entries_entry_id_) - Get a list entry
-* [patch_v2_lists_list_entries_entry_id_](docs/sdks/entries/README.md#patch_v2_lists_list_entries_entry_id_) - Update a list entry (append multiselect values)
-* [put_v2_lists_list_entries_entry_id_](docs/sdks/entries/README.md#put_v2_lists_list_entries_entry_id_) - Update a list entry (overwrite multiselect values)
-* [delete_v2_lists_list_entries_entry_id_](docs/sdks/entries/README.md#delete_v2_lists_list_entries_entry_id_) - Delete a list entry
-* [get_v2_lists_list_entries_entry_id_attributes_attribute_values](docs/sdks/entries/README.md#get_v2_lists_list_entries_entry_id_attributes_attribute_values) - List attribute values for a list entry
-* [put_v2_lists_list_entries_entry_id_attributes_attribute_values](docs/sdks/entries/README.md#put_v2_lists_list_entries_entry_id_attributes_attribute_values) - Write list entry attribute values
+* [post_v2_lists_list_entries_query](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/entries/README.md#post_v2_lists_list_entries_query) - List entries
+* [post_v2_lists_list_entries](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/entries/README.md#post_v2_lists_list_entries) - Create an entry (add record to list)
+* [put_v2_lists_list_entries](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/entries/README.md#put_v2_lists_list_entries) - Upsert a list entry by parent
+* [get_v2_lists_list_entries_entry_id_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/entries/README.md#get_v2_lists_list_entries_entry_id_) - Get a list entry
+* [patch_v2_lists_list_entries_entry_id_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/entries/README.md#patch_v2_lists_list_entries_entry_id_) - Update a list entry (append multiselect values)
+* [put_v2_lists_list_entries_entry_id_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/entries/README.md#put_v2_lists_list_entries_entry_id_) - Update a list entry (overwrite multiselect values)
+* [delete_v2_lists_list_entries_entry_id_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/entries/README.md#delete_v2_lists_list_entries_entry_id_) - Delete a list entry
+* [get_v2_lists_list_entries_entry_id_attributes_attribute_values](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/entries/README.md#get_v2_lists_list_entries_entry_id_attributes_attribute_values) - List attribute values for a list entry
+* [put_v2_lists_list_entries_entry_id_attributes_attribute_values](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/entries/README.md#put_v2_lists_list_entries_entry_id_attributes_attribute_values) - Write list entry attribute values
 
-### [Files](docs/sdks/files/README.md)
+### [Files](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/files/README.md): `sdk.files`
 
-* [get_v2_files](docs/sdks/files/README.md#get_v2_files) - List files
-* [post_v2_files](docs/sdks/files/README.md#post_v2_files) - Create a folder
-* [post_v2_files_upload](docs/sdks/files/README.md#post_v2_files_upload) - Upload a file
-* [get_v2_files_file_id_](docs/sdks/files/README.md#get_v2_files_file_id_) - Get a file
-* [delete_v2_files_file_id_](docs/sdks/files/README.md#delete_v2_files_file_id_) - Delete a file
-* [get_v2_files_file_id_download](docs/sdks/files/README.md#get_v2_files_file_id_download) - Download a file
+* [get_v2_files](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/files/README.md#get_v2_files) - List files
+* [post_v2_files](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/files/README.md#post_v2_files) - Create a folder
+* [post_v2_files_upload](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/files/README.md#post_v2_files_upload) - Upload a file
+* [get_v2_files_file_id_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/files/README.md#get_v2_files_file_id_) - Get a file
+* [delete_v2_files_file_id_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/files/README.md#delete_v2_files_file_id_) - Delete a file
+* [get_v2_files_file_id_download](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/files/README.md#get_v2_files_file_id_download) - Download a file
 
-### [Lists](docs/sdks/lists/README.md)
+### [Lists](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/lists/README.md): `sdk.lists`
 
-* [get_v2_lists](docs/sdks/lists/README.md#get_v2_lists) - List all lists
-* [post_v2_lists](docs/sdks/lists/README.md#post_v2_lists) - Create a list
-* [get_v2_lists_list_](docs/sdks/lists/README.md#get_v2_lists_list_) - Get a list
-* [patch_v2_lists_list_](docs/sdks/lists/README.md#patch_v2_lists_list_) - Update a list
-* [get_v2_lists_list_views](docs/sdks/lists/README.md#get_v2_lists_list_views) - List views for list
+* [get_v2_lists](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/lists/README.md#get_v2_lists) - List all lists
+* [post_v2_lists](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/lists/README.md#post_v2_lists) - Create a list
+* [get_v2_lists_list_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/lists/README.md#get_v2_lists_list_) - Get a list
+* [patch_v2_lists_list_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/lists/README.md#patch_v2_lists_list_) - Update a list
+* [get_v2_lists_list_views](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/lists/README.md#get_v2_lists_list_views) - List views for list
 
-### [Meetings](docs/sdks/meetings/README.md)
+### [Meetings](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/meetings/README.md): `sdk.meetings`
 
-* [get_v2_meetings](docs/sdks/meetings/README.md#get_v2_meetings) - List meetings
-* [post_v2_meetings](docs/sdks/meetings/README.md#post_v2_meetings) - Create a meeting
-* [get_v2_meetings_meeting_id_](docs/sdks/meetings/README.md#get_v2_meetings_meeting_id_) - Get a meeting
-* [patch_v2_meetings_meeting_id_](docs/sdks/meetings/README.md#patch_v2_meetings_meeting_id_) - Update a meeting (append linked records)
-* [put_v2_meetings_meeting_id_](docs/sdks/meetings/README.md#put_v2_meetings_meeting_id_) - Update a meeting (overwrite linked records)
-* [delete_v2_meetings_meeting_id_](docs/sdks/meetings/README.md#delete_v2_meetings_meeting_id_) - Delete a meeting
+* [get_v2_meetings](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/meetings/README.md#get_v2_meetings) - List meetings
+* [post_v2_meetings](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/meetings/README.md#post_v2_meetings) - Create a meeting
+* [get_v2_meetings_meeting_id_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/meetings/README.md#get_v2_meetings_meeting_id_) - Get a meeting
+* [patch_v2_meetings_meeting_id_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/meetings/README.md#patch_v2_meetings_meeting_id_) - Update a meeting (append linked records)
+* [put_v2_meetings_meeting_id_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/meetings/README.md#put_v2_meetings_meeting_id_) - Update a meeting (overwrite linked records)
+* [delete_v2_meetings_meeting_id_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/meetings/README.md#delete_v2_meetings_meeting_id_) - Delete a meeting
 
-### [Meta](docs/sdks/meta/README.md)
+### [Meta](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/meta/README.md): `sdk.meta`
 
-* [get_v2_self](docs/sdks/meta/README.md#get_v2_self) - Identify
+* [get_v2_self](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/meta/README.md#get_v2_self) - Identify
 
-### [Notes](docs/sdks/notes/README.md)
+### [Notes](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/notes/README.md): `sdk.notes`
 
-* [get_v2_notes](docs/sdks/notes/README.md#get_v2_notes) - List notes
-* [post_v2_notes](docs/sdks/notes/README.md#post_v2_notes) - Create a note
-* [get_v2_notes_note_id_](docs/sdks/notes/README.md#get_v2_notes_note_id_) - Get a note
-* [patch_v2_notes_note_id_](docs/sdks/notes/README.md#patch_v2_notes_note_id_) - Update a note
-* [delete_v2_notes_note_id_](docs/sdks/notes/README.md#delete_v2_notes_note_id_) - Delete a note
+* [get_v2_notes](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/notes/README.md#get_v2_notes) - List notes
+* [post_v2_notes](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/notes/README.md#post_v2_notes) - Create a note
+* [get_v2_notes_note_id_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/notes/README.md#get_v2_notes_note_id_) - Get a note
+* [patch_v2_notes_note_id_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/notes/README.md#patch_v2_notes_note_id_) - Update a note
+* [delete_v2_notes_note_id_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/notes/README.md#delete_v2_notes_note_id_) - Delete a note
 
-### [Objects](docs/sdks/objects/README.md)
+### [Objects](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/objects/README.md): `sdk.objects`
 
-* [get_v2_objects](docs/sdks/objects/README.md#get_v2_objects) - List objects
-* [post_v2_objects](docs/sdks/objects/README.md#post_v2_objects) - Create an object
-* [get_v2_objects_object_](docs/sdks/objects/README.md#get_v2_objects_object_) - Get an object
-* [patch_v2_objects_object_](docs/sdks/objects/README.md#patch_v2_objects_object_) - Update an object
-* [delete_v2_objects_object_](docs/sdks/objects/README.md#delete_v2_objects_object_) - Delete an object
-* [get_v2_objects_object_views](docs/sdks/objects/README.md#get_v2_objects_object_views) - List views for object
+* [get_v2_objects](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/objects/README.md#get_v2_objects) - List objects
+* [post_v2_objects](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/objects/README.md#post_v2_objects) - Create an object
+* [get_v2_objects_object_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/objects/README.md#get_v2_objects_object_) - Get an object
+* [patch_v2_objects_object_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/objects/README.md#patch_v2_objects_object_) - Update an object
+* [delete_v2_objects_object_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/objects/README.md#delete_v2_objects_object_) - Delete an object
+* [get_v2_objects_object_views](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/objects/README.md#get_v2_objects_object_views) - List views for object
 
-### [Records](docs/sdks/records/README.md)
+### [Records](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/records/README.md): `sdk.records`
 
-* [post_v2_objects_object_records_query](docs/sdks/records/README.md#post_v2_objects_object_records_query) - List records
-* [post_v2_objects_object_records](docs/sdks/records/README.md#post_v2_objects_object_records) - Create a record
-* [put_v2_objects_object_records](docs/sdks/records/README.md#put_v2_objects_object_records) - Upsert a record
-* [get_v2_objects_object_records_record_id_](docs/sdks/records/README.md#get_v2_objects_object_records_record_id_) - Get a record
-* [patch_v2_objects_object_records_record_id_](docs/sdks/records/README.md#patch_v2_objects_object_records_record_id_) - Update a record (append multiselect values)
-* [put_v2_objects_object_records_record_id_](docs/sdks/records/README.md#put_v2_objects_object_records_record_id_) - Update a record (overwrite multiselect values)
-* [delete_v2_objects_object_records_record_id_](docs/sdks/records/README.md#delete_v2_objects_object_records_record_id_) - Delete a record
-* [post_v2_objects_object_records_merge](docs/sdks/records/README.md#post_v2_objects_object_records_merge) - Merge two records
-* [get_v2_objects_object_records_record_id_attributes_attribute_values](docs/sdks/records/README.md#get_v2_objects_object_records_record_id_attributes_attribute_values) - List record attribute values
-* [put_v2_objects_object_records_record_id_attributes_attribute_values](docs/sdks/records/README.md#put_v2_objects_object_records_record_id_attributes_attribute_values) - Write record attribute values
-* [get_v2_objects_object_records_record_id_entries](docs/sdks/records/README.md#get_v2_objects_object_records_record_id_entries) - List record entries
-* [post_v2_objects_records_search](docs/sdks/records/README.md#post_v2_objects_records_search) - Search records
+* [post_v2_objects_object_records_query](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/records/README.md#post_v2_objects_object_records_query) - List records
+* [post_v2_objects_object_records](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/records/README.md#post_v2_objects_object_records) - Create a record
+* [put_v2_objects_object_records](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/records/README.md#put_v2_objects_object_records) - Upsert a record
+* [get_v2_objects_object_records_record_id_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/records/README.md#get_v2_objects_object_records_record_id_) - Get a record
+* [patch_v2_objects_object_records_record_id_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/records/README.md#patch_v2_objects_object_records_record_id_) - Update a record (append multiselect values)
+* [put_v2_objects_object_records_record_id_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/records/README.md#put_v2_objects_object_records_record_id_) - Update a record (overwrite multiselect values)
+* [delete_v2_objects_object_records_record_id_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/records/README.md#delete_v2_objects_object_records_record_id_) - Delete a record
+* [post_v2_objects_object_records_merge](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/records/README.md#post_v2_objects_object_records_merge) - Merge two records
+* [get_v2_objects_object_records_record_id_attributes_attribute_values](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/records/README.md#get_v2_objects_object_records_record_id_attributes_attribute_values) - List record attribute values
+* [put_v2_objects_object_records_record_id_attributes_attribute_values](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/records/README.md#put_v2_objects_object_records_record_id_attributes_attribute_values) - Write record attribute values
+* [get_v2_objects_object_records_record_id_entries](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/records/README.md#get_v2_objects_object_records_record_id_entries) - List record entries
+* [post_v2_objects_records_search](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/records/README.md#post_v2_objects_records_search) - Search records
 
-### [Sequences](docs/sdks/sequences/README.md)
+### [Sequences](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/sequences/README.md): `sdk.sequences`
 
-* [post_v2_sequences_unsubscribed_emails](docs/sdks/sequences/README.md#post_v2_sequences_unsubscribed_emails) - Add emails to the unsubscribe list
+* [post_v2_sequences_unsubscribed_emails](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/sequences/README.md#post_v2_sequences_unsubscribed_emails) - Add emails to the unsubscribe list
 
-### [Sql](docs/sdks/sql/README.md)
+### [Sql](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/sql/README.md): `sdk.sql`
 
-* [post_v2_sql](docs/sdks/sql/README.md#post_v2_sql) - Query SQL
+* [post_v2_sql](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/sql/README.md#post_v2_sql) - Query SQL
 
-### [Tasks](docs/sdks/tasks/README.md)
+### [Tasks](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/tasks/README.md): `sdk.tasks`
 
-* [get_v2_tasks](docs/sdks/tasks/README.md#get_v2_tasks) - List tasks
-* [post_v2_tasks](docs/sdks/tasks/README.md#post_v2_tasks) - Create a task
-* [get_v2_tasks_task_id_](docs/sdks/tasks/README.md#get_v2_tasks_task_id_) - Get a task
-* [patch_v2_tasks_task_id_](docs/sdks/tasks/README.md#patch_v2_tasks_task_id_) - Update a task
-* [delete_v2_tasks_task_id_](docs/sdks/tasks/README.md#delete_v2_tasks_task_id_) - Delete a task
+* [get_v2_tasks](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/tasks/README.md#get_v2_tasks) - List tasks
+* [post_v2_tasks](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/tasks/README.md#post_v2_tasks) - Create a task
+* [get_v2_tasks_task_id_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/tasks/README.md#get_v2_tasks_task_id_) - Get a task
+* [patch_v2_tasks_task_id_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/tasks/README.md#patch_v2_tasks_task_id_) - Update a task
+* [delete_v2_tasks_task_id_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/tasks/README.md#delete_v2_tasks_task_id_) - Delete a task
 
-### [Threads](docs/sdks/threads/README.md)
+### [Threads](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/threads/README.md): `sdk.threads`
 
-* [get_v2_threads](docs/sdks/threads/README.md#get_v2_threads) - List threads
-* [get_v2_threads_thread_id_](docs/sdks/threads/README.md#get_v2_threads_thread_id_) - Get a thread and its comments
+* [get_v2_threads](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/threads/README.md#get_v2_threads) - List threads
+* [get_v2_threads_thread_id_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/threads/README.md#get_v2_threads_thread_id_) - Get a thread and its comments
 
-### [Transcripts](docs/sdks/transcripts/README.md)
+### [Transcripts](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/transcripts/README.md): `sdk.transcripts`
 
-* [get_v2_meetings_meeting_id_call_recordings_call_recording_id_transcript](docs/sdks/transcripts/README.md#get_v2_meetings_meeting_id_call_recordings_call_recording_id_transcript) - Deprecated: Get call transcript
+* [get_v2_meetings_meeting_id_call_recordings_call_recording_id_transcript](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/transcripts/README.md#get_v2_meetings_meeting_id_call_recordings_call_recording_id_transcript) - Deprecated: Get call transcript
 
-### [Webhooks](docs/sdks/webhooks/README.md)
+### [Webhooks](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/webhooks/README.md): `sdk.webhooks`
 
-* [get_v2_webhooks](docs/sdks/webhooks/README.md#get_v2_webhooks) - List webhooks
-* [post_v2_webhooks](docs/sdks/webhooks/README.md#post_v2_webhooks) - Create a webhook
-* [get_v2_webhooks_webhook_id_](docs/sdks/webhooks/README.md#get_v2_webhooks_webhook_id_) - Get a webhook
-* [patch_v2_webhooks_webhook_id_](docs/sdks/webhooks/README.md#patch_v2_webhooks_webhook_id_) - Update a webhook
-* [delete_v2_webhooks_webhook_id_](docs/sdks/webhooks/README.md#delete_v2_webhooks_webhook_id_) - Delete a webhook
+* [get_v2_webhooks](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/webhooks/README.md#get_v2_webhooks) - List webhooks
+* [post_v2_webhooks](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/webhooks/README.md#post_v2_webhooks) - Create a webhook
+* [get_v2_webhooks_webhook_id_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/webhooks/README.md#get_v2_webhooks_webhook_id_) - Get a webhook
+* [patch_v2_webhooks_webhook_id_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/webhooks/README.md#patch_v2_webhooks_webhook_id_) - Update a webhook
+* [delete_v2_webhooks_webhook_id_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/webhooks/README.md#delete_v2_webhooks_webhook_id_) - Delete a webhook
 
-### [WorkspaceMembers](docs/sdks/workspacemembers/README.md)
+### [WorkspaceMembers](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/workspacemembers/README.md): `sdk.workspace_members`
 
-* [get_v2_workspace_members](docs/sdks/workspacemembers/README.md#get_v2_workspace_members) - List workspace members
-* [get_v2_workspace_members_workspace_member_id_](docs/sdks/workspacemembers/README.md#get_v2_workspace_members_workspace_member_id_) - Get a workspace member
+* [get_v2_workspace_members](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/workspacemembers/README.md#get_v2_workspace_members) - List workspace members
+* [get_v2_workspace_members_workspace_member_id_](https://github.com/elviskahoro/sdk-python-attio/blob/main/generated/docs/sdks/workspacemembers/README.md#get_v2_workspace_members_workspace_member_id_) - Get a workspace member
 
-</details>
-<!-- End Available Resources and Operations [operations] -->
-
-<!-- Start File uploads [file-upload] -->
 ## File uploads
 
-Certain SDK methods accept file objects as part of a request body or multi-part request. It is possible and typically recommended to upload files as a stream rather than reading the entire contents into memory. This avoids excessive memory consumption and potentially crashing with out-of-memory errors when working with very large files. The following example demonstrates how to attach a file stream to a request.
-
-> [!TIP]
->
-> For endpoints that handle file uploads bytes arrays can also be used. However, using streams is recommended for large files.
->
+Pass a file as a stream rather than reading it into memory; `bytes` also work:
 
 ```python
+import os
+
 from attio import SDK
 
-
-with SDK(
-    oauth2="<YOUR_OAUTH2_HERE>",
-) as sdk:
-
-    res = sdk.files.post_v2_files_upload(file={
-        "file_name": "example.file",
-        "content": open("example.file", "rb"),
-    }, object="people", record_id="bf071e1f-6035-429d-b874-d83ea64ea13b", parent_folder_id="a1b2c3d4-e5f6-7890-abcd-ef1234567890")
-
-    # Handle response
-    print(res)
-
+with SDK(oauth2=os.environ["ATTIO_API_KEY"]) as sdk, open("example.pdf", "rb") as content:
+    res = sdk.files.post_v2_files_upload(
+        file={"file_name": "example.pdf", "content": content},
+        object="people",
+        record_id="bf071e1f-6035-429d-b874-d83ea64ea13b",
+    )
+    print(res.data)
 ```
-<!-- End File uploads [file-upload] -->
 
-<!-- Start Retries [retries] -->
-## Retries
+## Retries and timeouts
 
-Some of the endpoints in this SDK support retries. If you use the SDK without any configuration, it will fall back to the default retry strategy provided by the API. However, the default retry strategy can be overridden on a per-operation basis, or across the entire SDK.
-
-To change the default retry strategy for a single API call, simply provide a `RetryConfig` object to the call:
+By default, a failed request is not retried. Pass a `RetryConfig`, either per call with `retries=` or for the whole client with `retry_config=`. A retry happens on HTTP 429, 500, 502, 503 and 504, and also on connection errors when `retry_connection_errors` is set:
 
 ```python
+import os
+
 from attio import SDK
 from attio.utils import BackoffStrategy, RetryConfig
 
+retry = RetryConfig(
+    "backoff",
+    BackoffStrategy(
+        initial_interval=500,  # ms before the first retry
+        max_interval=60_000,  # ms cap on a single wait
+        exponent=1.5,  # growth factor between waits
+        max_elapsed_time=300_000,  # ms before giving up
+    ),
+    retry_connection_errors=True,
+)
 
-with SDK(
-    oauth2="<YOUR_OAUTH2_HERE>",
-) as sdk:
-
-    res = sdk.objects.get_v2_objects(,
-        RetryConfig("backoff", BackoffStrategy(1, 50, 1.1, 100), False))
-
-    # Handle response
-    print(res)
-
+# For every method on this client:
+with SDK(oauth2=os.environ["ATTIO_API_KEY"], retry_config=retry, timeout_ms=30_000) as sdk:
+    # Or per call; this overrides the client-wide setting:
+    res = sdk.objects.get_v2_objects(retries=retry, timeout_ms=10_000)
 ```
 
-If you'd like to override the default retry strategy for all operations that support retries, you can use the `retry_config` optional parameter when initializing the SDK:
+`timeout_ms` is in milliseconds. Set it on `SDK(...)` for every request, or on a single call.
 
-```python
-from attio import SDK
-from attio.utils import BackoffStrategy, RetryConfig
-
-
-with SDK(
-    retry_config=RetryConfig("backoff", BackoffStrategy(1, 50, 1.1, 100), False),
-    oauth2="<YOUR_OAUTH2_HERE>",
-) as sdk:
-
-    res = sdk.objects.get_v2_objects()
-
-    # Handle response
-    print(res)
-
-```
-<!-- End Retries [retries] -->
-
-<!-- Start Error Handling [errors] -->
 ## Error Handling
 
-[`SDKError`](./generated/src/attio/errors/sdkerror.py) is the base class for all HTTP error responses. It has the following properties:
-
-| Property           | Type             | Description                                                                             |
-| ------------------ | ---------------- | --------------------------------------------------------------------------------------- |
-| `err.message`      | `str`            | Error message                                                                           |
-| `err.status_code`  | `int`            | HTTP response status code eg `404`                                                      |
-| `err.headers`      | `httpx.Headers`  | HTTP response headers                                                                   |
-| `err.body`         | `str`            | HTTP body. Can be empty string if no body is returned.                                  |
-| `err.raw_response` | `httpx.Response` | Raw HTTP response                                                                       |
-| `err.data`         |                  | Optional. Some errors may contain structured data. [See Error Classes](#error-classes). |
-
-### Example
-
 ```python
+import os
+
+import httpx
 from attio import SDK, errors
 
-
-with SDK(
-    oauth2="<YOUR_OAUTH2_HERE>",
-) as sdk:
-    res = None
+with SDK(oauth2=os.environ["ATTIO_API_KEY"]) as sdk:
     try:
-
-        res = sdk.objects.post_v2_objects(data={
-            "api_slug": "people",
-            "singular_noun": "Person",
-            "plural_noun": "People",
-        })
-
-        # Handle response
-        print(res)
-
-
+        sdk.records.get_v2_objects_object_records_record_id_(
+            object="people",
+            record_id="00000000-0000-0000-0000-000000000000",
+        )
     except errors.SDKError as e:
-        # The base class for HTTP error responses
+        print(e.status_code)  # e.g. 404
         print(e.message)
-        print(e.status_code)
-        print(e.body)
-        print(e.headers)
-        print(e.raw_response)
-
-        # Depending on the method different errors may be thrown
-        if isinstance(e, errors.QuotaExceededError):
-            print(e.data.status_code)  # float
-            print(e.data.type)  # models.PostV2ObjectsBadRequestType
-            print(e.data.code)  # models.PostV2ObjectsCodeQuotaExceeded
-            print(e.data.message)  # str
+        print(e.body)  # Attio's JSON error body: status_code, type, code, message
+    except httpx.RequestError as e:
+        print("network error:", e)
 ```
 
-### Error Classes
+| Exception | When |
+| --- | --- |
+| `errors.SDKError` | Base class for every HTTP error response. Has `status_code`, `message`, `body`, `headers` and `raw_response`. |
+| `errors.<Verb><Path><Kind>Error` | A typed subclass for each documented Attio error, e.g. `PostV2ObjectsObjectRecordsBadRequestInvalidRequestError` (400 on create record) or `GetV2NotesNoteIDNotFoundError`. Has the parsed body in `e.data` (`status_code`, `type`, `code`, `message`). |
+| `errors.SDKDefaultError` | Any other 4XX or 5XX response. |
+| `errors.ResponseValidationError` | The response didn't match the SDK's model. The Pydantic error is in `e.cause`. |
+| `httpx.RequestError` (`ConnectError`, `TimeoutException`) | Network failure. Not an `SDKError`. |
 
-**Primary error:**
-* [`SDKError`](./generated/src/attio/errors/sdkerror.py): The base class for HTTP error responses.
+The typed classes are long and specific to one endpoint. Catch `errors.SDKError` and branch on `e.status_code` (404, 409, 429, …), or on `e.data.code` when the class has one. Each method's reference page lists its error classes under "Errors", but a few of those tables still use older class names. Before you catch a class, confirm it exists in `attio.errors`; the definitions live in [`generated/src/attio/errors/`](https://github.com/elviskahoro/sdk-python-attio/tree/main/generated/src/attio/errors).
 
-<details><summary>Less common errors (175)</summary>
-
-<br />
-
-**Network errors:**
-* [`httpx.RequestError`](https://www.python-httpx.org/exceptions/#httpx.RequestError): Base class for request errors.
-    * [`httpx.ConnectError`](https://www.python-httpx.org/exceptions/#httpx.ConnectError): HTTP client was unable to make a request to a server.
-    * [`httpx.TimeoutException`](https://www.python-httpx.org/exceptions/#httpx.TimeoutException): HTTP request timed out.
-
-**Inherit from [`SDKError`](./generated/src/attio/errors/sdkerror.py)**:
-* [`QuotaExceededError`](./generated/src/attio/errors/quotaexceedederror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
-* [`PatchV2ObjectsObjectValidationTypeError`](./generated/src/attio/errors/patchv2objectsobjectvalidationtypeerror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
-* [`DeleteV2ObjectsObjectSystemEditUnauthorizedError`](./generated/src/attio/errors/deletev2objectsobjectsystemeditunauthorizederror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
-* [`PatchV2ActivitiesActivityValidationTypeError`](./generated/src/attio/errors/patchv2activitiesactivityvalidationtypeerror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
-* [`DeleteV2ActivitiesActivitySystemEditUnauthorizedError`](./generated/src/attio/errors/deletev2activitiesactivitysystemeditunauthorizederror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
-* [`PostV2ActivitiesActivityRecordsQueryFilterError`](./generated/src/attio/errors/postv2activitiesactivityrecordsqueryfiltererror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
-* [`PostV2ActivitiesActivityRecordsInvalidRequestError`](./generated/src/attio/errors/postv2activitiesactivityrecordsinvalidrequesterror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
-* [`PutV2ActivitiesActivityRecordsInvalidRequestError`](./generated/src/attio/errors/putv2activitiesactivityrecordsinvalidrequesterror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
-* [`PatchV2ActivitiesActivityRecordsRecordIDInvalidRequestError`](./generated/src/attio/errors/patchv2activitiesactivityrecordsrecordidinvalidrequesterror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
-* [`PutV2ActivitiesActivityRecordsRecordIDInvalidRequestError`](./generated/src/attio/errors/putv2activitiesactivityrecordsrecordidinvalidrequesterror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
-* [`PostV2TargetIdentifierAttributesValidationTypeError`](./generated/src/attio/errors/postv2targetidentifierattributesvalidationtypeerror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
-* [`PatchV2TargetIdentifierAttributesAttributeSystemEditUnauthorizedError`](./generated/src/attio/errors/patchv2targetidentifierattributesattributesystemeditunauthorizederror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
-* [`PostV2TargetIdentifierAttributesAttributeOptionsValidationTypeError`](./generated/src/attio/errors/postv2targetidentifierattributesattributeoptionsvalidationtypeerror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
-* [`PatchV2TargetIdentifierAttributesAttributeOptionsOptionInvalidRequestError`](./generated/src/attio/errors/patchv2targetidentifierattributesattributeoptionsoptioninvalidrequesterror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
-* [`PostV2TargetIdentifierAttributesAttributeStatusesValidationTypeError`](./generated/src/attio/errors/postv2targetidentifierattributesattributestatusesvalidationtypeerror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
-* [`PatchV2TargetIdentifierAttributesAttributeStatusesStatusInvalidRequestError`](./generated/src/attio/errors/patchv2targetidentifierattributesattributestatusesstatusinvalidrequesterror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
-* [`PostV2ObjectsObjectRecordsQueryFilterError`](./generated/src/attio/errors/postv2objectsobjectrecordsqueryfiltererror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
-* [`PostV2ObjectsObjectRecordsInvalidRequestError`](./generated/src/attio/errors/postv2objectsobjectrecordsinvalidrequesterror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
-* [`PutV2ObjectsObjectRecordsInvalidRequestError`](./generated/src/attio/errors/putv2objectsobjectrecordsinvalidrequesterror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
-* [`PatchV2ObjectsObjectRecordsRecordIDInvalidRequestError`](./generated/src/attio/errors/patchv2objectsobjectrecordsrecordidinvalidrequesterror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
-* [`PutV2ObjectsObjectRecordsRecordIDInvalidRequestError`](./generated/src/attio/errors/putv2objectsobjectrecordsrecordidinvalidrequesterror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
-* [`SelfMergeError`](./generated/src/attio/errors/selfmergeerror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
-* [`GetV2ObjectsObjectRecordsRecordIDAttributesAttributeValuesValidationTypeError`](./generated/src/attio/errors/getv2objectsobjectrecordsrecordidattributesattributevaluesvalidationtypeerror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
-* [`PutV2ObjectsObjectRecordsRecordIDAttributesAttributeValuesBadRequestInvalidRequestError`](./generated/src/attio/errors/putv2objectsobjectrecordsrecordidattributesattributevaluesbadrequestinvalidrequesterror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
-* [`PostV2ObjectsRecordsSearchInvalidRequestError`](./generated/src/attio/errors/postv2objectsrecordssearchinvalidrequesterror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
-* [`PostV2SQLFilterError`](./generated/src/attio/errors/postv2sqlfiltererror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
-* [`PostV2ListsInvalidRequestError`](./generated/src/attio/errors/postv2listsinvalidrequesterror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
-* [`PatchV2ListsListInvalidRequestError`](./generated/src/attio/errors/patchv2listslistinvalidrequesterror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
-* [`PostV2ListsListEntriesInvalidRequestError`](./generated/src/attio/errors/postv2listslistentriesinvalidrequesterror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
-* [`PutV2ListsListEntriesInvalidRequestError`](./generated/src/attio/errors/putv2listslistentriesinvalidrequesterror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
-* [`PatchV2ListsListEntriesEntryIDInvalidRequestError`](./generated/src/attio/errors/patchv2listslistentriesentryidinvalidrequesterror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
-* [`PutV2ListsListEntriesEntryIDInvalidRequestError`](./generated/src/attio/errors/putv2listslistentriesentryidinvalidrequesterror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
-* [`PutV2ListsListEntriesEntryIDAttributesAttributeValuesBadRequestInvalidRequestError`](./generated/src/attio/errors/putv2listslistentriesentryidattributesattributevaluesbadrequestinvalidrequesterror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
-* [`PostV2TasksInvalidRequestError`](./generated/src/attio/errors/postv2tasksinvalidrequesterror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
-* [`PatchV2TasksTaskIDInvalidRequestError`](./generated/src/attio/errors/patchv2taskstaskidinvalidrequesterror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
-* [`PostV2CommentsInvalidRequestError`](./generated/src/attio/errors/postv2commentsinvalidrequesterror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
-* [`PostV2SequencesUnsubscribedEmailsValidationTypeError`](./generated/src/attio/errors/postv2sequencesunsubscribedemailsvalidationtypeerror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
-* [`PostV2MeetingsValidationTypeError`](./generated/src/attio/errors/postv2meetingsvalidationtypeerror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
-* [`PatchV2MeetingsMeetingIDInvalidRequestError`](./generated/src/attio/errors/patchv2meetingsmeetingidinvalidrequesterror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
-* [`PutV2MeetingsMeetingIDInvalidRequestError`](./generated/src/attio/errors/putv2meetingsmeetingidinvalidrequesterror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
-* [`DeleteV2MeetingsMeetingIDSystemEditUnauthorizedError`](./generated/src/attio/errors/deletev2meetingsmeetingidsystemeditunauthorizederror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
-* [`PostV2MeetingsMeetingIDCallRecordingsValidationTypeError`](./generated/src/attio/errors/postv2meetingsmeetingidcallrecordingsvalidationtypeerror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
-* [`PostV2WebhooksValidationTypeError`](./generated/src/attio/errors/postv2webhooksvalidationtypeerror.py): Bad Request. Status code `400`. Applicable to 1 of 97 methods.*
-* [`PostV2ObjectsUnauthorizedError`](./generated/src/attio/errors/postv2objectsunauthorizederror.py): Forbidden. Status code `403`. Applicable to 1 of 97 methods.*
-* [`PatchV2ObjectsObjectUnauthorizedError`](./generated/src/attio/errors/patchv2objectsobjectunauthorizederror.py): Forbidden. Status code `403`. Applicable to 1 of 97 methods.*
-* [`DeleteV2ObjectsObjectUnauthorizedError`](./generated/src/attio/errors/deletev2objectsobjectunauthorizederror.py): Forbidden. Status code `403`. Applicable to 1 of 97 methods.*
-* [`PostV2ActivitiesAuthError`](./generated/src/attio/errors/postv2activitiesautherror.py): Forbidden. Status code `403`. Applicable to 1 of 97 methods.*
-* [`PatchV2ActivitiesActivityUnauthorizedError`](./generated/src/attio/errors/patchv2activitiesactivityunauthorizederror.py): Forbidden. Status code `403`. Applicable to 1 of 97 methods.*
-* [`DeleteV2ActivitiesActivityUnauthorizedError`](./generated/src/attio/errors/deletev2activitiesactivityunauthorizederror.py): Forbidden. Status code `403`. Applicable to 1 of 97 methods.*
-* [`PostV2ActivitiesActivityRecordsAuthError`](./generated/src/attio/errors/postv2activitiesactivityrecordsautherror.py): Forbidden. Status code `403`. Applicable to 1 of 97 methods.*
-* [`PutV2ActivitiesActivityRecordsAuthError`](./generated/src/attio/errors/putv2activitiesactivityrecordsautherror.py): Forbidden. Status code `403`. Applicable to 1 of 97 methods.*
-* [`PatchV2ActivitiesActivityRecordsRecordIDUnauthorizedError`](./generated/src/attio/errors/patchv2activitiesactivityrecordsrecordidunauthorizederror.py): Forbidden. Status code `403`. Applicable to 1 of 97 methods.*
-* [`PutV2ActivitiesActivityRecordsRecordIDUnauthorizedError`](./generated/src/attio/errors/putv2activitiesactivityrecordsrecordidunauthorizederror.py): Forbidden. Status code `403`. Applicable to 1 of 97 methods.*
-* [`DeleteV2ActivitiesActivityRecordsRecordIDUnauthorizedError`](./generated/src/attio/errors/deletev2activitiesactivityrecordsrecordidunauthorizederror.py): Forbidden. Status code `403`. Applicable to 1 of 97 methods.*
-* [`PostV2TargetIdentifierAttributesUnauthorizedError`](./generated/src/attio/errors/postv2targetidentifierattributesunauthorizederror.py): Forbidden. Status code `403`. Applicable to 1 of 97 methods.*
-* [`PatchV2TargetIdentifierAttributesAttributeUnauthorizedError`](./generated/src/attio/errors/patchv2targetidentifierattributesattributeunauthorizederror.py): Forbidden. Status code `403`. Applicable to 1 of 97 methods.*
-* [`PostV2TargetIdentifierAttributesAttributeOptionsUnauthorizedError`](./generated/src/attio/errors/postv2targetidentifierattributesattributeoptionsunauthorizederror.py): Forbidden. Status code `403`. Applicable to 1 of 97 methods.*
-* [`PatchV2TargetIdentifierAttributesAttributeOptionsOptionUnauthorizedError`](./generated/src/attio/errors/patchv2targetidentifierattributesattributeoptionsoptionunauthorizederror.py): Forbidden. Status code `403`. Applicable to 1 of 97 methods.*
-* [`PostV2TargetIdentifierAttributesAttributeStatusesUnauthorizedError`](./generated/src/attio/errors/postv2targetidentifierattributesattributestatusesunauthorizederror.py): Forbidden. Status code `403`. Applicable to 1 of 97 methods.*
-* [`PatchV2TargetIdentifierAttributesAttributeStatusesStatusUnauthorizedError`](./generated/src/attio/errors/patchv2targetidentifierattributesattributestatusesstatusunauthorizederror.py): Forbidden. Status code `403`. Applicable to 1 of 97 methods.*
-* [`PostV2ObjectsObjectRecordsUnauthorizedError`](./generated/src/attio/errors/postv2objectsobjectrecordsunauthorizederror.py): Forbidden. Status code `403`. Applicable to 1 of 97 methods.*
-* [`PutV2ObjectsObjectRecordsUnauthorizedError`](./generated/src/attio/errors/putv2objectsobjectrecordsunauthorizederror.py): Forbidden. Status code `403`. Applicable to 1 of 97 methods.*
-* [`PatchV2ObjectsObjectRecordsRecordIDUnauthorizedError`](./generated/src/attio/errors/patchv2objectsobjectrecordsrecordidunauthorizederror.py): Forbidden. Status code `403`. Applicable to 1 of 97 methods.*
-* [`PutV2ObjectsObjectRecordsRecordIDUnauthorizedError`](./generated/src/attio/errors/putv2objectsobjectrecordsrecordidunauthorizederror.py): Forbidden. Status code `403`. Applicable to 1 of 97 methods.*
-* [`DeleteV2ObjectsObjectRecordsRecordIDUnauthorizedError`](./generated/src/attio/errors/deletev2objectsobjectrecordsrecordidunauthorizederror.py): Forbidden. Status code `403`. Applicable to 1 of 97 methods.*
-* [`PostV2ObjectsObjectRecordsMergeUnauthorizedError`](./generated/src/attio/errors/postv2objectsobjectrecordsmergeunauthorizederror.py): Forbidden. Status code `403`. Applicable to 1 of 97 methods.*
-* [`PutV2ObjectsObjectRecordsRecordIDAttributesAttributeValuesUnauthorizedError`](./generated/src/attio/errors/putv2objectsobjectrecordsrecordidattributesattributevaluesunauthorizederror.py): Forbidden. Status code `403`. Applicable to 1 of 97 methods.*
-* [`BillingError`](./generated/src/attio/errors/billingerror.py): Forbidden. Status code `403`. Applicable to 1 of 97 methods.*
-* [`PostV2ListsListEntriesUnauthorizedError`](./generated/src/attio/errors/postv2listslistentriesunauthorizederror.py): Forbidden. Status code `403`. Applicable to 1 of 97 methods.*
-* [`PutV2ListsListEntriesUnauthorizedError`](./generated/src/attio/errors/putv2listslistentriesunauthorizederror.py): Forbidden. Status code `403`. Applicable to 1 of 97 methods.*
-* [`PatchV2ListsListEntriesEntryIDUnauthorizedError`](./generated/src/attio/errors/patchv2listslistentriesentryidunauthorizederror.py): Forbidden. Status code `403`. Applicable to 1 of 97 methods.*
-* [`PutV2ListsListEntriesEntryIDUnauthorizedError`](./generated/src/attio/errors/putv2listslistentriesentryidunauthorizederror.py): Forbidden. Status code `403`. Applicable to 1 of 97 methods.*
-* [`DeleteV2ListsListEntriesEntryIDUnauthorizedError`](./generated/src/attio/errors/deletev2listslistentriesentryidunauthorizederror.py): Forbidden. Status code `403`. Applicable to 1 of 97 methods.*
-* [`PutV2ListsListEntriesEntryIDAttributesAttributeValuesUnauthorizedError`](./generated/src/attio/errors/putv2listslistentriesentryidattributesattributevaluesunauthorizederror.py): Forbidden. Status code `403`. Applicable to 1 of 97 methods.*
-* [`DeleteV2CommentsCommentIDUnauthorizedError`](./generated/src/attio/errors/deletev2commentscommentidunauthorizederror.py): Forbidden. Status code `403`. Applicable to 1 of 97 methods.*
-* [`PostV2MeetingsMeetingIDCallRecordingsAuthError`](./generated/src/attio/errors/postv2meetingsmeetingidcallrecordingsautherror.py): Forbidden. Status code `403`. Applicable to 1 of 97 methods.*
-* [`PostV2FilesUploadAuthError`](./generated/src/attio/errors/postv2filesuploadautherror.py): Forbidden. Status code `403`. Applicable to 1 of 97 methods.*
-* [`GetV2ObjectsObjectNotFoundError`](./generated/src/attio/errors/getv2objectsobjectnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`PatchV2ObjectsObjectNotFoundError`](./generated/src/attio/errors/patchv2objectsobjectnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`DeleteV2ObjectsObjectNotFoundError`](./generated/src/attio/errors/deletev2objectsobjectnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`GetV2ObjectsObjectViewsNotFoundError`](./generated/src/attio/errors/getv2objectsobjectviewsnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`GetV2ActivitiesActivityNotFoundError`](./generated/src/attio/errors/getv2activitiesactivitynotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`PatchV2ActivitiesActivityNotFoundError`](./generated/src/attio/errors/patchv2activitiesactivitynotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`DeleteV2ActivitiesActivityNotFoundError`](./generated/src/attio/errors/deletev2activitiesactivitynotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`PostV2ActivitiesActivityRecordsQueryNotFoundError`](./generated/src/attio/errors/postv2activitiesactivityrecordsquerynotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`PostV2ActivitiesActivityRecordsNotFoundError`](./generated/src/attio/errors/postv2activitiesactivityrecordsnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`PutV2ActivitiesActivityRecordsNotFoundError`](./generated/src/attio/errors/putv2activitiesactivityrecordsnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`GetV2ActivitiesActivityRecordsRecordIDNotFoundError`](./generated/src/attio/errors/getv2activitiesactivityrecordsrecordidnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`PatchV2ActivitiesActivityRecordsRecordIDNotFoundError`](./generated/src/attio/errors/patchv2activitiesactivityrecordsrecordidnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`PutV2ActivitiesActivityRecordsRecordIDNotFoundError`](./generated/src/attio/errors/putv2activitiesactivityrecordsrecordidnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`DeleteV2ActivitiesActivityRecordsRecordIDNotFoundError`](./generated/src/attio/errors/deletev2activitiesactivityrecordsrecordidnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`PostV2TargetIdentifierAttributesNotFoundError`](./generated/src/attio/errors/postv2targetidentifierattributesnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`GetV2TargetIdentifierAttributesAttributeNotFoundError`](./generated/src/attio/errors/getv2targetidentifierattributesattributenotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`PatchV2TargetIdentifierAttributesAttributeNotFoundError`](./generated/src/attio/errors/patchv2targetidentifierattributesattributenotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`GetV2TargetIdentifierAttributesAttributeOptionsNotFoundError`](./generated/src/attio/errors/getv2targetidentifierattributesattributeoptionsnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`PostV2TargetIdentifierAttributesAttributeOptionsNotFoundError`](./generated/src/attio/errors/postv2targetidentifierattributesattributeoptionsnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`PatchV2TargetIdentifierAttributesAttributeOptionsOptionNotFoundError`](./generated/src/attio/errors/patchv2targetidentifierattributesattributeoptionsoptionnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`GetV2TargetIdentifierAttributesAttributeStatusesNotFoundError`](./generated/src/attio/errors/getv2targetidentifierattributesattributestatusesnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`PostV2TargetIdentifierAttributesAttributeStatusesNotFoundError`](./generated/src/attio/errors/postv2targetidentifierattributesattributestatusesnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`PatchV2TargetIdentifierAttributesAttributeStatusesStatusNotFoundError`](./generated/src/attio/errors/patchv2targetidentifierattributesattributestatusesstatusnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`PostV2ObjectsObjectRecordsQueryNotFoundError`](./generated/src/attio/errors/postv2objectsobjectrecordsquerynotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`PostV2ObjectsObjectRecordsNotFoundError`](./generated/src/attio/errors/postv2objectsobjectrecordsnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`PutV2ObjectsObjectRecordsNotFoundError`](./generated/src/attio/errors/putv2objectsobjectrecordsnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`GetV2ObjectsObjectRecordsRecordIDInvalidRequestError`](./generated/src/attio/errors/getv2objectsobjectrecordsrecordidinvalidrequesterror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`PatchV2ObjectsObjectRecordsRecordIDNotFoundError`](./generated/src/attio/errors/patchv2objectsobjectrecordsrecordidnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`PutV2ObjectsObjectRecordsRecordIDNotFoundError`](./generated/src/attio/errors/putv2objectsobjectrecordsrecordidnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`DeleteV2ObjectsObjectRecordsRecordIDNotFoundError`](./generated/src/attio/errors/deletev2objectsobjectrecordsrecordidnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`PostV2ObjectsObjectRecordsMergeInvalidRequestError`](./generated/src/attio/errors/postv2objectsobjectrecordsmergeinvalidrequesterror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`GetV2ObjectsObjectRecordsRecordIDAttributesAttributeValuesNotFoundError`](./generated/src/attio/errors/getv2objectsobjectrecordsrecordidattributesattributevaluesnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`PutV2ObjectsObjectRecordsRecordIDAttributesAttributeValuesNotFoundInvalidRequestError`](./generated/src/attio/errors/putv2objectsobjectrecordsrecordidattributesattributevaluesnotfoundinvalidrequesterror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`PostV2ListsNotFoundError`](./generated/src/attio/errors/postv2listsnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`GetV2ListsListNotFoundError`](./generated/src/attio/errors/getv2listslistnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`PatchV2ListsListNotFoundError`](./generated/src/attio/errors/patchv2listslistnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`GetV2ListsListViewsNotFoundError`](./generated/src/attio/errors/getv2listslistviewsnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`PostV2ListsListEntriesQueryNotFoundError`](./generated/src/attio/errors/postv2listslistentriesquerynotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`PostV2ListsListEntriesNotFoundError`](./generated/src/attio/errors/postv2listslistentriesnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`PutV2ListsListEntriesNotFoundError`](./generated/src/attio/errors/putv2listslistentriesnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`GetV2ListsListEntriesEntryIDNotFoundError`](./generated/src/attio/errors/getv2listslistentriesentryidnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`PatchV2ListsListEntriesEntryIDNotFoundError`](./generated/src/attio/errors/patchv2listslistentriesentryidnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`PutV2ListsListEntriesEntryIDNotFoundError`](./generated/src/attio/errors/putv2listslistentriesentryidnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`DeleteV2ListsListEntriesEntryIDNotFoundError`](./generated/src/attio/errors/deletev2listslistentriesentryidnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`GetV2ListsListEntriesEntryIDAttributesAttributeValuesNotFoundError`](./generated/src/attio/errors/getv2listslistentriesentryidattributesattributevaluesnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`PutV2ListsListEntriesEntryIDAttributesAttributeValuesNotFoundInvalidRequestError`](./generated/src/attio/errors/putv2listslistentriesentryidattributesattributevaluesnotfoundinvalidrequesterror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`GetV2WorkspaceMembersWorkspaceMemberIDNotFoundError`](./generated/src/attio/errors/getv2workspacemembersworkspacememberidnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`GetV2NotesNotFoundError`](./generated/src/attio/errors/getv2notesnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`PostV2NotesNotFoundError`](./generated/src/attio/errors/postv2notesnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`GetV2NotesNoteIDNotFoundError`](./generated/src/attio/errors/getv2notesnoteidnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`PatchV2NotesNoteIDNotFoundError`](./generated/src/attio/errors/patchv2notesnoteidnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`DeleteV2NotesNoteIDNotFoundError`](./generated/src/attio/errors/deletev2notesnoteidnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`PostV2TasksNotFoundError`](./generated/src/attio/errors/postv2tasksnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`GetV2TasksTaskIDNotFoundError`](./generated/src/attio/errors/getv2taskstaskidnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`PatchV2TasksTaskIDNotFoundError`](./generated/src/attio/errors/patchv2taskstaskidnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`DeleteV2TasksTaskIDNotFoundError`](./generated/src/attio/errors/deletev2taskstaskidnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`GetV2ThreadsThreadIDNotFoundError`](./generated/src/attio/errors/getv2threadsthreadidnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`GetV2CommentsCommentIDNotFoundError`](./generated/src/attio/errors/getv2commentscommentidnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`DeleteV2CommentsCommentIDNotFoundError`](./generated/src/attio/errors/deletev2commentscommentidnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`GetV2MeetingsMeetingIDNotFoundError`](./generated/src/attio/errors/getv2meetingsmeetingidnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`PatchV2MeetingsMeetingIDNotFoundError`](./generated/src/attio/errors/patchv2meetingsmeetingidnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`PutV2MeetingsMeetingIDNotFoundError`](./generated/src/attio/errors/putv2meetingsmeetingidnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`DeleteV2MeetingsMeetingIDNotFoundError`](./generated/src/attio/errors/deletev2meetingsmeetingidnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`PostV2MeetingsMeetingIDCallRecordingsNotFoundError`](./generated/src/attio/errors/postv2meetingsmeetingidcallrecordingsnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`GetV2MeetingsMeetingIDCallRecordingsCallRecordingIDNotFoundError`](./generated/src/attio/errors/getv2meetingsmeetingidcallrecordingscallrecordingidnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`DeleteV2MeetingsMeetingIDCallRecordingsCallRecordingIDNotFoundError`](./generated/src/attio/errors/deletev2meetingsmeetingidcallrecordingscallrecordingidnotfounderror.py): Call recording not found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`GetV2FilesFileIDNotFoundError`](./generated/src/attio/errors/getv2filesfileidnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`DeleteV2FilesFileIDNotFoundError`](./generated/src/attio/errors/deletev2filesfileidnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`GetV2WebhooksWebhookIDNotFoundError`](./generated/src/attio/errors/getv2webhookswebhookidnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`PatchV2WebhooksWebhookIDNotFoundError`](./generated/src/attio/errors/patchv2webhookswebhookidnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`DeleteV2WebhooksWebhookIDNotFoundError`](./generated/src/attio/errors/deletev2webhookswebhookidnotfounderror.py): Not Found. Status code `404`. Applicable to 1 of 97 methods.*
-* [`PostV2ObjectsSlugConflictError`](./generated/src/attio/errors/postv2objectsslugconflicterror.py): Conflict. Status code `409`. Applicable to 1 of 97 methods.*
-* [`PatchV2ObjectsObjectSlugConflictError`](./generated/src/attio/errors/patchv2objectsobjectslugconflicterror.py): Conflict. Status code `409`. Applicable to 1 of 97 methods.*
-* [`PostV2ActivitiesSlugConflictError`](./generated/src/attio/errors/postv2activitiesslugconflicterror.py): Conflict. Status code `409`. Applicable to 1 of 97 methods.*
-* [`PatchV2ActivitiesActivitySlugConflictError`](./generated/src/attio/errors/patchv2activitiesactivityslugconflicterror.py): Conflict. Status code `409`. Applicable to 1 of 97 methods.*
-* [`PostV2ActivitiesActivityRecordsConcurrentWriteConflictError`](./generated/src/attio/errors/postv2activitiesactivityrecordsconcurrentwriteconflicterror.py): Conflict. Status code `409`. Applicable to 1 of 97 methods.*
-* [`PutV2ActivitiesActivityRecordsConcurrentWriteConflictError`](./generated/src/attio/errors/putv2activitiesactivityrecordsconcurrentwriteconflicterror.py): Conflict. Status code `409`. Applicable to 1 of 97 methods.*
-* [`PatchV2ActivitiesActivityRecordsRecordIDConcurrentWriteConflictError`](./generated/src/attio/errors/patchv2activitiesactivityrecordsrecordidconcurrentwriteconflicterror.py): Conflict. Status code `409`. Applicable to 1 of 97 methods.*
-* [`PutV2ActivitiesActivityRecordsRecordIDConcurrentWriteConflictError`](./generated/src/attio/errors/putv2activitiesactivityrecordsrecordidconcurrentwriteconflicterror.py): Conflict. Status code `409`. Applicable to 1 of 97 methods.*
-* [`PostV2TargetIdentifierAttributesSlugConflictError`](./generated/src/attio/errors/postv2targetidentifierattributesslugconflicterror.py): Conflict. Status code `409`. Applicable to 1 of 97 methods.*
-* [`PostV2TargetIdentifierAttributesAttributeOptionsSlugConflictError`](./generated/src/attio/errors/postv2targetidentifierattributesattributeoptionsslugconflicterror.py): Conflict. Status code `409`. Applicable to 1 of 97 methods.*
-* [`PatchV2TargetIdentifierAttributesAttributeOptionsOptionSlugConflictError`](./generated/src/attio/errors/patchv2targetidentifierattributesattributeoptionsoptionslugconflicterror.py): Conflict. Status code `409`. Applicable to 1 of 97 methods.*
-* [`PostV2TargetIdentifierAttributesAttributeStatusesSlugConflictError`](./generated/src/attio/errors/postv2targetidentifierattributesattributestatusesslugconflicterror.py): Conflict. Status code `409`. Applicable to 1 of 97 methods.*
-* [`PatchV2TargetIdentifierAttributesAttributeStatusesStatusSlugConflictError`](./generated/src/attio/errors/patchv2targetidentifierattributesattributestatusesstatusslugconflicterror.py): Conflict. Status code `409`. Applicable to 1 of 97 methods.*
-* [`PostV2ObjectsObjectRecordsConcurrentWriteConflictError`](./generated/src/attio/errors/postv2objectsobjectrecordsconcurrentwriteconflicterror.py): Conflict. Status code `409`. Applicable to 1 of 97 methods.*
-* [`PutV2ObjectsObjectRecordsConcurrentWriteConflictError`](./generated/src/attio/errors/putv2objectsobjectrecordsconcurrentwriteconflicterror.py): Conflict. Status code `409`. Applicable to 1 of 97 methods.*
-* [`PatchV2ObjectsObjectRecordsRecordIDConcurrentWriteConflictError`](./generated/src/attio/errors/patchv2objectsobjectrecordsrecordidconcurrentwriteconflicterror.py): Conflict. Status code `409`. Applicable to 1 of 97 methods.*
-* [`PutV2ObjectsObjectRecordsRecordIDConcurrentWriteConflictError`](./generated/src/attio/errors/putv2objectsobjectrecordsrecordidconcurrentwriteconflicterror.py): Conflict. Status code `409`. Applicable to 1 of 97 methods.*
-* [`PostV2ListsSlugConflictError`](./generated/src/attio/errors/postv2listsslugconflicterror.py): Conflict. Status code `409`. Applicable to 1 of 97 methods.*
-* [`PostV2WebhooksUniquenessConflictError`](./generated/src/attio/errors/postv2webhooksuniquenessconflicterror.py): Conflict. Status code `409`. Applicable to 1 of 97 methods.*
-* [`PatchV2WebhooksWebhookIDUniquenessConflictError`](./generated/src/attio/errors/patchv2webhookswebhookiduniquenessconflicterror.py): Conflict. Status code `409`. Applicable to 1 of 97 methods.*
-* [`PostV2NotesValidationTypeError`](./generated/src/attio/errors/postv2notesvalidationtypeerror.py): Content Too Large. Status code `413`. Applicable to 1 of 97 methods.*
-* [`PatchV2NotesNoteIDValidationTypeError`](./generated/src/attio/errors/patchv2notesnoteidvalidationtypeerror.py): Content Too Large. Status code `413`. Applicable to 1 of 97 methods.*
-* [`ResponseValidationError`](./generated/src/attio/errors/responsevalidationerror.py): Type mismatch between the response data and the expected Pydantic model. Provides access to the Pydantic validation error via the `cause` attribute.
-
-</details>
-
-\* Check [the method documentation](#available-resources-and-operations) to see if the error is applicable.
-<!-- End Error Handling [errors] -->
-
-<!-- Start Server Selection [server] -->
 ## Server Selection
 
-### Override Server URL Per-Client
-
-The default server can be overridden globally by passing a URL to the `server_url: str` optional parameter when initializing the SDK client instance. For example:
+The default server is `https://api.attio.com`. To override it, pass `server_url` to `SDK(...)`, or to a single call:
 
 ```python
+import os
+
 from attio import SDK
 
-
-with SDK(
-    server_url="https://api.attio.com",
-    oauth2="<YOUR_OAUTH2_HERE>",
-) as sdk:
-
-    res = sdk.objects.get_v2_objects()
-
-    # Handle response
-    print(res)
-
+sdk = SDK(oauth2=os.environ["ATTIO_API_KEY"], server_url="https://api.attio.com")
 ```
-<!-- End Server Selection [server] -->
 
-<!-- Start Custom HTTP Client [http-client] -->
 ## Custom HTTP Client
 
-The Python SDK makes API calls using the [httpx](https://www.python-httpx.org/) HTTP library.  In order to provide a convenient way to configure timeouts, cookies, proxies, custom headers, and other low-level configuration, you can initialize the SDK client with your own HTTP client instance.
-Depending on whether you are using the sync or async version of the SDK, you can pass an instance of `HttpClient` or `AsyncHttpClient` respectively, which are Protocol's ensuring that the client has the necessary methods to make API calls.
-This allows you to wrap the client with your own custom logic, such as adding custom headers, logging, or error handling, or you can just pass an instance of `httpx.Client` or `httpx.AsyncClient` directly.
-
-For example, you could specify a header for every request that this sdk makes as follows:
+The SDK uses [httpx](https://www.python-httpx.org/). For proxies, custom headers, transport timeouts or event hooks, pass your own client: `client=` for sync calls, `async_client=` for async ones:
 
 ```python
-from attio import SDK
-import httpx
+import os
 
-http_client = httpx.Client(headers={"x-custom-header": "someValue"})
-s = SDK(client=http_client)
+import httpx
+from attio import SDK
+
+sdk = SDK(
+    oauth2=os.environ["ATTIO_API_KEY"],
+    client=httpx.Client(headers={"x-custom-header": "someValue"}),
+    async_client=httpx.AsyncClient(headers={"x-custom-header": "someValue"}),
+)
 ```
 
-Or you could wrap the client with your own custom logic:
+Any object that implements the `attio.httpclient.HttpClient` or `AsyncHttpClient` protocol (`send` and `build_request`) also works, for example a wrapper that adds logging.
 
-```python
-from attio import SDK
-from attio.httpclient import AsyncHttpClient
-import httpx
-
-class CustomClient(AsyncHttpClient):
-    client: AsyncHttpClient
-
-    def __init__(self, client: AsyncHttpClient):
-        self.client = client
-
-    async def send(
-        self,
-        request: httpx.Request,
-        *,
-        stream: bool = False,
-        auth: Union[
-            httpx._types.AuthTypes, httpx._client.UseClientDefault, None
-        ] = httpx.USE_CLIENT_DEFAULT,
-        follow_redirects: Union[
-            bool, httpx._client.UseClientDefault
-        ] = httpx.USE_CLIENT_DEFAULT,
-    ) -> httpx.Response:
-        request.headers["Client-Level-Header"] = "added by client"
-
-        return await self.client.send(
-            request, stream=stream, auth=auth, follow_redirects=follow_redirects
-        )
-
-    def build_request(
-        self,
-        method: str,
-        url: httpx._types.URLTypes,
-        *,
-        content: Optional[httpx._types.RequestContent] = None,
-        data: Optional[httpx._types.RequestData] = None,
-        files: Optional[httpx._types.RequestFiles] = None,
-        json: Optional[Any] = None,
-        params: Optional[httpx._types.QueryParamTypes] = None,
-        headers: Optional[httpx._types.HeaderTypes] = None,
-        cookies: Optional[httpx._types.CookieTypes] = None,
-        timeout: Union[
-            httpx._types.TimeoutTypes, httpx._client.UseClientDefault
-        ] = httpx.USE_CLIENT_DEFAULT,
-        extensions: Optional[httpx._types.RequestExtensions] = None,
-    ) -> httpx.Request:
-        return self.client.build_request(
-            method,
-            url,
-            content=content,
-            data=data,
-            files=files,
-            json=json,
-            params=params,
-            headers=headers,
-            cookies=cookies,
-            timeout=timeout,
-            extensions=extensions,
-        )
-
-s = SDK(async_client=CustomClient(httpx.AsyncClient()))
-```
-
-### httpx2 (Pydantic's httpx fork)
-
-[httpx2](https://httpx2.pydantic.dev/) is Pydantic's maintained fork of `httpx`. To run this SDK on httpx2, call `alias_httpx()` at your program's entry point, before importing the SDK, so every `import httpx` — including the ones inside the SDK — resolves to `httpx2`:
+To run on [httpx2](https://httpx2.pydantic.dev/), Pydantic's fork of httpx, alias it before importing the SDK:
 
 ```python
 import httpx2
 
 httpx2.alias_httpx()
 
-from attio import SDK
-
-s = SDK()
+from attio import SDK  # noqa: E402
 ```
 
-An SDK can also be generated against httpx2 directly, so it depends on the fork instead of `httpx`, by setting `python.httpClientLibrary: httpx2` in `gen.yaml`.
-<!-- End Custom HTTP Client [http-client] -->
-
-<!-- Start Resource Management [resource-management] -->
 ## Resource Management
 
-The `SDK` class implements the context manager protocol and registers a finalizer function to close the underlying sync and async HTTPX clients it uses under the hood. This will close HTTP connections, release memory and free up other resources held by the SDK. In short-lived Python programs and notebooks that make a few SDK method calls, resource management may not be a concern. However, in longer-lived programs, it is beneficial to create a single SDK instance via a [context manager][context-manager] and reuse it across the application.
-
-[context-manager]: https://docs.python.org/3/reference/datamodel.html#context-managers
+`SDK` is a context manager. On exit it closes the HTTP clients it created; a finalizer closes them otherwise. In a long-running program, create one client and reuse it:
 
 ```python
+import os
+
 from attio import SDK
-def main():
-
-    with SDK(
-        oauth2="<YOUR_OAUTH2_HERE>",
-    ) as sdk:
-        # Rest of application here...
 
 
-# Or when using async:
-async def amain():
+def main() -> None:
+    with SDK(oauth2=os.environ["ATTIO_API_KEY"]) as sdk:
+        ...  # reuse sdk for every call
 
-    async with SDK(
-        oauth2="<YOUR_OAUTH2_HERE>",
-    ) as sdk:
-        # Rest of application here...
+
+async def amain() -> None:
+    async with SDK(oauth2=os.environ["ATTIO_API_KEY"]) as sdk:
+        ...  # reuse sdk for every call
 ```
-<!-- End Resource Management [resource-management] -->
 
-<!-- Start Debugging [debug] -->
 ## Debugging
 
-You can setup your SDK to emit debug logs for SDK requests and responses.
-
-You can pass your own logger class directly into your SDK.
-
 ```python
-from attio import SDK
 import logging
+import os
+
+from attio import SDK
 
 logging.basicConfig(level=logging.DEBUG)
-s = SDK(debug_logger=logging.getLogger("attio"))
+sdk = SDK(oauth2=os.environ["ATTIO_API_KEY"], debug_logger=logging.getLogger("attio"))
 ```
-<!-- End Debugging [debug] -->
+
+The debug logger records each request's method, URL, **headers** and body, and each response. The headers include `Authorization: Bearer <your key>`, so never share these logs or commit them.
 
 ## Troubleshooting
 
 ### 401 or 403 responses
 
-- Confirm the OAuth2 token is valid and not expired.
-- Confirm the token includes the scopes required by the endpoint (scope requirements are listed in each operation doc).
-- Verify you are sending the token through `SDK(oauth2=...)`.
+- From the CLI, this is the `invalid_api_key` error. From the SDK, it's an `SDKError` with status 401 or 403.
+- Check that the key is current and has the scopes on the method's reference page. Record writes, for example, need `record_permission:read-write`.
 
-### Validation errors on create/update
+### 400 validation errors on create or update
 
-- Attribute keys and value shapes must match your Attio workspace schema.
-- Check the operation docs for the exact request model and examples.
-- Start from a simple payload, then add fields incrementally.
+- Values must be lists in the shapes shown in [Record values](#record-values), and every attribute slug must exist in your workspace.
+- Start from one attribute and add the rest one at a time. The error's `message` names the attribute it rejected.
+
+### `uvx` runs an old version
+
+`uvx` reuses a cached environment. Run `uvx gtm-attio@latest …`, pin a version with `@X.Y.Z`, or add `--refresh`.
+
+### `uvx attio`: "An executable named `attio` is not provided by package `attio`"
+
+The resolved release predates 0.28.2, so it ships only `gtm-attio`. Run `uvx gtm-attio …`, `uvx attio@latest …` or `uvx --from attio gtm-attio …`.
+
+### `uvx: command not found`
+
+`uvx` ships with [uv](https://docs.astral.sh/uv/getting-started/installation/). `uv tool run …` does the same thing.
 
 ### Async usage issues
 
-- Use async methods (ending in `_async`) inside `async with SDK(...)`.
-- Do not mix sync and async clients in the same call path.
+- Inside `async with SDK(...)`, use the `_async` methods. The sync methods block the event loop.
+- Don't mix sync and async clients in the same call path.
 
-<!-- Placeholder for Future Speakeasy SDK Sections -->
+## Maintaining this repository
+
+This README is maintained by hand. Speakeasy generates everything under `generated/`: the SDK source, `generated/docs/` and `generated/USAGE.md`. `ci/post_generate_patch.py` owns the [Standalone CLI](#standalone-cli) section and the `[project.scripts]` entry points, and re-applies them after every regeneration. [AGENTS.md](https://github.com/elviskahoro/sdk-python-attio/blob/main/AGENTS.md) covers regeneration, the overlay and releases.

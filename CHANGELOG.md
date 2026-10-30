@@ -84,6 +84,28 @@ after 0.26.1) — the published 0.26.1 wheel generated `transcript` as
 `Optional[...] = None`, so payloads omitting it now fail pydantic
 validation client-side before any HTTP call.
 
+Regenerates the SDK (0.28.2) against the unchanged spec, with no model or
+API-surface changes. An intra-PR 0.28.1 bump was never published.
+
+- **New `attio` command.** It runs the same CLI as `gtm-attio`, so
+  `uvx attio …` works as well as `uvx gtm-attio …`. `usage:` and `--version`
+  now print the name you invoked. Both names come from both distributions.
+- **README rewritten for agents.** It adds:
+  - a uvx quick start
+  - the full CLI contract: commands, JSON input keys, envelope, error codes,
+    exit codes
+  - the method-naming and record-value rules
+  - runnable examples
+  - absolute links to the per-method docs
+
+  `tests/test_readme.py` keeps the examples compiling, parsing and pointing
+  at real methods and files.
+- **Root `pyproject.toml` version synced.** `ci/post_generate_patch.py` now
+  copies the version from the generated `_version.py`, because Speakeasy's
+  patch bump never reaches the root file.
+- **Repository URLs.** `homepage`/`repoURL` now point at
+  `elviskahoro/sdk-python-attio`.
+
 ## 0.25.1 — 2026-10-03
 
 Adopts Attio's 2026-10-03 OpenAPI spec and repairs the Speakeasy overlay.

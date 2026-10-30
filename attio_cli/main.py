@@ -38,11 +38,19 @@ if TYPE_CHECKING:
     from collections.abc import Callable, Sequence
 
 EXPORT_KEYWORD_LENGTH = 6
+# Both console scripts run this module; usage and --version echo the one invoked.
+PROG_NAMES = ("attio", "gtm-attio")
+DEFAULT_PROG = "gtm-attio"
+
+
+def _prog() -> str:
+    invoked = Path(sys.argv[0]).stem if sys.argv else ""
+    return invoked if invoked in PROG_NAMES else DEFAULT_PROG
 
 
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="gtm-attio",
+        prog=_prog(),
         description="A standalone Attio CLI for agent-friendly people, company, and note workflows.",
         epilog=(
             "Credentials: ATTIO_API_KEY from the process environment takes priority, "
@@ -52,7 +60,7 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--version",
         action="version",
-        version=f"gtm-attio {__version__}",
+        version=f"%(prog)s {__version__}",
     )
     groups = parser.add_subparsers(dest="resource", required=True)
     people = groups.add_parser("people", help="Manage people records")

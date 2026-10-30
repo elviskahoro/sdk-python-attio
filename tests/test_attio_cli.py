@@ -623,6 +623,26 @@ def test_root_help_explains_credential_precedence(capsys):
     assert ".env" in output
 
 
+@pytest.mark.parametrize(
+    ("argv0", "prog"),
+    [
+        ("/opt/venv/bin/attio", "attio"),
+        ("/opt/venv/bin/gtm-attio", "gtm-attio"),
+        ("/opt/venv/Scripts/attio.exe", "attio"),
+        ("/opt/venv/bin/pytest", "gtm-attio"),
+    ],
+)
+def test_version_and_usage_echo_the_invoked_command(monkeypatch, capsys, argv0, prog):
+    monkeypatch.setattr(cli_main.sys, "argv", [argv0])
+    with pytest.raises(SystemExit) as exc_info:
+        cli_main.main(["--version"])
+    assert exc_info.value.code == 0
+    assert capsys.readouterr().out == f"{prog} {cli_main.__version__}\n"
+    with pytest.raises(SystemExit):
+        cli_main.main([])
+    assert capsys.readouterr().err.startswith(f"usage: {prog} ")
+
+
 def test_missing_email_is_a_usage_error(capsys):
     with pytest.raises(SystemExit) as exc_info:
         cli_main.main(["people", "upsert"])
