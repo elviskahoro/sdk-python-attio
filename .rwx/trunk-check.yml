@@ -57,27 +57,64 @@ tasks:
       - pyproject.toml
       - uv.lock
 
-  # Pre-warm Trunk's CLI and linter downloads. Everything is pinned in
-  # .trunk/trunk.yaml, so that file is the whole cache key: an unchanged config
-  # is a cache hit (no network), a version bump is a miss that re-installs.
-  # The install runs in a scratch repo so this task's layer only adds the
-  # Trunk binary and ~/.cache/trunk, never workspace files that would collide
-  # with the `code` layer's .git.
+  # Trunk launcher, checksum-pinned: trunk.io/releases/trunk is latest-only,
+  # so the bytes are pinned and any upstream change fails closed (same pin as
+  # .rwx/pytest.yml). Re-pin deliberately if the checksum no longer matches.
   - key: trunk-install
+    run: |
+      set -euo pipefail
+      trunk_launcher="$(mktemp)"
+      if ! curl -fsSL https://trunk.io/releases/trunk -o "${trunk_launcher}" ||
+        ! echo "700f8bbedfd226595999ea2202b9a7af75ba8398dd711f5f159f5bbba6cbf322  ${trunk_launcher}" | sha256sum -c -; then
+        rm -f "${trunk_launcher}"
+        echo "error: trunk launcher download or checksum failed" >&2
+        exit 1
+      fi
+      if ! install -m 755 "${trunk_launcher}" /usr/local/bin/trunk 2>/dev/null; then
+        mkdir -p "$HOME/.local/bin"
+        install -m 755 "${trunk_launcher}" "$HOME/.local/bin/trunk"
+        echo "$HOME/.local/bin" >> "$RWX_ENV/PATH"
+      fi
+      rm -f "${trunk_launcher}"
+
+  # Tool cache. A `filter` scopes only the task that defines it: downstream
+  # `use:`rs do NOT inherit it and cache-key on every workspace file, so
+  # trunk-config and trunk-tools each declare the same .trunk/ filter and
+  # both are load-bearing. trunk-config keys on .trunk/ alone, freezing the
+  # $HOME/trunk-seed bytes it writes (outside-workspace files are always
+  # keyed, never filtered); trunk-tools keys on .trunk/ plus the pinned
+  # launcher. Every linter, runtime and plugin pin is downloaded once and
+  # reused until trunk.yaml changes. Keep the two filter lists in lockstep.
+  - key: trunk-config
     use: code
     filter:
       - .trunk/trunk.yaml
+      - .trunk/configs
     run: |
-      curl -fsSL https://get.trunk.io | bash -s -- -y
-      scratch="$(mktemp -d)"
-      mkdir "$scratch/.trunk"
-      cp .trunk/trunk.yaml "$scratch/.trunk/"
-      cd "$scratch"
+      set -euo pipefail
+      mkdir -p "$HOME/trunk-seed"
+      cp -r .trunk "$HOME/trunk-seed/.trunk"
+      rm -rf "$HOME/trunk-seed/.trunk/.gitignore"
+      cd "$HOME/trunk-seed"
       git init -q
-      trunk install --ci
+      # Pin the dates so a cold-cache re-execution writes identical bytes
+      # instead of busting trunk-tools' key with wall-clock timestamps.
+      export GIT_AUTHOR_DATE="2000-01-01T00:00:00+00:00"
+      export GIT_COMMITTER_DATE="2000-01-01T00:00:00+00:00"
+      git -c user.name=rwx -c user.email=rwx@example.com commit -q --allow-empty -m seed
+
+  - key: trunk-tools
+    use: [trunk-install, trunk-config]
+    filter:
+      - .trunk/trunk.yaml
+      - .trunk/configs
+    run: |
+      set -euo pipefail
+      cd "$HOME/trunk-seed"
+      trunk install --ci < /dev/null
 
   - key: lint
-    use: [sync, trunk-install]
+    use: [sync, trunk-tools]
     env:
       UPSTREAM: ${{ init.lint-upstream }}
     run: |
