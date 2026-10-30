@@ -7,7 +7,7 @@ allowed-tools: Read, Grep, Glob, Bash
 
 # OpenAPI Overlay Guide
 
-Reference for creating and using OpenAPI Overlays to customize the API specification without modifying the original OpenAPI document. Overlays follow the [OpenAPI Overlay Specification v1.0.0](https://github.com/OAI/Overlay-Specification).
+Reference for creating and using OpenAPI Overlays to customize the API specification without modifying the original OpenAPI document. Overlays follow the [OpenAPI Overlay Specification v1.1.0](https://github.com/OAI/Overlay-Specification).
 
 > **Always regenerate after editing the overlay** (`ci/regenerate_host.sh` or
 > `uv run python ci/pipeline.py generate --no-fetch`) and commit the regenerated
@@ -24,7 +24,7 @@ Reference for creating and using OpenAPI Overlays to customize the API specifica
 Every overlay document contains three required sections:
 
 ```yaml
-overlay: 1.0.0              # Overlay specification version
+overlay: 1.1.0              # Overlay specification version
 info:                        # Metadata about the overlay
   title: "Description"
   version: "0.0.1"
