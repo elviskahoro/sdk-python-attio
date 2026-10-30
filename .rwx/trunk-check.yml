@@ -57,12 +57,30 @@ tasks:
       - pyproject.toml
       - uv.lock
 
+  # Pre-warm Trunk's CLI and linter downloads. Everything is pinned in
+  # .trunk/trunk.yaml, so that file is the whole cache key: an unchanged config
+  # is a cache hit (no network), a version bump is a miss that re-installs.
+  # The install runs in a scratch repo so this task's layer only adds the
+  # Trunk binary and ~/.cache/trunk, never workspace files that would collide
+  # with the `code` layer's .git.
+  - key: trunk-install
+    use: code
+    filter:
+      - .trunk/trunk.yaml
+    run: |
+      curl -fsSL https://get.trunk.io | bash -s -- -y
+      scratch="$(mktemp -d)"
+      mkdir "$scratch/.trunk"
+      cp .trunk/trunk.yaml "$scratch/.trunk/"
+      cd "$scratch"
+      git init -q
+      trunk install --ci
+
   - key: lint
-    use: sync
+    use: [sync, trunk-install]
     env:
       UPSTREAM: ${{ init.lint-upstream }}
     run: |
-      curl -fsSL https://get.trunk.io | bash -s -- -y
       # Lint only the diff, like trunk-action. The trigger picks the base
       # (PR/queue: main, push to main: previous commit) rather than this
       # script inferring it from the branch name, which a fork PR from its
