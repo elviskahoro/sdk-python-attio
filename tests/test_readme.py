@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-from attio import SDK
+from attio import SDK, errors
 from attio_cli import main as cli_main
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -53,6 +53,14 @@ def test_sdk_methods_in_examples_exist() -> None:
         if not hasattr(getattr(sdk, resource, None), method)
     )
     assert not missing, f"README references SDK methods that do not exist: {missing}"
+
+
+def test_error_classes_in_readme_exist() -> None:
+    names = set(re.findall(r"\berrors\.([A-Z]\w+)", README))
+    names |= set(re.findall(r"`((?:Get|Post|Put|Patch|Delete)\w*Error)`", README))
+    assert names
+    missing = sorted(name for name in names if not hasattr(errors, name))
+    assert not missing, f"README references error classes that do not exist: {missing}"
 
 
 @pytest.mark.parametrize("command", _cli_examples())

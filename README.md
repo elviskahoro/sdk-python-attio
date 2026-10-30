@@ -714,7 +714,7 @@ with SDK(oauth2=os.environ["ATTIO_API_KEY"]) as sdk:
 | Exception | When |
 | --- | --- |
 | `errors.SDKError` | Base class for every HTTP error response. Has `status_code`, `message`, `body`, `headers` and `raw_response`. |
-| `errors.<Verb><Path><Kind>Error` | A typed subclass for each documented Attio error, e.g. `PostV2ObjectsObjectRecordsInvalidRequestError` (400 on create record) or `GetV2NotesNoteIDNotFoundError`. Has the parsed body in `e.data` (`status_code`, `type`, `code`, `message`). |
+| `errors.<Verb><Path><Kind>Error` | A typed subclass for each documented Attio error, e.g. `PostV2ObjectsObjectRecordsBadRequestInvalidRequestError` (400 on create record) or `GetV2NotesNoteIDNotFoundError`. Has the parsed body in `e.data` (`status_code`, `type`, `code`, `message`). |
 | `errors.SDKDefaultError` | Any other 4XX or 5XX response. |
 | `errors.ResponseValidationError` | The response didn't match the SDK's model. The Pydantic error is in `e.cause`. |
 | `httpx.RequestError` (`ConnectError`, `TimeoutException`) | Network failure. Not an `SDKError`. |
