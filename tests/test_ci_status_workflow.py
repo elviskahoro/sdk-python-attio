@@ -74,12 +74,18 @@ def test_every_required_rwx_status_is_declared_by_a_workflow(
     assert not missing, missing
 
 
-def test_only_rwx_statuses_are_required(required_statuses: list[str]) -> None:
-    """Externally posted checks (e.g. ``pullfrog-approval``, required only by
-    the GitHub ruleset) report on PR heads but never on the queue's test
-    branches, so listing one here deadlocks the queue on "Waiting for status
-    to be reported"."""
-    external = [s for s in required_statuses if not s.startswith("RWX: ")]
+def test_only_rwx_and_pullfrog_statuses_are_required(
+    required_statuses: list[str],
+) -> None:
+    """``pullfrog-approval`` is posted by the Pullfrog GitHub App and is also
+    required by the GitHub ruleset; any other externally posted check never
+    reports on the queue's test branches and would deadlock the queue on
+    "Waiting for status to be reported"."""
+    external = [
+        s
+        for s in required_statuses
+        if not s.startswith("RWX: ") and s != "pullfrog-approval"
+    ]
     assert not external, external
 
 
