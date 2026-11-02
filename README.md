@@ -531,7 +531,6 @@ with SDK(oauth2=os.environ["ATTIO_API_KEY"]) as sdk:
 
 `patch_...` adds to multiselect attributes (new values are prepended to the existing list). Use `put_v2_objects_object_records_record_id_` to overwrite them. To create or update by a unique attribute in one call, see [Upsert a person by email](#upsert-a-person-by-email).
 
-
 ### Upsert a record on any object
 
 `object` accepts any object slug or ID, including custom objects. `matching_attribute` should be a unique attribute on that object; a record is created if none matches. Record-reference values point at a record either by ID or by a matching attribute of the target:
