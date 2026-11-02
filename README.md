@@ -439,6 +439,63 @@ with SDK(oauth2=os.environ["ATTIO_API_KEY"]) as sdk:
     print(res.data.id.record_id)
 ```
 
+### Look up records of any object
+
+`object` takes any object slug, built-in or custom. This finds a record's ID by filtering on an attribute, then fetches it:
+
+```python
+import os
+
+from attio import SDK
+
+with SDK(oauth2=os.environ["ATTIO_API_KEY"]) as sdk:
+    page = sdk.records.post_v2_objects_object_records_query(
+        object="deals",
+        filter_={"name": "Acme renewal"},
+        limit=10,
+    )
+    for record in page.data:
+        print(record.id.record_id, record.values.get("name"))
+
+    if page.data:
+        res = sdk.records.get_v2_objects_object_records_record_id_(
+            object="deals",
+            record_id=page.data[0].id.record_id,
+        )
+        print(res.data.values)
+```
+
+### Set custom attributes on a person
+
+Custom attributes are written like built-in ones: `{attribute_slug: [value, ...]}` (see [Record values](#record-values)). The attribute must already exist; list slugs with `sdk.attributes.get_v2_target_identifier_attributes(target="objects", identifier="people")`. This example assumes a text attribute `lead_source`.
+
+```python
+import os
+
+from attio import SDK
+
+with SDK(oauth2=os.environ["ATTIO_API_KEY"]) as sdk:
+    # Create with a custom attribute.
+    created = sdk.records.post_v2_objects_object_records(
+        object="people",
+        data={
+            "values": {
+                "email_addresses": [{"email_address": "ada@example.com"}],
+                "lead_source": ["Conference"],
+            },
+        },
+    )
+
+    # Update it later by record ID.
+    sdk.records.patch_v2_objects_object_records_record_id_(
+        object="people",
+        record_id=created.data.id.record_id,
+        data={"values": {"lead_source": ["Webinar"]}},
+    )
+```
+
+`patch_...` adds to multiselect attributes (new values are prepended to the existing list). Use `put_v2_objects_object_records_record_id_` to overwrite them. To create or update by a unique attribute in one call, see [Upsert a person by email](#upsert-a-person-by-email).
+
 ### Add a note to a record
 
 ```python
