@@ -1,0 +1,14 @@
+.git-blame-ignore-revs
+  h_2de9cc37cded86 22-25
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "0cd11ccf5603d35e8a127dd3794cbf6939b72d88",
+  "prompts": {},
+  "humans": {
+    "h_2de9cc37cded86": {
+      "author": "elvis kahoro <github@elvis.ai>"
+    }
+  }
+}
