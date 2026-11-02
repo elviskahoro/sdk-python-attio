@@ -2,6 +2,18 @@
 
 ## Unreleased — 2026-10-05
 
+Adds a `records upsert --json` command to the standalone CLI: it writes any
+object by a unique `matching_attribute` (a record is created when nothing
+matches, updated when exactly one does), returns the `upserted` action with
+`meta.record`, `meta.object` and `meta.matching_attribute`, and surfaces
+Attio's `multiple_match_results` error when the matching attribute matches
+more than one record.
+
+Regenerates the SDK (0.28.6) against the unchanged spec. No model or
+API-surface changes — the post-generation patch's `README_CLI_SECTION`
+picks up the `records upsert` docs, and `pyproject.toml`, `uv.lock`, and
+the Speakeasy-side version files stay in lockstep.
+
 Regenerates the SDK (0.28.5) against the latest spec: adds the alpha
 `sdk.workspace_blocklist` resource (`PUT /v2/workspace_blocklist_addresses`,
 `DELETE /v2/workspace_blocklist_addresses/{address}`) with the

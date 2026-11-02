@@ -3,7 +3,7 @@
 [![PyPI](https://img.shields.io/pypi/v/attio)](https://pypi.org/project/attio/)
 [![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-A type-safe Python client for the [Attio REST API](https://docs.attio.com/rest-api/overview) (v2), with a sync and an async variant of every method. It also ships the standalone `attio` CLI, installed under a second name as `gtm-attio`, for people, company and note workflows. The CLI prints JSON for agents and scripts.
+A type-safe Python client for the [Attio REST API](https://docs.attio.com/rest-api/overview) (v2), with a sync and an async variant of every method. It also ships the standalone `attio` CLI, installed under a second name as `gtm-attio`, for people, company, note and record workflows. The CLI prints JSON for agents and scripts.
 
 - **Package:** `attio` on PyPI. `gtm-attio` is the same code under another distribution name. Requires Python 3.10+.
 - **Credentials:** an Attio API key, in `ATTIO_API_KEY`.

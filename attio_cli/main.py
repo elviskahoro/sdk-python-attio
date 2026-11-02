@@ -53,7 +53,7 @@ def _prog() -> str:
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog=_prog(),
-        description="A standalone Attio CLI for agent-friendly people, company, and note workflows.",
+        description="A standalone Attio CLI for agent-friendly people, company, note and record workflows.",
         epilog=(
             "Credentials: ATTIO_API_KEY from the process environment takes priority, "
             "then .env.local and .env in the current working directory."

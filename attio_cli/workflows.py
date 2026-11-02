@@ -1,4 +1,4 @@
-"""People, company, and note workflows for the standalone CLI."""
+"""People, company, note and record workflows for the standalone CLI."""
 
 from __future__ import annotations
 
