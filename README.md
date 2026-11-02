@@ -416,6 +416,40 @@ with SDK(oauth2=os.environ["ATTIO_API_KEY"]) as sdk:
     print(res.data.id.record_id)
 ```
 
+### Create a custom attribute and select options on people
+
+Create the attribute, then add options to it. The API key needs the `object_configuration:read-write` scope. Other types (`text`, `date`, ...) use the same call with a different `type`:
+
+```python
+import os
+
+from attio import SDK
+
+with SDK(oauth2=os.environ["ATTIO_API_KEY"]) as sdk:
+    sdk.attributes.post_v2_target_identifier_attributes(
+        target="objects",
+        identifier="people",
+        data={
+            "title": "Lead stage",
+            "description": None,
+            "api_slug": "lead_stage",
+            "type": "select",
+            "is_required": False,
+            "is_unique": False,
+            "is_multiselect": False,
+            "config": {},
+        },
+    )
+
+    for title in ("Prospect", "Customer"):
+        sdk.attributes.post_v2_target_identifier_attributes_attribute_options(
+            target="objects",
+            identifier="people",
+            attribute="lead_stage",
+            data={"title": title},
+        )
+```
+
 ### Upsert a person by email
 
 This creates the person, or updates the one record whose `matching_attribute` matches:
