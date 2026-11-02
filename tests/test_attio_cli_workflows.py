@@ -159,6 +159,12 @@ def test_note_list_add_and_update_use_supported_sdk_shapes():
 def test_note_input_models_reject_empty_updates_and_invalid_pages():
     with pytest.raises(ValueError):
         NoteUpdatePayload(note_id="note-1")
+    with pytest.raises(ValueError):
+        NoteListPayload(parent_object="people", parent_record_id="person-1", limit=0)
+    with pytest.raises(ValueError, match="reserved"):
+        CompanyPayload(
+            domain="example.com", values={"domains": [{"domain": "other.com"}]}
+        )
 
 
 def test_record_upsert_payload_requires_matching_attribute_in_values():
@@ -247,12 +253,6 @@ def test_records_upsert_dispatches_through_main_and_surfaces_api_errors(
     result = json.loads(capsys.readouterr().out)
     assert status == 1
     assert result["errors"][0]["code"] == "multiple_match_results"
-    with pytest.raises(ValueError):
-        NoteListPayload(parent_object="people", parent_record_id="person-1", limit=0)
-    with pytest.raises(ValueError, match="reserved"):
-        CompanyPayload(
-            domain="example.com", values={"domains": [{"domain": "other.com"}]}
-        )
 
 
 def test_new_command_json_validation_and_help(monkeypatch, capsys):
