@@ -1,0 +1,19 @@
+.trunk/.gitignore
+  s_a93669d4a7dba6::t_6396d034924fe0 1-9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "98cb9f3645beebc45640b620b26ba250ebb1ec9c",
+  "prompts": {},
+  "sessions": {
+    "s_a93669d4a7dba6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ab8096e6-20f3-4557-86b3-a5e46bef97ba",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "elvis kahoro <github@elvis.ai>"
+    }
+  }
+}
