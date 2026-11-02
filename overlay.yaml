@@ -717,3 +717,9 @@ actions:
   - target: "$.paths['/v2/sql'].post.requestBody.content['application/json'].schema.properties.parameters.additionalProperties.oneOf[9].properties['value'].additionalProperties.type"
     description: "Make SQL struct parameter fields free-form so nested type/value survive serialization"
     remove: true
+
+  # Attio timestamps stay `str` across the SDK; the spec types the blocklist
+  # `created_at` as `format: date-time`, which would generate `datetime`.
+  - target: "$.paths['/v2/workspace_blocklist_addresses'].put.responses['200'].content['application/json'].schema.properties.data.items.properties.created_at.format"
+    description: "Remove format from the workspace blocklist created_at so it generates as str like other timestamps"
+    remove: true

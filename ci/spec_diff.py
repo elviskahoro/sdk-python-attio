@@ -775,7 +775,10 @@ def _resolve_targets(
             # `format: date` from a genuine date-only field. Example and
             # description updates are cosmetic and may legitimately target
             # non-timestamp nodes, so flagging those would be noise.
-            if base not in timestamp_trails:
+            # A removal that lands on a genuine `date-time` format (typed
+            # `datetime` otherwise) is a deliberate keep-as-str fix, not a
+            # date-only field being stripped, so it is not misdirected.
+            if base not in timestamp_trails and "date-time" not in matches:
                 misdirected.append(target)
     return dead, misdirected, covered
 

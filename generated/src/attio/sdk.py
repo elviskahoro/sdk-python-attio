@@ -35,6 +35,7 @@ if TYPE_CHECKING:
     from attio.threads import Threads
     from attio.transcripts import Transcripts
     from attio.webhooks import Webhooks
+    from attio.workspace_blocklist import WorkspaceBlocklist
     from attio.workspace_members import WorkspaceMembers
 
 
@@ -69,6 +70,8 @@ class SDK(BaseSDK):
     r"""Emails are messages synced from connected mailboxes."""
     sequences: "Sequences"
     r"""Sequences are automated email campaigns sent from Attio."""
+    workspace_blocklist: "WorkspaceBlocklist"
+    r"""An address is an email address (jane@acme.com) or a domain (acme.com). The workspace blocklist is the workspace-wide list of addresses whose emails and calendar events are hidden in Attio. An email address matches only itself, and a domain matches every email address at that domain. The address itself is the key: there is no separate ID."""
     meetings: "Meetings"
     r"""Meetings are events synced from your calendar, added manually or added from third-party integrations."""
     call_recordings: "CallRecordings"
@@ -97,6 +100,7 @@ class SDK(BaseSDK):
         "comments": ("attio.comments", "Comments"),
         "emails": ("attio.emails", "Emails"),
         "sequences": ("attio.sequences", "Sequences"),
+        "workspace_blocklist": ("attio.workspace_blocklist", "WorkspaceBlocklist"),
         "meetings": ("attio.meetings", "Meetings"),
         "call_recordings": ("attio.call_recordings", "CallRecordings"),
         "transcripts": ("attio.transcripts", "Transcripts"),

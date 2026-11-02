@@ -116,3 +116,9 @@ class OAuth2Scope(str, Enum):
 
     SEQUENCE_UNSUBSCRIBE_READ_WRITE = "sequence_unsubscribe:read-write"
     r"""View, and optionally add to, the sequence unsubscribe list."""
+
+    EMAIL_CALENDAR_BLOCKLIST_READ = "email_calendar_blocklist:read"
+    r"""View, and optionally manage, the addresses (email addresses and domains) whose emails and calendar events are hidden in Attio."""
+
+    EMAIL_CALENDAR_BLOCKLIST_READ_WRITE = "email_calendar_blocklist:read-write"
+    r"""View, and optionally manage, the addresses (email addresses and domains) whose emails and calendar events are hidden in Attio."""
