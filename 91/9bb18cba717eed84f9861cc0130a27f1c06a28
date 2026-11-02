@@ -1,0 +1,14 @@
+.conductor/settings.toml
+  h_2de9cc37cded86 1-497
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "919bb18cba717eed84f9861cc0130a27f1c06a28",
+  "prompts": {},
+  "humans": {
+    "h_2de9cc37cded86": {
+      "author": "elvis kahoro <github@elvis.ai>"
+    }
+  }
+}
