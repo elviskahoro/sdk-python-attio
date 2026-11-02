@@ -17213,6 +17213,7 @@ generatedFiles:
   - docs/sdks/threads/README.md
   - docs/sdks/transcripts/README.md
   - docs/sdks/webhooks/README.md
+  - docs/sdks/workspaceblocklist/README.md
   - docs/sdks/workspacemembers/README.md
   - py.typed
   - pylintrc

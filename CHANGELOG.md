@@ -2,6 +2,12 @@
 
 ## Unreleased — 2026-10-05
 
+Regenerates the SDK (0.28.4) against the latest spec: adds the alpha
+`sdk.workspace_blocklist` resource (`PUT /v2/workspace_blocklist_addresses`,
+`DELETE /v2/workspace_blocklist_addresses/{address}`) with the
+`email_calendar_blocklist:read`/`read-write` OAuth scopes, and updates the
+`GET /v2/self` `sub` docs for user-level tokens.
+
 Pins Speakeasy to 1.804.0, the generator that produced the committed tree, so pinned regeneration no longer downgrades the template (restores the `security.py` empty-value guard on regen).
 
 Expands the standalone `uvx gtm-attio` CLI with safe people search/add/update,
