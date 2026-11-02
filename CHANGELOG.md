@@ -2,13 +2,6 @@
 
 ## Unreleased — 2026-10-05
 
-Adds a `records upsert --json` command to the standalone CLI: it writes any
-object by a unique `matching_attribute` (a record is created when nothing
-matches, updated when exactly one does), returns the `upserted` action with
-`meta.record`, `meta.object` and `meta.matching_attribute`, and surfaces
-Attio's `multiple_match_results` error when the matching attribute matches
-more than one record.
-
 Regenerates the SDK (0.28.6) against the unchanged spec. No model or
 API-surface changes — the post-generation patch's `README_CLI_SECTION`
 picks up the `records upsert` docs, and `pyproject.toml`, `uv.lock`, and
@@ -25,7 +18,10 @@ Pins Speakeasy to 1.804.0, the generator that produced the committed tree, so pi
 Expands the standalone `uvx gtm-attio` CLI with safe people search/add/update,
 company search/add/update, and note list/add/update commands. Mutations write
 immediately, validate JSON inputs, and return the versioned reliability
-envelope; search and list results are returned in `meta.results`.
+envelope; search and list results are returned in `meta.results`. Adds
+`records upsert`, which writes any object by a unique `matching_attribute`
+and returns the `upserted` action, rejecting ambiguous matches with
+`multiple_match_results`.
 
 Regenerates the SDK (0.26.2) from the committed spec and overlay. Three
 public model names are renamed by the error-code union flattening, and the old
