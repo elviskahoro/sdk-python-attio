@@ -106,6 +106,12 @@ API-surface changes. An intra-PR 0.28.1 bump was never published.
 - **Repository URLs.** `homepage`/`repoURL` now point at
   `elviskahoro/sdk-python-attio`.
 
+Releases the SDK (0.28.3) against the unchanged spec — a content-empty
+bump that keeps `pyproject.toml`, `uv.lock`, and the Speakeasy-side version
+files in lockstep. An intra-PR 0.29.0 bump was renumbered before tagging:
+nothing changed since 0.28.2 but CI configuration, and the 0.x minor bump
+is the breaking-change signal.
+
 ## 0.25.1 — 2026-10-03
 
 Adopts Attio's 2026-10-03 OpenAPI spec and repairs the Speakeasy overlay.
