@@ -1,0 +1,14 @@
+pyrefly.toml
+  h_2de9cc37cded86 2-5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9a20b769692bed7e187c9d2636c2fc6d7809dfc7",
+  "prompts": {},
+  "humans": {
+    "h_2de9cc37cded86": {
+      "author": "elvis kahoro <github@elvis.ai>"
+    }
+  }
+}
