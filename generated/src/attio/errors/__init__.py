@@ -72,6 +72,14 @@ if TYPE_CHECKING:
         DeleteV2WebhooksWebhookIDNotFoundError,
         DeleteV2WebhooksWebhookIDNotFoundErrorData,
     )
+    from .delete_v2_workspace_blocklist_addresses_address_op import (
+        DeleteV2WorkspaceBlocklistAddressesAddressNotFoundError,
+        DeleteV2WorkspaceBlocklistAddressesAddressNotFoundErrorData,
+        DeleteV2WorkspaceBlocklistAddressesAddressUnauthorizedError,
+        DeleteV2WorkspaceBlocklistAddressesAddressUnauthorizedErrorData,
+        DeleteV2WorkspaceBlocklistAddressesAddressValidationTypeError,
+        DeleteV2WorkspaceBlocklistAddressesAddressValidationTypeErrorData,
+    )
     from .get_v2_activities_activity_op import (
         GetV2ActivitiesActivityNotFoundError,
         GetV2ActivitiesActivityNotFoundErrorData,
@@ -501,6 +509,14 @@ if TYPE_CHECKING:
         PutV2ObjectsObjectRecordsUnauthorizedError,
         PutV2ObjectsObjectRecordsUnauthorizedErrorData,
     )
+    from .put_v2_workspace_blocklist_addressesop import (
+        PutV2WorkspaceBlocklistAddressesAuthError,
+        PutV2WorkspaceBlocklistAddressesAuthErrorData,
+        PutV2WorkspaceBlocklistAddressesUniquenessConflictError,
+        PutV2WorkspaceBlocklistAddressesUniquenessConflictErrorData,
+        PutV2WorkspaceBlocklistAddressesValidationTypeError,
+        PutV2WorkspaceBlocklistAddressesValidationTypeErrorData,
+    )
     from .responsevalidationerror import ResponseValidationError
     from .sdkdefaulterror import SDKDefaultError
 
@@ -549,6 +565,12 @@ __all__ = [
     "DeleteV2TasksTaskIDNotFoundErrorData",
     "DeleteV2WebhooksWebhookIDNotFoundError",
     "DeleteV2WebhooksWebhookIDNotFoundErrorData",
+    "DeleteV2WorkspaceBlocklistAddressesAddressNotFoundError",
+    "DeleteV2WorkspaceBlocklistAddressesAddressNotFoundErrorData",
+    "DeleteV2WorkspaceBlocklistAddressesAddressUnauthorizedError",
+    "DeleteV2WorkspaceBlocklistAddressesAddressUnauthorizedErrorData",
+    "DeleteV2WorkspaceBlocklistAddressesAddressValidationTypeError",
+    "DeleteV2WorkspaceBlocklistAddressesAddressValidationTypeErrorData",
     "GetV2ActivitiesActivityNotFoundError",
     "GetV2ActivitiesActivityNotFoundErrorData",
     "GetV2ActivitiesActivityRecordsRecordIDNotFoundError",
@@ -842,6 +864,12 @@ __all__ = [
     "PutV2ObjectsObjectRecordsRecordIDUnauthorizedErrorData",
     "PutV2ObjectsObjectRecordsUnauthorizedError",
     "PutV2ObjectsObjectRecordsUnauthorizedErrorData",
+    "PutV2WorkspaceBlocklistAddressesAuthError",
+    "PutV2WorkspaceBlocklistAddressesAuthErrorData",
+    "PutV2WorkspaceBlocklistAddressesUniquenessConflictError",
+    "PutV2WorkspaceBlocklistAddressesUniquenessConflictErrorData",
+    "PutV2WorkspaceBlocklistAddressesValidationTypeError",
+    "PutV2WorkspaceBlocklistAddressesValidationTypeErrorData",
     "QuotaExceededError",
     "QuotaExceededErrorData",
     "ResponseValidationError",
@@ -894,6 +922,12 @@ _dynamic_imports: dict[str, str] = {
     "DeleteV2TasksTaskIDNotFoundErrorData": ".delete_v2_tasks_task_id_op",
     "DeleteV2WebhooksWebhookIDNotFoundError": ".delete_v2_webhooks_webhook_id_op",
     "DeleteV2WebhooksWebhookIDNotFoundErrorData": ".delete_v2_webhooks_webhook_id_op",
+    "DeleteV2WorkspaceBlocklistAddressesAddressNotFoundError": ".delete_v2_workspace_blocklist_addresses_address_op",
+    "DeleteV2WorkspaceBlocklistAddressesAddressNotFoundErrorData": ".delete_v2_workspace_blocklist_addresses_address_op",
+    "DeleteV2WorkspaceBlocklistAddressesAddressUnauthorizedError": ".delete_v2_workspace_blocklist_addresses_address_op",
+    "DeleteV2WorkspaceBlocklistAddressesAddressUnauthorizedErrorData": ".delete_v2_workspace_blocklist_addresses_address_op",
+    "DeleteV2WorkspaceBlocklistAddressesAddressValidationTypeError": ".delete_v2_workspace_blocklist_addresses_address_op",
+    "DeleteV2WorkspaceBlocklistAddressesAddressValidationTypeErrorData": ".delete_v2_workspace_blocklist_addresses_address_op",
     "GetV2ActivitiesActivityNotFoundError": ".get_v2_activities_activity_op",
     "GetV2ActivitiesActivityNotFoundErrorData": ".get_v2_activities_activity_op",
     "GetV2ActivitiesActivityRecordsRecordIDNotFoundError": ".get_v2_activities_activity_records_record_id_op",
@@ -1193,6 +1227,12 @@ _dynamic_imports: dict[str, str] = {
     "PutV2ObjectsObjectRecordsNotFoundErrorData": ".put_v2_objects_object_recordsop",
     "PutV2ObjectsObjectRecordsUnauthorizedError": ".put_v2_objects_object_recordsop",
     "PutV2ObjectsObjectRecordsUnauthorizedErrorData": ".put_v2_objects_object_recordsop",
+    "PutV2WorkspaceBlocklistAddressesAuthError": ".put_v2_workspace_blocklist_addressesop",
+    "PutV2WorkspaceBlocklistAddressesAuthErrorData": ".put_v2_workspace_blocklist_addressesop",
+    "PutV2WorkspaceBlocklistAddressesUniquenessConflictError": ".put_v2_workspace_blocklist_addressesop",
+    "PutV2WorkspaceBlocklistAddressesUniquenessConflictErrorData": ".put_v2_workspace_blocklist_addressesop",
+    "PutV2WorkspaceBlocklistAddressesValidationTypeError": ".put_v2_workspace_blocklist_addressesop",
+    "PutV2WorkspaceBlocklistAddressesValidationTypeErrorData": ".put_v2_workspace_blocklist_addressesop",
     "ResponseValidationError": ".responsevalidationerror",
     "SDKDefaultError": ".sdkdefaulterror",
 }

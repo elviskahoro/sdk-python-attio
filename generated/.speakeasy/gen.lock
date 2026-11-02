@@ -1,16 +1,16 @@
 lockVersion: 2.0.0
 id: 8dc93348-09a5-472d-90a9-8d558c23be86
 management:
-  docChecksum: 1a8fd0087d8727bb5b3f9e8fa8f0d8b4
+  docChecksum: 378b85eb6011ebc9446743de1983a87a
   docVersion: 2.0.0
   speakeasyVersion: 1.804.0
   generationVersion: 2.952.5
-  releaseVersion: 0.28.3
-  configChecksum: 9685429dc616cba390b472bf74c9085d
+  releaseVersion: 0.28.4
+  configChecksum: 59f7953c85d974d1b0e8a87dfd6bd2c3
 persistentEdits:
-  generation_id: 5b4090b7-381f-40ee-b7c7-d09a083ee728
-  pristine_commit_hash: 71937347064a08c45ca3f844e6f65d8b21677ba9
-  pristine_tree_hash: e27ecaba35660abada9a811f40f783844970c4fb
+  generation_id: a5ba0c45-4cfa-4947-9b10-60b90ee9e179
+  pristine_commit_hash: 84ee7e3ea5f664e4849e42c1b74bc6792b05714b
+  pristine_tree_hash: 3a19cbc4269f6e42a6771c750a877aeb95df1eac
 features:
   python:
     additionalDependencies: 1.1.0
@@ -135,6 +135,18 @@ trackedFiles:
     id: 4c1c4973d5ab
     last_write_checksum: sha1:7510a4b912a7035f41c3a13379e767f71ef71200
     pristine_git_object: 457c7bf1914b4bad9fbdc5565fd18e9fa4ecb16b
+  docs/errors/deletev2workspaceblocklistaddressesaddressnotfounderror.md:
+    id: 50d95deb0b79
+    last_write_checksum: sha1:7e5e47c6da1fd337a5917141c9a331d2aee1bd12
+    pristine_git_object: eef97087b450c436199f7ed037f6c9522c93d168
+  docs/errors/deletev2workspaceblocklistaddressesaddressunauthorizederror.md:
+    id: c17ada8bcf4b
+    last_write_checksum: sha1:010c624331fdccc55df57f6c985b9e333825032a
+    pristine_git_object: 40ad3c64762165e2c8bc66ecf992f47386f20ed1
+  docs/errors/deletev2workspaceblocklistaddressesaddressvalidationtypeerror.md:
+    id: 7c673019539e
+    last_write_checksum: sha1:7c1d54972e70ac76f793dfcc6b8bdcd995833e2c
+    pristine_git_object: b25d82cb8326eef47930c34ac413446109e93c79
   docs/errors/getv2activitiesactivitynotfounderror.md:
     id: 1f3c32eb9a98
     last_write_checksum: sha1:4599563f122798f2849b420c3524d4f16352c327
@@ -719,6 +731,18 @@ trackedFiles:
     id: c58b4759f9d1
     last_write_checksum: sha1:f11dd2e41a76ed6ab9b437f9a07f6afc22594fc3
     pristine_git_object: 19eb17f89f66cd110d0c4d5fdbb050a3dc8d8ddc
+  docs/errors/putv2workspaceblocklistaddressesautherror.md:
+    id: "50399245e256"
+    last_write_checksum: sha1:471288312d19022684bc06d0a37d4d555797a710
+    pristine_git_object: 97379894a9dcd3182456b52f0ef6a2501033872b
+  docs/errors/putv2workspaceblocklistaddressesuniquenessconflicterror.md:
+    id: 32795a8d0d5c
+    last_write_checksum: sha1:bb155c4013ea89eb170b0d76e19c0cb4945d9753
+    pristine_git_object: 440707573b2f4b84c1b56628e870547cfd41f95b
+  docs/errors/putv2workspaceblocklistaddressesvalidationtypeerror.md:
+    id: 08f51fe0980e
+    last_write_checksum: sha1:c4cf36a0afd0cbec89b07b4ed089a9fe2dfc467a
+    pristine_git_object: b89c162b327441f705ac97e4b230dbcf769dd56f
   docs/errors/quotaexceedederror.md:
     id: 0ff0168f8abe
     last_write_checksum: sha1:6e34d0c7c75ec391f2c4076ea6806a095b73496b
@@ -739,14 +763,22 @@ trackedFiles:
     id: cf9b99e8ce31
     last_write_checksum: sha1:7b13a9573f46070f0a0fe2db711c47f104a6e0dc
     pristine_git_object: 40fd36881c6121cc0a9e1eb10736c81ef695d640
+  docs/models/address.md:
+    id: 308e7ce51a5c
+    last_write_checksum: sha1:859b4a58f5aa3eb1a65d56f67299d7b778c1470c
+    pristine_git_object: 33fd457a74eef601afec7a1871dd3d08d99f0dcf
+  docs/models/addresstype.md:
+    id: a064815d2a9a
+    last_write_checksum: sha1:7c3147be3561fdf1327a4d8e93803569cba343b1
+    pristine_git_object: 51267fd81bae303014ed043b168b0bc386263cfa
   docs/models/assignee.md:
     id: ac8078bb60ba
     last_write_checksum: sha1:a0a8dca8264b3f2bb1911453d231f3e4acb54b75
     pristine_git_object: 91ca9bd8e41503b6014558c345d9488525d06f4b
   docs/models/attiocom.md:
     id: f5b3fe427acf
-    last_write_checksum: sha1:dfbeb34cd5467bc791b53350d690b719d7d9e127
-    pristine_git_object: b7560f52714bb2543b78abe6c50f822c9328d907
+    last_write_checksum: sha1:f7632f1209a6b924cb873bbae4819f26c54b656e
+    pristine_git_object: 5dec6ba3d29803857f02d917a61ac6a4ac5b7167
   docs/models/attribute.md:
     id: 4b84711ddd4e
     last_write_checksum: sha1:97db90090b7ddd3353d6e7d8f86e6c53aab3cc5a
@@ -1207,6 +1239,38 @@ trackedFiles:
     id: 0ceacd3300c5
     last_write_checksum: sha1:428a7373de5b6cc8443bcaf18b2b9d4c720e3a75
     pristine_git_object: d4c1e1d0e0e91ac6ea388956eae290875ca5c1e2
+  docs/models/deletev2workspaceblocklistaddressesaddressbadrequesttype.md:
+    id: 5ed910cfd939
+    last_write_checksum: sha1:97b73de2164ded89c3284e9b4fbcac89021147d0
+    pristine_git_object: ff839dfb33cf56daa2044757b2b64228a7c313f9
+  docs/models/deletev2workspaceblocklistaddressesaddresscodeunauthorized.md:
+    id: 276d5b4668c5
+    last_write_checksum: sha1:206b518d1a0527d570c1163b5c62b50c5f201ae3
+    pristine_git_object: 8ec89f6c8fad9666f59c785aa8cc149e12dd3a4e
+  docs/models/deletev2workspaceblocklistaddressesaddresscodevalidationtype.md:
+    id: 2befff687da3
+    last_write_checksum: sha1:c9d1947453a6a471059de9fb26ec31a46a0d866b
+    pristine_git_object: 59d9828f6308b2d0413c51fbe534b99a10d90395
+  docs/models/deletev2workspaceblocklistaddressesaddressforbiddentype.md:
+    id: becbccf5137c
+    last_write_checksum: sha1:70390c25ec56045f49cbd1cad889a13f6ba3672a
+    pristine_git_object: cf1279a4eec550e8a07195804296ae65eaf5e6e6
+  docs/models/deletev2workspaceblocklistaddressesaddressnotfoundcode.md:
+    id: 168e8793c3e8
+    last_write_checksum: sha1:2b47d3f8907a48580ce0ebc8df6d01252b64f299
+    pristine_git_object: c184aac720adcf38cec9ae8207467e84d50fe0fb
+  docs/models/deletev2workspaceblocklistaddressesaddressnotfoundtype.md:
+    id: 32c6ac7d670d
+    last_write_checksum: sha1:4e4312ca449c8ba33c4ae6f536c7b61c516c1964
+    pristine_git_object: b351055bbcf27527ba5d791cd48e5979399e5b80
+  docs/models/deletev2workspaceblocklistaddressesaddressrequest.md:
+    id: de7b5ad12235
+    last_write_checksum: sha1:cab9ffb13832e3a6711eaa49475141876f1b6aad
+    pristine_git_object: 6b0c36d0059c5fc47508288e13c1272474cb4bb3
+  docs/models/deletev2workspaceblocklistaddressesaddressresponse.md:
+    id: 7990b4d6ff47
+    last_write_checksum: sha1:16074548eec0767ed9d4719816f5c91a8264c35d
+    pristine_git_object: 1c9bed35953dd7e6ffd36595440c906fd9debc3c
   docs/models/direction.md:
     id: 5c2dbb7995cb
     last_write_checksum: sha1:3aaab062d64772d73528b1bd4374633b1b932af5
@@ -1243,6 +1307,14 @@ trackedFiles:
     id: 0e3e9a3dcf9b
     last_write_checksum: sha1:fc2a185a4e5e00fde95b01e35ebafc3d7f029401
     pristine_git_object: d243d18e27082a5200e95fe93b13244e6e9e992d
+  docs/models/enforcementlevelrequest.md:
+    id: 14c6c2fb1cb1
+    last_write_checksum: sha1:c6e19c0f6c08b752b4b9c6007a29a8a116d4a2a4
+    pristine_git_object: 380ca94ad9497df7cb20641ffc7a7936bcdb90b5
+  docs/models/enforcementlevelresponse.md:
+    id: db8cf82a8855
+    last_write_checksum: sha1:eb8d5ca1a20d3bd63a2f07dbad0b0cb134c347e7
+    pristine_git_object: cdef83391e91423e16ea0e800ff0d511cb292e1e
   docs/models/entry.md:
     id: da9a99ab48ab
     last_write_checksum: sha1:6d7da98a97dc8eca8190ecd3b99e9b3441629cfd
@@ -12123,6 +12195,54 @@ trackedFiles:
     id: 063f15e96182
     last_write_checksum: sha1:47b5ce430c13968ccc65bcc396544b40249633eb
     pristine_git_object: 29a00f7ed6b4226c962f18572e1385f821a3f7b8
+  docs/models/putv2workspaceblocklistaddressesbadrequesttype.md:
+    id: 69cb3d17b683
+    last_write_checksum: sha1:5376653e377df9143fe4f09883fa1ea9610ae124
+    pristine_git_object: 864d23b666b72ff0b3404df06ab0b5287e0079e1
+  docs/models/putv2workspaceblocklistaddressescodebillingerror.md:
+    id: 20f5ed0f324f
+    last_write_checksum: sha1:368983f02c22e2cb781f1a2f273c80836217a73c
+    pristine_git_object: b3a99a266283e50aa5bea27c0928610aba1ce44e
+  docs/models/putv2workspaceblocklistaddressescodeunauthorized.md:
+    id: c1df65e21596
+    last_write_checksum: sha1:228698a12f6b24b7d33cea598fdf54a13c42d51b
+    pristine_git_object: 29d70deb430a763a9370bbe7a941c0457e6c2862
+  docs/models/putv2workspaceblocklistaddressescodeunion.md:
+    id: 9144b01ac179
+    last_write_checksum: sha1:16892ab837cf46439882eee164119090a70a987c
+    pristine_git_object: b2fcb0ba3d524e03d5a7502a71311b04640c5f6a
+  docs/models/putv2workspaceblocklistaddressescodeuniquenessconflict.md:
+    id: d7b4cd3513cc
+    last_write_checksum: sha1:c470171b4a2be670d78613594808a2a83684e3f5
+    pristine_git_object: 412a87dab2b012c1cbb49cac2a32baec78434bad
+  docs/models/putv2workspaceblocklistaddressescodevalidationtype.md:
+    id: 67a351166fc7
+    last_write_checksum: sha1:110fda1e30547144ab691098a5602376d8e918cd
+    pristine_git_object: efa0cbfe420cbb05f55f063c870cb0367333eb85
+  docs/models/putv2workspaceblocklistaddressesconflicttype.md:
+    id: 0b60f088a82a
+    last_write_checksum: sha1:ff652e2575ff9c499551a2adb02f5beb43e23f55
+    pristine_git_object: 0db4f35b1c2ad12b0cfa0b1d6ea3c065880b7276
+  docs/models/putv2workspaceblocklistaddressesdatarequest.md:
+    id: 9adaab156869
+    last_write_checksum: sha1:852777f716141917a102e01e0c064634ca6044cb
+    pristine_git_object: 68765b5286b5a15b88fc767f6ecc5b98bb27ef61
+  docs/models/putv2workspaceblocklistaddressesdataresponse.md:
+    id: f55dfe6bf248
+    last_write_checksum: sha1:cd5d30aec6ff975fd8100bbb4cdca126e90231f2
+    pristine_git_object: ec5c7c41d715006b57c1f4cd7702a941710bb763
+  docs/models/putv2workspaceblocklistaddressesforbiddentype.md:
+    id: 8b8b781db8de
+    last_write_checksum: sha1:0b71049082de2ef8463e12926786317edc3dfc2c
+    pristine_git_object: 5ea7a7b99fb4c58d34b43fd2b4aa371061e0ac0b
+  docs/models/putv2workspaceblocklistaddressesrequest.md:
+    id: d3fa3320594f
+    last_write_checksum: sha1:0f1a365e452d5653fd3f4cc8bd927ab2604c7956
+    pristine_git_object: 69fc39916a34eff93ad1a56a30b217e4d9dd5849
+  docs/models/putv2workspaceblocklistaddressesresponse.md:
+    id: 9118f96217b4
+    last_write_checksum: sha1:4d8751aedd3f286065e7643d349c4e8fa76a9914
+    pristine_git_object: 5db5192748d11cb77100502b7ee21098ad259dba
   docs/models/record.md:
     id: d9abc723bb58
     last_write_checksum: sha1:cb1f8115cead4b1093ebfaae5f43e62d75ee1b2d
@@ -12385,8 +12505,8 @@ trackedFiles:
     pristine_git_object: e763be4b171bbcf9c16caeaf381f8c92ce8d8e6e
   src/attio/_hooks/oauth2scopes.py:
     id: cec8be2cdee0
-    last_write_checksum: sha1:b5b709e4a8bf83e0a8b47b844895b036309f03e5
-    pristine_git_object: 0fe0c1f706db929df84fea8a5f37fbe5feb00bb5
+    last_write_checksum: sha1:eb90015c4c3ba1bb09b1a2662eca0bbf715059ff
+    pristine_git_object: 497a4faee2d57fbbea7a016f54d7b5865669e1af
   src/attio/_hooks/sdkhooks.py:
     id: d89be375c092
     last_write_checksum: sha1:44945fcc70c4502560d0c00be59d20625849b0e7
@@ -12397,8 +12517,8 @@ trackedFiles:
     pristine_git_object: 07fce86de71e75fc33b319175a2b1e576d7ca370
   src/attio/_version.py:
     id: 601b0c828c8d
-    last_write_checksum: sha1:0b9cb9cfa6b7f21185c0227ee84a9a8c135eda6a
-    pristine_git_object: f549cbf21b0a7e92d89d841532d0d24341592547
+    last_write_checksum: sha1:c371fda90dabf702068531d8bddc7c2c650e51d9
+    pristine_git_object: cab306a322712b44dfe1dedf17c7bdfb20aaa7c7
   src/attio/activities.py:
     id: b43e8ae24d8e
     last_write_checksum: sha1:e697e2847c81186670fd69e63f040a0866970d4c
@@ -12433,8 +12553,8 @@ trackedFiles:
     pristine_git_object: db95026ce488cabf5398a7a9bf2b022150ae0042
   src/attio/errors/__init__.py:
     id: 7c90e5764394
-    last_write_checksum: sha1:0e3f06475c5675e1e4391e5f27402499b9b3cdf9
-    pristine_git_object: fd1eadacceb52e58c380eaf5d5f80c1303b3247c
+    last_write_checksum: sha1:6ad728b4c05b0be122cb8d89aebf3c6d7aa34e59
+    pristine_git_object: 80708084dd3757b174c8c655815c8bd390f65225
   src/attio/errors/delete_v2_activities_activity_op.py:
     id: 60f946ff4d9a
     last_write_checksum: sha1:5a5f7b3242bab676685ed168c716ba12f5673532
@@ -12483,6 +12603,10 @@ trackedFiles:
     id: 6d9fbe2d9ecf
     last_write_checksum: sha1:f6b4e47fbe303b141255bf75570f7d396b14fc7f
     pristine_git_object: 38e29b7e93d7716ab78f44ab38543d591084833a
+  src/attio/errors/delete_v2_workspace_blocklist_addresses_address_op.py:
+    id: aa22582d0fe0
+    last_write_checksum: sha1:9eb4cd3aa821941926a38feb3f7a96891837bef9
+    pristine_git_object: a445a64320379982d5f64467c3b60e9af93ab814
   src/attio/errors/get_v2_activities_activity_op.py:
     id: 5f1ad46cc0cc
     last_write_checksum: sha1:9c7c98c8d019582c2222800dc27695202ae2714e
@@ -12759,6 +12883,10 @@ trackedFiles:
     id: d03ed32bcb39
     last_write_checksum: sha1:0bfb4cf32eaf2ffe5b77b7cc75b91338d35abb13
     pristine_git_object: 4b2de1e3564f0197762c9bdf1d810d242d41879e
+  src/attio/errors/put_v2_workspace_blocklist_addressesop.py:
+    id: 2553265f0204
+    last_write_checksum: sha1:2173dc6d610fe33fe66372330bc4e87d2faad38d
+    pristine_git_object: b5016d8268e347755dd96db2553f327e7c1ef858
   src/attio/errors/responsevalidationerror.py:
     id: 3e7293984a37
     last_write_checksum: sha1:7ae837437b10247493976aaf763c76667210c14a
@@ -12793,8 +12921,8 @@ trackedFiles:
     pristine_git_object: 6f065a0fe84570a4412e24856a62fef911ce10a1
   src/attio/models/__init__.py:
     id: f9c8b4a4dc53
-    last_write_checksum: sha1:39040d2471e09bb9b7d7d87fa1c06592ad3930f3
-    pristine_git_object: 422639ce3ceb333fa5c6ad4de5f7a2d1f7f72de7
+    last_write_checksum: sha1:692b7f504f423fcef76f82912b670f3996a6c5d5
+    pristine_git_object: f3f6ceb4abc1ddc8c2342b4b786d73c43a502c5b
   src/attio/models/activity.py:
     id: 4fa0596ac2e4
     last_write_checksum: sha1:942b984a70aaaf48f78ad0bab946081beeac3d76
@@ -12863,6 +12991,10 @@ trackedFiles:
     id: 3b01ba1d7e1e
     last_write_checksum: sha1:209812acc6eed038e1374502ae18a094dc761a9b
     pristine_git_object: ca2be48a43c988503866fff18e9eccc350ec5baf
+  src/attio/models/delete_v2_workspace_blocklist_addresses_address_op.py:
+    id: 7112a87d52d0
+    last_write_checksum: sha1:83fee16cd3dd92488fb534431395159c137e5c2d
+    pristine_git_object: 7c203dda6ffd11664e84bc4c16e9d85bf99f7584
   src/attio/models/email.py:
     id: edc4f1b96a05
     last_write_checksum: sha1:8204ada4839dc2cffd3741719298e75f7bbdde89
@@ -12981,8 +13113,8 @@ trackedFiles:
     pristine_git_object: 66ebd8a112b7a86d5afe180963ebf0042ee80328
   src/attio/models/get_v2_selfop.py:
     id: de2e2bcbaa48
-    last_write_checksum: sha1:eb3e5e58968acb8ace41cef5ce7d7eb6df287b07
-    pristine_git_object: 2f1507d82a0e48d34f00fe94008404e403405030
+    last_write_checksum: sha1:27d6dc9f3b77095f4deaf88a34bd74d6b6b11cb3
+    pristine_git_object: 8f7d42e9a633f42aef72bc4b4d0672025d63b9d4
   src/attio/models/get_v2_target_identifier_attributes_attribute_op.py:
     id: e5ae1228f75a
     last_write_checksum: sha1:0a1b64613326f61a9ddc1d5216e8f92b11a55183
@@ -13247,6 +13379,10 @@ trackedFiles:
     id: 97095d1a5c2a
     last_write_checksum: sha1:a40eced19f5c6b87fc0c9399d1c5c5b9abbf4873
     pristine_git_object: 35d8e5ef9434527a42f4b0d3851499f38558eb81
+  src/attio/models/put_v2_workspace_blocklist_addressesop.py:
+    id: 708ee0794dc0
+    last_write_checksum: sha1:39e194a023ffbbd2986bcf2db83338d086acc3a1
+    pristine_git_object: 0f046c4490678f1a5ff31bf61833cd0be528f182
   src/attio/models/security.py:
     id: 85ee2962631a
     last_write_checksum: sha1:ae8cd0db99350218e7f8350d3fd352b74d922021
@@ -13289,8 +13425,8 @@ trackedFiles:
     pristine_git_object: fdca50e42af839454722d3bbefee8e4143715a5c
   src/attio/sdk.py:
     id: c9d3347e371f
-    last_write_checksum: sha1:7d0f67ebf1aee4aef4dd6ebc01d371f95d87ce36
-    pristine_git_object: a309e457c2adf45f7857e9d3d97e44faed199a32
+    last_write_checksum: sha1:1c838e93bcb1614e4c98e70f9b61a67be50ac3c5
+    pristine_git_object: 0ad658b7534d6502c671569a908bfd0f43347f6a
   src/attio/sdkconfiguration.py:
     id: 8e7545581179
     last_write_checksum: sha1:9102a68505d89b7401cf61f65289ec24dbaa3b93
@@ -13403,6 +13539,10 @@ trackedFiles:
     id: 92608d966910
     last_write_checksum: sha1:caee3411a8095f09279492b58291444d08c729ff
     pristine_git_object: 5816315a298df7348a877974eb84d319ca9c4f14
+  src/attio/workspace_blocklist.py:
+    id: 3e9423f782bb
+    last_write_checksum: sha1:572cbef99d30003d537c18e84214fb6a6793c033
+    pristine_git_object: 1516540303fce7ee715a1c272f61f7648e170ab8
   src/attio/workspace_members.py:
     id: cff3e292fb2c
     last_write_checksum: sha1:e5d7d6ce8998583ed7089102feef5d15e0a41a27
@@ -14437,7 +14577,7 @@ examples:
     User-level app access token:
       responses:
         "200":
-          application/json: {"active": true, "scope": "note:read-write record_permission:read-write", "client_id": "1e4a3f7c-8d29-4b51-9e0f-6c3a5d8b21e7", "token_type": "Bearer", "exp": null, "iat": 1672585200, "sub": "14beef7a-99f7-4534-a87e-70b564330a4c", "aud": "1e4a3f7c-8d29-4b51-9e0f-6c3a5d8b21e7", "iss": "attio.com", "token_level": "user", "authorized_by_workspace_member_id": "50cf242c-7fa3-4cad-87d0-75b1af71c57b", "workspace_id": "14beef7a-99f7-4534-a87e-70b564330a4c", "workspace_name": "Salarya", "workspace_slug": "salarya", "workspace_logo_url": null}
+          application/json: {"active": true, "scope": "note:read-write record_permission:read-write", "client_id": "1e4a3f7c-8d29-4b51-9e0f-6c3a5d8b21e7", "token_type": "Bearer", "exp": null, "iat": 1672585200, "sub": "wsm_14beef7a-99f7-4534-a87e-70b564330a4c_50cf242c-7fa3-4cad-87d0-75b1af71c57b", "aud": "1e4a3f7c-8d29-4b51-9e0f-6c3a5d8b21e7", "iss": "attio.com", "token_level": "user", "authorized_by_workspace_member_id": "50cf242c-7fa3-4cad-87d0-75b1af71c57b", "workspace_id": "14beef7a-99f7-4534-a87e-70b564330a4c", "workspace_name": "Salarya", "workspace_slug": "salarya", "workspace_logo_url": null}
   get_/v2/objects/{object}/views:
     speakeasy-default-get-/v2-/objects/{object}/views:
       parameters:
@@ -15133,6 +15273,45 @@ examples:
           application/json: {"status_code": 3527.53, "type": "invalid_request_error", "code": "system_edit_unauthorized", "message": "Cannot delete a meeting which was created by calendar sync."}
         "404":
           application/json: {"status_code": 8653.69, "type": "invalid_request_error", "code": "not_found", "message": "Meeting with ID \"cb59ab17-ad15-460c-a126-0715617c0853\" was not found."}
+  put_/v2/workspace_blocklist_addresses:
+    Add, keep and move addresses:
+      requestBody:
+        application/json: {"data": {"addresses": [{"address": "lists@acme.com", "enforcement_level": "blocked"}, {"address": "https://www.newsletter.example.com", "enforcement_level": "blocked"}, {"address": "jane@acme.com", "enforcement_level": "protected"}]}}
+      responses:
+        "200":
+          application/json: {"data": []}
+        "400":
+          application/json: {"status_code": 2358.69, "type": "invalid_request_error", "code": "validation_type", "message": "Body payload validation error."}
+        "403":
+          application/json: {"status_code": 3131.24, "type": "auth_error", "code": "billing_error", "message": "A user-level access token can only manage the workspace blocklist if the member it acts for is a workspace admin."}
+        "409":
+          application/json: {"status_code": 1934.4, "type": "invalid_request_error", "code": "uniqueness_conflict", "message": "One or more addresses were changed by a concurrent request. Please retry."}
+    speakeasy-default-put-/v2-/workspace-blocklist-addresses:
+      requestBody:
+        application/json: {"data": {"addresses": [{"address": "jane@acme.com", "enforcement_level": "blocked"}]}}
+      responses:
+        "200":
+          application/json: {"data": []}
+        "400":
+          application/json: {"status_code": 2358.69, "type": "invalid_request_error", "code": "validation_type", "message": "Body payload validation error."}
+        "403":
+          application/json: {"status_code": 3131.24, "type": "auth_error", "code": "billing_error", "message": "A user-level access token can only manage the workspace blocklist if the member it acts for is a workspace admin."}
+        "409":
+          application/json: {"status_code": 1934.4, "type": "invalid_request_error", "code": "uniqueness_conflict", "message": "One or more addresses were changed by a concurrent request. Please retry."}
+  delete_/v2/workspace_blocklist_addresses/{address}:
+    speakeasy-default-delete-/v2-/workspace-blocklist-addresses/{address}:
+      parameters:
+        path:
+          address: "jane@acme.com"
+      responses:
+        "200":
+          application/json: {}
+        "400":
+          application/json: {"status_code": 6932.04, "type": "invalid_request_error", "code": "validation_type", "message": "Path params validation error."}
+        "403":
+          application/json: {"status_code": 7063.67, "type": "auth_error", "code": "unauthorized", "message": "A user-level access token can only manage the workspace blocklist if the member it acts for is a workspace admin."}
+        "404":
+          application/json: {"status_code": 2009.45, "type": "invalid_request_error", "code": "not_found", "message": "Address not found on the workspace blocklist"}
 examplesVersion: 1.0.2
 generatedFiles:
   - .gitattributes

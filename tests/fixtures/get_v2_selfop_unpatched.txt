@@ -36,7 +36,7 @@ class AttioComTypedDict(TypedDict):
     iat: float
     r"""The time at which this token was issued, as a number of seconds since January 1 1970 UTC."""
     sub: str
-    r"""Since Bearer tokens grant Workspace-level permissions, this property contains the workspace_id."""
+    r"""The subject of the token. For a workspace-level token, this is the workspace ID. For a user-level token, this is an opaque value that identifies the workspace member. Do not parse this value. To get the workspace ID, use workspace_id. To get the workspace member ID, use authorized_by_workspace_member_id."""
     aud: str
     r"""The intended audience for this token, for Bearer tokens this is the same as the client_id."""
     iss: Iss
@@ -75,7 +75,7 @@ class AttioCom(BaseModel):
     r"""The time at which this token was issued, as a number of seconds since January 1 1970 UTC."""
 
     sub: str
-    r"""Since Bearer tokens grant Workspace-level permissions, this property contains the workspace_id."""
+    r"""The subject of the token. For a workspace-level token, this is the workspace ID. For a user-level token, this is an opaque value that identifies the workspace member. Do not parse this value. To get the workspace ID, use workspace_id. To get the workspace member ID, use authorized_by_workspace_member_id."""
 
     aud: str
     r"""The intended audience for this token, for Bearer tokens this is the same as the client_id."""
