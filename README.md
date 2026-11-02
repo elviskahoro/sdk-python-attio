@@ -568,7 +568,7 @@ with SDK(oauth2=os.environ["ATTIO_API_KEY"]) as sdk:
     print(res.data.id.record_id)
 ```
 
-A reference matching no record, or more than one, is rejected. For multiselect attributes, upserting adds values rather than replacing them.
+A reference matching no record, or more than one, is rejected. If the matching attribute is itself multiselect, upserted values are added to the existing ones; any other multiselect attribute is set to exactly the supplied values, so values left out are deleted.
 
 ### Add a note to a record
 
