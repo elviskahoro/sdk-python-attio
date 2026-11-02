@@ -1,16 +1,16 @@
 lockVersion: 2.0.0
 id: 8dc93348-09a5-472d-90a9-8d558c23be86
 management:
-  docChecksum: 378b85eb6011ebc9446743de1983a87a
+  docChecksum: 1327c258669c261241e11f645c2aa9f1
   docVersion: 2.0.0
   speakeasyVersion: 1.804.0
   generationVersion: 2.952.5
-  releaseVersion: 0.28.4
-  configChecksum: 59f7953c85d974d1b0e8a87dfd6bd2c3
+  releaseVersion: 0.28.5
+  configChecksum: 6fde48b66a6fb7d7077af6e7f43a62d5
 persistentEdits:
-  generation_id: a5ba0c45-4cfa-4947-9b10-60b90ee9e179
-  pristine_commit_hash: 84ee7e3ea5f664e4849e42c1b74bc6792b05714b
-  pristine_tree_hash: 3a19cbc4269f6e42a6771c750a877aeb95df1eac
+  generation_id: 85c7d649-430c-4785-a61a-59a2151be0f1
+  pristine_commit_hash: b1fe12258a73cfb65486bd39e4e4e15f1ee39358
+  pristine_tree_hash: b830d9ac876217ad50ed2aa28d3308464a4214f9
 features:
   python:
     additionalDependencies: 1.1.0
@@ -12229,8 +12229,8 @@ trackedFiles:
     pristine_git_object: 68765b5286b5a15b88fc767f6ecc5b98bb27ef61
   docs/models/putv2workspaceblocklistaddressesdataresponse.md:
     id: f55dfe6bf248
-    last_write_checksum: sha1:cd5d30aec6ff975fd8100bbb4cdca126e90231f2
-    pristine_git_object: ec5c7c41d715006b57c1f4cd7702a941710bb763
+    last_write_checksum: sha1:4f9026ef2cd1c39db5b9148b71561c4692e7b86e
+    pristine_git_object: 57d12bf40b5f65054da8183b09077c6f0654742e
   docs/models/putv2workspaceblocklistaddressesforbiddentype.md:
     id: 8b8b781db8de
     last_write_checksum: sha1:0b71049082de2ef8463e12926786317edc3dfc2c
@@ -12517,8 +12517,8 @@ trackedFiles:
     pristine_git_object: 07fce86de71e75fc33b319175a2b1e576d7ca370
   src/attio/_version.py:
     id: 601b0c828c8d
-    last_write_checksum: sha1:c371fda90dabf702068531d8bddc7c2c650e51d9
-    pristine_git_object: cab306a322712b44dfe1dedf17c7bdfb20aaa7c7
+    last_write_checksum: sha1:180d169d3da9b359b180cbd7a1af5a6776a9c960
+    pristine_git_object: a117a172c5fcee82711ac55533d5ee12fc3bf298
   src/attio/activities.py:
     id: b43e8ae24d8e
     last_write_checksum: sha1:e697e2847c81186670fd69e63f040a0866970d4c
@@ -13381,8 +13381,8 @@ trackedFiles:
     pristine_git_object: 35d8e5ef9434527a42f4b0d3851499f38558eb81
   src/attio/models/put_v2_workspace_blocklist_addressesop.py:
     id: 708ee0794dc0
-    last_write_checksum: sha1:39e194a023ffbbd2986bcf2db83338d086acc3a1
-    pristine_git_object: 0f046c4490678f1a5ff31bf61833cd0be528f182
+    last_write_checksum: sha1:7384aa3a59c3e7236cdbee0d1caadd00b1978e0d
+    pristine_git_object: ea2c0f609447473deca43701ff8656e311007592
   src/attio/models/security.py:
     id: 85ee2962631a
     last_write_checksum: sha1:ae8cd0db99350218e7f8350d3fd352b74d922021

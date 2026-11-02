@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 from attio.types import BaseModel
-from datetime import datetime
 from typing import List, Literal, Union
 from typing_extensions import TypeAliasType, TypedDict
 
@@ -107,7 +106,7 @@ class PutV2WorkspaceBlocklistAddressesDataResponseTypedDict(TypedDict):
     r"""Whether the address is an email address or a domain."""
     enforcement_level: EnforcementLevelResponse
     r"""`protected`: emails and calendar events are hidden unless at least one participant is not on the workspace blocklist. `blocked`: they are hidden even when other participants are included."""
-    created_at: datetime
+    created_at: str
     r"""When the address was given its current enforcement level."""
 
 
@@ -121,7 +120,7 @@ class PutV2WorkspaceBlocklistAddressesDataResponse(BaseModel):
     enforcement_level: EnforcementLevelResponse
     r"""`protected`: emails and calendar events are hidden unless at least one participant is not on the workspace blocklist. `blocked`: they are hidden even when other participants are included."""
 
-    created_at: datetime
+    created_at: str
     r"""When the address was given its current enforcement level."""
 
 

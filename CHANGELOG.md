@@ -2,7 +2,7 @@
 
 ## Unreleased — 2026-10-05
 
-Regenerates the SDK (0.28.4) against the latest spec: adds the alpha
+Regenerates the SDK (0.28.5) against the latest spec: adds the alpha
 `sdk.workspace_blocklist` resource (`PUT /v2/workspace_blocklist_addresses`,
 `DELETE /v2/workspace_blocklist_addresses/{address}`) with the
 `email_calendar_blocklist:read`/`read-write` OAuth scopes, and updates the

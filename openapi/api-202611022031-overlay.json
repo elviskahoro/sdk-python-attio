@@ -63929,7 +63929,6 @@
                           },
                           "created_at": {
                             "type": "string",
-                            "format": "date-time",
                             "description": "When the address was given its current enforcement level.",
                             "example": "2026-10-28T09:12:44.210000000Z"
                           }

@@ -701,3 +701,17 @@ def test_schema_property_named_description_is_structural() -> None:
     diff = SD.structural_diff(old, new)
     assert diff["has_structural_changes"] is True
     assert "schemas/Thing" in diff["components_changed"]
+
+
+def test_resolve_targets_accepts_date_time_format_removal_but_flags_other_formats() -> None:
+    """A `.format` removal on a genuine `date-time` node is a deliberate
+    keep-as-str fix; the same removal on any other format is misdirected."""
+    spec = {
+        "a": {"format": "date-time"},
+        "b": {"format": "uuid"},
+    }
+    dead, misdirected, _ = SD._resolve_targets(
+        spec, ["$.a.format", "$.b.format"]
+    )
+    assert dead == []
+    assert misdirected == ["$.b.format"]
