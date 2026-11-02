@@ -54,6 +54,10 @@ class FakeRecords:
         self.calls.append(("put", kwargs))
         return NS(data=self.written)
 
+    def put_v2_objects_object_records(self, **kwargs):
+        self.calls.append(("upsert", kwargs))
+        return NS(data=self.written)
+
 
 class FakeNotes:
     def __init__(self):

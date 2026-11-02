@@ -71,7 +71,7 @@ def test_cli_examples_parse(command: str) -> None:
 
 def test_cli_examples_cover_every_resource() -> None:
     resources = {shlex.split(command)[2] for command in _cli_examples()}
-    assert resources == {"people", "companies", "notes"}
+    assert resources == {"people", "companies", "notes", "records"}
 
 
 def test_no_unrendered_placeholders_or_relative_doc_links() -> None:

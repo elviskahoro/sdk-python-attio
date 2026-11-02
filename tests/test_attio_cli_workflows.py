@@ -13,6 +13,7 @@ from attio_cli.query import (
     NoteListPayload,
     NoteUpdatePayload,
     PersonUpsertQuery,
+    RecordUpsertPayload,
 )
 from attio_cli.workflows import (
     add_company,
@@ -24,6 +25,7 @@ from attio_cli.workflows import (
     update_company,
     update_note,
     update_person,
+    upsert_record,
 )
 from _attio_cli_helpers import FakeClient as _Client
 from _attio_cli_helpers import FakeNotes as _Notes
@@ -157,6 +159,94 @@ def test_note_list_add_and_update_use_supported_sdk_shapes():
 def test_note_input_models_reject_empty_updates_and_invalid_pages():
     with pytest.raises(ValueError):
         NoteUpdatePayload(note_id="note-1")
+
+
+def test_record_upsert_payload_requires_matching_attribute_in_values():
+    with pytest.raises(ValueError, match="at least one attribute"):
+        RecordUpsertPayload(object="deals", matching_attribute="external_id", values={})
+    with pytest.raises(ValueError, match="matching_attribute key"):
+        RecordUpsertPayload(
+            object="deals",
+            matching_attribute="external_id",
+            values={"name": [{"value": "Acme"}]},
+        )
+
+
+def test_upsert_record_passes_object_matching_attribute_and_record_reference_values():
+    records = _Records(written=_record("deal-1"))
+    payload = RecordUpsertPayload(
+        object="deals",
+        matching_attribute="external_id",
+        values={
+            "external_id": ["deal-1042"],
+            "contact": [
+                {
+                    "target_object": "people",
+                    "email_addresses": [{"email_address": "ada@example.com"}],
+                },
+            ],
+        },
+    )
+    result = upsert_record(payload, _Client(records=records))
+
+    upsert_call = next(kwargs for method, kwargs in records.calls if method == "upsert")
+    assert upsert_call["object"] == "deals"
+    assert upsert_call["matching_attribute"] == "external_id"
+    assert upsert_call["data"]["values"]["contact"][0]["target_object"] == "people"
+    assert result["action"] == "upserted"
+    assert result["record_id"] == "deal-1"
+    assert result["meta"]["object"] == "deals"
+    assert result["meta"]["matching_attribute"] == "external_id"
+
+
+def test_records_upsert_dispatches_through_main_and_surfaces_api_errors(
+    monkeypatch, capsys
+):
+    monkeypatch.setattr(cli_main, "_load_credentials", lambda: "test-key")
+    records = _Records(written=_record("deal-1"))
+    client = _Client(records=records)
+
+    class _SDK:
+        def __init__(self, *, oauth2):
+            assert oauth2 == "test-key"
+
+        def __enter__(self):
+            return client
+
+        def __exit__(self, *_exc):
+            return None
+
+    monkeypatch.setattr(cli_main, "SDK", _SDK)
+    status = cli_main.main(
+        [
+            "records",
+            "upsert",
+            "--json",
+            '{"object":"deals","matching_attribute":"external_id",'
+            '"values":{"external_id":["deal-1042"]}}',
+        ]
+    )
+    result = json.loads(capsys.readouterr().out)
+    assert status == 0
+    assert result["action"] == "upserted"
+    assert result["record_id"] == "deal-1"
+
+    def conflict(**kwargs):
+        raise RuntimeError('{"code":"multiple_match_results","message":"ambiguous"}')
+
+    records.put_v2_objects_object_records = conflict
+    status = cli_main.main(
+        [
+            "records",
+            "upsert",
+            "--json",
+            '{"object":"deals","matching_attribute":"external_id",'
+            '"values":{"external_id":["deal-1042"]}}',
+        ]
+    )
+    result = json.loads(capsys.readouterr().out)
+    assert status == 1
+    assert result["errors"][0]["code"] == "multiple_match_results"
     with pytest.raises(ValueError):
         NoteListPayload(parent_object="people", parent_record_id="person-1", limit=0)
     with pytest.raises(ValueError, match="reserved"):

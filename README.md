@@ -86,7 +86,7 @@ Run it with `uv run script.py`, or make it executable. A script without the meta
 <!-- Start Standalone CLI [cli] -->
 ## Standalone CLI
 
-The `attio` command, also installed as `gtm-attio`, wraps the SDK in people, company and note commands. Each command identifies records by email, domain or ID, and prints one JSON envelope. You can run it without cloning or installing anything:
+The `attio` command, also installed as `gtm-attio`, wraps the SDK in people, company, note and record commands. Each command identifies records by email, domain, matching attribute or ID, and prints one JSON envelope. You can run it without cloning or installing anything:
 
 ```bash
 export ATTIO_API_KEY="your-attio-api-key"
@@ -109,7 +109,7 @@ Run `uvx gtm-attio <resource> <command> --help` for the full flag list of any co
 
 ### Credentials
 
-The CLI reads only `ATTIO_API_KEY`. It looks in the process environment first, then in `.env.local`, then in `.env` in the current directory. Without a key, the CLI returns the `missing_api_key` envelope. If Attio rejects the key (HTTP 401/403), the CLI returns `invalid_api_key`. The key needs record read/write scopes for `people` and `companies` commands, and note scopes for `notes`.
+The CLI reads only `ATTIO_API_KEY`. It looks in the process environment first, then in `.env.local`, then in `.env` in the current directory. Without a key, the CLI returns the `missing_api_key` envelope. If Attio rejects the key (HTTP 401/403), the CLI returns `invalid_api_key`. The key needs record read/write scopes for `people`, `companies` and `records` commands, and note scopes for `notes`.
 
 ### Commands
 
@@ -125,6 +125,7 @@ The CLI reads only `ATTIO_API_KEY`. It looks in the process environment first, t
 | `notes list --json PAYLOAD` | Read-only | Parent record |
 | `notes add --json PAYLOAD` | Creates a note on an existing record | Parent record |
 | `notes update --json PAYLOAD` | Replaces only the fields you supply | Note ID |
+| `records upsert --json PAYLOAD` | Creates or updates a record on any object; `multiple_match_results` if the matching attribute finds more than one record | Matching attribute |
 
 ### People
 
@@ -195,6 +196,19 @@ uvx gtm-attio notes add --json '{"parent_object":"people","parent_record_id":"RE
 uvx gtm-attio notes update --json '{"note_id":"NOTE_ID","content":"Updated call notes."}'
 ```
 
+### Records
+
+`--json` is required and has the form `{"object": "...", "matching_attribute": "...", "values": {...}}`:
+
+- `object` is any object slug or ID, including custom objects.
+- `matching_attribute` is a unique attribute on that object; a record is created if no record matches it, or updated if exactly one does.
+- `values` uses the API's record format, `{"attribute_slug": [value, ...]}` (see [Record values](#record-values)), and must include the `matching_attribute` key. Values can reference other records, by ID or by a matching attribute of the target; see [Upsert a record on any object](#upsert-a-record-on-any-object).
+- Attio rejects a matching attribute that finds more than one record with `multiple_match_results`.
+
+```bash
+uvx gtm-attio records upsert --json '{"object":"deals","matching_attribute":"external_id","values":{"external_id":["deal-1042"],"name":["Acme renewal"],"contact":[{"target_object":"people","email_addresses":[{"email_address":"ada@example.com"}]}]}}'
+```
+
 ### Output envelope
 
 Every run that gets past argument parsing prints exactly one JSON object to stdout:
@@ -223,10 +237,11 @@ Every run that gets past argument parsing prints exactly one JSON object to stdo
 
 | Field | Contents |
 | --- | --- |
-| `action` | `created`, `updated`, `searched`, `listed` or `failed` |
-| `record_id` | The ID of the person or company written (the note ID for notes); `null` for search, list and failures |
+| `action` | `created`, `updated`, `upserted`, `searched`, `listed` or `failed` |
+| `record_id` | The ID of the person, company or record written (the note ID for notes); `null` for search, list and failures |
 | `meta.results` | The matching records or notes from `search` or `list`. A people or company search returns at most 50, and adds a `search_result_limit_reached` warning when it hits that cap. |
-| `meta.person`, `meta.company`, `meta.note` | The object that was written |
+| `meta.person`, `meta.company`, `meta.note`, `meta.record` | The object that was written |
+| `meta.object`, `meta.matching_attribute` | Echoed back from `records upsert`; the API response doesn't say whether the record was created or updated, so both arrive as `upserted` |
 | `warnings[]` | Objects with `code`, `message`, `field` and `retryable` |
 | `skipped_fields[]` | Objects with `field` and `reason` (`invalid_value` or `schema_mismatch`) |
 
@@ -264,6 +279,7 @@ A failure has the same shape, with `success: false` and the details in `errors`:
 | `duplicate_identity` | `add` found an existing person or company with that email or domain |
 | `record_not_found` | `update` matched nothing |
 | `multiple_matches` | `update`, or `upsert --strict`, matched more than one record |
+| `multiple_match_results` | `records upsert`'s matching attribute matched more than one record |
 | `invalid_value`, `schema_mismatch` | With `--strict`: a value was invalid, or the workspace lacks the attribute |
 | `uniqueness_conflict` | A person write included an email address that already belongs to another person |
 | anything else | Attio's own error `code`, passed through with `status_code` and `details` from the API response |

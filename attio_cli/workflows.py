@@ -36,6 +36,7 @@ if TYPE_CHECKING:
         NoteListPayload,
         NoteUpdatePayload,
         PersonUpsertQuery,
+        RecordUpsertPayload,
     )
 
 
@@ -427,6 +428,22 @@ def add_note(payload: NoteAddPayload, client: SDK) -> dict[str, Any]:
         record_id=note_id,
         note_id=note_id,
         note=_jsonable(note),
+    )
+
+
+def upsert_record(payload: RecordUpsertPayload, client: SDK) -> dict[str, Any]:
+    response = client.records.put_v2_objects_object_records(
+        object=payload.object,
+        matching_attribute=payload.matching_attribute,
+        data={"values": {key: list(value) for key, value in payload.values.items()}},
+    )
+    record = response.data
+    return _success_envelope(
+        "upserted",
+        record_id=_record_id(record),
+        record=_jsonable(record),
+        object=payload.object,
+        matching_attribute=payload.matching_attribute,
     )
 
 
