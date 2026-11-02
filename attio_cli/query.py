@@ -119,3 +119,26 @@ class NoteUpdatePayload(BaseModel):
             msg = "at least one of title, content, or format is required"
             raise ValueError(msg)
         return self
+
+
+class RecordUpsertPayload(BaseModel):
+    """Validated input for upserting a record on any object by a matching attribute."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    object: str = Field(min_length=1)
+    matching_attribute: str = Field(min_length=1)
+    values: dict[str, list[Any]] = Field(default_factory=dict)
+
+    @model_validator(mode="after")
+    def require_matching_attribute_value(self) -> RecordUpsertPayload:
+        if not self.values:
+            msg = "values must include at least one attribute to write"
+            raise ValueError(msg)
+        if self.matching_attribute not in self.values:
+            msg = (
+                "values must include the matching_attribute key "
+                f"'{self.matching_attribute}'"
+            )
+            raise ValueError(msg)
+        return self

@@ -2,6 +2,11 @@
 
 ## Unreleased — 2026-10-05
 
+Regenerates the SDK (0.28.6) against the unchanged spec. No model or
+API-surface changes — the post-generation patch's `README_CLI_SECTION`
+picks up the `records upsert` docs, and `pyproject.toml`, `uv.lock`, and
+the Speakeasy-side version files stay in lockstep.
+
 Regenerates the SDK (0.28.5) against the latest spec: adds the alpha
 `sdk.workspace_blocklist` resource (`PUT /v2/workspace_blocklist_addresses`,
 `DELETE /v2/workspace_blocklist_addresses/{address}`) with the
@@ -13,7 +18,10 @@ Pins Speakeasy to 1.804.0, the generator that produced the committed tree, so pi
 Expands the standalone `uvx gtm-attio` CLI with safe people search/add/update,
 company search/add/update, and note list/add/update commands. Mutations write
 immediately, validate JSON inputs, and return the versioned reliability
-envelope; search and list results are returned in `meta.results`.
+envelope; search and list results are returned in `meta.results`. Adds
+`records upsert`, which writes any object by a unique `matching_attribute`
+and returns the `upserted` action, rejecting ambiguous matches with
+`multiple_match_results`.
 
 Regenerates the SDK (0.26.2) from the committed spec and overlay. Three
 public model names are renamed by the error-code union flattening, and the old

@@ -21,6 +21,7 @@ from .query import (
     NoteListPayload,
     NoteUpdatePayload,
     PersonUpsertQuery,
+    RecordUpsertPayload,
 )
 from .workflows import (
     add_company,
@@ -32,6 +33,7 @@ from .workflows import (
     update_company,
     update_note,
     update_person,
+    upsert_record,
 )
 
 if TYPE_CHECKING:
@@ -51,7 +53,7 @@ def _prog() -> str:
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog=_prog(),
-        description="A standalone Attio CLI for agent-friendly people, company, and note workflows.",
+        description="A standalone Attio CLI for agent-friendly people, company, note and record workflows.",
         epilog=(
             "Credentials: ATTIO_API_KEY from the process environment takes priority, "
             "then .env.local and .env in the current working directory."
@@ -175,6 +177,23 @@ def _parser() -> argparse.ArgumentParser:
             required=True,
             metavar="PAYLOAD",
         )
+
+    records = groups.add_parser("records", help="Manage records on any object")
+    record_commands = records.add_subparsers(dest="operation", required=True)
+    upsert_record_command = record_commands.add_parser(
+        "upsert",
+        help="Create or update a record on any object by a matching attribute",
+        description=(
+            "Create or update a record on any object by a matching attribute. "
+            "JSON input is validated; writes are applied immediately."
+        ),
+    )
+    upsert_record_command.add_argument(
+        "--json",
+        dest="json_payload",
+        required=True,
+        metavar="PAYLOAD",
+    )
     return parser
 
 
@@ -298,6 +317,7 @@ def _dispatch_command(
         ("notes", "list"): list_notes,
         ("notes", "add"): add_note,
         ("notes", "update"): update_note,
+        ("records", "upsert"): upsert_record,
     }
     handler = handlers.get((args.resource, args.operation))
     return handler(payload, client) if handler else None
@@ -347,6 +367,8 @@ def _parse_payload(
         return _input_from_args(args)
     if args.resource == "companies":
         return CompanyPayload.model_validate_json(args.json_payload)
+    if args.resource == "records":
+        return RecordUpsertPayload.model_validate_json(args.json_payload)
     note_payloads: dict[str, type[BaseModel]] = {
         "list": NoteListPayload,
         "add": NoteAddPayload,
