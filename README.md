@@ -359,6 +359,7 @@ Attio record attributes are written as `{attribute_slug: [value, ...]}`. The val
 | `domains` (companies) | `[{"domain": "example.com"}]` |
 | `name` (companies) | `[{"value": "Example Inc"}]` |
 | `associated_company` (person → company) | `[{"target_object": "companies", "domains": [{"domain": "example.com"}]}]` |
+| Any record reference, by ID | `[{"target_object": "people", "target_record_id": "<record-uuid>"}]` |
 
 Attribute slugs and types differ between workspaces. List them with `sdk.attributes.get_v2_target_identifier_attributes(target="objects", identifier="people")`, and see Attio's [attribute types](https://docs.attio.com/rest-api/attribute-types/attribute-types) reference for every value shape.
 
@@ -529,6 +530,46 @@ with SDK(oauth2=os.environ["ATTIO_API_KEY"]) as sdk:
 ```
 
 `patch_...` adds to multiselect attributes (new values are prepended to the existing list). Use `put_v2_objects_object_records_record_id_` to overwrite them. To create or update by a unique attribute in one call, see [Upsert a person by email](#upsert-a-person-by-email).
+
+
+### Upsert a record on any object
+
+`object` accepts any object slug or ID, including custom objects. `matching_attribute` should be a unique attribute on that object; a record is created if none matches. Record-reference values point at a record either by ID or by a matching attribute of the target:
+
+```python
+import os
+
+from attio import SDK
+
+with SDK(oauth2=os.environ["ATTIO_API_KEY"]) as sdk:
+    res = sdk.records.put_v2_objects_object_records(
+        object="deals",
+        matching_attribute="external_id",
+        data={
+            "values": {
+                "external_id": ["deal-1042"],
+                "name": ["Acme renewal"],
+                # Reference a person by matching attribute...
+                "contact": [
+                    {
+                        "target_object": "people",
+                        "email_addresses": [{"email_address": "ada@example.com"}],
+                    },
+                ],
+                # ...or by record ID.
+                "owner": [
+                    {
+                        "target_object": "people",
+                        "target_record_id": "00000000-0000-0000-0000-000000000000",
+                    },
+                ],
+            },
+        },
+    )
+    print(res.data.id.record_id)
+```
+
+A reference matching no record, or more than one, is rejected. For multiselect attributes, upserting adds values rather than replacing them.
 
 ### Add a note to a record
 
