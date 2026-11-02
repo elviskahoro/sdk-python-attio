@@ -1,0 +1,58 @@
+.agents/skills/update-sdk/SKILL.md
+  h_2de9cc37cded86 59,61,64,67-68,85
+.entire/runners/trail-confidence.json
+  h_2de9cc37cded86 19
+.entire/runners/trail-drift.json
+  h_2de9cc37cded86 19
+.entire/runners/trail-review.json
+  h_2de9cc37cded86 21
+.entire/runners/trail-risk.json
+  h_2de9cc37cded86 19
+.entire/runners/trail-security.json
+  h_2de9cc37cded86 19
+.entire/runners/trail-summary.json
+  h_2de9cc37cded86 20
+.github/workflows/spec-update-check.yml
+  h_2de9cc37cded86 218,221,302
+.roborev.toml
+  h_2de9cc37cded86 10,14,34
+.speakeasy/workflow.yaml
+  h_2de9cc37cded86 15
+.trunk/trunk.yaml
+  h_2de9cc37cded86 193,200,206-207,212,217,222,225
+AGENTS.md
+  h_2de9cc37cded86 114,117-119,124-126,136,141
+README.md
+  h_2de9cc37cded86 548,600,611-782
+ci/pipeline.py
+  h_2de9cc37cded86 55,84,101,127,479,553,577,662,728,747,758,760
+ci/post_generate_patch.py
+  h_2de9cc37cded86 4,16,41,51,76-78,367,450,463
+ci/release.sh
+  h_2de9cc37cded86 2,62
+generated/.genignore
+  h_2de9cc37cded86 12-19
+pyproject.toml
+  h_2de9cc37cded86 26-27,38,43
+tach.toml
+  h_2de9cc37cded86 5
+tests/test_hooks_init_wiring.py
+  h_2de9cc37cded86 3,8,38-39,96,172
+tests/test_pipeline_generation_selection.py
+  h_2de9cc37cded86 352,395
+tests/test_post_generate_patch.py
+  h_2de9cc37cded86 12,33,368
+tests/test_spec_update_workflow.py
+  h_2de9cc37cded86 100-104,107-112,121,245,253
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b4c26f1b71c84997284c2023f7e590af992896f4",
+  "prompts": {},
+  "humans": {
+    "h_2de9cc37cded86": {
+      "author": "elvis kahoro <github@elvis.ai>"
+    }
+  }
+}
