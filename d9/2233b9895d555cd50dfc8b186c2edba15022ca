@@ -1,0 +1,27 @@
+pyproject.toml
+  s_0e915969b69ce0::t_f239f56c4c7fb4 3
+.speakeasy/gen.yaml
+  s_0e915969b69ce0::t_f239f56c4c7fb4 35
+generated/src/attio/_version.py
+  s_0e915969b69ce0::t_f239f56c4c7fb4 6,9
+generated/.speakeasy/gen.lock
+  s_0e915969b69ce0::t_62beec46674d4e 8
+uv.lock
+  s_0e915969b69ce0::t_f022f7d9614183 48
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d92233b9895d555cd50dfc8b186c2edba15022ca",
+  "prompts": {},
+  "sessions": {
+    "s_0e915969b69ce0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1e470fe8-9877-4144-a1d4-a2434544b919",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "elvis kahoro <github@elvis.ai>"
+    }
+  }
+}
