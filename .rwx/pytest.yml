@@ -64,7 +64,7 @@ tasks:
 
   - key: uv
     use: python
-    run: pip install uv
+    run: pip install uv==0.11.26
 
   - key: sync
     use: [code, uv]
@@ -97,6 +97,21 @@ tasks:
       captain run sdk-python-attio-pytest
       echo "$?" > tmp/pytest-exit-code
 
+  # The checksum-verified download is deterministic, so it caches on its own
+  # script text; trunk-upload (cache: false) only runs the upload.
+  - key: trunk-launcher
+    run: |
+      set -euo pipefail
+      mkdir -p "${HOME}/.local/bin"
+      dest="${HOME}/.local/bin/trunk-launcher"
+      if ! curl -fsSL https://trunk.io/releases/trunk -o "${dest}" ||
+        ! echo "700f8bbedfd226595999ea2202b9a7af75ba8398dd711f5f159f5bbba6cbf322  ${dest}" | sha256sum -c -; then
+        rm -f "${dest}"
+        echo "error: trunk launcher download or checksum failed" >&2
+        exit 1
+      fi
+      chmod 0755 "${dest}"
+
   # Uploads to Trunk Flaky Tests. TRUNK_API_TOKEN is the org-wide Trunk API
   # token (the Analytics CLI accepts no scoped key), so it lives in its own
   # `sdk-python-attio-trunk` vault; never add another secret to it. The `if:`
@@ -121,7 +136,7 @@ tasks:
   # the same way, `cli.version` in .trunk/trunk.yaml). Bump the checksum and
   # the version deliberately.
   - key: trunk-upload
-    use: [pytest-run]
+    use: [pytest-run, trunk-launcher]
     if: ${{ init.event-type != 'pull_request' || init.pr-author == 'elviskahoro' }}
     cache: false
     env:
@@ -142,14 +157,7 @@ tasks:
       set -euo pipefail
       # RWX auto-exposes RWX_RUN_URL (www.rwx.com/docs/environment-variables).
       export JOB_URL="${RWX_RUN_URL}"
-      trunk_launcher="$(mktemp)"
-      if ! curl -fsSL https://trunk.io/releases/trunk -o "${trunk_launcher}" ||
-        ! echo "700f8bbedfd226595999ea2202b9a7af75ba8398dd711f5f159f5bbba6cbf322  ${trunk_launcher}" | sha256sum -c -; then
-        rm -f "${trunk_launcher}"
-        echo "error: trunk launcher download or checksum failed" >&2
-        exit 1
-      fi
-      chmod 0755 "${trunk_launcher}"
+      trunk_launcher="${HOME}/.local/bin/trunk-launcher"
       # Guard against a run that uploaded nothing going green: pipefail
       # carries the CLI's exit code through tee, the grep catches its error
       # banner under the quarantining exit code, and
@@ -178,7 +186,7 @@ tasks:
         echo "error: trunk upload reported an error" >&2
         exit 1
       fi
-      rm -f "${trunk_launcher}" "${upload_log}"
+      rm -f "${upload_log}"
 
   # `after` is an expression, not a list: a list-form `after:` skips the task
   # when a listed task is skipped (https://www.rwx.com/docs/after), which
