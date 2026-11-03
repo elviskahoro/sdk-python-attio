@@ -761,3 +761,21 @@ def test_error_envelope_preserves_non_auth_api_errors(status_code, code):
     result = error_envelope(exc)
     assert result["errors"][0]["status_code"] == status_code
     assert result["errors"][0]["code"] == code
+
+
+def test_records_upsert_invalid_json_is_structured_failure(capsys):
+    status = cli_main.main(["records", "upsert", "--json", "not-json"])
+    result = json.loads(capsys.readouterr().out)
+    assert status == 1
+    assert result["errors"][0]["code"] == "invalid_json"
+
+
+def test_records_upsert_unknown_json_fields_fail_validation(capsys):
+    payload = (
+        '{"object":"deals","matching_attribute":"name",'
+        '"values":{"name":["x"]},"typo":1}'
+    )
+    status = cli_main.main(["records", "upsert", "--json", payload])
+    result = json.loads(capsys.readouterr().out)
+    assert status == 1
+    assert result["errors"][0]["code"] == "validation_error"
