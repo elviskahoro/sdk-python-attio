@@ -1,14 +1,14 @@
 # On-demand pyrefly with a synced venv. Manual only: no github trigger, so it
 # never runs on PRs or pushes and is not a required status.
 #   rwx run .rwx/pyrefly.yml --wait
-#   rwx run .rwx/pyrefly.yml --wait --init paths="attio_cli/main.py"
+#   rwx run .rwx/pyrefly.yml --wait --init paths="attio_cli/main.py"   # default: attio_cli ci, matching Trunk scope
 # `rwx run` layers the local working tree on the clone; HEAD must be pushed
 # so `commit-sha` resolves.
 on:
   cli:
     init:
       commit-sha: ${{ event.git.sha }}
-      paths: ""
+      paths: "attio_cli ci"
 
 base:
   image: ubuntu:24.04

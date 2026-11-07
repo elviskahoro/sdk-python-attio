@@ -1,14 +1,14 @@
 # On-demand pyright with a synced venv. Manual only: no github trigger, so it
 # never runs on PRs or pushes and is not a required status.
 #   rwx run .rwx/pyright.yml --wait
-#   rwx run .rwx/pyright.yml --wait --init paths="attio_cli/main.py"
+#   rwx run .rwx/pyright.yml --wait --init paths="attio_cli/main.py"   # default: attio_cli ci, matching Trunk scope
 # `rwx run` layers the local working tree on the clone; HEAD must be pushed
 # so `commit-sha` resolves.
 on:
   cli:
     init:
       commit-sha: ${{ event.git.sha }}
-      paths: ""
+      paths: "attio_cli ci"
 
 base:
   image: ubuntu:24.04
@@ -42,7 +42,7 @@ tasks:
       - generated/src
       - attio_cli
 
-  # pyright comes from the dev group (pinned in pyproject.toml).
+  # pyright is pinned to the Trunk version (.trunk/trunk.yaml); the dev group pins an older one.
   - key: pyright
     use: [code, sync]
     cache: false
@@ -50,4 +50,4 @@ tasks:
       CHECK_PATHS: ${{ init.paths }}
     run: |
       set -euo pipefail
-      uv run pyright ${CHECK_PATHS}
+      uv run --with "pyright[nodejs]==1.1.414" pyright ${CHECK_PATHS}
