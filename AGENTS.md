@@ -181,18 +181,6 @@ rwx results <run-id>                      # run-id is the hex id in the cloud.rw
 rwx logs <task-id> --output /tmp/rwxlogs  # task ids are listed by `rwx results` for failed tasks
 ```
 
-Full workflow, flags and per-file notes: `.agents/skills/rwx/SKILL.md`. What
-the CLI can do here:
-
-- `rwx run .rwx/<file>.yml --wait` runs CI on your uncommitted working tree (no
-  commit or push); `--target <task>` limits it.
-- `rwx run .rwx/pyright.yml` / `pyrefly.yml` type-check remotely, no local venv.
-- `rwx results`, `rwx logs`, `rwx artifacts` inspect runs; `rwx retry` and
-  `rwx cancel` manage them.
-- `rwx dispatch regenerate --ref main` regenerates the SDK without Speakeasy.
-- `rwx sandbox exec -- <cmd>` runs commands in a persistent sandbox.
-- `rwx lint` validates `.rwx/*.yml`; `rwx docs search|pull` is the docs source.
-
 - Use the `elviskahoro` token. A token for another org (e.g.
   `RWX_ACCESS_TOKEN_MARCHILI`) authenticates but returns `not found` for this
   repo's runs.
@@ -209,6 +197,18 @@ the CLI can do here:
   main-pinned `spec-update-check.yml` and `regenerate.yml`.
   `.rwx/integration.yml` instead reads the `sdk-python-attio-it` vault (a
   throwaway sandbox key, approvals off, unlocked), so PR runs need no approver.
+
+Full workflow, flags and per-file notes: `.agents/skills/rwx/SKILL.md`. What
+the CLI can do here:
+
+- `rwx run .rwx/<file>.yml --wait` runs CI on your uncommitted working tree (no
+  commit or push); `--target <task>` limits it.
+- `rwx run .rwx/pyright.yml` / `pyrefly.yml` type-check remotely, no local venv.
+- `rwx results`, `rwx logs`, `rwx artifacts` inspect runs; `rwx retry` and
+  `rwx cancel` manage them.
+- `rwx dispatch regenerate --ref main` regenerates the SDK without Speakeasy.
+- `rwx sandbox exec -- <cmd>` runs commands in a persistent sandbox.
+- `rwx lint` validates `.rwx/*.yml`; `rwx docs search|pull` is the docs source.
 
 ### Trunk Flaky Tests uploads (`.rwx/pytest.yml`)
 

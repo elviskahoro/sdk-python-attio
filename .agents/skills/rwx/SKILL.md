@@ -11,7 +11,7 @@ CI definitions live in `.rwx/`. Upstream skills (config authoring, GitHub Action
 | File | Trigger | Notes |
 | --- | --- | --- |
 | `pytest.yml` | PR, push to main, merge queue, `cli` | Uploads JUnit to Trunk Flaky Tests (main, merge-queue, manual, `elviskahoro` PRs only) |
-| `trunk-check.yml` | PR, `cli` | Trunk lint |
+| `trunk-check.yml` | PR, push to main, merge queue, `cli` | Trunk lint |
 | `integration.yml` | PR, push to main, `cli` | Reads the `sdk-python-attio-it` vault (throwaway key, unlocked, no approver) |
 | `pyright.yml`, `pyrefly.yml` | `cli` only | Type checks on the working tree; `paths` init, default `attio_cli ci` |
 | `regenerate.yml` | `cli`, `dispatch` | Needs `SPEAKEASY_API_KEY`; vault is main-only with approvals, so use `rwx dispatch` |
