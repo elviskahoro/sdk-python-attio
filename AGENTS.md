@@ -243,10 +243,12 @@ git apply .rwx/downloads/<dir>/regenerate.patch
 ```
 
 - Tasks: `generate` (host Speakeasy CLI, `ci/pipeline.py generate --no-fetch`,
-  compile step on) -> `verify` (`check-overlay`, `mypy generated/src`,
-  `pytest -q`) -> `patch` (allowlist check, then `regenerate.patch`). The
-  patch is diffed against a pre-generation snapshot, so only generation
-  output is captured.
+  compile step on) -> `captain` (`rwx/install-captain 1.2.0`) -> `verify`
+  (`check-overlay`, `mypy generated/src`, `captain run
+  sdk-python-attio-pytest`, so retries and flake quarantine guard the suite
+  instead of bare `pytest -q`) -> `patch` (allowlist check, then
+  `regenerate.patch`). The patch is diffed against a pre-generation snapshot,
+  so only generation output is captured.
 - Secret: `SPEAKEASY_API_KEY` lives in the RWX vault `sdk-python-attio`
   (referenced as `vaults.sdk-python-attio.secrets.SPEAKEASY_API_KEY`), not the
   `default` vault. `spec-update-check.yml` reads it from that vault, so the
