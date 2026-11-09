@@ -723,3 +723,7 @@ actions:
   - target: "$.paths['/v2/workspace_blocklist_addresses'].put.responses['200'].content['application/json'].schema.properties.data.items.properties.created_at.format"
     description: "Remove format from the workspace blocklist created_at so it generates as str like other timestamps"
     remove: true
+
+  - target: "$.paths['/v2/workspace_blocklist_addresses'].get.responses['200'].content['application/json'].schema.properties.data.items.properties.created_at.format"
+    description: "Remove format from the workspace blocklist GET created_at so it generates as str like the PUT response"
+    remove: true

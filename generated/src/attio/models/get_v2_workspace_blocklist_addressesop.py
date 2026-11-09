@@ -3,7 +3,6 @@
 from __future__ import annotations
 from attio.types import BaseModel, Nullable, UNSET_SENTINEL
 from attio.utils import FieldMetadata, QueryParamMetadata
-from datetime import datetime
 from pydantic import model_serializer
 from typing import List, Literal, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
@@ -75,7 +74,7 @@ class GetV2WorkspaceBlocklistAddressesDataTypedDict(TypedDict):
     r"""Whether the address is an email address or a domain."""
     enforcement_level: GetV2WorkspaceBlocklistAddressesEnforcementLevel
     r"""`protected`: emails and calendar events are hidden unless at least one participant is not on the workspace blocklist. `blocked`: they are hidden even when other participants are included."""
-    created_at: datetime
+    created_at: str
     r"""When the address was given its current enforcement level."""
 
 
@@ -89,7 +88,7 @@ class GetV2WorkspaceBlocklistAddressesData(BaseModel):
     enforcement_level: GetV2WorkspaceBlocklistAddressesEnforcementLevel
     r"""`protected`: emails and calendar events are hidden unless at least one participant is not on the workspace blocklist. `blocked`: they are hidden even when other participants are included."""
 
-    created_at: datetime
+    created_at: str
     r"""When the address was given its current enforcement level."""
 
 
