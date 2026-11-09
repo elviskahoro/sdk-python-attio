@@ -16,7 +16,7 @@ gtm-attio = "attio_cli.main:main"
 dev = [
   "dagger-io >=0.20.5",
   "mypy ==1.15.0",
-  "pylint ==3.2.3",
+  "pylint==4.0.9",
   "pyright[nodejs] ==1.1.398",
   "pytest >=8.0.0",
   "pytest-asyncio >=0.24.0",
