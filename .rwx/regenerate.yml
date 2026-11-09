@@ -101,8 +101,14 @@ tasks:
         uv run python ci/pipeline.py generate --no-fetch
       fi
 
+  - key: captain
+    call: rwx/install-captain 1.2.0
+
   - key: verify
-    use: generate
+    use: [generate, captain]
+    # Uncached: a cache hit would replay the old captain run and skip
+    # cloud-side quarantine reads (see pytest.yml `pytest-run`).
+    cache: false
     # A timeout SIGKILLs the task and skips patch, so no artifact is produced;
     # the 10m default is too short for mypy plus the full test suite.
     timeout: 60m
@@ -111,7 +117,8 @@ tasks:
       uv sync
       uv run python ci/spec_diff.py check-overlay
       uv run mypy generated/src
-      uv run pytest -q
+      mkdir -p tmp
+      captain run sdk-python-attio-pytest
 
   # Regeneration only produces a patch; nothing is committed or pushed. Apply
   # it locally:
