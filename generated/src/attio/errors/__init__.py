@@ -167,6 +167,12 @@ if TYPE_CHECKING:
         GetV2WebhooksWebhookIDNotFoundError,
         GetV2WebhooksWebhookIDNotFoundErrorData,
     )
+    from .get_v2_workspace_blocklist_addressesop import (
+        GetV2WorkspaceBlocklistAddressesUnauthorizedError,
+        GetV2WorkspaceBlocklistAddressesUnauthorizedErrorData,
+        GetV2WorkspaceBlocklistAddressesValidationTypeError,
+        GetV2WorkspaceBlocklistAddressesValidationTypeErrorData,
+    )
     from .get_v2_workspace_members_workspace_member_id_op import (
         GetV2WorkspaceMembersWorkspaceMemberIDNotFoundError,
         GetV2WorkspaceMembersWorkspaceMemberIDNotFoundErrorData,
@@ -617,6 +623,10 @@ __all__ = [
     "GetV2ThreadsThreadIDNotFoundErrorData",
     "GetV2WebhooksWebhookIDNotFoundError",
     "GetV2WebhooksWebhookIDNotFoundErrorData",
+    "GetV2WorkspaceBlocklistAddressesUnauthorizedError",
+    "GetV2WorkspaceBlocklistAddressesUnauthorizedErrorData",
+    "GetV2WorkspaceBlocklistAddressesValidationTypeError",
+    "GetV2WorkspaceBlocklistAddressesValidationTypeErrorData",
     "GetV2WorkspaceMembersWorkspaceMemberIDNotFoundError",
     "GetV2WorkspaceMembersWorkspaceMemberIDNotFoundErrorData",
     "NoResponseError",
@@ -974,6 +984,10 @@ _dynamic_imports: dict[str, str] = {
     "GetV2ThreadsThreadIDNotFoundErrorData": ".get_v2_threads_thread_id_op",
     "GetV2WebhooksWebhookIDNotFoundError": ".get_v2_webhooks_webhook_id_op",
     "GetV2WebhooksWebhookIDNotFoundErrorData": ".get_v2_webhooks_webhook_id_op",
+    "GetV2WorkspaceBlocklistAddressesUnauthorizedError": ".get_v2_workspace_blocklist_addressesop",
+    "GetV2WorkspaceBlocklistAddressesUnauthorizedErrorData": ".get_v2_workspace_blocklist_addressesop",
+    "GetV2WorkspaceBlocklistAddressesValidationTypeError": ".get_v2_workspace_blocklist_addressesop",
+    "GetV2WorkspaceBlocklistAddressesValidationTypeErrorData": ".get_v2_workspace_blocklist_addressesop",
     "GetV2WorkspaceMembersWorkspaceMemberIDNotFoundError": ".get_v2_workspace_members_workspace_member_id_op",
     "GetV2WorkspaceMembersWorkspaceMemberIDNotFoundErrorData": ".get_v2_workspace_members_workspace_member_id_op",
     "NoResponseError": ".no_response_error",

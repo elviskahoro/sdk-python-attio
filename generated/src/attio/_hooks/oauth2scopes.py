@@ -122,3 +122,9 @@ class OAuth2Scope(str, Enum):
 
     EMAIL_CALENDAR_BLOCKLIST_READ_WRITE = "email_calendar_blocklist:read-write"
     r"""View, and optionally manage, the addresses (email addresses and domains) whose emails and calendar events are hidden in Attio."""
+
+    VIEW_READ = "view:read"
+    r"""View, and optionally manage, the saved views of objects and lists, with their filters, sorts and shown attributes."""
+
+    VIEW_READ_WRITE = "view:read-write"
+    r"""View, and optionally manage, the saved views of objects and lists, with their filters, sorts and shown attributes."""

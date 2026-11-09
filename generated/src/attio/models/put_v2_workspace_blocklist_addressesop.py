@@ -85,14 +85,14 @@ PutV2WorkspaceBlocklistAddressesBadRequestType = Literal["invalid_request_error"
 PutV2WorkspaceBlocklistAddressesCodeValidationType = Literal["validation_type",]
 
 
-AddressType = Literal[
+PutV2WorkspaceBlocklistAddressesAddressType = Literal[
     "email_address",
     "domain",
 ]
 r"""Whether the address is an email address or a domain."""
 
 
-EnforcementLevelResponse = Literal[
+PutV2WorkspaceBlocklistAddressesEnforcementLevelResponse = Literal[
     "protected",
     "blocked",
 ]
@@ -102,9 +102,9 @@ r"""`protected`: emails and calendar events are hidden unless at least one parti
 class PutV2WorkspaceBlocklistAddressesDataResponseTypedDict(TypedDict):
     address: str
     r"""The normalized email address or domain. It is the address's key on the workspace blocklist."""
-    address_type: AddressType
+    address_type: PutV2WorkspaceBlocklistAddressesAddressType
     r"""Whether the address is an email address or a domain."""
-    enforcement_level: EnforcementLevelResponse
+    enforcement_level: PutV2WorkspaceBlocklistAddressesEnforcementLevelResponse
     r"""`protected`: emails and calendar events are hidden unless at least one participant is not on the workspace blocklist. `blocked`: they are hidden even when other participants are included."""
     created_at: str
     r"""When the address was given its current enforcement level."""
@@ -114,10 +114,10 @@ class PutV2WorkspaceBlocklistAddressesDataResponse(BaseModel):
     address: str
     r"""The normalized email address or domain. It is the address's key on the workspace blocklist."""
 
-    address_type: AddressType
+    address_type: PutV2WorkspaceBlocklistAddressesAddressType
     r"""Whether the address is an email address or a domain."""
 
-    enforcement_level: EnforcementLevelResponse
+    enforcement_level: PutV2WorkspaceBlocklistAddressesEnforcementLevelResponse
     r"""`protected`: emails and calendar events are hidden unless at least one participant is not on the workspace blocklist. `blocked`: they are hidden even when other participants are included."""
 
     created_at: str

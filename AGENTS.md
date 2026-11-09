@@ -316,7 +316,7 @@ no-op run still bumps the version, which must be kept in sync across
 - The SDK is fully generated code — manual edits to `generated/src/attio/` will be overwritten on next generation.
 - The overlay exists because Speakeasy infers `date` type from ISO8601 timestamp strings, but Attio returns timestamps as strings that should stay as `str` in Python.
 - The `list` → `list_id` renames avoid shadowing Python's built-in `list`.
-- A regeneration that renames a public model symbol which already shipped must keep the old name importable: add it to `MODEL_RENAME_ALIASES` in `ci/post_generate_patch.py` (0.26.1 precedent: the activity-record `ForbiddenCodeUnion` names became `CodeUnion`, and `PutV2ListsListEntriesCodeMultipleMatchResults` became `CodeMultipleMatchResults`) so a patch release never breaks `from attio.models import <old>` or the per-module import; retire the aliases only in a breaking release (in 0.x the minor bump is the signal).
+- Never add anything for backwards compatibility (no `MODEL_RENAME_ALIASES` entries for new renames, shims, or deprecated re-exports). We embrace breaking changes: when a regeneration renames or removes a public symbol, let it break and note it in the PR. The existing 0.26.1 aliases may be retired.
 - Description-only spec changes (marketing copy) are reported by `check-openapi` but do not count as structural drift, so they do not trigger the automated workflow.
 
 <!-- entire-agent:begin -->
