@@ -6,8 +6,61 @@ An address is an email address (jane@acme.com) or a domain (acme.com). The works
 
 ### Available Operations
 
+* [get_v2_workspace_blocklist_addresses](#get_v2_workspace_blocklist_addresses) - List workspace blocklist addresses
 * [put_v2_workspace_blocklist_addresses](#put_v2_workspace_blocklist_addresses) - Add or update workspace blocklist addresses
 * [delete_v2_workspace_blocklist_addresses_address_](#delete_v2_workspace_blocklist_addresses_address_) - Delete a workspace blocklist address
+
+## get_v2_workspace_blocklist_addresses
+
+An address is an email address (jane@acme.com) or a domain (acme.com).
+
+Lists every address on the workspace blocklist, at both enforcement levels. Email addresses come first, then domains, each in alphabetical order.
+
+A user-level access token can only call this endpoint if the workspace member it acts for is a workspace admin.
+
+This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+
+Required scopes: `email_calendar_blocklist:read`.
+
+Supported token levels: `workspace`, `user`.
+
+### Example Usage
+
+<!-- UsageSnippet language="python" operationID="get_/v2/workspace_blocklist_addresses" method="get" path="/v2/workspace_blocklist_addresses" -->
+```python
+from attio import SDK
+
+
+with SDK(
+    oauth2="<YOUR_OAUTH2_HERE>",
+) as sdk:
+
+    res = sdk.workspace_blocklist.get_v2_workspace_blocklist_addresses(limit=500)
+
+    # Handle response
+    print(res)
+
+```
+
+### Parameters
+
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `limit`                                                             | *Optional[int]*                                                     | :heavy_minus_sign:                                                  | N/A                                                                 | 500                                                                 |
+| `cursor`                                                            | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | N/A                                                                 |                                                                     |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
+
+### Response
+
+**[models.GetV2WorkspaceBlocklistAddressesResponse](../../models/getv2workspaceblocklistaddressesresponse.md)**
+
+### Errors
+
+| Error Type                                                 | Status Code                                                | Content Type                                               |
+| ---------------------------------------------------------- | ---------------------------------------------------------- | ---------------------------------------------------------- |
+| errors.GetV2WorkspaceBlocklistAddressesValidationTypeError | 400                                                        | application/json                                           |
+| errors.GetV2WorkspaceBlocklistAddressesUnauthorizedError   | 403                                                        | application/json                                           |
+| errors.SDKDefaultError                                     | 4XX, 5XX                                                   | \*/\*                                                      |
 
 ## put_v2_workspace_blocklist_addresses
 
