@@ -106,6 +106,9 @@ tasks:
 
   - key: verify
     use: [generate, captain]
+    # Uncached: a cache hit would replay the old captain run and skip
+    # cloud-side quarantine reads (see pytest.yml `pytest-run`).
+    cache: false
     # A timeout SIGKILLs the task and skips patch, so no artifact is produced;
     # the 10m default is too short for mypy plus the full test suite.
     timeout: 60m

@@ -200,6 +200,9 @@ tasks:
 
   - key: regenerate
     use: [generate, captain]
+    # Uncached: a cache hit would replay the old captain run and skip
+    # cloud-side quarantine reads (see pytest.yml `pytest-run`).
+    cache: false
     docker: true
     timeout: 60m
     env:
