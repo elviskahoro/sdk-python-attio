@@ -195,8 +195,11 @@ tasks:
       uv run python ci/pipeline.py generate --no-fetch
       echo true > "$RWX_VALUES/ready"
 
+  - key: captain
+    call: rwx/install-captain 1.2.0
+
   - key: regenerate
-    use: generate
+    use: [generate, captain]
     docker: true
     timeout: 60m
     env:
@@ -215,7 +218,8 @@ tasks:
 
       uv lock
       uv sync
-      uv run pytest -q
+      mkdir -p tmp
+      captain run sdk-python-attio-pytest
 
       adopted=$(grep -oE 'location: openapi/api-[0-9]+\.json' .speakeasy/workflow.yaml \
         | head -1 | cut -d' ' -f2)
