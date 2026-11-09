@@ -15,22 +15,19 @@
 
 ## Landing PRs
 
-PRs land through the Trunk Merge Queue, not the GitHub Merge button.
+Agent sessions land PRs with `gh`. `trunk merge` is no longer used (agent
+sessions are not logged in to Trunk).
 
-- Submit: `trunk merge <pr-number>` (a number, not a URL or branch name).
-- Check once: `trunk merge status <pr-number>`. States: Queued, Testing,
-  Tests Passed, Merged. Report the state and stop. Never poll in a loop.
-- Never use `gh pr merge` or the GitHub Merge button. They bypass the queue.
-- Never use `--force`, `pause` or `resume`.
-- Leave priority at the default (`medium`). `urgent` and `high` are for
-  incidents and need an explicit reason from the user.
-- Failed or PENDING_FAILURE: PENDING_FAILURE may be a flake, so retry once.
-  Failed means push a fix to the PR branch and resubmit. Do not resubmit
-  blindly in a loop.
-- Auth failure: run `trunk login` once and retry.
-- Refuse to queue from main or a protected branch.
-- A `Closes #N` line in the PR body auto-closes the issue when the queue lands
-  the PR. Do not close the issue by hand beforehand.
+- Land: `gh pr merge <pr-number> --squash --auto`. `--auto` waits for the
+  required checks, then merges.
+- Check once: `gh pr view <pr-number> --json state,mergeStateStatus`. Report
+  the state and stop. Never poll in a loop.
+- Never use `--admin` to bypass required checks, and never push directly to
+  `main`.
+- Refuse to land from main or a protected branch.
+- Failed checks: push a fix to the PR branch; do not retry blindly in a loop.
+- A `Closes #N` line in the PR body auto-closes the issue when the PR merges.
+  Do not close the issue by hand beforehand.
 
 ## SDK Update Guide
 
