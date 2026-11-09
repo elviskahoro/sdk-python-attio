@@ -2,6 +2,21 @@
 
 ## Unreleased — 2026-10-05
 
+Regenerates the SDK (0.28.8) against the 2026-11-09 spec
+(`api-202611022031.json` → `api-202611090900.json`): adds
+`sdk.workspace_blocklist.get_v2_workspace_blocklist_addresses` (+
+`_async`) from the new `GET /v2/workspace_blocklist_addresses`
+endpoint, plus the `OAuth2Scope.VIEW_READ` / `VIEW_READ_WRITE`
+constants, and an overlay action that keeps the GET 200 `created_at`
+as `str` (mirroring the PUT entry). **Breaking changes** — the
+generator splits the shared blocklist enums per operation, renaming
+`attio.models.AddressType` →
+`PutV2WorkspaceBlocklistAddressesAddressType` and
+`attio.models.EnforcementLevelResponse` →
+`PutV2WorkspaceBlocklistAddressesEnforcementLevelResponse`, without
+aliases (safe: 0.28.5–0.28.6 were never published — PyPI latest is
+0.28.3 — so the old names never shipped).
+
 Regenerates the SDK (0.28.6) against the unchanged spec. No model or
 API-surface changes — the post-generation patch's `README_CLI_SECTION`
 picks up the `records upsert` docs, and `pyproject.toml`, `uv.lock`, and
