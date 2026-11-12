@@ -1,5 +1,5 @@
 version = 1
-revision = 5
+revision = 3
 requires-python = ">=3.10"
 resolution-markers = [
     "python_full_version >= '3.12'",
@@ -73,7 +73,7 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "dagger-io", specifier = ">=0.20.5" },
+    { name = "dagger-io", specifier = "==0.21.10" },
     { name = "mypy", specifier = "==1.15.0" },
     { name = "pylint", specifier = "==4.0.9" },
     { name = "pyright", extras = ["nodejs"], specifier = "==1.1.398" },
