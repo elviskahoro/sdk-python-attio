@@ -29,6 +29,13 @@ sessions are not logged in to Trunk).
 - A `Closes #N` line in the PR body auto-closes the issue when the PR merges.
   Do not close the issue by hand beforehand.
 
+## CI Core (Dagger)
+
+pytest/pyright/pyrefly logic lives in `ci/main.py`; run `ci/run.sh <test|pyright|pyrefly|all>`
+(needs Docker + `dagger` 0.21.10). RWX tasks only call it. Dagger cannot run in
+Conductor cloud sandboxes: validate with `rwx run .rwx/<file>.yml` (needs the branch pushed).
+See `ci/README.md`.
+
 ## SDK Update Guide
 
 This SDK is generated using Speakeasy from an OpenAPI spec.
