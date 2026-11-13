@@ -35,8 +35,6 @@ EXCLUDES = [
     ".context",
     "dist",
     "tmp",
-    "openapi",
-    "generated/docs",
     "**/__pycache__",
     ".pytest_cache",
     ".mypy_cache",
@@ -44,11 +42,16 @@ EXCLUDES = [
 ]
 
 
-def _source() -> dagger.Directory:
-    return dag.host().directory(str(REPO_ROOT), exclude=EXCLUDES)
+# Type checkers read no spec or docs; pytest does (overlay/spec/README tests).
+TYPECHECK_EXCLUDES = ["openapi", "generated/docs"]
 
 
-def _base() -> dagger.Container:
+def _source(*, typecheck: bool = False) -> dagger.Directory:
+    extra = TYPECHECK_EXCLUDES if typecheck else []
+    return dag.host().directory(str(REPO_ROOT), exclude=[*EXCLUDES, *extra])
+
+
+def _base(*, typecheck: bool = False) -> dagger.Container:
     """Toolchain -> uv -> sources -> `uv sync` (least to most changing)."""
     return (
         dag.container()
@@ -61,7 +64,7 @@ def _base() -> dagger.Container:
         # Manifests first so the sync layer survives source-only edits.
         .with_directory(
             "/repo",
-            _source(),
+            _source(typecheck=typecheck),
             include=[
                 "pyproject.toml",
                 "uv.lock",
@@ -71,7 +74,7 @@ def _base() -> dagger.Container:
             ],
         )
         .with_exec(["uv", "sync", "--frozen"])
-        .with_directory("/repo", _source())
+        .with_directory("/repo", _source(typecheck=typecheck))
     )
 
 
@@ -108,7 +111,7 @@ async def cmd_test(ns: argparse.Namespace) -> int:
 async def cmd_pyright(ns: argparse.Namespace) -> int:
     paths = ns.paths.split()
     return await _run(
-        _base(),
+        _base(typecheck=True),
         ["uv", "run", "--with", PYRIGHT_SPEC, "pyright", *paths],
     )
 
@@ -116,7 +119,7 @@ async def cmd_pyright(ns: argparse.Namespace) -> int:
 async def cmd_pyrefly(ns: argparse.Namespace) -> int:
     paths = ns.paths.split()
     return await _run(
-        _base(),
+        _base(typecheck=True),
         [
             "uv", "run", "--with", PYREFLY_SPEC, "pyrefly", "check",
             "--python-interpreter-path", "/venv/bin/python", "--search-path", ".",
