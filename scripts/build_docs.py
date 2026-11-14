@@ -1,9 +1,12 @@
-#!/usr/bin/env python3
 """Build the docs site: authored docs_site/content + generated/docs -> site/.
 
 Navigation is derived from the tree, so new generated pages appear automatically.
 Authored content lives outside generated/, so Speakeasy never touches it.
 """
+
+# ruff: noqa: INP001
+
+import os
 import re
 import shutil
 import subprocess
@@ -50,20 +53,34 @@ def main() -> int:
         return f"  - {title}:\n" + "\n".join(items)
 
     nav_yaml = "\n".join(
-        ["nav:", "  - Home: index.md", "  - Getting started: getting-started.md"]
-        + [nav("sdks", "SDK resources"), nav("models", "Models"), nav("errors", "Errors")]
+        [
+            "nav:",
+            "  - Home: index.md",
+            "  - Getting started: getting-started.md",
+            nav("sdks", "SDK resources"),
+            nav("models", "Models"),
+            nav("errors", "Errors"),
+        ],
     )
     cfg = ROOT / "tmp" / "mkdocs.yml"
     cfg.write_text(
-        (ROOT / "docs_site" / "mkdocs.yml").read_text()
-        .replace("docs_dir: ../tmp/docs-src", "docs_dir: docs-src")
-        .replace("site_dir: ../site", "site_dir: ../site")
-        + nav_yaml + "\n"
+        (ROOT / "docs_site" / "mkdocs.yml")
+        .read_text()
+        .replace(
+            "docs_dir: ../tmp/docs-src",
+            "docs_dir: docs-src",
+        )
+        + nav_yaml
+        + "\n",
     )
     cmd = [sys.executable, "-m", "mkdocs", "build", "-f", str(cfg)]
     if "--strict" in sys.argv:
         cmd.append("--strict")
-    return subprocess.call(cmd, cwd=ROOT)
+    # mkdocs-material 9.8.x prints an end-of-life notice on every build; set
+    # NO_MKDOCS_2_WARNING to keep it out of build output and to stop it
+    # tripping --strict if the theme ever logs it as a real warning.
+    env = {**os.environ, "NO_MKDOCS_2_WARNING": "1"}
+    return subprocess.call(cmd, cwd=ROOT, env=env)  # noqa: S603 - own script, fixed argv
 
 
 if __name__ == "__main__":

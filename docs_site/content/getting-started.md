@@ -24,7 +24,7 @@ with SDK(oauth2=os.environ["ATTIO_API_KEY"]) as sdk:
 from attio import SDK
 
 with SDK(oauth2="<token>") as sdk:
-    res = sdk.records.post_v2_objects_object_records_query(object_="people")
+    res = sdk.records.post_v2_objects_object_records_query(object="people")
     print(res)
 ```
 
