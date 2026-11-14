@@ -52,6 +52,10 @@ Rules of thumb:
 * [Troubleshooting](#troubleshooting)
 * [Maintaining this repository](#maintaining-this-repository)
 
+## Documentation
+
+Browse the SDK reference, models and errors at <https://attio-sdk.netlify.app/>. Build it locally with `pip install -r docs_site/requirements.txt && python scripts/build_docs.py` (output in `site/`). Authored content lives in `docs_site/`; reference pages are built from `generated/docs/`, with navigation derived from that tree. Netlify settings are in `netlify.toml`.
+
 ## SDK Installation
 
 ```bash
