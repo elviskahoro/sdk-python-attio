@@ -28,10 +28,10 @@
 set -euo pipefail
 
 PACKAGES=(attio gtm-attio)
-MERGE_TIMEOUT_SECONDS="${RELEASE_MERGE_TIMEOUT_SECONDS:-3600}"
 PYPI_TIMEOUT_SECONDS="${RELEASE_PYPI_TIMEOUT_SECONDS:-600}"
 
 mode="current"
+bump_flag=0
 target=""
 dry_run=0
 
@@ -42,7 +42,10 @@ usage() {
 
 for arg in "$@"; do
 	case "${arg}" in
-	--bump) mode="bump" ;;
+	--bump)
+		bump_flag=1
+		[[ ${mode} == set ]] || mode="bump"
+		;;
 	--dry-run) dry_run=1 ;;
 	-h | --help) usage ;;
 	-*) usage ;;
@@ -53,6 +56,10 @@ for arg in "$@"; do
 		;;
 	esac
 done
+if ((bump_flag)) && [[ -n ${target} ]]; then
+	echo "Error: pass either --bump or an explicit version, not both" >&2
+	exit 2
+fi
 
 if [[ ${mode} == set ]] && ! [[ ${target} =~ ^[0-9]+\.[0-9]+\.[0-9]+([a-zA-Z0-9.+-]*)?$ ]]; then
 	echo "Error: '${target}' does not look like a version (e.g. 0.29.0 or 1.0.0rc1)" >&2
@@ -102,8 +109,8 @@ fi
 	die "working tree is dirty; commit or stash first"
 }
 [[ "$(git rev-parse --abbrev-ref HEAD)" == main ]] || die "check out main first"
-git fetch -q origin main --tags
-git merge -q --ff-only origin/main
+run git fetch -q origin main --tags
+run git merge -q --ff-only origin/main
 
 # --- Bump (optional) ---------------------------------------------------------
 
@@ -127,24 +134,35 @@ if [[ ${mode} != current ]]; then
 		[[ ${mode} != set || ${version} == "${target}" ]] ||
 			die "regeneration produced ${version}, expected ${target}"
 	fi
-	run git add -A generated .speakeasy pyproject.toml uv.lock README.md
+	if ((dry_run)); then
+		printf '[dry-run] append the Unreleased regen paragraph to CHANGELOG.md\n' >&2
+	else
+		python3 - "${version}" <<'PY'
+import re, sys
+v = sys.argv[1]
+text = open("CHANGELOG.md").read()
+para = f"Regenerates the SDK ({v}) against the unchanged spec.\n\n"
+m = re.search(r"^## Unreleased.*\n\n", text, re.M)
+if m is None:
+    sys.exit("CHANGELOG.md has no '## Unreleased' section")
+open("CHANGELOG.md", "w").write(text[: m.end()] + para + text[m.end():])
+PY
+	fi
+	run git add -A generated .speakeasy pyproject.toml uv.lock README.md CHANGELOG.md
 	run git commit -q -m "Bump version to ${version}"
 	run git push -q -u origin "${branch}"
 	if ((dry_run)); then
-		printf '[dry-run] gh pr create + gh pr merge --squash --auto, then wait for the merge\n' >&2
+		printf '[dry-run] gh pr create + gh pr merge --squash --auto; stop if it has not merged yet\n' >&2
 	else
 		pr_url="$(gh pr create --base main --head "${branch}" \
 			--title "Bump version to ${version}" \
 			--body "Release bump ${before} → ${version} via \`ci/release.sh\` (no-op regeneration, unchanged spec).")"
 		gh pr merge "${pr_url}" --squash --auto
-		log "Waiting for ${pr_url} to merge (timeout ${MERGE_TIMEOUT_SECONDS}s)"
-		deadline=$((SECONDS + MERGE_TIMEOUT_SECONDS))
-		until [[ "$(gh pr view "${pr_url}" --json state --jq .state)" == MERGED ]]; do
-			state="$(gh pr view "${pr_url}" --json state --jq .state)"
-			[[ ${state} != CLOSED ]] || die "${pr_url} was closed without merging"
-			((SECONDS < deadline)) || die "${pr_url} did not merge in time; re-run scripts/release.sh once it lands"
-			sleep 30
-		done
+		state="$(gh pr view "${pr_url}" --json state --jq .state)" || state=""
+		if [[ ${state} != MERGED ]]; then
+			log "Bump PR ${pr_url} is ${state:-in an unknown state}; auto-merge is enabled. Re-run scripts/release.sh once it lands."
+			exit 0
+		fi
 		git checkout -q main
 		git fetch -q origin main
 		git merge -q --ff-only origin/main
@@ -182,12 +200,19 @@ remote_tag_sha="$(git ls-remote origin "refs/tags/${tag}^{}" | cut -f1)"
 if [[ -n ${remote_tag_sha} ]]; then
 	# A retry after a failed publish: keep the existing tag if it is ours.
 	tagged_version="$(git show "${remote_tag_sha}:generated/src/attio/_version.py" 2>/dev/null |
-		sed -n 's/^__version__: str = "\(.*\)"$/\1/p')"
+		sed -n 's/^__version__: str = "\(.*\)"$/\1/p')" || tagged_version=""
 	[[ ${tagged_version} == "${version}" ]] ||
 		die "${tag} already exists on origin at ${remote_tag_sha} with version '${tagged_version}'"
 	echo "${tag} already on origin (${remote_tag_sha:0:7}); reusing it" >&2
 else
-	run git tag -a "${tag}" "${head_sha}" -m "${tag}"
+	local_tag_sha="$(git rev-parse -q --verify "refs/tags/${tag}^{commit}")" || local_tag_sha=""
+	if [[ -z ${local_tag_sha} ]]; then
+		run git tag -a "${tag}" "${head_sha}" -m "${tag}"
+	elif [[ ${local_tag_sha} != "${head_sha}" ]]; then
+		die "local tag ${tag} points at ${local_tag_sha}, not ${head_sha}"
+	else
+		echo "local ${tag} already at HEAD; pushing it" >&2
+	fi
 	run git push -q origin "${tag}"
 fi
 
