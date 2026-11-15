@@ -87,6 +87,12 @@ automatically after generation. Run it manually only after a direct
 `speakeasy run`. The patch is idempotent and fails loudly if the generated
 layout drifts, so a regeneration can no longer silently drop the invariant.
 
+`generated/pylintrc` is hand-maintained and listed in `generated/.genignore`
+so regeneration preserves it. The compile step uses the root dev-group pylint
+(4.x); this config omits the removed `suggestion-mode` option and disables
+`too-many-positional-arguments` and `unidiomatic-typecheck`, which Speakeasy's
+templates do not satisfy.
+
 ### 5. Review generated changes
 
 Check what changed in the generated code:
