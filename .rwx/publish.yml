@@ -1,8 +1,9 @@
 # Publish attio and gtm-attio to PyPI.
 #
-# Preferred: `rwx dispatch publish --ref main --param tag=vX.Y.Z` (the tag
-# must already be pushed and match the committed version; verify-version
-# checks it). Dispatch is itself the manual gate, so it starts immediately.
+# Preferred: `rwx dispatch publish --ref main --param tag=vX.Y.Z`. The tag
+# must already be pushed; the run checks out the tag and verify-version checks
+# it matches that checkout's version. Dispatch is itself the manual gate, so
+# it starts immediately.
 # A pushed v* tag also creates a run, held for a manual start in the RWX UI.
 #
 # PYPI_TOKEN lives alone in the `sdk-python-attio-publish` vault: locked to
@@ -25,7 +26,10 @@ on:
           description: Release tag to publish, e.g. v0.28.9. Must match the committed version.
           required: true
       init:
-        commit-sha: ${{ event.git.sha }}
+        # Build the tag itself, not the dispatch ref (--ref main only picks
+        # this definition and the vault scope), so a main that moved past the
+        # tag can never be what gets uploaded.
+        commit-sha: ${{ event.dispatch.params.tag }}
         tag: ${{ event.dispatch.params.tag }}
   cli:
     init:
