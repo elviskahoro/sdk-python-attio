@@ -211,6 +211,16 @@ the CLI can do here:
 - `rwx results`, `rwx logs`, `rwx artifacts` inspect runs; `rwx retry` and
   `rwx cancel` manage them.
 - `rwx dispatch regenerate --ref main` regenerates the SDK without Speakeasy.
+- `rwx dispatch release --ref main --wait` releases the version already
+  committed on `main` with no local steps (`.rwx/release.yml`): preflight
+  (exits green if both packages are already on PyPI) -> annotated `vX.Y.Z` tag
+  (reused if it exists, never moved) -> the `publish.yml` chain embedded at that
+  tag -> waits for both packages on PyPI and runs `uvx attio@X --version` /
+  `uvx gtm-attio@X --version`. It has no bump step and never uses Speakeasy:
+  bump through the regeneration pipeline first. Dispatch-only (no `cli`
+  trigger). Its `GITHUB_TOKEN` (fine-grained PAT, Contents read/write) lives
+  alone in the `sdk-python-attio-release` vault (main, approvals off). Cancel
+  the held `v*` tag-push run of `publish.yml` it leaves behind.
 - `rwx dispatch publish --ref main --param tag=vX.Y.Z` publishes an already-pushed
   release tag immediately. The run checks out the tag and verifies it matches
   the committed version. `PYPI_TOKEN_ATTIO` and `PYPI_TOKEN_GTM_ATTIO` live alone in the

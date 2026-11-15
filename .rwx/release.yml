@@ -1,0 +1,191 @@
+# One-command release of the version already committed on main:
+#
+#   rwx dispatch release --ref main --wait
+#
+# There is no bump step: version bumps come from the regeneration pipeline
+# (spec-update-check.yml PRs, or `rwx dispatch regenerate` + a PR), which keeps
+# gen.yaml, gen.lock, _version.py, pyproject.toml and uv.lock in lockstep. So
+# this run never needs SPEAKEASY_API_KEY and never waits on an approver.
+#
+#   preflight -> read the version at the dispatched commit, check PyPI and the
+#                remote vX.Y.Z tag. Both packages already live: stop (success).
+#   tag       -> push an annotated vX.Y.Z on the dispatched commit, unless the
+#                tag already exists (then the tagged commit is what ships).
+#   publish   -> embeds publish.yml at that commit and tag: verify-version
+#                (fails before any upload if the tag and committed version
+#                disagree), test, build, twine upload --skip-existing.
+#   verify    -> waits for both versions on PyPI, then smoke-tests
+#                `uvx attio@X --version` and `uvx gtm-attio@X --version`.
+#
+# Re-runs are safe: an existing tag is reused, never moved, and twine skips
+# files already on PyPI. main is never pushed to; the only ref pushed is the tag.
+#
+# Secrets: GITHUB_TOKEN (fine-grained PAT for this repo, Contents: read and
+# write; used only by `tag`) in the sdk-python-attio-release vault, so the
+# PyPI vault stays single-purpose. The PyPI tokens are read by the embedded
+# publish.yml from sdk-python-attio-publish. Both vaults must release secrets
+# to `main` dispatches with approvals off.
+#
+# Dispatch-only on purpose: a `cli` run starts from local HEAD, which could tag
+# and publish an unmerged commit. (`rwx run --target preflight` adds a `cli`
+# trigger automatically; drop it again before committing.)
+#
+# The pushed tag also triggers publish.yml's `v*` push run, which is held for a
+# manual start. It is redundant after this run; cancel or ignore it.
+on:
+  dispatch:
+    - key: release
+      title: Release to PyPI
+      init:
+        commit-sha: ${{ event.git.sha }}
+
+base:
+  image: ubuntu:24.04
+  config: rwx/base 1.2.0
+
+concurrency-pools:
+  - id: elviskahoro/sdk-python-attio:release
+    capacity: 1
+    on-overflow: queue
+
+tasks:
+  - key: code
+    call: git/clone 2.2.0
+    with:
+      repository: https://github.com/elviskahoro/sdk-python-attio.git
+      ref: ${{ init.commit-sha }}
+      preserve-git-dir: true
+
+  - key: python
+    call: python/install 2.0.1
+    with:
+      python-version: "3.13"
+
+  - key: uv
+    use: python
+    run: pip install uv==0.11.26
+
+  # Uncached: PyPI and the remote tags are external state that changes
+  # between runs at the same commit.
+  - key: preflight
+    use: [code, python]
+    cache: false
+    env:
+      COMMIT_SHA: ${{ init.commit-sha }}
+    run: |
+      set -euo pipefail
+      version="$(python3 -c 'import tomllib; print(tomllib.load(open("pyproject.toml", "rb"))["project"]["version"])')"
+      tag="v${version}"
+      echo "Committed version at ${COMMIT_SHA}: ${version}"
+
+      published=true
+      for pkg in attio gtm-attio; do
+        status="$(curl -sS -o /dev/null -w '%{http_code}' "https://pypi.org/pypi/${pkg}/${version}/json")"
+        case "${status}" in
+          200) echo "${pkg}==${version} is already on PyPI" ;;
+          404) echo "${pkg}==${version} is not on PyPI yet"; published=false ;;
+          *) echo "PyPI returned HTTP ${status} for ${pkg}==${version}" >&2; exit 1 ;;
+        esac
+      done
+
+      # The peeled ^{} line gives an annotated tag's commit; a lightweight tag
+      # only has the plain line.
+      remote="$(git ls-remote --tags https://github.com/elviskahoro/sdk-python-attio.git "refs/tags/${tag}" "refs/tags/${tag}^{}")"
+      tag_sha="$(printf '%s\n' "${remote}" | awk '$2 ~ /\^\{\}$/ {print $1}')"
+      if [ -z "${tag_sha}" ]; then
+        tag_sha="$(printf '%s\n' "${remote}" | awk 'NF {print $1; exit}')"
+      fi
+
+      if [ -n "${tag_sha}" ]; then
+        tag_exists=true
+        release_sha="${tag_sha}"
+        echo "${tag} already exists at ${tag_sha}; releasing the tagged commit."
+        if [ "${tag_sha}" != "${COMMIT_SHA}" ]; then
+          echo "Note: ${tag} is not on the dispatched commit ${COMMIT_SHA}. The version on main was not bumped since that tag."
+        fi
+      else
+        tag_exists=false
+        release_sha="${COMMIT_SHA}"
+        echo "${tag} does not exist yet; it will be created at ${COMMIT_SHA}."
+      fi
+
+      if [ "${published}" = true ]; then
+        echo "attio and gtm-attio ${version} are both live on PyPI. Nothing to release."
+        echo "Bump the version through the regeneration pipeline to release again."
+      fi
+
+      printf '%s' "${version}" > "$RWX_VALUES/version"
+      printf '%s' "${tag}" > "$RWX_VALUES/tag"
+      printf '%s' "${release_sha}" > "$RWX_VALUES/release-sha"
+      printf '%s' "${tag_exists}" > "$RWX_VALUES/tag-exists"
+      printf '%s' "${published}" > "$RWX_VALUES/published"
+
+  # The only push in this run. An existing tag is never moved or re-pushed.
+  - key: tag
+    use: code
+    if: ${{ tasks.preflight.values.published != 'true' && tasks.preflight.values.tag-exists != 'true' }}
+    cache: false
+    env:
+      TAG: ${{ tasks.preflight.values.tag }}
+      VERSION: ${{ tasks.preflight.values.version }}
+      RELEASE_SHA: ${{ tasks.preflight.values.release-sha }}
+      GITHUB_TOKEN: ${{ vaults.sdk-python-attio-release.secrets.GITHUB_TOKEN }}
+    run: |
+      set -euo pipefail
+      if [ -z "${GITHUB_TOKEN}" ]; then
+        echo "GITHUB_TOKEN is empty or unset. Set it with: rwx vaults secrets set --vault sdk-python-attio-release GITHUB_TOKEN=..." >&2
+        exit 1
+      fi
+      git config user.name "rwx-release"
+      git config user.email "rwx-release@users.noreply.github.com"
+      git tag -a "${TAG}" -m "Release ${VERSION}" "${RELEASE_SHA}"
+      # The credential helper reads the token from the environment, so it
+      # never appears in the remote URL, argv or the logs.
+      git -c credential.helper= \
+        -c 'credential.helper=!f() { echo username=x-access-token; echo "password=${GITHUB_TOKEN}"; }; f' \
+        push https://github.com/elviskahoro/sdk-python-attio.git "refs/tags/${TAG}:refs/tags/${TAG}"
+
+  - key: publish
+    call: ${{ run.dir }}/publish.yml
+    if: ${{ tasks.preflight.values.published != 'true' }}
+    after: ${{ tag.succeeded || tag.skipped }}
+    init:
+      commit-sha: ${{ tasks.preflight.values.release-sha }}
+      tag: ${{ tasks.preflight.values.tag }}
+
+  - key: verify
+    use: uv
+    if: ${{ tasks.preflight.values.published != 'true' }}
+    after: [publish]
+    cache: false
+    timeout: 20m
+    env:
+      VERSION: ${{ tasks.preflight.values.version }}
+    run: |
+      set -euo pipefail
+      for pkg in attio gtm-attio; do
+        for attempt in $(seq 1 60); do
+          if curl -fsS -o /dev/null "https://pypi.org/pypi/${pkg}/${VERSION}/json"; then
+            echo "${pkg}==${VERSION} is on PyPI"
+            break
+          fi
+          if [ "${attempt}" -eq 60 ]; then
+            echo "${pkg}==${VERSION} did not appear on PyPI within 10 minutes" >&2
+            exit 1
+          fi
+          sleep 10
+        done
+      done
+      # The CDN can lag the JSON API, so retry the installs briefly.
+      for cmd in attio gtm-attio; do
+        for attempt in 1 2 3 4 5 6; do
+          if uvx --refresh "${cmd}@${VERSION}" --version; then
+            break
+          fi
+          if [ "${attempt}" -eq 6 ]; then
+            echo "uvx ${cmd}@${VERSION} --version failed" >&2
+            exit 1
+          fi
+          sleep 20
+        done
+      done
