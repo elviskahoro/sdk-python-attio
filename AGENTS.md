@@ -211,6 +211,12 @@ the CLI can do here:
 - `rwx results`, `rwx logs`, `rwx artifacts` inspect runs; `rwx retry` and
   `rwx cancel` manage them.
 - `rwx dispatch regenerate --ref main` regenerates the SDK without Speakeasy.
+- `rwx dispatch publish --ref main --param tag=vX.Y.Z` publishes an already-pushed
+  release tag immediately. The run checks out the tag and verifies it matches
+  the committed version. `PYPI_TOKEN` lives alone in the
+  `sdk-python-attio-publish` vault, locked to `main` and `refs/tags/v*` with
+  approvals off. A `v*` tag push instead creates a run held for a manual start
+  in the RWX UI.
 - `rwx sandbox exec -- <cmd>` runs commands in a persistent sandbox.
 - `rwx lint` validates `.rwx/*.yml`; `rwx docs search|pull` is the docs source.
 
