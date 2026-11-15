@@ -211,6 +211,11 @@ the CLI can do here:
 - `rwx results`, `rwx logs`, `rwx artifacts` inspect runs; `rwx retry` and
   `rwx cancel` manage them.
 - `rwx dispatch regenerate --ref main` regenerates the SDK without Speakeasy.
+- `scripts/release.sh [--bump | X.Y.Z] [--dry-run]` releases end to end from a
+  clean `main`: optional version bump (no-op regeneration, landed as an
+  auto-merged PR), annotated `vX.Y.Z` tag, the `publish` dispatch below, then
+  waits for both packages on PyPI and smoke-tests them with `uvx`. Re-runs skip
+  an existing matching tag and already-published versions.
 - `rwx dispatch publish --ref main --param tag=vX.Y.Z` publishes an already-pushed
   release tag immediately. The run checks out the tag and verifies it matches
   the committed version. `PYPI_TOKEN_ATTIO` and `PYPI_TOKEN_GTM_ATTIO` live alone in the
