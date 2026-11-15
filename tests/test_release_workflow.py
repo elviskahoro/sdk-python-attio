@@ -15,7 +15,9 @@ import yaml
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 WORKFLOW = REPO_ROOT / ".rwx" / "release.yml"
-GITHUB_TOKEN_REFERENCE = "vaults.sdk-python-attio-release.secrets.GITHUB_TOKEN"  # nosec B105 - vault reference, not a credential
+GITHUB_TOKEN_REFERENCE = (
+    "vaults.sdk-python-attio-release.github-apps.rwx-automation-elviskahoro.token"  # nosec B105 - vault reference, not a credential
+)
 
 
 @pytest.fixture(scope="module")
@@ -52,6 +54,12 @@ def test_github_token_reaches_only_tag(doc: dict) -> None:
         if GITHUB_TOKEN_REFERENCE in str(task.get("env", {}))
     ]
     assert holders == ["tag"]
+
+
+def test_no_stored_github_secret(doc: dict) -> None:
+    """GitHub write access comes from the vault's GitHub App (a per-run
+    installation token), never from a stored PAT secret."""
+    assert "secrets.GITHUB_TOKEN" not in str(doc["tasks"])
 
 
 def test_pypi_tokens_stay_in_publish_yml() -> None:

@@ -218,9 +218,10 @@ the CLI can do here:
   tag -> waits for both packages on PyPI and runs `uvx attio@X --version` /
   `uvx gtm-attio@X --version`. It has no bump step and never uses Speakeasy:
   bump through the regeneration pipeline first. Dispatch-only (no `cli`
-  trigger). Its `GITHUB_TOKEN` (fine-grained PAT, Contents read/write) lives
-  alone in the `sdk-python-attio-release` vault (main, approvals off). Cancel
-  the held `v*` tag-push run of `publish.yml` it leaves behind.
+  trigger). The tag push uses no PAT: a per-run token from the private GitHub
+  App `rwx-automation-elviskahoro` (installed on this repo only) in the
+  `sdk-python-attio-release` vault (main, approvals off). Cancel the held `v*`
+  tag-push run of `publish.yml` it leaves behind.
 - `rwx dispatch publish --ref main --param tag=vX.Y.Z` publishes an already-pushed
   release tag immediately. The run checks out the tag and verifies it matches
   the committed version. `PYPI_TOKEN_ATTIO` and `PYPI_TOKEN_GTM_ATTIO` live alone in the

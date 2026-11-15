@@ -16,7 +16,7 @@ CI definitions live in `.rwx/`. Upstream skills (config authoring, GitHub Action
 | `pyright.yml`, `pyrefly.yml` | `cli` only | Type checks on the working tree; `paths` init, default `attio_cli ci` |
 | `regenerate.yml` | `cli`, `dispatch` | Needs `SPEAKEASY_API_KEY`; vault is main-only with approvals, so use `rwx dispatch` |
 | `spec-update-check.yml` | weekly cron (Mon 09:00 UTC), `cli` | Main-pinned; same vault rules |
-| `release.yml` | `rwx dispatch release --ref main` only | Tags and publishes the version on main (embeds `publish.yml`); no bump, no Speakeasy. `GITHUB_TOKEN` in the `sdk-python-attio-release` vault (approvals off) |
+| `release.yml` | `rwx dispatch release --ref main` only | Tags and publishes the version on main (embeds `publish.yml`); no bump, no Speakeasy. Tag push uses the `rwx-automation-elviskahoro` GitHub App token from the `sdk-python-attio-release` vault (approvals off), no PAT |
 | `publish.yml` | `rwx dispatch publish --ref main --param tag=vX.Y.Z`, `v*` tag (manual start), `cli` | Release; `PYPI_TOKEN_ATTIO` and `PYPI_TOKEN_GTM_ATTIO` (one project-scoped token per distribution) in the `sdk-python-attio-publish` vault (approvals off) |
 
 ## Auth

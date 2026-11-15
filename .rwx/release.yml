@@ -20,11 +20,12 @@
 # Re-runs are safe: an existing tag is reused, never moved, and twine skips
 # files already on PyPI. main is never pushed to; the only ref pushed is the tag.
 #
-# Secrets: GITHUB_TOKEN (fine-grained PAT for this repo, Contents: read and
-# write; used only by `tag`) in the sdk-python-attio-release vault, so the
-# PyPI vault stays single-purpose. The PyPI tokens are read by the embedded
-# publish.yml from sdk-python-attio-publish. Both vaults must release secrets
-# to `main` dispatches with approvals off.
+# GitHub write access: no PAT. The `tag` task gets a short-lived installation
+# token for the private GitHub App `rwx-automation-elviskahoro`, which lives in
+# the sdk-python-attio-release vault (locked to main, approvals off) and is
+# installed on this repository only. RWX mints the token per run; nothing
+# long-lived is stored. The PyPI tokens are read by the embedded publish.yml
+# from sdk-python-attio-publish, so that vault stays single-purpose.
 #
 # Dispatch-only on purpose: a `cli` run starts from local HEAD, which could tag
 # and publish an unmerged commit. (`rwx run --target preflight` adds a `cli`
@@ -129,15 +130,16 @@ tasks:
       TAG: ${{ tasks.preflight.values.tag }}
       VERSION: ${{ tasks.preflight.values.version }}
       RELEASE_SHA: ${{ tasks.preflight.values.release-sha }}
-      GITHUB_TOKEN: ${{ vaults.sdk-python-attio-release.secrets.GITHUB_TOKEN }}
+      GITHUB_TOKEN: ${{ vaults.sdk-python-attio-release.github-apps.rwx-automation-elviskahoro.token }}
     run: |
       set -euo pipefail
       if [ -z "${GITHUB_TOKEN}" ]; then
-        echo "GITHUB_TOKEN is empty or unset. Set it with: rwx vaults secrets set --vault sdk-python-attio-release GITHUB_TOKEN=..." >&2
+        echo "No token from the rwx-automation-elviskahoro GitHub App. Check that it is in the sdk-python-attio-release vault and installed on this repository." >&2
         exit 1
       fi
-      git config user.name "rwx-release"
-      git config user.email "rwx-release@users.noreply.github.com"
+      # The app's bot account, so the tagger shows as the app on GitHub.
+      git config user.name "rwx-automation-elviskahoro[bot]"
+      git config user.email "357120051+rwx-automation-elviskahoro[bot]@users.noreply.github.com"
       git tag -a "${TAG}" -m "Release ${VERSION}" "${RELEASE_SHA}"
       # The credential helper reads the token from the environment, so it
       # never appears in the remote URL, argv or the logs.
