@@ -21,3 +21,9 @@ CONTRIBUTING.md
 # Speakeasy's compile step runs mypy with cwd=generated/, where the root
 # pyproject.toml mypy config is not read; this file stands in for it.
 mypy.ini
+
+# Speakeasy's compile step runs the root dev-group pylint (4.x) with this file.
+# Its template targets pylint 3 (removed `suggestion-mode` option, no
+# too-many-positional-arguments/unidiomatic-typecheck disables), so it is
+# hand-maintained here.
+pylintrc

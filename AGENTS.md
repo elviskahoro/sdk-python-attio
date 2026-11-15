@@ -264,6 +264,10 @@ git apply .rwx/downloads/<dir>/regenerate.patch
   `generated/` as cwd, where the root `pyproject.toml` `[tool.mypy]` is not
   read, which otherwise fails with ~565 `import-not-found` errors. It is
   listed in `generated/.genignore` so regeneration keeps it.
+- `generated/pylintrc` is hand-maintained (also in `generated/.genignore`):
+  the compile step runs the root dev-group pylint (4.x), and Speakeasy's
+  pylint-3 template fails it (removed `suggestion-mode` option, plus
+  `too-many-positional-arguments` and `unidiomatic-typecheck` hits).
 - The CLI is pinned to 1.804.0 via `speakeasyVersion` in
   `.speakeasy/workflow.yaml`, so `speakeasy run` cannot self-upgrade (it once
   promoted itself to 1.803.2); the pipeline fails the run when the host CLI

@@ -1,4 +1,4 @@
-"""Entry point for the standalone ``gtm-attio`` command."""
+"""Entry point for the standalone ``attio`` command (also installed as ``gtm-attio``)."""
 
 from __future__ import annotations
 
@@ -42,7 +42,7 @@ if TYPE_CHECKING:
 EXPORT_KEYWORD_LENGTH = 6
 # Both console scripts run this module; usage and --version echo the one invoked.
 PROG_NAMES = ("attio", "gtm-attio")
-DEFAULT_PROG = "gtm-attio"
+DEFAULT_PROG = "attio"
 
 
 def _prog() -> str:

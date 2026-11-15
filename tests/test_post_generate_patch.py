@@ -216,7 +216,7 @@ def test_readme_cli_section_is_restored_idempotently(tmp_path: Path) -> None:
 
     assert PGP.ensure_readme_cli_section(target) is True
     content = target.read_text()
-    assert "uvx gtm-attio people upsert" in content
+    assert "uvx attio people upsert" in content
     assert "  * [Standalone CLI](#standalone-cli)" in content
     assert PGP.ensure_readme_cli_section(target) is False
 
