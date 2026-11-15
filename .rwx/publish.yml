@@ -6,7 +6,8 @@
 # it starts immediately.
 # A pushed v* tag also creates a run, held for a manual start in the RWX UI.
 #
-# PYPI_TOKEN lives alone in the `sdk-python-attio-publish` vault: locked to
+# PYPI_TOKEN_ATTIO and PYPI_TOKEN_GTM_ATTIO live alone in the
+# `sdk-python-attio-publish` vault: locked to
 # main and refs/tags/v*, approvals off, so neither path waits on an approver.
 # ci/pipeline.py runs its test/build steps through Dagger, which needs a
 # container runtime and the dagger CLI, hence `docker: true`.
@@ -124,11 +125,26 @@ tasks:
     # Uncached: twine upload is an external effect; a cache hit on a
     # re-triggered run for an already-published tag would skip the upload.
     cache: false
+    # PyPI project-scoped tokens map to one project each, so each
+    # distribution uploads with its own token. --skip-existing makes a retry
+    # after a partial upload safe.
     env:
-      PYPI_TOKEN: ${{ vaults.sdk-python-attio-publish.secrets.PYPI_TOKEN }}
+      PYPI_TOKEN_ATTIO: ${{ vaults.sdk-python-attio-publish.secrets.PYPI_TOKEN_ATTIO }}
+      PYPI_TOKEN_GTM_ATTIO: ${{ vaults.sdk-python-attio-publish.secrets.PYPI_TOKEN_GTM_ATTIO }}
     run: |
-      if [ -z "${PYPI_TOKEN}" ]; then
-        echo "PYPI_TOKEN secret is empty or unset. Set it with: rwx vaults secrets set --vault sdk-python-attio-publish PYPI_TOKEN=..." >&2
+      for name in PYPI_TOKEN_ATTIO PYPI_TOKEN_GTM_ATTIO; do
+        if [ -z "${!name}" ]; then
+          echo "${name} is empty or unset. Set it with: rwx vaults secrets set --vault sdk-python-attio-publish ${name}=..." >&2
+          exit 1
+        fi
+      done
+      shopt -s nullglob
+      attio=(dist/attio-*)
+      gtm=(dist/gtm_attio-* dist/gtm-attio-*)
+      if [ ${#attio[@]} -eq 0 ] || [ ${#gtm[@]} -eq 0 ]; then
+        echo "Expected both attio and gtm-attio artifacts in dist/:" >&2
+        ls dist >&2
         exit 1
       fi
-      TWINE_USERNAME=__token__ TWINE_PASSWORD="${PYPI_TOKEN}" twine upload dist/*
+      TWINE_USERNAME=__token__ TWINE_PASSWORD="${PYPI_TOKEN_ATTIO}" twine upload --skip-existing "${attio[@]}"
+      TWINE_USERNAME=__token__ TWINE_PASSWORD="${PYPI_TOKEN_GTM_ATTIO}" twine upload --skip-existing "${gtm[@]}"

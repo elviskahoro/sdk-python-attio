@@ -134,10 +134,10 @@ def test_pypi_token_reads_from_the_publish_vault() -> None:
     token; the publish task must read the dedicated publish vault instead."""
     doc = yaml.safe_load((REPO_ROOT / ".rwx" / "publish.yml").read_text(encoding="utf-8"))
     publish = next(t for t in doc["tasks"] if t["key"] == "publish")
-    assert (
-        publish["env"]["PYPI_TOKEN"]
-        == "${{ vaults.sdk-python-attio-publish.secrets.PYPI_TOKEN }}"
-    )
+    assert publish["env"] == {
+        "PYPI_TOKEN_ATTIO": "${{ vaults.sdk-python-attio-publish.secrets.PYPI_TOKEN_ATTIO }}",  # nosec B105 - vault reference, not a credential
+        "PYPI_TOKEN_GTM_ATTIO": "${{ vaults.sdk-python-attio-publish.secrets.PYPI_TOKEN_GTM_ATTIO }}",  # nosec B105 - vault reference, not a credential
+    }
 
 
 def test_dispatched_publish_checks_out_the_release_tag() -> None:
