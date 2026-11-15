@@ -22,6 +22,9 @@
 # RWC_ACCESS_TOKEN_ELVISKAHORO which is mapped in); a bump also needs
 # SPEAKEASY_API_KEY.
 
+# Command substitutions inside conditions are intentional (failures there are
+# handled explicitly), so the "masked return value" style checks do not apply.
+# shellcheck disable=SC2312,SC2310
 set -euo pipefail
 
 PACKAGES=(attio gtm-attio)
