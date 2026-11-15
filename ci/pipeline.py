@@ -497,29 +497,62 @@ def _apply_post_generation_patches() -> None:
     subprocess.run([sys.executable, str(script)], check=True)  # noqa: S603 - own script
 
 
+# PyPI project-scoped tokens cover exactly one project, so each distribution
+# uploads with its own token. Keys are dist/ filename prefixes (wheel and
+# sdist names normalize "gtm-attio" to "gtm_attio").
+_PUBLISH_TOKENS = {
+    "attio-": "PYPI_TOKEN_ATTIO",
+    "gtm_attio-": "PYPI_TOKEN_GTM_ATTIO",
+}
+
+
+def _require_publish_tokens() -> None:
+    missing = [name for name in _PUBLISH_TOKENS.values() if not os.environ.get(name)]
+    if missing:
+        msg = f"PyPI token environment variable(s) not set: {', '.join(missing)}"
+        raise RuntimeError(msg)
+
+
 def _publish_artifacts() -> None:
     """Publish the just-built artifacts through the shared Dagger module.
 
-    ``env:PYPI_TOKEN`` makes Dagger read the token as a Secret, so it is never
-    passed as a command-line token or copied into build artifacts.
+    Each distribution is staged into its own directory and uploaded with its
+    own project-scoped token. ``env:NAME`` makes Dagger read the token as a
+    Secret, so it is never passed as a command-line token or copied into
+    build artifacts.
     """
-    if not Path("dist").is_dir():
+    dist = Path("dist")
+    if not dist.is_dir():
         msg = "dist/ does not exist; run the build command before publishing"
         raise RuntimeError(msg)
-    subprocess.run(  # noqa: S603 - fixed argv, token via env: secret  # nosec B603 B607
-        [  # noqa: S607 - PATH lookup intended
-            "dagger",
-            "-m",
-            _PYPI_PUBLISHER_MODULE,
-            "call",
-            "publish-artifacts",
-            "--artifacts",
-            "./dist",
-            "--pypi-token",
-            "env:PYPI_TOKEN",
-        ],
-        check=True,
-    )
+    staging_root = Path("tmp") / "publish"
+    shutil.rmtree(staging_root, ignore_errors=True)
+    staged: list[tuple[Path, str]] = []
+    for prefix, token_env in _PUBLISH_TOKENS.items():
+        files = sorted(f for f in dist.iterdir() if f.name.startswith(prefix))
+        if not files:
+            msg = f"dist/ has no {prefix}* artifacts to publish"
+            raise RuntimeError(msg)
+        staging = staging_root / prefix.rstrip("-")
+        staging.mkdir(parents=True)
+        for f in files:
+            shutil.copy2(f, staging / f.name)
+        staged.append((staging, token_env))
+    for staging, token_env in staged:
+        subprocess.run(  # noqa: S603 - fixed argv, token via env: secret  # nosec B603 B607
+            [  # noqa: S607 - PATH lookup intended
+                "dagger",
+                "-m",
+                _PYPI_PUBLISHER_MODULE,
+                "call",
+                "publish-artifacts",
+                "--artifacts",
+                f"./{staging.as_posix()}",
+                "--pypi-token",
+                f"env:{token_env}",
+            ],
+            check=True,
+        )
 
 
 class AttioSDKPipeline:
@@ -831,9 +864,7 @@ async def cmd_build() -> None:
 
 async def cmd_publish() -> None:
     """Build once and publish both SDK distributions with the shared module."""
-    if "PYPI_TOKEN" not in os.environ:
-        msg = "PYPI_TOKEN environment variable not set"
-        raise RuntimeError(msg)
+    _require_publish_tokens()
     await cmd_build()
     _publish_artifacts()
 
@@ -882,9 +913,7 @@ async def cmd_ci(
         print("Build completed successfully (artifacts in ./dist)", file=sys.stderr)
 
     if publish:
-        if "PYPI_TOKEN" not in os.environ:
-            msg = "PYPI_TOKEN environment variable not set"
-            raise RuntimeError(msg)
+        _require_publish_tokens()
         _publish_artifacts()
 
 
