@@ -143,6 +143,28 @@ def test_release_runs_one_at_a_time(doc: dict) -> None:
 
 def test_verify_smoke_tests_both_cli_names(tasks: dict[str, dict]) -> None:
     run = tasks["verify"]["run"]
-    assert "for pkg in attio gtm-attio" in run
     assert "for cmd in attio gtm-attio" in run
     assert 'uvx --refresh "${cmd}@${VERSION}" --version' in run
+
+
+@pytest.mark.parametrize("key", ["preflight", "verify"])
+def test_pypi_checks_require_every_artifact(tasks: dict[str, dict], key: str) -> None:
+    """A bare "version exists" check would treat a partial upload as done,
+    and preflight would then skip the publish that finishes it."""
+    run = tasks[key]["run"]
+    assert "python3 ci/pypi_release_status.py" in run
+    assert "pypi.org" not in run
+    assert "code" in tasks[key]["use"]
+
+
+def test_verify_timeout_outlasts_its_retry_budget(tasks: dict[str, dict]) -> None:
+    """RWX SIGKILLs on timeout, so a slow but successful release would end red
+    if the timeout were shorter than the polling and uvx retry loops."""
+    run = tasks["verify"]["run"]
+    polls = int(re.search(r"seq 1 (\d+)", run).group(1))
+    poll_sleep = int(re.search(r"sleep (\d+)\n\s*done\n", run).group(1))
+    uvx_attempts = len(re.search(r"for attempt in ([\d ]+); do", run).group(1).split())
+    uvx_sleep = int(re.findall(r"sleep (\d+)", run)[-1])
+    budget_seconds = polls * poll_sleep + 2 * uvx_attempts * uvx_sleep
+    timeout_minutes = int(str(tasks["verify"]["timeout"]).rstrip("m"))
+    assert timeout_minutes * 60 >= budget_seconds + 5 * 60, budget_seconds

@@ -213,7 +213,8 @@ the CLI can do here:
 - `rwx dispatch regenerate --ref main` regenerates the SDK without Speakeasy.
 - `rwx dispatch release --ref main --wait` releases the version already
   committed on `main` with no local steps (`.rwx/release.yml`): preflight
-  (exits green if both packages are already on PyPI) -> annotated `vX.Y.Z` tag
+  (exits green once both packages have a wheel and sdist on PyPI; a partial
+  upload still publishes) -> annotated `vX.Y.Z` tag
   (reused if it exists, never moved) -> the `publish.yml` chain embedded at that
   tag -> waits for both packages on PyPI and runs `uvx attio@X --version` /
   `uvx gtm-attio@X --version`. It has no bump step and never uses Speakeasy:

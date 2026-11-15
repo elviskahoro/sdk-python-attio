@@ -79,15 +79,16 @@ tasks:
       tag="v${version}"
       echo "Committed version at ${COMMIT_SHA}: ${version}"
 
-      published=true
-      for pkg in attio gtm-attio; do
-        status="$(curl -sS -o /dev/null -w '%{http_code}' "https://pypi.org/pypi/${pkg}/${version}/json")"
-        case "${status}" in
-          200) echo "${pkg}==${version} is already on PyPI" ;;
-          404) echo "${pkg}==${version} is not on PyPI yet"; published=false ;;
-          *) echo "PyPI returned HTTP ${status} for ${pkg}==${version}" >&2; exit 1 ;;
-        esac
-      done
+      # Published means a wheel and an sdist for both packages, so a partial
+      # upload from an earlier run still goes through publish (which skips the
+      # files already there). Exit 1 = missing/incomplete, 2 = PyPI unreadable.
+      status=0
+      python3 ci/pypi_release_status.py "${version}" || status=$?
+      case "${status}" in
+        0) published=true ;;
+        1) published=false ;;
+        *) echo "Could not read PyPI; refusing to guess." >&2; exit 1 ;;
+      esac
 
       # The peeled ^{} line gives an annotated tag's commit; a lightweight tag
       # only has the plain line.
@@ -155,28 +156,28 @@ tasks:
       commit-sha: ${{ tasks.preflight.values.release-sha }}
       tag: ${{ tasks.preflight.values.tag }}
 
+  # Timeout covers the worst case: ~10m of PyPI polling plus ~2m of uvx
+  # retries, with headroom so a slow but successful release never ends red.
   - key: verify
-    use: uv
+    use: [code, uv]
     if: ${{ tasks.preflight.values.published != 'true' }}
     after: [publish]
     cache: false
-    timeout: 20m
+    timeout: 30m
     env:
       VERSION: ${{ tasks.preflight.values.version }}
     run: |
       set -euo pipefail
-      for pkg in attio gtm-attio; do
-        for attempt in $(seq 1 60); do
-          if curl -fsS -o /dev/null "https://pypi.org/pypi/${pkg}/${VERSION}/json"; then
-            echo "${pkg}==${VERSION} is on PyPI"
-            break
-          fi
-          if [ "${attempt}" -eq 60 ]; then
-            echo "${pkg}==${VERSION} did not appear on PyPI within 10 minutes" >&2
-            exit 1
-          fi
-          sleep 10
-        done
+      # Wait for every file (wheel + sdist, both packages); ~10 minutes.
+      for attempt in $(seq 1 60); do
+        if python3 ci/pypi_release_status.py "${VERSION}"; then
+          break
+        fi
+        if [ "${attempt}" -eq 60 ]; then
+          echo "attio and gtm-attio ${VERSION} were not complete on PyPI within 10 minutes" >&2
+          exit 1
+        fi
+        sleep 10
       done
       # The CDN can lag the JSON API, so retry the installs briefly.
       for cmd in attio gtm-attio; do
