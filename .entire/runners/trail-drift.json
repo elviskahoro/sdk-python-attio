@@ -1,7 +1,7 @@
 {
   "id": "trail-drift",
   "display_name": "Drift Eval",
-  "enabled": true,
+  "enabled": false,
   "scope": "trail",
   "runtime": {
     "kind": "prompt_runner",

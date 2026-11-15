@@ -1,7 +1,7 @@
 {
   "id": "trail-security",
   "display_name": "Security Review",
-  "enabled": true,
+  "enabled": false,
   "scope": "trail",
   "runtime": {
     "kind": "prompt_runner",
