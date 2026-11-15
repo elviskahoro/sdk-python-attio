@@ -71,9 +71,10 @@ It never commits or pushes. See "Regenerating on RWX" in `AGENTS.md`.
 rwx dispatch release --ref main --wait
 ```
 
-Exits green without doing anything when both packages already have the
-committed version on PyPI. There is no bump step: land a version bump through
-the regeneration pipeline first. Re-running after a failure is safe (existing
+Exits green without doing anything once both packages have a wheel and an
+sdist for the committed version on PyPI (a partial upload still publishes,
+checked by `ci/pypi_release_status.py`). There is no bump step: land a version
+bump through the regeneration pipeline first. Re-running after a failure is safe (existing
 tag reused, `twine --skip-existing`). Cancel the held `publish.yml` tag-push run
 it leaves behind.
 
