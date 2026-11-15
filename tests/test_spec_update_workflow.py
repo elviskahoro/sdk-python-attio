@@ -140,6 +140,18 @@ def test_pypi_token_reads_from_the_publish_vault() -> None:
     )
 
 
+
+def test_dispatched_publish_checks_out_the_release_tag() -> None:
+    """`--ref main` only selects the definition and vault scope; the run must
+    clone the tag, or a main that moved past it would be uploaded."""
+    doc = yaml.safe_load((REPO_ROOT / ".rwx" / "publish.yml").read_text(encoding="utf-8"))
+    triggers = doc.get("on", doc.get(True))
+    dispatch = next(d for d in triggers["dispatch"] if d["key"] == "publish")
+    assert dispatch["init"]["commit-sha"] == "${{ event.dispatch.params.tag }}"
+    assert dispatch["init"]["tag"] == "${{ event.dispatch.params.tag }}"
+    code = next(t for t in doc["tasks"] if t["key"] == "code")
+    assert code["with"]["ref"] == "${{ init.commit-sha }}"
+
 def test_publish_chain_survives_skipped_version_check() -> None:
     """CLI runs skip verify-version; test must still run, and the long
     Dagger tasks need an explicit timeout above RWX's 10m default."""
