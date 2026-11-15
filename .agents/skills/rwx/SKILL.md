@@ -16,7 +16,7 @@ CI definitions live in `.rwx/`. Upstream skills (config authoring, GitHub Action
 | `pyright.yml`, `pyrefly.yml` | `cli` only | Type checks on the working tree; `paths` init, default `attio_cli ci` |
 | `regenerate.yml` | `cli`, `dispatch` | Needs `SPEAKEASY_API_KEY`; vault is main-only with approvals, so use `rwx dispatch` |
 | `spec-update-check.yml` | weekly cron (Mon 09:00 UTC), `cli` | Main-pinned; same vault rules |
-| `publish.yml` | `v*` tag (manual start), `cli` | Release |
+| `publish.yml` | `rwx dispatch publish --ref main --param tag=vX.Y.Z`, `v*` tag (manual start), `cli` | Release; `PYPI_TOKEN` in the `sdk-python-attio-publish` vault (approvals off) |
 
 ## Auth
 

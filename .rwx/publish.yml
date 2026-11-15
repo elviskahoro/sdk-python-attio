@@ -1,8 +1,13 @@
-# Publish to PyPI on version tags (v*). Replaces the GitHub Actions pypi.yml.
-# `start: manually` replaces the old `pypi` environment's required-reviewer
-# gate: a tag push creates the run in a waiting state and a human starts it
-# from the RWX UI. Also restrict the PYPI_TOKEN vault to refs/tags/v* and
-# enable vault approvals (see `rwx vaults update`).
+# Publish attio and gtm-attio to PyPI.
+#
+# Preferred: `rwx dispatch publish --ref main --param tag=vX.Y.Z`. The tag
+# must already be pushed; the run checks out the tag and verify-version checks
+# it matches that checkout's version. Dispatch is itself the manual gate, so
+# it starts immediately.
+# A pushed v* tag also creates a run, held for a manual start in the RWX UI.
+#
+# PYPI_TOKEN lives alone in the `sdk-python-attio-publish` vault: locked to
+# main and refs/tags/v*, approvals off, so neither path waits on an approver.
 # ci/pipeline.py runs its test/build steps through Dagger, which needs a
 # container runtime and the dagger CLI, hence `docker: true`.
 on:
@@ -13,6 +18,19 @@ on:
         init:
           commit-sha: ${{ event.git.sha }}
           tag: ${{ event.git.tag }}
+  dispatch:
+    - key: publish
+      title: Publish to PyPI
+      params:
+        - key: tag
+          description: Release tag to publish, e.g. v0.28.9. Must match the committed version.
+          required: true
+      init:
+        # Build the tag itself, not the dispatch ref (--ref main only picks
+        # this definition and the vault scope), so a main that moved past the
+        # tag can never be what gets uploaded.
+        commit-sha: ${{ event.dispatch.params.tag }}
+        tag: ${{ event.dispatch.params.tag }}
   cli:
     init:
       commit-sha: ${{ event.git.sha }}
@@ -107,10 +125,10 @@ tasks:
     # re-triggered run for an already-published tag would skip the upload.
     cache: false
     env:
-      PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
+      PYPI_TOKEN: ${{ vaults.sdk-python-attio-publish.secrets.PYPI_TOKEN }}
     run: |
       if [ -z "${PYPI_TOKEN}" ]; then
-        echo "PYPI_TOKEN secret is empty or unset. Set it with: rwx vaults secrets set PYPI_TOKEN=..." >&2
+        echo "PYPI_TOKEN secret is empty or unset. Set it with: rwx vaults secrets set --vault sdk-python-attio-publish PYPI_TOKEN=..." >&2
         exit 1
       fi
       TWINE_USERNAME=__token__ TWINE_PASSWORD="${PYPI_TOKEN}" twine upload dist/*

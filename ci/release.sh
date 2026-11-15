@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Cut a new release: bump version in pyproject.toml + generated/src/attio/_version.py
-# via the Dagger pipeline, commit, tag, and push. The Publish to PyPI workflow
-# fires on the tag push.
+# via the Dagger pipeline, commit, tag, and push. The tag push creates a publish
+# run held for a manual start in the RWX UI; `rwx dispatch publish` starts one
+# immediately (see the hint printed at the end).
 #
 # Real entrypoint lives in ci/ so Speakeasy generation can never overwrite it;
 # scripts/release.sh is a thin wrapper that delegates here.
@@ -65,5 +66,7 @@ git tag "v${version}"
 git push origin main "v${version}"
 
 echo
-echo "Pushed v${version}. Watch the publish run:"
-echo "  gh run watch \$(gh run list --workflow='Publish to PyPI' --limit 1 --json databaseId -q '.[0].databaseId')"
+echo "Pushed v${version}. The tag push creates a publish run held for a manual"
+echo "start in the RWX UI: https://cloud.rwx.com/elviskahoro/runs"
+echo "Or publish immediately:"
+echo "  rwx dispatch publish --ref main --param tag=v${version}"

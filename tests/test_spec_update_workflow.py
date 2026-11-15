@@ -129,6 +129,29 @@ def test_publish_uploads_only_for_tag_runs() -> None:
     assert doc[True]["cli"]["init"]["tag"] == ""
 
 
+def test_pypi_token_reads_from_the_publish_vault() -> None:
+    """`secrets.*` resolves from the `default` vault, which never held the
+    token; the publish task must read the dedicated publish vault instead."""
+    doc = yaml.safe_load((REPO_ROOT / ".rwx" / "publish.yml").read_text(encoding="utf-8"))
+    publish = next(t for t in doc["tasks"] if t["key"] == "publish")
+    assert (
+        publish["env"]["PYPI_TOKEN"]
+        == "${{ vaults.sdk-python-attio-publish.secrets.PYPI_TOKEN }}"
+    )
+
+
+def test_dispatched_publish_checks_out_the_release_tag() -> None:
+    """`--ref main` only selects the definition and vault scope; the run must
+    clone the tag, or a main that moved past it would be uploaded."""
+    doc = yaml.safe_load((REPO_ROOT / ".rwx" / "publish.yml").read_text(encoding="utf-8"))
+    triggers = doc.get("on", doc.get(True))
+    dispatch = next(d for d in triggers["dispatch"] if d["key"] == "publish")
+    assert dispatch["init"]["commit-sha"] == "${{ event.dispatch.params.tag }}"
+    assert dispatch["init"]["tag"] == "${{ event.dispatch.params.tag }}"
+    code = next(t for t in doc["tasks"] if t["key"] == "code")
+    assert code["with"]["ref"] == "${{ init.commit-sha }}"
+
+
 def test_publish_chain_survives_skipped_version_check() -> None:
     """CLI runs skip verify-version; test must still run, and the long
     Dagger tasks need an explicit timeout above RWX's 10m default."""
