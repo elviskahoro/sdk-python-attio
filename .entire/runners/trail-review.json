@@ -1,7 +1,7 @@
 {
   "id": "trail-review",
   "display_name": "Trail Review",
-  "enabled": true,
+  "enabled": false,
   "scope": "trail",
   "runtime": {
     "kind": "prompt_runner",
@@ -27,7 +27,7 @@
   },
   "debounce_ms": 10000,
   "trails_review": {
-    "enabled": true
+    "enabled": false
   },
   "output": {
     "adapter": "last_json_line",

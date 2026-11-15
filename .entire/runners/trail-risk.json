@@ -1,7 +1,7 @@
 {
   "id": "trail-risk",
   "display_name": "Risk Eval",
-  "enabled": true,
+  "enabled": false,
   "scope": "trail",
   "runtime": {
     "kind": "prompt_runner",

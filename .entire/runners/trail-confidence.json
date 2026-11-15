@@ -1,7 +1,7 @@
 {
   "id": "trail-confidence",
   "display_name": "Confidence Eval",
-  "enabled": true,
+  "enabled": false,
   "scope": "trail",
   "runtime": {
     "kind": "prompt_runner",
