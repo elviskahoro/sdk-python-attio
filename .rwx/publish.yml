@@ -1,6 +1,8 @@
 # Publish attio and gtm-attio to PyPI.
 #
-# Preferred: `rwx dispatch publish --ref main --param tag=vX.Y.Z`. The tag
+# Usually embedded by release.yml (`rwx dispatch release --ref main`), which
+# creates the tag first. Standalone: `rwx dispatch publish --ref main
+# --param tag=vX.Y.Z`. The tag
 # must already be pushed; the run checks out the tag and verify-version checks
 # it matches that checkout's version. Dispatch is itself the manual gate, so
 # it starts immediately.
