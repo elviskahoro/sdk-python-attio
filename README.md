@@ -3,9 +3,10 @@
 [![PyPI](https://img.shields.io/pypi/v/attio)](https://pypi.org/project/attio/)
 [![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-A type-safe Python client for the [Attio REST API](https://docs.attio.com/rest-api/overview) (v2), with a sync and an async variant of every method. It also ships the standalone `attio` CLI, installed under a second name as `gtm-attio`, for people, company, note and record workflows. The CLI prints JSON for agents and scripts.
+A type-safe Python client for the [Attio REST API](https://docs.attio.com/rest-api/overview) (v2), with a sync and an async variant of every method. It also ships the standalone `attio` CLI for people, company, note and record workflows. The CLI prints JSON for agents and scripts.
 
-- **Package:** `attio` on PyPI. `gtm-attio` is the same code under another distribution name. Requires Python 3.10+.
+- **Install:** `pip install attio` (or `uv add attio`) for the SDK; `uvx attio` runs the CLI without installing. Requires Python 3.10+.
+- **Package:** `attio` on PyPI. `gtm-attio` is the same code under its original distribution and command name, kept as an alias.
 - **Credentials:** an Attio API key, in `ATTIO_API_KEY`.
 - **Where the SDK comes from:** [Speakeasy](https://www.speakeasy.com/) generates it from Attio's OpenAPI spec into `generated/`. Every method has a reference page under [`generated/docs/sdks/`](https://github.com/elviskahoro/sdk-python-attio/tree/main/generated/docs/sdks).
 
@@ -13,15 +14,14 @@ A type-safe Python client for the [Attio REST API](https://docs.attio.com/rest-a
 
 | Goal | Command |
 | --- | --- |
-| List the CLI commands (no install) | `uvx gtm-attio --help` |
-| The same, with the shorter name (0.28.2+) | `uvx attio --help` |
-| Pin an exact version | `uvx gtm-attio@0.28.0 --help` |
-| Force the newest release | `uvx gtm-attio@latest --help` |
-| Run unreleased code from `main` | `uvx --from git+https://github.com/elviskahoro/sdk-python-attio gtm-attio --help` |
+| Add the SDK to a project | `pip install attio` (or `uv add attio`) |
+| List the CLI commands (no install) | `uvx attio --help` |
+| Pin an exact version | `uvx attio@0.28.3 --help` |
+| Force the newest release | `uvx attio@latest --help` |
+| Run unreleased code from `main` | `uvx --from git+https://github.com/elviskahoro/sdk-python-attio attio --help` |
 | Install the CLI on PATH | `uv tool install attio` |
 | Run a script that imports the SDK | `uv run --with attio script.py` |
 | Open a Python REPL with the SDK | `uvx --from attio python` |
-| Add the SDK to a project | `uv add attio` (or `pip install attio`) |
 
 Rules of thumb:
 
@@ -55,10 +55,10 @@ Rules of thumb:
 ## SDK Installation
 
 ```bash
-uv add attio        # or: pip install attio / poetry add attio
+pip install attio   # or: uv add attio / poetry add attio
 ```
 
-Install `attio` *or* `gtm-attio`, not both. They are the same code under two distribution names, and each installs the `attio` import package and the `attio` and `gtm-attio` commands. Releases before 0.28.2 install only `gtm-attio`.
+Install `attio`. `gtm-attio` is the same code under its original distribution name; install one or the other, not both. Each installs the `attio` import package and both the `attio` and `gtm-attio` commands. Releases before 0.28.2 install only the `gtm-attio` command.
 
 Minimum Python: once a Python version reaches its [end of life](https://devguide.python.org/versions/), the SDK keeps supporting it for 3 more months and then raises the minimum.
 
@@ -86,11 +86,11 @@ Run it with `uv run script.py`, or make it executable. A script without the meta
 <!-- Start Standalone CLI [cli] -->
 ## Standalone CLI
 
-The `attio` command, also installed as `gtm-attio`, wraps the SDK in people, company, note and record commands. Each command identifies records by email, domain, matching attribute or ID, and prints one JSON envelope. You can run it without cloning or installing anything:
+The `attio` command wraps the SDK in people, company, note and record commands. Each command identifies records by email, domain, matching attribute or ID, and prints one JSON envelope. You can run it without cloning or installing anything:
 
 ```bash
 export ATTIO_API_KEY="your-attio-api-key"
-uvx gtm-attio people upsert person@example.com \
+uvx attio people upsert person@example.com \
   --first-name Ada --last-name Lovelace
 ```
 
@@ -98,14 +98,15 @@ uvx gtm-attio people upsert person@example.com \
 
 | Form | Use it when |
 | --- | --- |
-| `uvx gtm-attio …` | Always. This name works on every published version. |
-| `uvx attio …` | You want the shorter name. Needs 0.28.2+; on older releases use `uvx --from attio gtm-attio …`. |
-| `uvx gtm-attio@0.28.0 …` | You need reproducible runs pinned to one version. |
-| `uvx gtm-attio@latest …` | You want a new release. Plain `uvx` reuses a version it already cached. |
-| `uvx --from git+https://github.com/elviskahoro/sdk-python-attio gtm-attio …` | You need unreleased code from `main`. |
-| `uv tool run gtm-attio …` | Only `uv` is on PATH. It's identical to `uvx`. |
+| `uvx attio …` | The default. Needs 0.28.2+. |
+| `uvx attio@0.28.3 …` | You need reproducible runs pinned to one version. |
+| `uvx attio@latest …` | You want a new release. Plain `uvx` reuses a version it already cached. |
+| `uvx --from git+https://github.com/elviskahoro/sdk-python-attio attio …` | You need unreleased code from `main`. |
+| `uv tool install attio` | You want `attio` on PATH permanently. |
+| `uv tool run attio …` | Only `uv` is on PATH. It's identical to `uvx`. |
+| `uvx gtm-attio …` | You are on a release older than 0.28.2. `gtm-attio` is the original name of the same command, and still ships as an alias. |
 
-Run `uvx gtm-attio <resource> <command> --help` for the full flag list of any command.
+Run `uvx attio <resource> <command> --help` for the full flag list of any command.
 
 ### Credentials
 
@@ -159,11 +160,11 @@ Without `--strict`, the CLI keeps going in three cases, and reports each one in 
 With `--strict`, these fail with `invalid_value`, `schema_mismatch` or `multiple_matches` instead. `update` and `add` never pick between duplicates.
 
 ```bash
-uvx gtm-attio people search person@example.com
-uvx gtm-attio people add person@example.com --first-name Ada --last-name Lovelace
-uvx gtm-attio people update person@example.com --job-title Mathematician
-uvx gtm-attio people upsert person@example.com --company example.com --strict
-uvx gtm-attio people upsert --json '{"email":"person@example.com","first_name":"Ada","job_title":"Mathematician"}'
+uvx attio people search person@example.com
+uvx attio people add person@example.com --first-name Ada --last-name Lovelace
+uvx attio people update person@example.com --job-title Mathematician
+uvx attio people upsert person@example.com --company example.com --strict
+uvx attio people upsert --json '{"email":"person@example.com","first_name":"Ada","job_title":"Mathematician"}'
 ```
 
 ### Companies
@@ -175,9 +176,9 @@ uvx gtm-attio people upsert --json '{"email":"person@example.com","first_name":"
 - `update` overwrites only the attributes you supply. Multi-select values are replaced, not appended.
 
 ```bash
-uvx gtm-attio companies search --json '{"domain":"example.com"}'
-uvx gtm-attio companies add --json '{"domain":"example.com","values":{"name":[{"value":"Example Inc"}]}}'
-uvx gtm-attio companies update --json '{"domain":"example.com","values":{"description":["Prospect"]}}'
+uvx attio companies search --json '{"domain":"example.com"}'
+uvx attio companies add --json '{"domain":"example.com","values":{"name":[{"value":"Example Inc"}]}}'
+uvx attio companies update --json '{"domain":"example.com","values":{"description":["Prospect"]}}'
 ```
 
 ### Notes
@@ -191,9 +192,9 @@ uvx gtm-attio companies update --json '{"domain":"example.com","values":{"descri
 `parent_object` is an object slug such as `people` or `companies`. `parent_record_id` is that record's ID, which you can read from the `record_id` of a people or company envelope.
 
 ```bash
-uvx gtm-attio notes list --json '{"parent_object":"people","parent_record_id":"RECORD_ID"}'
-uvx gtm-attio notes add --json '{"parent_object":"people","parent_record_id":"RECORD_ID","title":"Discovery call","content":"Discussed the launch plan.","format":"plaintext"}'
-uvx gtm-attio notes update --json '{"note_id":"NOTE_ID","content":"Updated call notes."}'
+uvx attio notes list --json '{"parent_object":"people","parent_record_id":"RECORD_ID"}'
+uvx attio notes add --json '{"parent_object":"people","parent_record_id":"RECORD_ID","title":"Discovery call","content":"Discussed the launch plan.","format":"plaintext"}'
+uvx attio notes update --json '{"note_id":"NOTE_ID","content":"Updated call notes."}'
 ```
 
 ### Records
@@ -206,7 +207,7 @@ uvx gtm-attio notes update --json '{"note_id":"NOTE_ID","content":"Updated call 
 - Attio rejects a matching attribute that finds more than one record with `multiple_match_results`.
 
 ```bash
-uvx gtm-attio records upsert --json '{"object":"deals","matching_attribute":"external_id","values":{"external_id":["deal-1042"],"name":["Acme renewal"],"contact":[{"target_object":"people","email_addresses":[{"email_address":"ada@example.com"}]}]}}'
+uvx attio records upsert --json '{"object":"deals","matching_attribute":"external_id","values":{"external_id":["deal-1042"],"name":["Acme renewal"],"contact":[{"target_object":"people","email_addresses":[{"email_address":"ada@example.com"}]}]}}'
 ```
 
 ### Output envelope
@@ -957,11 +958,11 @@ The debug logger records each request's method, URL, **headers** and body, and e
 
 ### `uvx` runs an old version
 
-`uvx` reuses a cached environment. Run `uvx gtm-attio@latest …`, pin a version with `@X.Y.Z`, or add `--refresh`.
+`uvx` reuses a cached environment. Run `uvx attio@latest …`, pin a version with `@X.Y.Z`, or add `--refresh`.
 
 ### `uvx attio`: "An executable named `attio` is not provided by package `attio`"
 
-The resolved release predates 0.28.2, so it ships only `gtm-attio`. Run `uvx gtm-attio …`, `uvx attio@latest …` or `uvx --from attio gtm-attio …`.
+The resolved release predates 0.28.2, so it ships only `gtm-attio`. Run `uvx attio@latest …` to get a current release, or `uvx --from attio gtm-attio …` to stay on the old one.
 
 ### `uvx: command not found`
 

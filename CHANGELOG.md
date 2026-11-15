@@ -2,6 +2,19 @@
 
 ## Unreleased — 2026-10-05
 
+Makes `attio` the default name everywhere: the README now leads with
+`pip install attio` and `uvx attio …`, and the CLI's `usage:` and
+`--version` say `attio` when it can't tell which command ran it (e.g.
+when another program calls `attio_cli.main.main`). `gtm-attio` still
+ships, as a command and a PyPI distribution, as an alias for releases
+older than 0.28.2.
+
+Regenerates the SDK (0.28.9) against the unchanged spec. Also fixes
+regeneration, broken since pylint 4.0.9 (#151): `generated/pylintrc` is now
+hand-maintained (listed in `generated/.genignore`) and drops the removed
+`suggestion-mode` option, and disables `too-many-positional-arguments` and
+`unidiomatic-typecheck`.
+
 Regenerates the SDK (0.28.8) against the 2026-11-09 spec
 (`api-202611022031.json` → `api-202611090900.json`): adds
 `sdk.workspace_blocklist.get_v2_workspace_blocklist_addresses` (+

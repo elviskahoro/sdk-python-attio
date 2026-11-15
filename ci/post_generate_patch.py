@@ -151,8 +151,8 @@ set -euo pipefail
 exec bash "$(dirname "$0")/../{impl}" "$@"
 """
 
-# ``attio`` makes ``uvx attio`` work; ``gtm-attio`` is the original name and
-# the only command shipped before 0.28.2.
+# ``attio`` is the default command (``uvx attio``); ``gtm-attio`` is the
+# original name, the only command shipped before 0.28.2, kept as an alias.
 CLI_SCRIPT_LINES = (
     'attio = "attio_cli.main:main"',
     'gtm-attio = "attio_cli.main:main"',
@@ -162,11 +162,11 @@ README_CLI_END = "<!-- End Standalone CLI [cli] -->"
 README_CLI_SECTION = """<!-- Start Standalone CLI [cli] -->
 ## Standalone CLI
 
-The `attio` command, also installed as `gtm-attio`, wraps the SDK in people, company, note and record commands. Each command identifies records by email, domain, matching attribute or ID, and prints one JSON envelope. You can run it without cloning or installing anything:
+The `attio` command wraps the SDK in people, company, note and record commands. Each command identifies records by email, domain, matching attribute or ID, and prints one JSON envelope. You can run it without cloning or installing anything:
 
 ```bash
 export ATTIO_API_KEY="your-attio-api-key"
-uvx gtm-attio people upsert person@example.com \\
+uvx attio people upsert person@example.com \\
   --first-name Ada --last-name Lovelace
 ```
 
@@ -174,14 +174,15 @@ uvx gtm-attio people upsert person@example.com \\
 
 | Form | Use it when |
 | --- | --- |
-| `uvx gtm-attio …` | Always. This name works on every published version. |
-| `uvx attio …` | You want the shorter name. Needs 0.28.2+; on older releases use `uvx --from attio gtm-attio …`. |
-| `uvx gtm-attio@0.28.0 …` | You need reproducible runs pinned to one version. |
-| `uvx gtm-attio@latest …` | You want a new release. Plain `uvx` reuses a version it already cached. |
-| `uvx --from git+https://github.com/elviskahoro/sdk-python-attio gtm-attio …` | You need unreleased code from `main`. |
-| `uv tool run gtm-attio …` | Only `uv` is on PATH. It's identical to `uvx`. |
+| `uvx attio …` | The default. Needs 0.28.2+. |
+| `uvx attio@0.28.3 …` | You need reproducible runs pinned to one version. |
+| `uvx attio@latest …` | You want a new release. Plain `uvx` reuses a version it already cached. |
+| `uvx --from git+https://github.com/elviskahoro/sdk-python-attio attio …` | You need unreleased code from `main`. |
+| `uv tool install attio` | You want `attio` on PATH permanently. |
+| `uv tool run attio …` | Only `uv` is on PATH. It's identical to `uvx`. |
+| `uvx gtm-attio …` | You are on a release older than 0.28.2. `gtm-attio` is the original name of the same command, and still ships as an alias. |
 
-Run `uvx gtm-attio <resource> <command> --help` for the full flag list of any command.
+Run `uvx attio <resource> <command> --help` for the full flag list of any command.
 
 ### Credentials
 
@@ -235,11 +236,11 @@ Without `--strict`, the CLI keeps going in three cases, and reports each one in 
 With `--strict`, these fail with `invalid_value`, `schema_mismatch` or `multiple_matches` instead. `update` and `add` never pick between duplicates.
 
 ```bash
-uvx gtm-attio people search person@example.com
-uvx gtm-attio people add person@example.com --first-name Ada --last-name Lovelace
-uvx gtm-attio people update person@example.com --job-title Mathematician
-uvx gtm-attio people upsert person@example.com --company example.com --strict
-uvx gtm-attio people upsert --json '{"email":"person@example.com","first_name":"Ada","job_title":"Mathematician"}'
+uvx attio people search person@example.com
+uvx attio people add person@example.com --first-name Ada --last-name Lovelace
+uvx attio people update person@example.com --job-title Mathematician
+uvx attio people upsert person@example.com --company example.com --strict
+uvx attio people upsert --json '{"email":"person@example.com","first_name":"Ada","job_title":"Mathematician"}'
 ```
 
 ### Companies
@@ -251,9 +252,9 @@ uvx gtm-attio people upsert --json '{"email":"person@example.com","first_name":"
 - `update` overwrites only the attributes you supply. Multi-select values are replaced, not appended.
 
 ```bash
-uvx gtm-attio companies search --json '{"domain":"example.com"}'
-uvx gtm-attio companies add --json '{"domain":"example.com","values":{"name":[{"value":"Example Inc"}]}}'
-uvx gtm-attio companies update --json '{"domain":"example.com","values":{"description":["Prospect"]}}'
+uvx attio companies search --json '{"domain":"example.com"}'
+uvx attio companies add --json '{"domain":"example.com","values":{"name":[{"value":"Example Inc"}]}}'
+uvx attio companies update --json '{"domain":"example.com","values":{"description":["Prospect"]}}'
 ```
 
 ### Notes
@@ -267,9 +268,9 @@ uvx gtm-attio companies update --json '{"domain":"example.com","values":{"descri
 `parent_object` is an object slug such as `people` or `companies`. `parent_record_id` is that record's ID, which you can read from the `record_id` of a people or company envelope.
 
 ```bash
-uvx gtm-attio notes list --json '{"parent_object":"people","parent_record_id":"RECORD_ID"}'
-uvx gtm-attio notes add --json '{"parent_object":"people","parent_record_id":"RECORD_ID","title":"Discovery call","content":"Discussed the launch plan.","format":"plaintext"}'
-uvx gtm-attio notes update --json '{"note_id":"NOTE_ID","content":"Updated call notes."}'
+uvx attio notes list --json '{"parent_object":"people","parent_record_id":"RECORD_ID"}'
+uvx attio notes add --json '{"parent_object":"people","parent_record_id":"RECORD_ID","title":"Discovery call","content":"Discussed the launch plan.","format":"plaintext"}'
+uvx attio notes update --json '{"note_id":"NOTE_ID","content":"Updated call notes."}'
 ```
 
 ### Records
@@ -282,7 +283,7 @@ uvx gtm-attio notes update --json '{"note_id":"NOTE_ID","content":"Updated call 
 - Attio rejects a matching attribute that finds more than one record with `multiple_match_results`.
 
 ```bash
-uvx gtm-attio records upsert --json '{"object":"deals","matching_attribute":"external_id","values":{"external_id":["deal-1042"],"name":["Acme renewal"],"contact":[{"target_object":"people","email_addresses":[{"email_address":"ada@example.com"}]}]}}'
+uvx attio records upsert --json '{"object":"deals","matching_attribute":"external_id","values":{"external_id":["deal-1042"],"name":["Acme renewal"],"contact":[{"target_object":"people","email_addresses":[{"email_address":"ada@example.com"}]}]}}'
 ```
 
 ### Output envelope

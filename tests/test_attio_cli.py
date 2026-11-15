@@ -629,7 +629,7 @@ def test_root_help_explains_credential_precedence(capsys):
         ("/opt/venv/bin/attio", "attio"),
         ("/opt/venv/bin/gtm-attio", "gtm-attio"),
         ("/opt/venv/Scripts/attio.exe", "attio"),
-        ("/opt/venv/bin/pytest", "gtm-attio"),
+        ("/opt/venv/bin/pytest", "attio"),
     ],
 )
 def test_version_and_usage_echo_the_invoked_command(monkeypatch, capsys, argv0, prog):
