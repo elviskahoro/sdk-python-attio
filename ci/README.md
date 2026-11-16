@@ -8,6 +8,8 @@ ci/run.sh test [--junit-name NAME] [pytest args...]   # uv sync --frozen + pytes
 ci/run.sh pyright [--paths "attio_cli ci"]            # pyright 1.1.414 (Trunk pin)
 ci/run.sh pyrefly [--paths "attio_cli ci"]            # pyrefly 1.3.1 (Trunk pin)
 ci/run.sh all
+ci/run.sh release-status X.Y.Z                       # exit 0 when both packages have a wheel + sdist on PyPI
+ci/run.sh release-verify X.Y.Z                       # wait for PyPI, then uvx attio/gtm-attio --version
 ```
 
 Prerequisites: Docker and the `dagger` CLI **0.21.10** (kept in lockstep with

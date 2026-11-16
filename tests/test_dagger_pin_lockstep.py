@@ -2,7 +2,7 @@
 
 ``pyproject.toml`` pins ``dagger-io``; the three check workflows install the
 Dagger CLI (``v=`` in ``dagger-cli-install``) and pre-pull the matching engine
-image (``dagger-engine-warm``); ``.rwx/publish.yml`` installs the same CLI and
+image (``dagger-engine-warm``); ``.rwx/publish.yml`` and ``.rwx/release.yml`` install the same CLI and
 ``ci/README.md`` documents the version. A partial bump fails silently: bump
 the CLI pin alone and the warm task still runs (its ``use`` input changed) but
 pulls the old image, so the consuming task pays the cold pull anyway. This
@@ -14,6 +14,8 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
+
+import pytest
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 CHECK_WORKFLOWS = (".rwx/pytest.yml", ".rwx/pyright.yml", ".rwx/pyrefly.yml")
@@ -45,16 +47,17 @@ def test_check_workflow_dagger_pins_are_in_lockstep() -> None:
         )
 
 
-def test_publish_workflow_installs_the_same_dagger_cli() -> None:
+@pytest.mark.parametrize("workflow", [".rwx/publish.yml", ".rwx/release.yml"])
+def test_publish_workflow_installs_the_same_dagger_cli(workflow: str) -> None:
     version = _dagger_io_version()
-    text = (REPO_ROOT / ".rwx" / "publish.yml").read_text()
+    text = (REPO_ROOT / workflow).read_text()
     assert f"releases/{version}/dagger_v{version}_linux_amd64.tar.gz" in text, (
-        f".rwx/publish.yml no longer installs dagger {version}"
+        f"{workflow} no longer installs dagger {version}"
     )
 
 
 def test_dagger_tarball_checksums_are_identical() -> None:
-    workflows = CHECK_WORKFLOWS + (".rwx/publish.yml",)
+    workflows = CHECK_WORKFLOWS + (".rwx/publish.yml", ".rwx/release.yml")
     checksums = {
         workflow: _dagger_tarball_checksum((REPO_ROOT / workflow).read_text())
         for workflow in workflows

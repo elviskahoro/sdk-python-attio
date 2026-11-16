@@ -65,8 +65,8 @@ This applies the overlay to the spec and regenerates all SDK code under `generat
 `speakeasy run` rewrites `generated/` from scratch, so it drops the manual patches
 that `overlay.yaml` cannot express, e.g. the GET /v2/self `active` value
 discriminators on `AttioCom` and `ResponseBody` in
-`generated/src/attio/models/get_v2_selfop.py`, the `scripts/publish.sh` and
-`scripts/release.sh` wrappers, the `attio`/`gtm-attio` CLI entry points, CLI
+`generated/src/attio/models/get_v2_selfop.py`, the `scripts/publish.sh`
+wrapper, the `attio`/`gtm-attio` CLI entry points, CLI
 docs and synced `version` in `pyproject.toml` and `README.md` (Speakeasy never
 writes those root files; `generated/.genignore` blocks its copies), the SDKHooks
 `init_hooks` wiring and

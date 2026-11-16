@@ -26,16 +26,15 @@ Patch: ``generated/src/attio/models/get_v2_selfop.py``
     (``active`` must be ``True``) and ``ResponseBody`` (``active`` must be
     ``False``) are re-added here to restore the discriminating invariant.
 
-Patch: ``scripts/publish.sh`` and ``scripts/release.sh`` wrappers
+Patch: ``scripts/publish.sh`` wrapper
 
     Speakeasy regenerates ``scripts/`` with its own templates, which in the
     2026-10 regeneration silently reverted ``scripts/publish.sh`` to a naive
     ``uv build && uv publish --token`` script, dropping the dual
     attio/gtm-attio release pipeline. ``.genignore`` now excludes ``scripts/``
-    from generation, and this script additionally rewrites both wrappers to
-    their canonical delegating form (the real implementations live in
-    ``ci/publish.sh`` / ``ci/release.sh``, which the generator never
-    touches) so a regeneration can never again ship the naive script — worst
+    from generation, and this script additionally rewrites the wrapper to
+    its canonical delegating form (the real implementation lives in
+    ``ci/publish.sh``, which the generator never touches) so a regeneration can never again ship the naive script — worst
     case it is restored here, loudly.
 
     Note: the pipeline's Dagger generation path exports only ``generated/`` back
@@ -136,7 +135,6 @@ _AFTER_ERROR_HOOKS_ANCHOR = "self.after_error_hooks: List[AfterErrorHook] = []"
 # scripts/ wrappers -> the ci/ implementation each wrapper must delegate to.
 WRAPPER_IMPLS = {
     REPO_ROOT / "scripts" / "publish.sh": "ci/publish.sh",
-    REPO_ROOT / "scripts" / "release.sh": "ci/release.sh",
 }
 
 _WRAPPER_TEMPLATE = """#!/usr/bin/env bash
