@@ -1,6 +1,6 @@
 """Dagger pin lockstep across the repo.
 
-``pyproject.toml`` pins ``dagger-io``; the four check workflows install the
+``pyproject.toml`` pins ``dagger-io``; the five check workflows install the
 Dagger CLI (``v=`` in ``dagger-cli-install``) and pre-pull the matching engine
 image (``dagger-engine-warm``); ``.rwx/publish.yml`` and ``.rwx/release.yml`` install the same CLI and
 ``ci/README.md`` documents the version. A partial bump fails silently: bump
@@ -23,6 +23,7 @@ CHECK_WORKFLOWS = (
     ".rwx/pyright.yml",
     ".rwx/pyrefly.yml",
     ".rwx/spec-update-check.yml",
+    ".rwx/regenerate.yml",
 )
 
 
