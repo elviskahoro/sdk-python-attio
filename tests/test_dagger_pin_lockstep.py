@@ -18,7 +18,12 @@ from pathlib import Path
 import pytest
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-CHECK_WORKFLOWS = (".rwx/pytest.yml", ".rwx/pyright.yml", ".rwx/pyrefly.yml")
+CHECK_WORKFLOWS = (
+    ".rwx/pytest.yml",
+    ".rwx/pyright.yml",
+    ".rwx/pyrefly.yml",
+    ".rwx/spec-update-check.yml",
+)
 
 
 def _dagger_io_version() -> str:
