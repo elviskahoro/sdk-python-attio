@@ -5,12 +5,12 @@ management:
   docVersion: 2.0.0
   speakeasyVersion: 1.804.0
   generationVersion: 2.952.5
-  releaseVersion: 0.28.9
-  configChecksum: cabd241cc9e7e16aa1f94abd810afbd2
+  releaseVersion: 0.28.10
+  configChecksum: 39bb7cfa274ac9609b839f2ba077126c
 persistentEdits:
-  generation_id: 4332d4bc-783a-45cf-927a-ca48e2de940d
-  pristine_commit_hash: 4239dd30e383f751b1ef70d6b4daddff53b05d3e
-  pristine_tree_hash: 6f7fff8126dfb85804254bcaf92b7f9088936365
+  generation_id: 4a9bc586-5e12-41fe-acfc-3a4d3dd2d486
+  pristine_commit_hash: 417160d7735e4ae65debcd7676469b705e4bbb9e
+  pristine_tree_hash: 64410706c251c5597aec7f0499a035de21cd12ff
 features:
   python:
     additionalDependencies: 1.1.0
@@ -12561,8 +12561,8 @@ trackedFiles:
     pristine_git_object: 07fce86de71e75fc33b319175a2b1e576d7ca370
   src/attio/_version.py:
     id: 601b0c828c8d
-    last_write_checksum: sha1:eb30ef22a0e911e08a1446ed60758740714439f4
-    pristine_git_object: 5d75a180f4cc35e3bb034d25a4b0c012ec184763
+    last_write_checksum: sha1:923a0bde5c3b97eb732214c397c0d804ec7237a3
+    pristine_git_object: 5b57e60fac97aeb26e29522151fcc31477280778
   src/attio/activities.py:
     id: b43e8ae24d8e
     last_write_checksum: sha1:e697e2847c81186670fd69e63f040a0866970d4c

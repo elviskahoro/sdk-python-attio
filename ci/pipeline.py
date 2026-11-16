@@ -66,7 +66,7 @@ if under != expected:
     print(f"_version.py __version__ {under} does not match {expected}", file=sys.stderr)
     fail = True
 if fail:
-    sys.exit("Version mismatch. Run scripts/release.sh to bump both files in lockstep.")
+    sys.exit("Version mismatch. Bump through the regeneration pipeline to keep both files in lockstep.")
 """
 
 _RELEASE_BUMP_SCRIPT = r"""
@@ -596,8 +596,8 @@ class AttioSDKPipeline:
         """Verify pyproject.toml and generated/src/attio/_version.py match the expected version.
 
         Used by the release workflow before publishing to PyPI to catch tags
-        that drift from the in-tree version. Run scripts/release.sh <version>
-        to fix any mismatch.
+        that drift from the in-tree version. Bump through the
+        regeneration pipeline to fix any mismatch.
         """
         return await (
             dag.container()
@@ -620,8 +620,8 @@ class AttioSDKPipeline:
         """Rewrite pyproject.toml + generated/src/attio/_version.py to the target version.
 
         Returns the patched repo as a Directory so the caller can export the
-        files back to the host (the git commit/tag/push lives in
-        scripts/release.sh, not inside the container).
+        files back to the host (the git commit happens on
+        the host, not inside the container).
         """
         return (
             dag.container()
@@ -963,7 +963,7 @@ async def cmd_release_bump(version: str) -> None:
     """CLI handler for release-bump command.
 
     Bumps the version inside a container, then exports the patched files back
-    to the host so the caller (scripts/release.sh) can commit, tag, and push.
+    to the host so the caller can commit them.
     """
     import os
 

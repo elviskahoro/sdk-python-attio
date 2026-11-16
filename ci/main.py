@@ -1,8 +1,10 @@
-"""Portable CI core: pytest, pyright and pyrefly run in Dagger containers.
+"""Portable CI core: pytest, pyright, pyrefly and the release checks run in
+Dagger containers.
 
 Plain Dagger SDK program (no module). Run through the engine session:
 
     dagger run python ci/main.py <test|pyright|pyrefly|all> [options]
+    dagger run python ci/main.py <release-status|release-verify> X.Y.Z
 
 The same command runs locally (Docker + ``dagger`` CLI) and in RWX. RWX owns
 caching of everything before this step; locally Dagger uses its own engine cache.
@@ -16,6 +18,7 @@ import argparse
 import asyncio
 import os
 import sys
+import time
 from pathlib import Path
 
 import dagger
@@ -133,6 +136,62 @@ async def cmd_all(ns: argparse.Namespace) -> int:
     return max(codes)
 
 
+def _release_base() -> dagger.Container:
+    """Python + uv with only the stdlib PyPI checker; no repo sync needed.
+
+    PyPI is external state, so a per-call cache buster stops Dagger from
+    replaying an earlier answer for the same version.
+    """
+    return (
+        dag.container()
+        .from_(PYTHON_IMAGE)
+        .with_exec(["pip", "install", "--no-cache-dir", f"uv=={UV_VERSION}"])
+        .with_workdir("/repo")
+        .with_file(
+            "/repo/ci/pypi_release_status.py",
+            dag.host().file(str(REPO_ROOT / "ci" / "pypi_release_status.py")),
+        )
+        .with_env_variable("CACHE_BUSTER", str(time.time_ns()))
+    )
+
+
+async def cmd_release_status(ns: argparse.Namespace) -> int:
+    """Exit 0 when both packages have a wheel and sdist on PyPI, 1 when not,
+    2 when PyPI could not be read (see ci/pypi_release_status.py).
+    """
+    return await _run(
+        _release_base(),
+        ["python", "ci/pypi_release_status.py", ns.version],
+    )
+
+
+# Wait for every file (wheel + sdist, both packages), ~10 minutes, then
+# smoke-test both commands; the CDN can lag the JSON API, so retry installs.
+_RELEASE_VERIFY_SCRIPT = r"""
+set -eu
+for attempt in $(seq 1 60); do
+  if python ci/pypi_release_status.py "$VERSION"; then break; fi
+  if [ "$attempt" -eq 60 ]; then
+    echo "attio and gtm-attio $VERSION were not complete on PyPI within 10 minutes" >&2
+    exit 1
+  fi
+  sleep 10
+done
+for cmd in attio gtm-attio; do
+  for attempt in 1 2 3 4 5 6; do
+    if uvx --refresh "$cmd@$VERSION" --version; then break; fi
+    if [ "$attempt" -eq 6 ]; then echo "uvx $cmd@$VERSION --version failed" >&2; exit 1; fi
+    sleep 20
+  done
+done
+"""
+
+
+async def cmd_release_verify(ns: argparse.Namespace) -> int:
+    ctr = _release_base().with_env_variable("VERSION", ns.version)
+    return await _run(ctr, ["sh", "-c", _RELEASE_VERIFY_SCRIPT])
+
+
 def _parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="ci/main.py")
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -148,6 +207,13 @@ def _parser() -> argparse.ArgumentParser:
             default=os.environ.get("CHECK_PATHS", DEFAULT_TYPE_PATHS),
         )
         sp.add_argument("pytest_args", nargs="*", help="extra pytest args (test/all)")
+    for name, fn in (
+        ("release-status", cmd_release_status),
+        ("release-verify", cmd_release_verify),
+    ):
+        sp = sub.add_parser(name)
+        sp.set_defaults(fn=fn)
+        sp.add_argument("version", help="release version, e.g. 0.28.9")
     return p
 
 

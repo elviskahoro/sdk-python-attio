@@ -66,13 +66,37 @@ tasks:
     use: python
     run: pip install uv==0.11.26
 
+  # The PyPI checks and smoke tests run in Dagger (ci/main.py release-status /
+  # release-verify); RWX keeps only the git and secret-holding steps.
+  - key: dagger-cli
+    use: uv
+    run: |
+      # Fixed release, SHA-256 verified; keep in step with publish.yml and
+      # dagger-io in uv.lock.
+      curl -fsSL -o /tmp/dagger.tgz https://dl.dagger.io/dagger/releases/0.21.10/dagger_v0.21.10_linux_amd64.tar.gz
+      echo "f9ee083767dd12cdac583f9db3fedbebbbb3064f69152998be1f121d1a6cc103  /tmp/dagger.tgz" | sha256sum -c -
+      mkdir -p "$HOME/.local/bin"
+      tar -xzf /tmp/dagger.tgz -C "$HOME/.local/bin" dagger
+      echo "$HOME/.local/bin" >> "$RWX_ENV/PATH"
+
+  - key: sync
+    use: [code, dagger-cli]
+    run: uv sync
+    filter:
+      - pyproject.toml
+      - uv.lock
+
   # Uncached: PyPI and the remote tags are external state that changes
   # between runs at the same commit.
   - key: preflight
-    use: [code, python]
+    use: sync
     cache: false
+    timeout: 30m
+    docker: true
     env:
       COMMIT_SHA: ${{ init.commit-sha }}
+      DAGGER_PROGRESS: plain
+      OTEL_SDK_DISABLED: "true"
     run: |
       set -euo pipefail
       version="$(python3 -c 'import tomllib; print(tomllib.load(open("pyproject.toml", "rb"))["project"]["version"])')"
@@ -83,7 +107,7 @@ tasks:
       # upload from an earlier run still goes through publish (which skips the
       # files already there). Exit 1 = missing/incomplete, 2 = PyPI unreadable.
       status=0
-      python3 ci/pypi_release_status.py "${version}" || status=$?
+      ci/run.sh release-status "${version}" || status=$?
       case "${status}" in
         0) published=true ;;
         1) published=false ;;
@@ -159,36 +183,14 @@ tasks:
   # Timeout covers the worst case: ~10m of PyPI polling plus ~2m of uvx
   # retries, with headroom so a slow but successful release never ends red.
   - key: verify
-    use: [code, uv]
+    use: sync
     if: ${{ tasks.preflight.values.published != 'true' }}
     after: [publish]
     cache: false
     timeout: 30m
+    docker: true
     env:
       VERSION: ${{ tasks.preflight.values.version }}
-    run: |
-      set -euo pipefail
-      # Wait for every file (wheel + sdist, both packages); ~10 minutes.
-      for attempt in $(seq 1 60); do
-        if python3 ci/pypi_release_status.py "${VERSION}"; then
-          break
-        fi
-        if [ "${attempt}" -eq 60 ]; then
-          echo "attio and gtm-attio ${VERSION} were not complete on PyPI within 10 minutes" >&2
-          exit 1
-        fi
-        sleep 10
-      done
-      # The CDN can lag the JSON API, so retry the installs briefly.
-      for cmd in attio gtm-attio; do
-        for attempt in 1 2 3 4 5 6; do
-          if uvx --refresh "${cmd}@${VERSION}" --version; then
-            break
-          fi
-          if [ "${attempt}" -eq 6 ]; then
-            echo "uvx ${cmd}@${VERSION} --version failed" >&2
-            exit 1
-          fi
-          sleep 20
-        done
-      done
+      DAGGER_PROGRESS: plain
+      OTEL_SDK_DISABLED: "true"
+    run: ci/run.sh release-verify "${VERSION}"

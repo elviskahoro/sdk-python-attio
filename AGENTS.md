@@ -123,8 +123,8 @@ never set it in CI or automation, and fix the overlay afterwards.
    workflow's path; pinned Dagger container otherwise), then re-applies
    `ci/post_generate_patch.py` (manual patches `overlay.yaml` cannot
    express, e.g. the GET /v2/self `active` value discriminators in
-   `generated/src/attio/models/get_v2_selfop.py`, the `scripts/publish.sh` and
-   `scripts/release.sh` wrappers, the `attio`/`gtm-attio` CLI entry points,
+   `generated/src/attio/models/get_v2_selfop.py`, the `scripts/publish.sh`
+   wrapper, the `attio`/`gtm-attio` CLI entry points,
    the CLI docs and the synced `version` in `pyproject.toml` and
    `README.md`, SDKHooks `init_hooks` wiring plus
    the hooks-package re-export in `generated/src/attio/_hooks/sdkhooks.py` and
@@ -211,13 +211,11 @@ the CLI can do here:
 - `rwx results`, `rwx logs`, `rwx artifacts` inspect runs; `rwx retry` and
   `rwx cancel` manage them.
 - `rwx dispatch regenerate --ref main` regenerates the SDK without Speakeasy.
-- `scripts/release.sh [--bump | X.Y.Z] [--dry-run]` releases end to end from a
-  clean `main`: optional version bump (no-op regeneration, landed as an
-  auto-merged PR), annotated `vX.Y.Z` tag, the `publish` dispatch below, then
-  waits for both packages on PyPI and smoke-tests them with `uvx`. Re-runs skip
-  an existing matching tag and already-published versions.
 - `rwx dispatch release --ref main --wait` releases the version already
-  committed on `main` with no local steps (`.rwx/release.yml`): preflight
+  committed on `main` with no local steps (`.rwx/release.yml`; there is no
+  local release script). The PyPI checks and `uvx` smoke tests run in Dagger
+  (`ci/run.sh release-status|release-verify X.Y.Z`); only the tag push and the
+  uploads stay in RWX, next to their vault secrets. Preflight
   (exits green once both packages have a wheel and sdist on PyPI; a partial
   upload still publishes) -> annotated `vX.Y.Z` tag
   (reused if it exists, never moved) -> the `publish.yml` chain embedded at that

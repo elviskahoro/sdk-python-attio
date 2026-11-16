@@ -32,7 +32,7 @@ generation:
     generateNewTests: true
     skipResponseBodyAssertions: false
 python:
-  version: 0.28.9
+  version: 0.28.10
   additionalDependencies:
     dev:
       dagger-io: '>=0.20.5'
