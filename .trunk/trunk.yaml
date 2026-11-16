@@ -66,6 +66,16 @@ lint:
           enabled: true
         - name: lint
           enabled: true
+    # The plugin definition runs markdown-link-check bare (`-q "${target}"`),
+    # so a repo-root config is never picked up; pass one explicitly. The
+    # exemptions cover link targets that only exist inside the assembled
+    # gitignored tmp/docs-src tree (section index pages) and the Netlify site,
+    # which answers anonymous visitors with an edge-access login until its
+    # access control is lifted.
+    - name: markdown-link-check
+      commands:
+        - name: lint
+          run: markdown-link-check -q --config ${workspace}/.markdownlinkcheck.json "${target}"
 
   # Deviation from the reference config: Vale and its custom docs-markdown
   # file type are not enabled here. The reference scopes Vale to docs/** via

@@ -1,0 +1,13 @@
+{
+  "ignorePatterns": [
+    {
+      "pattern": "^https://attio-sdk\\.netlify\\.app"
+    },
+    {
+      "pattern": "^(sdks|models|errors)/index\\.md$"
+    },
+    {
+      "pattern": "^/(index\\.html|sdks/|models/|errors/)"
+    }
+  ]
+}

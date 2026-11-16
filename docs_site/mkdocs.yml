@@ -1,0 +1,12 @@
+site_name: Attio Python SDK
+site_url: https://attio-sdk.netlify.app/
+repo_url: https://github.com/elviskahoro/sdk-python-attio
+# docs_dir and nav are filled in by scripts/build_docs.py (assembled tree).
+docs_dir: ../tmp/docs-src
+site_dir: ../site
+use_directory_urls: false
+theme:
+  name: material
+  features: [navigation.sections, navigation.top, search.suggest]
+plugins:
+  - search
