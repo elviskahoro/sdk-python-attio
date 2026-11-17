@@ -55,6 +55,14 @@ Patch: ``pyproject.toml`` and ``README.md``
     ``generated/src/attio/_version.py`` because Speakeasy's patch bump never
     reaches the root file. Run ``uv lock`` afterwards so ``uv.lock`` follows.
 
+Patch: ``generated/src/attio/sdk.py``
+
+    Attio calls the credential an API key, but the generated ``SDK.__init__``
+    only takes ``oauth2=``, so ``SDK(api_key=...)`` raised a bare
+    ``TypeError``. The security-scheme key is not overlay-expressible, so this
+    script makes ``oauth2`` optional, adds ``api_key`` as an alias, and raises
+    ``TypeError`` when both or neither are passed.
+
 Patch: ``generated/src/attio/_hooks/sdkhooks.py`` and ``generated/src/attio/_hooks/__init__.py``
 
     ``registration.py`` is a one-time-generated, maintainer-editable
@@ -684,7 +692,9 @@ def ensure_init_hooks_wiring(path: Path) -> bool:
 
 
 _API_KEY_SIGNATURE_OLD = "        oauth2: Union[str, Callable[[], str]],\n"
-_API_KEY_SIGNATURE_NEW = "        oauth2: Optional[Union[str, Callable[[], str]]] = None,\n"
+_API_KEY_SIGNATURE_NEW = (
+    "        oauth2: Optional[Union[str, Callable[[], str]]] = None,\n"
+)
 _API_KEY_LAST_PARAM_OLD = (
     "        debug_logger: Optional[Logger] = None,\n    ) -> None:\n"
 )

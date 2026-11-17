@@ -37,6 +37,7 @@ import yaml
 REPO_ROOT = Path(__file__).resolve().parent.parent
 PATCH_SCRIPT = REPO_ROOT / "ci" / "post_generate_patch.py"
 COMMITTED_MODEL = REPO_ROOT / "generated" / "src" / "attio" / "models" / "get_v2_selfop.py"
+FIXTURE_SDK_UNPATCHED = REPO_ROOT / "tests" / "fixtures" / "sdk_unpatched.txt"
 FIXTURE_UNPATCHED = REPO_ROOT / "tests" / "fixtures" / "get_v2_selfop_unpatched.txt"
 UTILS_INIT_COMMITTED = REPO_ROOT / "generated" / "src" / "attio" / "utils" / "__init__.py"
 UTILS_INIT_UNPATCHED = REPO_ROOT / "tests" / "fixtures" / "utils_init_unpatched.txt"
@@ -751,33 +752,35 @@ def test_remove_open_enum_meta_subprocess_is_noop_on_committed_tree() -> None:
     assert not (REPO_ROOT / "generated" / "src" / "attio" / "utils" / "enums.py").exists()
 
 
-def _load_patch_module():
-    spec = importlib.util.spec_from_file_location("post_generate_patch_api_key", PATCH_SCRIPT)
-    assert spec is not None and spec.loader is not None
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
-
-
 def test_api_key_alias_patch_is_idempotent() -> None:
-    module = _load_patch_module()
-    assert module.ensure_api_key_alias(module.SDK_PATH) is False
+    assert PGP.ensure_api_key_alias(PGP.SDK_PATH) is False
 
 
 def test_api_key_alias_patch_fails_on_layout_drift(tmp_path: Path) -> None:
-    module = _load_patch_module()
     drifted = tmp_path / "sdk.py"
     drifted.write_text("class SDK:\n    pass\n")
     with pytest.raises(RuntimeError, match="post-generation patch"):
-        module.ensure_api_key_alias(drifted)
+        PGP.ensure_api_key_alias(drifted)
 
 
 def test_sdk_api_key_is_alias_for_oauth2() -> None:
     from attio import SDK
 
-    for kwargs in ({"api_key": "k"}, {"oauth2": "k"}):
-        sdk = SDK(**kwargs)
-        assert sdk.sdk_configuration.security.oauth2 == "k"
+    for sdk in (SDK(api_key="k"), SDK(oauth2="k")):
+        security = sdk.sdk_configuration.security
+        assert not callable(security)
+        assert security is not None
+        assert security.oauth2 == "k"
+
+
+def test_api_key_alias_patch_applies_to_unpatched_and_matches_committed(
+    tmp_path: Path,
+) -> None:
+    target = tmp_path / "sdk.py"
+    target.write_text(FIXTURE_SDK_UNPATCHED.read_text())
+    assert PGP.ensure_api_key_alias(target) is True
+    assert target.read_text() == PGP.SDK_PATH.read_text()
+    assert PGP.ensure_api_key_alias(target) is False
 
 
 def test_sdk_rejects_both_or_neither_credential() -> None:
