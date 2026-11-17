@@ -33,9 +33,22 @@ def pp(label: str, obj):
 
 def main():
     from attio import SDK
+    from attio.utils import BackoffStrategy, RetryConfig
+
+    # The default httpx 5s read timeout is too short for the people query.
+    retry = RetryConfig(
+        "backoff",
+        BackoffStrategy(
+            initial_interval=500,
+            max_interval=60_000,
+            exponent=1.5,
+            max_elapsed_time=120_000,
+        ),
+        retry_connection_errors=True,
+    )
 
     token = load_token()
-    with SDK(oauth2=token) as sdk:
+    with SDK(oauth2=token, retry_config=retry, timeout_ms=60_000) as sdk:
 
         # 1. Identify workspace
         print("\n[1/6] Identifying workspace...")
