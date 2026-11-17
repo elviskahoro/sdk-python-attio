@@ -2,6 +2,9 @@
 
 ## Unreleased — 2026-10-05
 
+Adds `api_key=` as an alias for `oauth2=` on `SDK()` (0.28.11); passing both or
+neither raises `TypeError`. The README now documents looking up a person by email.
+
 Makes `attio` the default name everywhere: the README now leads with
 `pip install attio` and `uvx attio …`, and the CLI's `usage:` and
 `--version` say `attio` when it can't tell which command ran it (e.g.

@@ -124,7 +124,8 @@ never set it in CI or automation, and fix the overlay afterwards.
    `ci/post_generate_patch.py` (manual patches `overlay.yaml` cannot
    express, e.g. the GET /v2/self `active` value discriminators in
    `generated/src/attio/models/get_v2_selfop.py`, the `scripts/publish.sh`
-   wrapper, the `attio`/`gtm-attio` CLI entry points,
+   wrapper, the `SDK(api_key=...)` alias for `SDK(oauth2=...)` in
+   `generated/src/attio/sdk.py`, the `attio`/`gtm-attio` CLI entry points,
    the CLI docs and the synced `version` in `pyproject.toml` and
    `README.md`, SDKHooks `init_hooks` wiring plus
    the hooks-package re-export in `generated/src/attio/_hooks/sdkhooks.py` and

@@ -296,7 +296,7 @@ Exit codes:
 
 ## Authentication
 
-Every request needs an Attio access token, which you pass as `oauth2`. Despite the parameter name, it accepts either kind of [Attio access token](https://docs.attio.com/rest-api/guides/authentication):
+Every request needs an Attio access token, which you pass as `api_key` (`oauth2` is an equivalent alias; pass only one). It accepts either kind of [Attio access token](https://docs.attio.com/rest-api/guides/authentication):
 
 - **API key:** a single-workspace token. Generate it in the developer settings of an app in your workspace.
 - **OAuth 2.0 access token:** for an app installed in several workspaces.
@@ -306,9 +306,23 @@ import os
 
 from attio import SDK
 
-with SDK(oauth2=os.environ["ATTIO_API_KEY"]) as sdk:
+with SDK(api_key=os.environ["ATTIO_API_KEY"]) as sdk:
     print(sdk.meta.get_v2_self())  # which workspace and scopes the token has
 ```
+
+### Look up a person by email
+
+```python
+with SDK(api_key=os.environ["ATTIO_API_KEY"]) as sdk:
+    res = sdk.records.post_v2_objects_object_records_query(
+        object="people",
+        filter_={"email_addresses": "ada@example.com"},
+        limit=1,
+    )
+    person = res.data[0] if res.data else None
+```
+
+From the shell, `uvx attio people search ada@example.com` does the same.
 
 Tokens carry scopes. Each method's reference page lists the scopes it needs under "Required scopes", and a 403 usually means one of them is missing.
 
