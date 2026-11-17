@@ -749,3 +749,41 @@ def test_remove_open_enum_meta_subprocess_is_noop_on_committed_tree() -> None:
     assert result.returncode == 0, result.stderr
     assert UTILS_INIT_COMMITTED.read_text() == init_before
     assert not (REPO_ROOT / "generated" / "src" / "attio" / "utils" / "enums.py").exists()
+
+
+def _load_patch_module():
+    spec = importlib.util.spec_from_file_location("post_generate_patch_api_key", PATCH_SCRIPT)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_api_key_alias_patch_is_idempotent() -> None:
+    module = _load_patch_module()
+    assert module.ensure_api_key_alias(module.SDK_PATH) is False
+
+
+def test_api_key_alias_patch_fails_on_layout_drift(tmp_path: Path) -> None:
+    module = _load_patch_module()
+    drifted = tmp_path / "sdk.py"
+    drifted.write_text("class SDK:\n    pass\n")
+    with pytest.raises(RuntimeError, match="post-generation patch"):
+        module.ensure_api_key_alias(drifted)
+
+
+def test_sdk_api_key_is_alias_for_oauth2() -> None:
+    from attio import SDK
+
+    for kwargs in ({"api_key": "k"}, {"oauth2": "k"}):
+        sdk = SDK(**kwargs)
+        assert sdk.sdk_configuration.security.oauth2 == "k"
+
+
+def test_sdk_rejects_both_or_neither_credential() -> None:
+    from attio import SDK
+
+    with pytest.raises(TypeError, match="not both"):
+        SDK(api_key="a", oauth2="b")
+    with pytest.raises(TypeError, match="requires api_key"):
+        SDK()
