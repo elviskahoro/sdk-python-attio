@@ -1,5 +1,10 @@
 # Attio SDK Python
 
+## Issue claims
+
+Before starting work on an issue, follow
+https://github.com/elviskahoro/oss-hq/blob/main/AGENT-LABELS.md
+
 ## Beads Issue Tracking
 
 - This repository uses Beads with the DoltHub remote `elviskahoro/sdk-python-attio`.
