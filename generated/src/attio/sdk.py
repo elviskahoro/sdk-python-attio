@@ -111,7 +111,7 @@ class SDK(BaseSDK):
 
     def __init__(
         self,
-        oauth2: Union[str, Callable[[], str]],
+        oauth2: Optional[Union[str, Callable[[], str]]] = None,
         server_idx: Optional[int] = None,
         url_params: Optional[Dict[str, str]] = None,
         server_url: Optional[str] = None,
@@ -120,10 +120,12 @@ class SDK(BaseSDK):
         retry_config: OptionalNullable[RetryConfig] = UNSET,
         timeout_ms: Optional[int] = None,
         debug_logger: Optional[Logger] = None,
+        api_key: Optional[Union[str, Callable[[], str]]] = None,
     ) -> None:
         r"""Instantiates the SDK configuring it with the provided parameters.
 
         :param oauth2: The oauth2 required for authentication
+        :param api_key: Alias for oauth2; an Attio API key or OAuth access token
         :param server_idx: The index of the server to use for all methods
         :param server_url: The server URL to use for all methods
         :param url_params: Parameters to optionally template the server URL with
@@ -152,6 +154,13 @@ class SDK(BaseSDK):
         assert issubclass(
             type(async_client), AsyncHttpClient
         ), "The provided async_client must implement the AsyncHttpClient protocol."
+
+        if oauth2 is not None and api_key is not None:
+            raise TypeError("pass either api_key or oauth2, not both")
+        if oauth2 is None:
+            oauth2 = api_key
+        if oauth2 is None:
+            raise TypeError("SDK() requires api_key (or its alias oauth2)")
 
         security: Any = None
         if oauth2 is None:

@@ -35,20 +35,19 @@ def main():
     from attio import SDK
     from attio.utils import BackoffStrategy, RetryConfig
 
-    token = load_token()
-    # Record queries on large workspaces can exceed the default read timeout
-    # (issue #170). retry_connection_errors is required for httpx.ReadTimeout
-    # to be retried; the queries are read-only so retrying is safe.
+    # The default httpx 5s read timeout is too short for the people query.
     retry = RetryConfig(
         "backoff",
         BackoffStrategy(
             initial_interval=500,
-            max_interval=5_000,
+            max_interval=60_000,
             exponent=1.5,
             max_elapsed_time=120_000,
         ),
         retry_connection_errors=True,
     )
+
+    token = load_token()
     with SDK(oauth2=token, retry_config=retry, timeout_ms=60_000) as sdk:
 
         # 1. Identify workspace

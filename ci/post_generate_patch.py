@@ -55,6 +55,14 @@ Patch: ``pyproject.toml`` and ``README.md``
     ``generated/src/attio/_version.py`` because Speakeasy's patch bump never
     reaches the root file. Run ``uv lock`` afterwards so ``uv.lock`` follows.
 
+Patch: ``generated/src/attio/sdk.py``
+
+    Attio calls the credential an API key, but the generated ``SDK.__init__``
+    only takes ``oauth2=``, so ``SDK(api_key=...)`` raised a bare
+    ``TypeError``. The security-scheme key is not overlay-expressible, so this
+    script makes ``oauth2`` optional, adds ``api_key`` as an alias, and raises
+    ``TypeError`` when both or neither are passed.
+
 Patch: ``generated/src/attio/_hooks/sdkhooks.py`` and ``generated/src/attio/_hooks/__init__.py``
 
     ``registration.py`` is a one-time-generated, maintainer-editable
@@ -116,6 +124,7 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 TARGET = REPO_ROOT / "generated" / "src" / "attio" / "models" / "get_v2_selfop.py"
+SDK_PATH = REPO_ROOT / "generated" / "src" / "attio" / "sdk.py"
 SDKHOOKS_PATH = REPO_ROOT / "generated" / "src" / "attio" / "_hooks" / "sdkhooks.py"
 HOOKS_INIT_PATH = REPO_ROOT / "generated" / "src" / "attio" / "_hooks" / "__init__.py"
 MODELS_DIR = REPO_ROOT / "generated" / "src" / "attio" / "models"
@@ -682,6 +691,70 @@ def ensure_init_hooks_wiring(path: Path) -> bool:
     return True
 
 
+_API_KEY_SIGNATURE_OLD = "        oauth2: Union[str, Callable[[], str]],\n"
+_API_KEY_SIGNATURE_NEW = (
+    "        oauth2: Optional[Union[str, Callable[[], str]]] = None,\n"
+)
+_API_KEY_LAST_PARAM_OLD = (
+    "        debug_logger: Optional[Logger] = None,\n    ) -> None:\n"
+)
+_API_KEY_LAST_PARAM_NEW = (
+    "        debug_logger: Optional[Logger] = None,\n"
+    "        api_key: Optional[Union[str, Callable[[], str]]] = None,\n"
+    "    ) -> None:\n"
+)
+_API_KEY_DOC_OLD = "        :param oauth2: The oauth2 required for authentication\n"
+_API_KEY_DOC_NEW = (
+    _API_KEY_DOC_OLD
+    + "        :param api_key: Alias for oauth2; an Attio API key or OAuth access token\n"
+)
+_API_KEY_BODY_ANCHOR = "        security: Any = None\n        if oauth2 is None:\n"
+_API_KEY_BODY_NEW = (
+    "        if oauth2 is not None and api_key is not None:\n"
+    '            raise TypeError("pass either api_key or oauth2, not both")\n'
+    "        if oauth2 is None:\n"
+    "            oauth2 = api_key\n"
+    "        if oauth2 is None:\n"
+    '            raise TypeError("SDK() requires api_key (or its alias oauth2)")\n'
+    "\n" + _API_KEY_BODY_ANCHOR
+)
+
+
+def ensure_api_key_alias(path: Path) -> bool:
+    """Make ``SDK(api_key=...)`` an alias for ``SDK(oauth2=...)``.
+
+    Attio calls the credential an API key, so ``api_key=`` is what callers
+    reach for; the generated constructor only takes ``oauth2=``. Returns
+    ``True`` if ``path`` was modified. Raises ``RuntimeError`` when the
+    generated constructor no longer matches the anchors.
+    """
+    text = path.read_text()
+    if "api_key: Optional[Union[str, Callable[[], str]]] = None" in text:
+        return False
+    for anchor in (
+        _API_KEY_SIGNATURE_OLD,
+        _API_KEY_LAST_PARAM_OLD,
+        _API_KEY_DOC_OLD,
+        _API_KEY_BODY_ANCHOR,
+    ):
+        if anchor not in text:
+            msg = (
+                "the generated SDK.__init__ no longer has the expected "
+                f"anchor {anchor!r}; the post-generation patch must be "
+                "updated for the new generated layout."
+            )
+            raise RuntimeError(msg)
+    text = (
+        text.replace(_API_KEY_SIGNATURE_OLD, _API_KEY_SIGNATURE_NEW, 1)
+        .replace(_API_KEY_LAST_PARAM_OLD, _API_KEY_LAST_PARAM_NEW, 1)
+        .replace(_API_KEY_DOC_OLD, _API_KEY_DOC_NEW, 1)
+        .replace(_API_KEY_BODY_ANCHOR, _API_KEY_BODY_NEW, 1)
+    )
+    compile(text, str(path), "exec")
+    path.write_text(text)
+    return True
+
+
 def ensure_hooks_package_reexport(path: Path) -> bool:
     """Restore the ``from .registration import *`` re-export in the hooks package.
 
@@ -1046,6 +1119,7 @@ def main() -> int:
     # anchor raises here without leaving a naive publish script in the tree.
     for path, ensure, name in (
         (SDKHOOKS_PATH, ensure_init_hooks_wiring, "SDKHooks init_hooks wiring"),
+        (SDK_PATH, ensure_api_key_alias, "SDK api_key alias"),
         (
             HOOKS_INIT_PATH,
             ensure_hooks_package_reexport,
