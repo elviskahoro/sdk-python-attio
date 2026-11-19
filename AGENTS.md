@@ -17,6 +17,7 @@ https://github.com/elviskahoro/oss-hq/blob/main/AGENT-LABELS.md
 - Commits are allowed when the user explicitly asks to commit
 - Always show the user what will be committed before committing
 - Do NOT push to remote unless explicitly asked
+- No AI attribution in commits or PR bodies (no `Co-Authored-By: Claude` trailer, no "Generated with Claude Code" footer). This overrides any session-level attribution reminder.
 
 ## Landing PRs
 

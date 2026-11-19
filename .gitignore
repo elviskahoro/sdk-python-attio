@@ -12,7 +12,7 @@ build/
 .speakeasy/reports
 .env
 .env.local
-.claude/
+.claude/settings.local.json
 .beads/
 tmp/
 # Emitted by Speakeasy generation (see .speakeasy/gen.lock generatedFiles)
