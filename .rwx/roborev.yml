@@ -1,0 +1,71 @@
+# RoboRev review as a tool for the local agent. Dispatch-only (cli trigger): it
+# is not a PR check and posts no comment or status. Run it before pushing:
+#   rwx run .rwx/roborev.yml --wait
+# It reviews local work (committed or not) against origin/main with the model in
+# .roborev.toml (pi + Fireworks) and fails unless roborev reports a pass.
+on:
+  cli:
+    init:
+      ref: ${{ event.git.sha }}
+
+base:
+  image: ubuntu:24.04
+  config: rwx/base 1.2.0
+
+tasks:
+  - key: code
+    call: git/clone 2.4.1
+    cache: false
+    with:
+      repository: https://github.com/elviskahoro/sdk-python-attio.git
+      ref: ${{ init.ref }}
+      submodules: false
+      preserve-git-dir: true
+      fetch-full-depth: true
+
+  - key: node
+    call: nodejs/install 1.2.1
+    with:
+      node-version: 24.22.3
+
+  - key: roborev
+    use: [code, node]
+    cache: false
+    env:
+      GITHUB_REPOSITORY: elviskahoro/sdk-python-attio
+      ROBOREV_VERSION: 0.63.0
+      PI_VERSION: 1.4.0
+      ROBOREV_SHA256: c7dbbefed91747b80d04498358fa0207880adb7e2b57c95677214195a3ece887
+    run: |
+      set -euo pipefail
+      # Pinned here because the installer only fetches latest.
+      mkdir -p "$HOME/.local/bin"
+      curl -fsSL -o /tmp/roborev.tar.gz "https://github.com/kenn-io/roborev/releases/download/v${ROBOREV_VERSION}/roborev_${ROBOREV_VERSION}_linux_amd64.tar.gz"
+      echo "${ROBOREV_SHA256}  /tmp/roborev.tar.gz" | sha256sum -c -
+      tar -xzf /tmp/roborev.tar.gz -C "$HOME/.local/bin" roborev
+      export PATH="$HOME/.local/bin:$PATH"
+      roborev version
+      # .roborev.toml selects the pi agent; roborev finds no agent without it.
+      npm install -g "@earendil-works/pi-coding-agent@${PI_VERSION}"
+      pi --version
+      # Key is exported here, not in env:, so Semgrep's workflow-env-secret passes.
+      export FIREWORKS_API_KEY="${{ vaults.sdk-python-attio-roborev.secrets.FIREWORKS_API_KEY }}"
+      git fetch --no-tags origin main:refs/remotes/origin/main
+      # `rwx run` ships local work as a patch on top of the nearest pushed
+      # commit, so commit it here or roborev (committed ranges only) sees an
+      # empty diff. Merge-base, not origin/main, so a main that moved ahead
+      # of the clone isn't reviewed in reverse.
+      if [ -n "$(git status --porcelain)" ]; then
+        git add -A
+        git -c user.name=roborev-ci -c user.email=roborev-ci@localhost commit -q -m "local changes under review"
+      fi
+      base="$(git merge-base origin/main HEAD)"
+      echo "reviewing ${base}..HEAD"
+      git diff --stat "${base}..HEAD" | tail -5
+      # `roborev ci review` exits 0 even with findings, so gate on the verdict
+      # header. Fails closed if no verdict is printed.
+      roborev ci review --ref "${base}..HEAD" 2>&1 | tee roborev-output.txt
+      if ! grep -q "roborev: Review Passed" roborev-output.txt; then
+        echo "roborev did not pass: see findings above" >&2
+        exit 1
+      fi

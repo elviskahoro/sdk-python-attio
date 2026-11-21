@@ -311,6 +311,22 @@ code. Uploads run on main, merge-queue, manual and `elviskahoro` PRs only.
   binary that actually runs (no tarball digest is verified either way). Bump
   both deliberately.
 
+### RoboRev review (`.rwx/roborev.yml`)
+
+Dispatch-only review of local work, required before publishing a PR:
+
+```bash
+rwx run .rwx/roborev.yml --wait
+```
+
+- Reviews `merge-base(origin/main, HEAD)..HEAD` (uncommitted work is committed
+  inside the run) with the agent and model in `.roborev.toml` (pi + Fireworks).
+- Fails closed: a missing `roborev: Review Passed` line exits non-zero.
+- `ROBOREV_VERSION` and its `ROBOREV_SHA256` are pinned in the workflow; bump
+  both together.
+- `FIREWORKS_API_KEY` lives alone in the `sdk-python-attio-roborev` vault. Never
+  add another secret to it.
+
 ### Regenerating on RWX (`.rwx/regenerate.yml`)
 
 Use this when you have no Speakeasy CLI or container runtime locally. It
