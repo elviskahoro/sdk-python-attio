@@ -80,11 +80,12 @@ def _query_records(
     client: SDK,
     object_name: str,
     filter_: dict[str, Any],
+    limit: int = RECORD_QUERY_LIMIT,
 ) -> list[Any]:
     response = client.records.post_v2_objects_object_records_query(
         object=object_name,
         filter_=filter_,
-        limit=RECORD_QUERY_LIMIT,
+        limit=limit,
     )
     return list(response.data)
 
@@ -102,21 +103,61 @@ def _normalized_email(email: str) -> str:
     return normalized
 
 
-def search_people(email: str, client: SDK) -> dict[str, Any]:
-    normalized = _normalized_email(email)
-    matches = _query_records(client, "people", {"email_addresses": normalized})
-    result = _success_envelope(
-        "searched",
-        results=matches,
-        identity={"email": normalized},
-    )
-    if len(matches) == RECORD_QUERY_LIMIT:
+def search_people(
+    email: str | None,
+    client: SDK,
+    *,
+    name: str | None = None,
+    email_domain: str | None = None,
+    company: str | None = None,
+    limit: int = RECORD_QUERY_LIMIT,
+) -> dict[str, Any]:
+    conditions: list[dict[str, Any]] = []
+    identity: dict[str, Any] = {}
+    if email is not None:
+        normalized = _normalized_email(email)
+        conditions.append({"email_addresses": normalized})
+        identity["email"] = normalized
+    if name is not None and name.strip():
+        identity["name"] = name.strip()
+        conditions.append({"name": {"full_name": {"$contains": name.strip()}}})
+    if email_domain is not None and email_domain.strip():
+        domain = email_domain.strip().casefold().lstrip("@")
+        if not domain:
+            code = "validation_error"
+            msg = "email domain must not be empty"
+            raise CLIError(code, msg, field="email_domain")
+        identity["email_domain"] = domain
+        conditions.append(
+            {"email_addresses": {"email_domain": {"$eq": domain}}},
+        )
+    if company is not None and company.strip():
+        identity["company"] = company.strip()
+        conditions.append(
+            {
+                "path": [["people", "company"], ["companies", "name"]],
+                "constraints": {"value": {"$contains": company.strip()}},
+            },
+        )
+    if not conditions:
+        code = "validation_error"
+        msg = "people search needs an email, --name, --email-domain or --company"
+        raise CLIError(code, msg, field="filters")
+    if limit < 1:
+        code = "validation_error"
+        msg = "limit must be at least 1"
+        raise CLIError(code, msg, field="limit")
+    effective_limit = min(limit, RECORD_QUERY_LIMIT)
+    filter_ = conditions[0] if len(conditions) == 1 else {"$and": conditions}
+    matches = _query_records(client, "people", filter_, effective_limit)
+    result = _success_envelope("searched", results=matches, identity=identity)
+    if len(matches) == effective_limit:
         result["partial_success"] = True
         result["warnings"].append(
             {
                 "code": "search_result_limit_reached",
-                "message": f"The search returned its {RECORD_QUERY_LIMIT}-record limit; additional matches may exist.",
-                "field": "email",
+                "message": f"The search returned its {effective_limit}-record limit; additional matches may exist.",
+                "field": "limit",
                 "retryable": False,
             },
         )

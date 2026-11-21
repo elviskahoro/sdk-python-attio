@@ -44,7 +44,7 @@ wheels = [
 
 [[package]]
 name = "attio"
-version = "0.28.11"
+version = "0.28.12"
 source = { editable = "." }
 dependencies = [
     { name = "httpcore" },

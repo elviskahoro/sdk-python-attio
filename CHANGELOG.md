@@ -2,6 +2,11 @@
 
 ## Unreleased — 2026-10-05
 
+Extends `people search` beyond exact email: the email is now optional, and
+`--name` and `--company` (case-insensitive substring), `--email-domain`
+(exact domain) and `--limit` (max 50) narrow results. Filters combine with
+AND, and every match is listed in the `searched` envelope (#179).
+
 Adds `api_key=` as an alias for `oauth2=` on `SDK()` (0.28.11); passing both or
 neither raises `TypeError`. The README now documents looking up a person by email.
 

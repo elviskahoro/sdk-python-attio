@@ -116,7 +116,7 @@ The CLI reads only `ATTIO_API_KEY`. It looks in the process environment first, t
 
 | Command | Effect | Identity |
 | --- | --- | --- |
-| `people search EMAIL` | Read-only | Exact email |
+| `people search [EMAIL] [search flags]` | Read-only | Email, name, email domain or company |
 | `people add EMAIL [flags]` | Creates a person; `duplicate_identity` if the email already exists | Email |
 | `people update EMAIL [flags]` | Updates exactly one match; `record_not_found` or `multiple_matches` otherwise | Email |
 | `people upsert EMAIL [flags]` | Creates a person, or updates the match | Email |
@@ -149,7 +149,17 @@ Every flag has a matching JSON key for `--json`:
 | `--notes` | `notes` | Writes the person's `notes` attribute |
 | `--strict` | `strict` | Turns the cases below into errors |
 
-`--json` replaces every flag, including the positional email, and rejects unknown keys.
+`--json` replaces every flag, including the positional email, and rejects unknown keys. `people search` has its own flags and does not take `--json`.
+
+`people search` needs at least one filter. Filters combine with AND, and every match is listed:
+
+| Flag | Match |
+| --- | --- |
+| `EMAIL` (positional) | Exact email |
+| `--name` | Case-insensitive substring of the full name |
+| `--email-domain` | Exact email domain (`mail.example.com` does not match `example.com`) |
+| `--company` | Case-insensitive substring of the linked company name |
+| `--limit` | Maximum records returned (default and cap: 50) |
 
 Without `--strict`, the CLI keeps going in three cases, and reports each one in `warnings` and `skipped_fields`:
 
@@ -161,6 +171,7 @@ With `--strict`, these fail with `invalid_value`, `schema_mismatch` or `multiple
 
 ```bash
 uvx attio people search person@example.com
+uvx attio people search --name "Ada Lovelace" --email-domain example.com
 uvx attio people add person@example.com --first-name Ada --last-name Lovelace
 uvx attio people update person@example.com --job-title Mathematician
 uvx attio people upsert person@example.com --company example.com --strict
@@ -240,7 +251,7 @@ Every run that gets past argument parsing prints exactly one JSON object to stdo
 | --- | --- |
 | `action` | `created`, `updated`, `upserted`, `searched`, `listed` or `failed` |
 | `record_id` | The ID of the person, company or record written (the note ID for notes); `null` for search, list and failures |
-| `meta.results` | The matching records or notes from `search` or `list`. A people or company search returns at most 50, and adds a `search_result_limit_reached` warning when it hits that cap. |
+| `meta.results` | The matching records or notes from `search` or `list`. A people or company search returns at most 50 (`people search --limit` can lower this), and adds a `search_result_limit_reached` warning when it hits that limit. |
 | `meta.person`, `meta.company`, `meta.note`, `meta.record` | The object that was written |
 | `meta.object`, `meta.matching_attribute` | Echoed back from `records upsert`; the API response doesn't say whether the record was created or updated, so both arrive as `upserted` |
 | `warnings[]` | Objects with `code`, `message`, `field` and `retryable` |
