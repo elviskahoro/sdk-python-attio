@@ -10,15 +10,15 @@ and `gas-city`, so label hygiene decides what humans see.
 
 ### Labels
 
-| Label | Meaning |
-| --- | --- |
-| `status::in_progress` | Claimed and being worked on by an agent. Do not pick up. |
-| `status::blocked` | Waiting on another issue in this repo ("blocked by #N"). |
+| Label                      | Meaning                                                                   |
+| -------------------------- | ------------------------------------------------------------------------- |
+| `status::in_progress`      | Claimed and being worked on by an agent. Do not pick up.                  |
+| `status::blocked`          | Waiting on another issue in this repo ("blocked by #N").                  |
 | `status::blocked-external` | Waiting on something outside the repo (another repo, upstream, a vendor). |
-| `status::deferred` | Parked on purpose; revisit date is in a comment. |
-| `needs-human` | A person must decide. Agents must not pick up. |
-| `gas-city` | Routed to Gas City. Conductor dispatch must not pick up. |
-| `stale-claim` | Claim has no recent heartbeat; reclaimable. |
+| `status::deferred`         | Parked on purpose; revisit date is in a comment.                          |
+| `needs-human`              | A person must decide. Agents must not pick up.                            |
+| `gas-city`                 | Routed to Gas City. Conductor dispatch must not pick up.                  |
+| `stale-claim`              | Claim has no recent heartbeat; reclaimable.                               |
 
 ### Picking up work
 
