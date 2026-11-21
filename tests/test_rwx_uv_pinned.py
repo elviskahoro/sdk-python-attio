@@ -8,7 +8,13 @@ from pathlib import Path
 import pytest
 import yaml
 
-WORKFLOWS = sorted((Path(__file__).resolve().parent.parent / ".rwx").glob("*.y*ml"))
+# roborev.yml is a Node/pi tool pipeline with no Python, so it has no uv task.
+NO_UV_WORKFLOWS = {"roborev.yml"}
+WORKFLOWS = sorted(
+    p
+    for p in (Path(__file__).resolve().parent.parent / ".rwx").glob("*.y*ml")
+    if p.name not in NO_UV_WORKFLOWS
+)
 # Every `pip install ... uv` occurrence must carry its own exact pin: an
 # unpinned fallback (`pip install uv==X || pip install uv`) installs latest.
 INSTALL = re.compile(r"pip install (?:-[\w=-]+ )*uv(==\d+(?:\.\d+)+)?(?=\s|$)")
