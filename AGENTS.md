@@ -231,14 +231,14 @@ the CLI can do here:
   bump through the regeneration pipeline first. Dispatch-only (no `cli`
   trigger). The tag push uses no PAT: a per-run token from the private GitHub
   App `rwx-automation-elviskahoro` (installed on this repo only) in the
-  `sdk-python-attio-release` vault (main, approvals off). Cancel the held `v*`
-  tag-push run of `publish.yml` it leaves behind.
+  `sdk-python-attio-release` vault (main, approvals off). `publish.yml` has no
+  tag-push trigger, so the tag leaves no stray run behind.
 - `rwx dispatch publish --ref main --param tag=vX.Y.Z` publishes an already-pushed
   release tag immediately. The run checks out the tag and verifies it matches
   the committed version. `PYPI_TOKEN_ATTIO` and `PYPI_TOKEN_GTM_ATTIO` live alone in the
   `sdk-python-attio-publish` vault, one project-scoped token per distribution,
-  locked to `main` and `refs/tags/v*` with approvals off. A `v*` tag push instead creates a run held for a manual start
-  in the RWX UI.
+  locked to `main` and `refs/tags/v*` with approvals off. A manually pushed `v*`
+  tag does not start a run; dispatch it as above.
 - `rwx sandbox exec -- <cmd>` runs commands in a persistent sandbox.
 - `rwx lint` validates `.rwx/*.yml`; `rwx docs search|pull` is the docs source.
 
