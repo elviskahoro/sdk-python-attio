@@ -233,10 +233,13 @@ rwx logs <task-id> --output /tmp/rwxlogs  # task ids are listed by `rwx results`
 grep -rhiE 'error|ISSUES' /tmp/rwxlogs    # find the lint failures in a failed trunk-check
 ```
 
-`RWX: trunk-check` runs markdownlint and markdown-table-prettify, and neither
-reproduces locally (no `trunk` binary in the sandbox). MD029 requires each
-ordered list to restart at 1, so do not number continuously across
-subsections. Pad table columns to equal width.
+`RWX: trunk-check` runs markdownlint and markdown-table-prettify. The exact
+gate needs the `trunk` binary (absent in sandboxes), but you can pre-check
+markdown with `npx -y markdownlint-cli2@0.23.3 --config <.markdownlint.yaml> AGENTS.md`
+(config: `configs/.markdownlint.yaml` in the `oss-linter-trunk` plugin repo,
+ref in `.trunk/trunk.yaml` `plugins.sources`); `markdown-table-prettify` also
+ships an npm bin. MD029 requires each ordered list to restart at 1, so do not
+number continuously across subsections. Pad table columns to equal width.
 
 - Use the `elviskahoro` token. A token for another org (e.g.
   `RWX_ACCESS_TOKEN_MARCHILI`) authenticates but returns `not found` for this
