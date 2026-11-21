@@ -251,7 +251,7 @@ Every run that gets past argument parsing prints exactly one JSON object to stdo
 | --- | --- |
 | `action` | `created`, `updated`, `upserted`, `searched`, `listed` or `failed` |
 | `record_id` | The ID of the person, company or record written (the note ID for notes); `null` for search, list and failures |
-| `meta.results` | The matching records or notes from `search` or `list`. A people or company search returns at most 50, and adds a `search_result_limit_reached` warning when it hits that cap. |
+| `meta.results` | The matching records or notes from `search` or `list`. A people or company search returns at most 50 (`people search --limit` can lower this), and adds a `search_result_limit_reached` warning when it hits that limit. |
 | `meta.person`, `meta.company`, `meta.note`, `meta.record` | The object that was written |
 | `meta.object`, `meta.matching_attribute` | Echoed back from `records upsert`; the API response doesn't say whether the record was created or updated, so both arrive as `upserted` |
 | `warnings[]` | Objects with `code`, `message`, `field` and `retryable` |

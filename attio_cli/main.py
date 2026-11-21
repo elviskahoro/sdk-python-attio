@@ -14,7 +14,7 @@ from attio import SDK
 from attio._version import __version__
 from pydantic import BaseModel, ValidationError
 
-from .people import CLIError, error_envelope, execute_upsert
+from .people import RECORD_QUERY_LIMIT, CLIError, error_envelope, execute_upsert
 from .query import (
     CompanyPayload,
     NoteAddPayload,
@@ -86,8 +86,8 @@ def _parser() -> argparse.ArgumentParser:
     search.add_argument(
         "--limit",
         type=int,
-        default=50,
-        help="Maximum records to return (default and cap: 50)",
+        default=RECORD_QUERY_LIMIT,
+        help=f"Maximum records to return (default and cap: {RECORD_QUERY_LIMIT})",
     )
 
     for operation, summary in (
