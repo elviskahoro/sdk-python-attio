@@ -113,15 +113,16 @@ def test_write_token_is_scoped_to_repo_operations(tasks: dict[str, dict]) -> Non
     assert holders == {"open-pr", "notify", "cleanup"}
 
 
-def test_publish_requires_manual_start() -> None:
+def test_publish_has_no_tag_push_trigger() -> None:
+    """release.yml pushes the tag itself; a `v*` push trigger would leave a
+    redundant held run behind for every release."""
     doc = yaml.safe_load((REPO_ROOT / ".rwx" / "publish.yml").read_text(encoding="utf-8"))
     # PyYAML parses the bare `on` key as boolean True.
-    tag_triggers = doc[True]["github"]["push"]
-    assert all(t.get("start") == "manually" for t in tag_triggers)
+    assert "github" not in doc[True]
 
 
 def test_publish_uploads_only_for_tag_runs() -> None:
-    """`start: manually` gates only the GitHub tag trigger; a CLI run has an
+    """A CLI run has an
     empty tag and must not reach the PyPI upload."""
     doc = yaml.safe_load((REPO_ROOT / ".rwx" / "publish.yml").read_text(encoding="utf-8"))
     publish = next(t for t in doc["tasks"] if t["key"] == "publish")

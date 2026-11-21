@@ -75,8 +75,8 @@ Exits green without doing anything once both packages have a wheel and an
 sdist for the committed version on PyPI (a partial upload still publishes,
 checked by `ci/pypi_release_status.py`). There is no bump step: land a version
 bump through the regeneration pipeline first. Re-running after a failure is safe (existing
-tag reused, `twine --skip-existing`). Cancel the held `publish.yml` tag-push run
-it leaves behind.
+tag reused, `twine --skip-existing`). `publish.yml` has no tag-push trigger, so
+nothing is left behind.
 
 ## Results, logs, artifacts
 

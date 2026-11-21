@@ -6,7 +6,8 @@
 # must already be pushed; the run checks out the tag and verify-version checks
 # it matches that checkout's version. Dispatch is itself the manual gate, so
 # it starts immediately.
-# A pushed v* tag also creates a run, held for a manual start in the RWX UI.
+# It has no tag-push trigger: a pushed v* tag starts no run (release.yml pushes
+# the tag itself, so such a run would be redundant).
 #
 # PYPI_TOKEN_ATTIO and PYPI_TOKEN_GTM_ATTIO live alone in the
 # `sdk-python-attio-publish` vault: locked to
@@ -14,13 +15,6 @@
 # ci/pipeline.py runs its test/build steps through Dagger, which needs a
 # container runtime and the dagger CLI, hence `docker: true`.
 on:
-  github:
-    push:
-      - if: ${{ event.git.tag != '' && starts-with(event.git.tag, 'v') }}
-        start: manually
-        init:
-          commit-sha: ${{ event.git.sha }}
-          tag: ${{ event.git.tag }}
   dispatch:
     - key: publish
       title: Publish to PyPI

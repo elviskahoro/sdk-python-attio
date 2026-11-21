@@ -31,8 +31,7 @@
 # and publish an unmerged commit. (`rwx run --target preflight` adds a `cli`
 # trigger automatically; drop it again before committing.)
 #
-# The pushed tag also triggers publish.yml's `v*` push run, which is held for a
-# manual start. It is redundant after this run; cancel or ignore it.
+# publish.yml has no tag-push trigger, so the pushed tag starts no extra run.
 on:
   dispatch:
     - key: release
