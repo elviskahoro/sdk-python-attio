@@ -80,7 +80,8 @@ def _parser() -> argparse.ArgumentParser:
         help="Exact email domain match (mail.example.com != example.com)",
     )
     search.add_argument(
-        "--company", help="Case-insensitive substring match on linked company name"
+        "--company",
+        help="Case-insensitive substring match on linked company name",
     )
     search.add_argument(
         "--limit",
