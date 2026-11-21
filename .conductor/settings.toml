@@ -5,30 +5,18 @@ setup = "bash ci/conductor_trunk_preflight.sh"
 
 [prompts] # Prompts below are generated from flox-conductor-sandbox prompts/conductor/*.md by scripts/install-conductor-prompts.py — edit the .md source and re-run, never this copy.
 create_pr = '''
-Follow the canonical instructions for create pr at
-https://raw.githubusercontent.com/elviskahoro/oss-hq/main/prompts/conductor/create-pr.md
-Fetch them first (`curl -fsSL <url>`) and follow them exactly; where this
-repo's AGENTS.md/CLAUDE.md differ, the repo wins. If the fetch fails, say so
-and stop instead of improvising.
+Follow the canonical oss-hq prompt for create pr: https://github.com/elviskahoro/oss-hq/blob/main/prompts/conductor/create-pr.md
+Fetch it fresh each time; set `CONDUCTOR_PROMPTS_REF` to a SHA or tag to pin, default `main` (`curl -fsSL https://raw.githubusercontent.com/elviskahoro/oss-hq/${CONDUCTOR_PROMPTS_REF:-main}/prompts/conductor/create-pr.md`) and follow it exactly. Where this repo's AGENTS.md/CLAUDE.md differ, the repo wins. If the fetch fails, say so and stop instead of improvising.
 '''
 fix_errors = '''
-Follow the canonical instructions for fix errors at
-https://raw.githubusercontent.com/elviskahoro/oss-hq/main/prompts/conductor/fix-errors.md
-Fetch them first (`curl -fsSL <url>`) and follow them exactly; where this
-repo's AGENTS.md/CLAUDE.md differ, the repo wins. If the fetch fails, say so
-and stop instead of improvising.
+Follow the canonical oss-hq prompt for fix errors: https://github.com/elviskahoro/oss-hq/blob/main/prompts/conductor/fix-errors.md
+Fetch it fresh each time; set `CONDUCTOR_PROMPTS_REF` to a SHA or tag to pin, default `main` (`curl -fsSL https://raw.githubusercontent.com/elviskahoro/oss-hq/${CONDUCTOR_PROMPTS_REF:-main}/prompts/conductor/fix-errors.md`) and follow it exactly. Where this repo's AGENTS.md/CLAUDE.md differ, the repo wins. If the fetch fails, say so and stop instead of improvising.
 '''
 general = '''
-Follow the canonical instructions for general at
-https://raw.githubusercontent.com/elviskahoro/oss-hq/main/prompts/conductor/general.md
-Fetch them first (`curl -fsSL <url>`) and follow them exactly; where this
-repo's AGENTS.md/CLAUDE.md differ, the repo wins. If the fetch fails, say so
-and stop instead of improvising.
+Follow the canonical oss-hq prompt for general: https://github.com/elviskahoro/oss-hq/blob/main/prompts/conductor/general.md
+Fetch it fresh each time; set `CONDUCTOR_PROMPTS_REF` to a SHA or tag to pin, default `main` (`curl -fsSL https://raw.githubusercontent.com/elviskahoro/oss-hq/${CONDUCTOR_PROMPTS_REF:-main}/prompts/conductor/general.md`) and follow it exactly. Where this repo's AGENTS.md/CLAUDE.md differ, the repo wins. If the fetch fails, say so and stop instead of improvising.
 '''
 resolve_merge_conflicts = '''
-Follow the canonical instructions for resolve merge conflicts at
-https://raw.githubusercontent.com/elviskahoro/oss-hq/main/prompts/conductor/resolve-merge-conflicts.md
-Fetch them first (`curl -fsSL <url>`) and follow them exactly; where this
-repo's AGENTS.md/CLAUDE.md differ, the repo wins. If the fetch fails, say so
-and stop instead of improvising.
+Follow the canonical oss-hq prompt for resolve merge conflicts: https://github.com/elviskahoro/oss-hq/blob/main/prompts/conductor/resolve-merge-conflicts.md
+Fetch it fresh each time; set `CONDUCTOR_PROMPTS_REF` to a SHA or tag to pin, default `main` (`curl -fsSL https://raw.githubusercontent.com/elviskahoro/oss-hq/${CONDUCTOR_PROMPTS_REF:-main}/prompts/conductor/resolve-merge-conflicts.md`) and follow it exactly. Where this repo's AGENTS.md/CLAUDE.md differ, the repo wins. If the fetch fails, say so and stop instead of improvising.
 '''
