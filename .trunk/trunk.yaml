@@ -309,7 +309,7 @@ merge:
   #
   # Do NOT add path-filtered workflows here -- they do not report on every PR
   # and would deadlock the queue. Same for workflow_run-triggered workflows,
-  # the tag-only .rwx/publish.yml, and the scheduled .rwx/spec-update-check.yml
+  # the dispatch-only .rwx/publish.yml, and the scheduled .rwx/spec-update-check.yml
   # (which never runs on PRs at all).
   required_statuses:
     - "RWX: trunk-check"
