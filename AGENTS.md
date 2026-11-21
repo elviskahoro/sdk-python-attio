@@ -27,22 +27,22 @@ and `gas-city`, so label hygiene decides what humans see.
 
 ### Claiming (required before any work)
 
-3. When you start an issue, claim it first: add `status::in_progress`, assign yourself, and leave a one-line "starting" comment.
-4. If `status::in_progress` is already present, stop. Two agents must never work one issue.
-5. Re-read the labels right after claiming. If another agent claimed at the same moment, back off.
-6. For long-running work, comment periodically so the claim does not become a `stale-claim`.
+1. When you start an issue, claim it first: add `status::in_progress`, assign yourself, and leave a one-line "starting" comment.
+2. If `status::in_progress` is already present, stop. Two agents must never work one issue.
+3. Re-read the labels right after claiming. If another agent claimed at the same moment, back off.
+4. For long-running work, comment periodically so the claim does not become a `stale-claim`.
 
 ### Releasing
 
-7. When done, put `Closes #N` in the PR body and remove `status::in_progress` once the PR is open. Merge closes the issue.
-8. If you abandon or fail, remove `status::in_progress` and comment what happened and what remains. Never leave a dead claim.
-9. If you need a decision you cannot make, remove `status::in_progress`, add `needs-human`, and comment the exact question. Do not guess. Never remove `needs-human` yourself.
+1. When done, put `Closes #N` in the PR body and remove `status::in_progress` once the PR is open. Merge closes the issue.
+2. If you abandon or fail, remove `status::in_progress` and comment what happened and what remains. Never leave a dead claim.
+3. If you need a decision you cannot make, remove `status::in_progress`, add `needs-human`, and comment the exact question. Do not guess. Never remove `needs-human` yourself.
 
 ### Blocked and deferred
 
-10. Blocked by another issue in this repo: add `status::blocked`, comment "blocked by #N", and release the claim.
-11. Blocked by something outside the repo: add `status::blocked-external`, comment what you are waiting on, and release the claim.
-12. Never set `status::deferred` yourself. Only a human parks work.
+1. Blocked by another issue in this repo: add `status::blocked`, comment "blocked by #N", and release the claim.
+2. Blocked by something outside the repo: add `status::blocked-external`, comment what you are waiting on, and release the claim.
+3. Never set `status::deferred` yourself. Only a human parks work.
 
 ## Beads Issue Tracking
 
