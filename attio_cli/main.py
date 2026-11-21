@@ -70,10 +70,19 @@ def _parser() -> argparse.ArgumentParser:
 
     search = people_commands.add_parser(
         "search",
-        help="Find people by exact email",
-        description="Read-only search by email.",
+        help="Find people by email, name, email domain or company",
+        description="Read-only search; filters combine with AND.",
     )
-    search.add_argument("email", help="Email address to find")
+    search.add_argument("email", nargs="?", help="Exact email address to find")
+    search.add_argument("--name", help="Fuzzy, case-insensitive full-name match")
+    search.add_argument("--email-domain", help="Match people with this email domain")
+    search.add_argument("--company", help="Fuzzy match on linked company name")
+    search.add_argument(
+        "--limit",
+        type=int,
+        default=50,
+        help="Maximum records to return (default and cap: 50)",
+    )
 
     for operation, summary in (
         ("upsert", "Create or update a person using email as the identity key"),
@@ -307,7 +316,14 @@ def _dispatch_command(
 ) -> dict[str, Any] | None:
     """Dispatch command to appropriate handler based on resource and operation."""
     if args.resource == "people" and args.operation == "search":
-        return search_people(args.email, client)
+        return search_people(
+            args.email,
+            client,
+            name=args.name,
+            email_domain=args.email_domain,
+            company=args.company,
+            limit=args.limit,
+        )
     handlers: dict[tuple[str, str], Callable[[Any, SDK], dict[str, Any]]] = {
         ("people", "add"): add_person,
         ("people", "update"): update_person,
@@ -355,13 +371,21 @@ def _input_from_args(args: argparse.Namespace) -> PersonUpsertQuery:
     )
 
 
+class _SearchPayload(BaseModel):
+    """Empty payload: people search reads its filters from argparse."""
+
+
 def _parse_payload(
     args: argparse.Namespace,
     parser: argparse.ArgumentParser,
 ) -> BaseModel:
     if args.resource == "people":
         if args.operation == "search":
-            return PersonUpsertQuery(email=args.email)
+            if not (args.email or args.name or args.email_domain or args.company):
+                parser.error(
+                    "people search needs an email, --name, --email-domain or --company",
+                )
+            return _SearchPayload()
         if args.json_payload is None and not args.email:
             parser.error("email is required unless --json supplies an email field")
         return _input_from_args(args)

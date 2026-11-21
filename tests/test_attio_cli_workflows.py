@@ -43,6 +43,46 @@ def test_people_search_is_exact_and_returns_versioned_results():
     assert result["meta"]["results"][0]["id"]["record_id"] == "person-1"
 
 
+def test_people_search_by_name_combines_filters_and_lists_matches():
+    records = _Records(
+        matches=[
+            _record("person-1", email="a@example.com"),
+            _record("person-2", email="b@example.com"),
+        ],
+    )
+    result = search_people(
+        None,
+        _Client(records=records),
+        name="Chris Pennington",
+        email_domain="@Example.com",
+        limit=10,
+    )
+
+    call = records.calls[0][1]
+    assert call["limit"] == 10
+    assert call["filter_"] == {
+        "$and": [
+            {"name": {"full_name": {"$contains": "Chris Pennington"}}},
+            {"email_addresses": {"email_domain": {"$eq": "example.com"}}},
+        ],
+    }
+    assert result["action"] == "searched"
+    assert len(result["meta"]["results"]) == 2
+
+
+def test_people_search_single_filter_unwrapped_and_limit_clamped():
+    records = _Records(matches=[])
+    search_people(None, _Client(records=records), name="Chris", limit=500)
+    call = records.calls[0][1]
+    assert call["filter_"] == {"name": {"full_name": {"$contains": "Chris"}}}
+    assert call["limit"] == 50
+
+
+def test_people_search_requires_a_filter():
+    with pytest.raises(CLIError):
+        search_people(None, _Client(records=_Records(matches=[])))
+
+
 def test_people_add_rejects_existing_identity_before_writing():
     records = _Records(matches=[_record("person-1", email="ada@example.com")])
     with pytest.raises(CLIError, match="already matches") as exc_info:
@@ -422,3 +462,11 @@ def test_cli_wraps_api_errors_for_new_commands(monkeypatch, capsys):
     assert status == 1
     assert result["action"] == "failed"
     assert result["errors"][0]["code"] == "service_unavailable"
+
+
+def test_cli_people_search_without_filter_exits_nonzero():
+    from attio_cli.main import main
+
+    with pytest.raises(SystemExit) as exc_info:
+        main(["people", "search"])
+    assert exc_info.value.code != 0
