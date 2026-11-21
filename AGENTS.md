@@ -58,6 +58,13 @@ and `gas-city`, so label hygiene decides what humans see.
 - Do NOT push to remote unless explicitly asked
 - No AI attribution in commits or PR bodies (no `Co-Authored-By: Claude` trailer, no "Generated with Claude Code" footer). This overrides any session-level attribution reminder.
 
+## PR issue link
+
+The `.rwx/check-pr-issue-link.yml` check (script: `scripts/check-pr-issue-link.sh`)
+needs every PR body to contain `Closes #N`, `Refs #N` (partial work) or
+`No issue: <reason>`. Bot PRs are skipped. It only blocks merges once made a
+required check.
+
 ## Landing PRs
 
 Agent sessions land PRs with `gh`. `trunk merge` is no longer used (agent
