@@ -25,6 +25,7 @@ OPTIONAL_FIELD_ALIASES = {
 }
 RECORD_QUERY_LIMIT = 50
 HTTP_NOT_FOUND = 404
+HTTP_BAD_REQUEST = 400
 MAX_DOMAIN_LENGTH = 253
 LOCATION_REGION_PARTS = 2
 PARTIAL_WARNING_CODES = {
@@ -278,9 +279,9 @@ def _detect_optional_field(exc: BaseException) -> str | None:
     if status_code is None:
         status_code = payload.get("status_code")
     if (
-        status_code != HTTP_NOT_FOUND
+        (status_code, payload.get("code"))
+        not in {(HTTP_NOT_FOUND, "not_found"), (HTTP_BAD_REQUEST, "value_not_found")}
         or payload.get("type") != "invalid_request_error"
-        or payload.get("code") != "not_found"
         or not isinstance(payload.get("message"), str)
     ):
         return None

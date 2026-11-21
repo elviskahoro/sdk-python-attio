@@ -32,7 +32,9 @@ from _attio_cli_helpers import FakeRecords as _FakeRecords
 from _attio_cli_helpers import record as _record
 
 
-def _attribute_not_found(field: str, *, wording: str = "standard") -> RuntimeError:
+def _attribute_not_found(
+    field: str, *, wording: str = "standard", status: int = 404, code: str = "not_found"
+) -> RuntimeError:
     if wording == "cannot_find":
         message = f'Cannot find attribute with slug/ID "{field}".'
     else:
@@ -40,9 +42,9 @@ def _attribute_not_found(field: str, *, wording: str = "standard") -> RuntimeErr
     return RuntimeError(
         json.dumps(
             {
-                "status_code": 404,
+                "status_code": status,
                 "type": "invalid_request_error",
-                "code": "not_found",
+                "code": code,
                 "message": message,
             }
         )
@@ -779,3 +781,18 @@ def test_records_upsert_unknown_json_fields_fail_validation(capsys):
     result = json.loads(capsys.readouterr().out)
     assert status == 1
     assert result["errors"][0]["code"] == "validation_error"
+
+
+def test_400_value_not_found_missing_attribute_is_detected():
+    exc = _attribute_not_found(
+        "associated_company", wording="cannot_find", status=400, code="value_not_found"
+    )
+    assert _detect_optional_field(exc) == "associated_company"
+
+
+def test_400_value_not_found_for_unresolved_record_is_not_detected():
+    exc = RuntimeError(
+        '{"status_code":400,"type":"invalid_request_error",'
+        '"code":"value_not_found","message":"Cannot find company with domain x.com."}'
+    )
+    assert _detect_optional_field(exc) is None
