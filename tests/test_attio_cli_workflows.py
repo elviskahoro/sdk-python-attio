@@ -78,6 +78,20 @@ def test_people_search_single_filter_unwrapped_and_limit_clamped():
     assert call["limit"] == 50
 
 
+def test_people_search_company_filter_uses_value_constraint():
+    records = _Records(matches=[])
+    search_people(None, _Client(records=records), company="Acme")
+    assert records.calls[0][1]["filter_"] == {
+        "path": [["people", "company"], ["companies", "name"]],
+        "constraints": {"value": {"$contains": "Acme"}},
+    }
+
+
+def test_people_search_rejects_empty_email_domain():
+    with pytest.raises(CLIError):
+        search_people(None, _Client(records=_Records(matches=[])), email_domain="@")
+
+
 def test_people_search_requires_a_filter():
     with pytest.raises(CLIError):
         search_people(None, _Client(records=_Records(matches=[])))

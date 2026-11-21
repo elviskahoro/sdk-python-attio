@@ -74,9 +74,9 @@ def _parser() -> argparse.ArgumentParser:
         description="Read-only search; filters combine with AND.",
     )
     search.add_argument("email", nargs="?", help="Exact email address to find")
-    search.add_argument("--name", help="Fuzzy, case-insensitive full-name match")
-    search.add_argument("--email-domain", help="Match people with this email domain")
-    search.add_argument("--company", help="Fuzzy match on linked company name")
+    search.add_argument("--name", help="Case-insensitive substring match on full name")
+    search.add_argument("--email-domain", help="Exact email domain match (mail.example.com != example.com)")
+    search.add_argument("--company", help="Case-insensitive substring match on linked company name")
     search.add_argument(
         "--limit",
         type=int,

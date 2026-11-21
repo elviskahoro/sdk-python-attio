@@ -123,6 +123,10 @@ def search_people(
         conditions.append({"name": {"full_name": {"$contains": name.strip()}}})
     if email_domain is not None and email_domain.strip():
         domain = email_domain.strip().casefold().lstrip("@")
+        if not domain:
+            code = "validation_error"
+            msg = "email domain must not be empty"
+            raise CLIError(code, msg, field="email_domain")
         identity["email_domain"] = domain
         conditions.append(
             {"email_addresses": {"email_domain": {"$eq": domain}}},
@@ -132,7 +136,7 @@ def search_people(
         conditions.append(
             {
                 "path": [["people", "company"], ["companies", "name"]],
-                "constraints": {"$contains": company.strip()},
+                "constraints": {"value": {"$contains": company.strip()}},
             },
         )
     if not conditions:
