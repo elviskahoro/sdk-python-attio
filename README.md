@@ -116,7 +116,7 @@ The CLI reads only `ATTIO_API_KEY`. It looks in the process environment first, t
 
 | Command | Effect | Identity |
 | --- | --- | --- |
-| `people search [EMAIL] [flags]` | Read-only | Exact email, name, email domain or linked company name |
+| `people search EMAIL` | Read-only | Exact email |
 | `people add EMAIL [flags]` | Creates a person; `duplicate_identity` if the email already exists | Email |
 | `people update EMAIL [flags]` | Updates exactly one match; `record_not_found` or `multiple_matches` otherwise | Email |
 | `people upsert EMAIL [flags]` | Creates a person, or updates the match | Email |
@@ -130,18 +130,7 @@ The CLI reads only `ATTIO_API_KEY`. It looks in the process environment first, t
 
 ### People
 
-`people search` accepts an optional exact email and these flags. Supply at least one filter; multiple filters combine with AND.
-
-| Flag | Notes |
-| --- | --- |
-| `--name` | Fuzzy, case-insensitive full-name match |
-| `--email-domain` | Match an email domain; accepts a leading `@` |
-| `--company` | Fuzzy match on linked company name |
-| `--limit` | Maximum records to return; at least 1, default 50, capped at 50 |
-
-Search returns the matches in `meta.results` with `action: "searched"`, rather than selecting one person when a name is ambiguous. Search filters are command-line arguments, not a `--json` payload.
-
-For `add`, `update` and `upsert`, every flag has a matching JSON key for `--json`:
+Every flag has a matching JSON key for `--json`:
 
 | Flag | JSON key | Notes |
 | --- | --- | --- |
@@ -160,7 +149,7 @@ For `add`, `update` and `upsert`, every flag has a matching JSON key for `--json
 | `--notes` | `notes` | Writes the person's `notes` attribute |
 | `--strict` | `strict` | Turns the cases below into errors |
 
-For `add`, `update` and `upsert`, `--json` replaces every flag, including the positional email, and rejects unknown keys.
+`--json` replaces every flag, including the positional email, and rejects unknown keys.
 
 Without `--strict`, the CLI keeps going in three cases, and reports each one in `warnings` and `skipped_fields`:
 
@@ -172,8 +161,6 @@ With `--strict`, these fail with `invalid_value`, `schema_mismatch` or `multiple
 
 ```bash
 uvx attio people search person@example.com
-uvx attio people search --name "Chris Pennington"
-uvx attio people search --name "Chris" --email-domain example.com --limit 10
 uvx attio people add person@example.com --first-name Ada --last-name Lovelace
 uvx attio people update person@example.com --job-title Mathematician
 uvx attio people upsert person@example.com --company example.com --strict
@@ -253,7 +240,7 @@ Every run that gets past argument parsing prints exactly one JSON object to stdo
 | --- | --- |
 | `action` | `created`, `updated`, `upserted`, `searched`, `listed` or `failed` |
 | `record_id` | The ID of the person, company or record written (the note ID for notes); `null` for search, list and failures |
-| `meta.results` | The matching records or notes from `search` or `list`. A people search returns at most `--limit` records (default and cap: 50); a company search returns at most 50. Reaching the search limit sets `partial_success` and adds a `search_result_limit_reached` warning because additional matches may exist. |
+| `meta.results` | The matching records or notes from `search` or `list`. A people or company search returns at most 50, and adds a `search_result_limit_reached` warning when it hits that cap. |
 | `meta.person`, `meta.company`, `meta.note`, `meta.record` | The object that was written |
 | `meta.object`, `meta.matching_attribute` | Echoed back from `records upsert`; the API response doesn't say whether the record was created or updated, so both arrive as `upserted` |
 | `warnings[]` | Objects with `code`, `message`, `field` and `retryable` |

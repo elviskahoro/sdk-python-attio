@@ -136,13 +136,13 @@ def search_people(
             },
         )
     if not conditions:
-        raise CLIError(
-            "validation_error",
-            "people search needs an email, --name, --email-domain or --company",
-            field="filters",
-        )
+        code = "validation_error"
+        msg = "people search needs an email, --name, --email-domain or --company"
+        raise CLIError(code, msg, field="filters")
     if limit < 1:
-        raise CLIError("validation_error", "limit must be at least 1", field="limit")
+        code = "validation_error"
+        msg = "limit must be at least 1"
+        raise CLIError(code, msg, field="limit")
     effective_limit = min(limit, RECORD_QUERY_LIMIT)
     filter_ = conditions[0] if len(conditions) == 1 else {"$and": conditions}
     matches = _query_records(client, "people", filter_, effective_limit)
