@@ -226,10 +226,17 @@ command. The runs for this repo live in the `elviskahoro` org:
 
 ```bash
 env | cut -d= -f1 | grep -iE "rwx|rwc"   # list names only, never print values
-export RWX_ACCESS_TOKEN="$RWC_ACCESS_TOKEN_ELVISKAHORO"
+# Conductor exposes RWX_ACCESS_TOKEN_ELVISKAHORO; some sandboxes use RWC_ACCESS_TOKEN_ELVISKAHORO instead.
+export RWX_ACCESS_TOKEN="${RWX_ACCESS_TOKEN_ELVISKAHORO:-${RWC_ACCESS_TOKEN_ELVISKAHORO:?no elviskahoro token set}}"
 rwx results <run-id>                      # run-id is the hex id in the cloud.rwx.com/elviskahoro/runs/<id> URL
 rwx logs <task-id> --output /tmp/rwxlogs  # task ids are listed by `rwx results` for failed tasks
+grep -rhiE 'error|ISSUES' /tmp/rwxlogs    # find the lint failures in a failed trunk-check
 ```
+
+`RWX: trunk-check` runs markdownlint and markdown-table-prettify, and neither
+reproduces locally (no `trunk` binary in the sandbox). MD029 requires each
+ordered list to restart at 1, so do not number continuously across
+subsections. Pad table columns to equal width.
 
 - Use the `elviskahoro` token. A token for another org (e.g.
   `RWX_ACCESS_TOKEN_MARCHILI`) authenticates but returns `not found` for this
