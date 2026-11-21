@@ -8,13 +8,13 @@
 # Usage: PR_BODY=... [PR_AUTHOR=...] check-pr-issue-link.sh
 set -uo pipefail
 if [[ ${PR_AUTHOR:-} == *"[bot]" ]]; then
-  echo "OK: skipped bot PR (${PR_AUTHOR})."
-  exit 0
+	echo "OK: skipped bot PR (${PR_AUTHOR})."
+	exit 0
 fi
 pat='((close[sd]?|fix(es|ed)?|resolve[sd]?|refs?|part of)[[:space:]]+([[:alnum:]_.-]+/[[:alnum:]_.-]+)?#[0-9]+)|(^|[[:space:]])no issue:[[:space:]]*[^[:space:]]'
-if grep -qiE "$pat" <<<"${PR_BODY:-}"; then
-  echo "OK: PR body links an issue (or says why not)."
-  exit 0
+if grep -qiE "${pat}" <<<"${PR_BODY:-}"; then
+	echo "OK: PR body links an issue (or says why not)."
+	exit 0
 fi
 echo "FAIL: PR body must contain 'Closes #N' (or Fixes/Resolves), 'Refs #N' for partial work, or 'No issue: <reason>'."
 echo "Why: the closing keyword closes the issue on merge and signals the claim can be released."

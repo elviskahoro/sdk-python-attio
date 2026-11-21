@@ -8,8 +8,8 @@ from pathlib import Path
 import pytest
 import yaml
 
-# roborev.yml is a Node/pi tool pipeline with no Python, so it has no uv task.
-NO_UV_WORKFLOWS = {"roborev.yml"}
+# roborev.yml (Node/pi) and check-pr-issue-link.yml (bash) have no Python, so no uv task.
+NO_UV_WORKFLOWS = {"roborev.yml", "check-pr-issue-link.yml"}
 WORKFLOWS = sorted(
     p
     for p in (Path(__file__).resolve().parent.parent / ".rwx").glob("*.y*ml")
