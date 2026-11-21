@@ -25,7 +25,7 @@ The CLI reads only `RWX_ACCESS_TOKEN` (or `--access-token`). Sandboxes inject on
 
 ```bash
 env | grep -E '^RW[XC]_ACCESS_TOKEN_' | cut -d= -f1      # names only
-export RWX_ACCESS_TOKEN="$RWC_ACCESS_TOKEN_ELVISKAHORO"  # this repo's org
+export RWX_ACCESS_TOKEN="${RWX_ACCESS_TOKEN_ELVISKAHORO:-${RWC_ACCESS_TOKEN_ELVISKAHORO:?no elviskahoro token set}}"  # this repo's org
 rwx whoami                                               # confirm the login
 ```
 
