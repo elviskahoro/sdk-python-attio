@@ -2,7 +2,7 @@
 # is not a PR check and posts no comment or status. Run it before pushing:
 #   rwx run .rwx/roborev.yml --wait
 # It reviews local work (committed or not) against origin/main with the model in
-# .roborev.toml (pi + Fireworks) and fails unless roborev reports a pass.
+# .roborev.toml (pi + Kilo gateway) and fails unless roborev reports a pass.
 on:
   cli:
     init:
@@ -49,7 +49,27 @@ tasks:
       npm install -g "@earendil-works/pi-coding-agent@${PI_VERSION}"
       pi --version
       # Key is exported here, not in env:, so Semgrep's workflow-env-secret passes.
-      export FIREWORKS_API_KEY="${{ vaults.sdk-python-attio-roborev.secrets.FIREWORKS_API_KEY }}"
+      export KILO_API_KEY="${{ vaults.roborev.secrets.KILO_API_KEY }}"
+      # Register the Kilo gateway as a pi provider (pi has no built-in one).
+      # The org header bills the Kilo organization. apiKey is read from the env.
+      mkdir -p "$HOME/.pi/agent"
+      cat > "$HOME/.pi/agent/models.json" <<'JSON'
+      {
+        "providers": {
+          "kilo": {
+            "name": "Kilo Gateway",
+            "baseUrl": "https://ai-gateway.kilo.ai/api/v1",
+            "api": "openai-completions",
+            "apiKey": "$KILO_API_KEY",
+            "authHeader": true,
+            "headers": { "X-KiloCode-OrganizationId": "9722c7e7-64c5-4638-8f1a-f046787d1175" },
+            "models": [
+              { "id": "z-ai/glm-5.3-flash", "name": "GLM 5.3 Flash", "contextWindow": 1048576, "maxTokens": 131072 }
+            ]
+          }
+        }
+      }
+      JSON
       git fetch --no-tags origin main:refs/remotes/origin/main
       # `rwx run` ships local work as a patch on top of the nearest pushed
       # commit, so commit it here or roborev (committed ranges only) sees an

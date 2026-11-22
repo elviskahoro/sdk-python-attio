@@ -3,9 +3,9 @@
 # `review_guidelines` is embedded into every review prompt. Use it to encode
 # deliberate house decisions so the reviewer stops re-flagging them as findings.
 
-# Review with the pi agent via Fireworks (needs FIREWORKS_API_KEY in the env).
+# Review with the pi agent via the Kilo gateway (needs KILO_API_KEY in the env).
 agent = "pi"
-model = "fireworks/accounts/fireworks/models/glm-5p3-flash"
+model = "kilo/z-ai/glm-5.3-flash"
 
 review_guidelines = """
 - generated/src/attio/ is FULLY GENERATED code (Speakeasy). Do not raise findings against
