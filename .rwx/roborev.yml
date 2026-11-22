@@ -35,6 +35,12 @@ tasks:
       GITHUB_REPOSITORY: elviskahoro/sdk-python-attio
       ROBOREV_VERSION: 0.63.0
       PI_VERSION: 1.4.0
+      # Kilo settings come from vars in the roborev vault (no repo change to switch model).
+      KILO_MODEL: ${{ vaults.roborev.vars.KILO_MODEL }}
+      KILO_BASE_URL: ${{ vaults.roborev.vars.KILO_BASE_URL }}
+      KILO_ORG_ID: ${{ vaults.roborev.vars.KILO_ORG_ID }}
+      KILO_CONTEXT: ${{ vaults.roborev.vars.KILO_CONTEXT }}
+      KILO_MAX_OUTPUT: ${{ vaults.roborev.vars.KILO_MAX_OUTPUT }}
       ROBOREV_SHA256: c7dbbefed91747b80d04498358fa0207880adb7e2b57c95677214195a3ece887
     run: |
       set -euo pipefail
@@ -53,23 +59,15 @@ tasks:
       # Register the Kilo gateway as a pi provider (pi has no built-in one).
       # The org header bills the Kilo organization. apiKey is read from the env.
       mkdir -p "$HOME/.pi/agent"
-      cat > "$HOME/.pi/agent/models.json" <<'JSON'
-      {
-        "providers": {
-          "kilo": {
-            "name": "Kilo Gateway",
-            "baseUrl": "https://ai-gateway.kilo.ai/api/v1",
-            "api": "openai-completions",
-            "apiKey": "$KILO_API_KEY",
-            "authHeader": true,
-            "headers": { "X-KiloCode-OrganizationId": "9722c7e7-64c5-4638-8f1a-f046787d1175" },
-            "models": [
-              { "id": "z-ai/glm-5.3-flash", "name": "GLM 5.3 Flash", "contextWindow": 1048576, "maxTokens": 131072 }
-            ]
-          }
-        }
-      }
-      JSON
+      node -e '
+        const e = process.env;
+        require("fs").writeFileSync(e.HOME + "/.pi/agent/models.json", JSON.stringify({providers: {kilo: {
+          name: "Kilo Gateway", baseUrl: e.KILO_BASE_URL, api: "openai-completions",
+          apiKey: "$KILO_API_KEY", authHeader: true,
+          headers: {"X-KiloCode-OrganizationId": e.KILO_ORG_ID},
+          models: [{id: e.KILO_MODEL, name: e.KILO_MODEL, contextWindow: +e.KILO_CONTEXT, maxTokens: +e.KILO_MAX_OUTPUT}]
+        }}}, null, 2));
+      '
       git fetch --no-tags origin main:refs/remotes/origin/main
       # `rwx run` ships local work as a patch on top of the nearest pushed
       # commit, so commit it here or roborev (committed ranges only) sees an
@@ -79,6 +77,9 @@ tasks:
         git add -A
         git -c user.name=roborev-ci -c user.email=roborev-ci@localhost commit -q -m "local changes under review"
       fi
+      # Select the model from the vault after the commit above, so this edit is
+      # not part of the reviewed diff. .roborev.toml's model line is only a default.
+      sed -i "s|^model = .*|model = \"kilo/${KILO_MODEL}\"|" .roborev.toml
       base="$(git merge-base origin/main HEAD)"
       echo "reviewing ${base}..HEAD"
       git diff --stat "${base}..HEAD" | tail -5
