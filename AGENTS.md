@@ -327,12 +327,12 @@ rwx run .rwx/roborev.yml --wait
 ```
 
 - Reviews `merge-base(origin/main, HEAD)..HEAD` (uncommitted work is committed
-  inside the run) with the agent and model in `.roborev.toml` (pi + Fireworks).
+  inside the run) with the agent and model in `.roborev.toml` (pi + Kilo gateway).
 - Fails closed: a missing `roborev: Review Passed` line exits non-zero.
 - `ROBOREV_VERSION` and its `ROBOREV_SHA256` are pinned in the workflow; bump
   both together.
-- `FIREWORKS_API_KEY` lives alone in the `sdk-python-attio-roborev` vault. Never
-  add another secret to it.
+- `KILO_API_KEY` lives in the unlocked org vault `roborev`
+  (`vaults.roborev.secrets.KILO_API_KEY`). Never add another secret to it.
 
 ### Regenerating on RWX (`.rwx/regenerate.yml`)
 
