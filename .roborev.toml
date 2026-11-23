@@ -3,9 +3,10 @@
 # `review_guidelines` is embedded into every review prompt. Use it to encode
 # deliberate house decisions so the reviewer stops re-flagging them as findings.
 
-# Review with the pi agent via Fireworks (needs FIREWORKS_API_KEY in the env).
+# Review with the pi agent via the Kilo gateway (needs KILO_API_KEY in the env; on RWX it comes from vaults.roborev.secrets.KILO_API_KEY, see .rwx/roborev.yml).
 agent = "pi"
-model = "fireworks/accounts/fireworks/models/glm-5p3-flash"
+# Default only; .rwx/roborev.yml overrides it from the roborev vault var KILO_MODEL.
+model = "kilo/deepseek/deepseek-v4-flash"
 
 review_guidelines = """
 - generated/src/attio/ is FULLY GENERATED code (Speakeasy). Do not raise findings against
