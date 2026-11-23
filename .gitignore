@@ -21,3 +21,4 @@ tmp/
 # same tree and the spec-update workflow's leftover guard does not fail
 # on it.
 .vscode/
+site/
