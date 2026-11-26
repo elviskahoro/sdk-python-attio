@@ -14,7 +14,7 @@ from typing import Optional
 class GetV2ActivitiesActivityRecordsRecordIDNotFoundErrorData(BaseModel):
     status_code: float
     type: models_get_v2_activities_activity_records_record_id_op.GetV2ActivitiesActivityRecordsRecordIDNotFoundType
-    code: models_get_v2_activities_activity_records_record_id_op.GetV2ActivitiesActivityRecordsRecordIDCode
+    code: models_get_v2_activities_activity_records_record_id_op.GetV2ActivitiesActivityRecordsRecordIDNotFoundCode
     message: str
 
 
@@ -27,6 +27,31 @@ class GetV2ActivitiesActivityRecordsRecordIDNotFoundError(SDKError):
     def __init__(
         self,
         data: GetV2ActivitiesActivityRecordsRecordIDNotFoundErrorData,
+        raw_response: httpx.Response,
+        body: Optional[str] = None,
+    ):
+        fallback = body or raw_response.text
+        message = str(data.message) or fallback
+        super().__init__(message, raw_response, body)
+        object.__setattr__(self, "data", data)
+
+
+class GetV2ActivitiesActivityRecordsRecordIDBillingErrorData(BaseModel):
+    status_code: float
+    type: models_get_v2_activities_activity_records_record_id_op.GetV2ActivitiesActivityRecordsRecordIDForbiddenType
+    code: models_get_v2_activities_activity_records_record_id_op.GetV2ActivitiesActivityRecordsRecordIDCodeBillingError
+    message: str
+
+
+@dataclass(unsafe_hash=True)
+class GetV2ActivitiesActivityRecordsRecordIDBillingError(SDKError):
+    r"""Forbidden"""
+
+    data: GetV2ActivitiesActivityRecordsRecordIDBillingErrorData = field(hash=False)
+
+    def __init__(
+        self,
+        data: GetV2ActivitiesActivityRecordsRecordIDBillingErrorData,
         raw_response: httpx.Response,
         body: Optional[str] = None,
     ):

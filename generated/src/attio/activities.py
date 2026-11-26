@@ -208,7 +208,7 @@ class Activities(BaseSDK):
     ) -> models.PostV2ActivitiesResponse:
         r"""Create an activity
 
-        Creates a new custom activity in your workspace. Your workspace must have the custom activities billing feature enabled. Public apps may instead create activities with the integration activities billing feature.
+        Creates a new custom activity in your workspace. Your workspace must have the custom activities billing feature enabled (unless the request comes from an app: apps may always create activities)
 
         This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 
@@ -312,7 +312,7 @@ class Activities(BaseSDK):
     ) -> models.PostV2ActivitiesResponse:
         r"""Create an activity
 
-        Creates a new custom activity in your workspace. Your workspace must have the custom activities billing feature enabled. Public apps may instead create activities with the integration activities billing feature.
+        Creates a new custom activity in your workspace. Your workspace must have the custom activities billing feature enabled (unless the request comes from an app: apps may always create activities)
 
         This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
 

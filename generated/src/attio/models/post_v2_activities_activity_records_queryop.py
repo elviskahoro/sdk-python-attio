@@ -192,6 +192,12 @@ PostV2ActivitiesActivityRecordsQueryNotFoundType = Literal["invalid_request_erro
 PostV2ActivitiesActivityRecordsQueryNotFoundCode = Literal["not_found",]
 
 
+PostV2ActivitiesActivityRecordsQueryForbiddenType = Literal["auth_error",]
+
+
+PostV2ActivitiesActivityRecordsQueryCodeBillingError = Literal["billing_error",]
+
+
 PostV2ActivitiesActivityRecordsQueryBadRequestType = Literal["invalid_request_error",]
 
 

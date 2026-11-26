@@ -72,8 +72,8 @@ PutV2ActivitiesActivityRecordsCodeConcurrentWriteConflict = Literal[
 ]
 
 
-PutV2ActivitiesActivityRecordsConflictCodeUnionTypedDict = TypeAliasType(
-    "PutV2ActivitiesActivityRecordsConflictCodeUnionTypedDict",
+PutV2ActivitiesActivityRecordsCodeUnionTypedDict = TypeAliasType(
+    "PutV2ActivitiesActivityRecordsCodeUnionTypedDict",
     Union[
         PutV2ActivitiesActivityRecordsCodeConcurrentWriteConflict,
         PutV2ActivitiesActivityRecordsCodeMultipleMatchResults,
@@ -82,8 +82,8 @@ PutV2ActivitiesActivityRecordsConflictCodeUnionTypedDict = TypeAliasType(
 )
 
 
-PutV2ActivitiesActivityRecordsConflictCodeUnion = TypeAliasType(
-    "PutV2ActivitiesActivityRecordsConflictCodeUnion",
+PutV2ActivitiesActivityRecordsCodeUnion = TypeAliasType(
+    "PutV2ActivitiesActivityRecordsCodeUnion",
     Union[
         PutV2ActivitiesActivityRecordsCodeConcurrentWriteConflict,
         PutV2ActivitiesActivityRecordsCodeMultipleMatchResults,
@@ -101,28 +101,7 @@ PutV2ActivitiesActivityRecordsNotFoundCode = Literal["not_found",]
 PutV2ActivitiesActivityRecordsForbiddenType = Literal["auth_error",]
 
 
-PutV2ActivitiesActivityRecordsCodeBillingError = Literal["billing_error",]
-
-
 PutV2ActivitiesActivityRecordsCodeUnauthorized = Literal["unauthorized",]
-
-
-PutV2ActivitiesActivityRecordsForbiddenCodeUnionTypedDict = TypeAliasType(
-    "PutV2ActivitiesActivityRecordsForbiddenCodeUnionTypedDict",
-    Union[
-        PutV2ActivitiesActivityRecordsCodeUnauthorized,
-        PutV2ActivitiesActivityRecordsCodeBillingError,
-    ],
-)
-
-
-PutV2ActivitiesActivityRecordsForbiddenCodeUnion = TypeAliasType(
-    "PutV2ActivitiesActivityRecordsForbiddenCodeUnion",
-    Union[
-        PutV2ActivitiesActivityRecordsCodeUnauthorized,
-        PutV2ActivitiesActivityRecordsCodeBillingError,
-    ],
-)
 
 
 PutV2ActivitiesActivityRecordsBadRequestType = Literal["invalid_request_error",]

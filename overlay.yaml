@@ -727,3 +727,51 @@ actions:
   - target: "$.paths['/v2/workspace_blocklist_addresses'].get.responses['200'].content['application/json'].schema.properties.data.items.properties.created_at.format"
     description: "Remove format from the workspace blocklist GET created_at so it generates as str like the PUT response"
     remove: true
+
+  - target: "$.paths['/v2/lists/{list}/views'].post.parameters[?(@.name=='list')]"
+    description: "Rename list parameter to list_id in POST /v2/lists/{list}/views"
+    update:
+      schema:
+        type: string
+        description: "A UUID or slug to identify the list."
+        example: "33ebdbe9-e529-47c9-b894-0ba25e9c15c0"
+      required: true
+      name: "list"
+      in: "path"
+      x-speakeasy-name-override: "list_id"
+
+  - target: "$.paths['/v2/lists/{list}/views/{view_id}'].get.parameters[?(@.name=='list')]"
+    description: "Rename list parameter to list_id in GET /v2/lists/{list}/views/{view_id}"
+    update:
+      schema:
+        type: string
+        description: "A UUID or slug to identify the list."
+        example: "33ebdbe9-e529-47c9-b894-0ba25e9c15c0"
+      required: true
+      name: "list"
+      in: "path"
+      x-speakeasy-name-override: "list_id"
+
+  - target: "$.paths['/v2/lists/{list}/views/{view_id}'].delete.parameters[?(@.name=='list')]"
+    description: "Rename list parameter to list_id in DELETE /v2/lists/{list}/views/{view_id}"
+    update:
+      schema:
+        type: string
+        description: "A UUID or slug to identify the list."
+        example: "33ebdbe9-e529-47c9-b894-0ba25e9c15c0"
+      required: true
+      name: "list"
+      in: "path"
+      x-speakeasy-name-override: "list_id"
+
+  - target: "$.paths['/v2/lists/{list}/views/{view_id}'].patch.parameters[?(@.name=='list')]"
+    description: "Rename list parameter to list_id in PATCH /v2/lists/{list}/views/{view_id}"
+    update:
+      schema:
+        type: string
+        description: "A UUID or slug to identify the list."
+        example: "33ebdbe9-e529-47c9-b894-0ba25e9c15c0"
+      required: true
+      name: "list"
+      in: "path"
+      x-speakeasy-name-override: "list_id"

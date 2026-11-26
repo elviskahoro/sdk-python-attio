@@ -59,7 +59,7 @@ class PostV2ListsNotFoundError(SDKError):
         object.__setattr__(self, "data", data)
 
 
-class BillingErrorData(BaseModel):
+class PostV2ListsBillingErrorData(BaseModel):
     status_code: float
     type: models_post_v2_listsop.PostV2ListsForbiddenType
     code: models_post_v2_listsop.PostV2ListsCodeBillingError
@@ -67,14 +67,14 @@ class BillingErrorData(BaseModel):
 
 
 @dataclass(unsafe_hash=True)
-class BillingError(SDKError):
+class PostV2ListsBillingError(SDKError):
     r"""Forbidden"""
 
-    data: BillingErrorData = field(hash=False)
+    data: PostV2ListsBillingErrorData = field(hash=False)
 
     def __init__(
         self,
-        data: BillingErrorData,
+        data: PostV2ListsBillingErrorData,
         raw_response: httpx.Response,
         body: Optional[str] = None,
     ):

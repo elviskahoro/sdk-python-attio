@@ -29,7 +29,13 @@ class GetV2ActivitiesActivityRecordsRecordIDRequest(BaseModel):
 GetV2ActivitiesActivityRecordsRecordIDNotFoundType = Literal["invalid_request_error",]
 
 
-GetV2ActivitiesActivityRecordsRecordIDCode = Literal["not_found",]
+GetV2ActivitiesActivityRecordsRecordIDNotFoundCode = Literal["not_found",]
+
+
+GetV2ActivitiesActivityRecordsRecordIDForbiddenType = Literal["auth_error",]
+
+
+GetV2ActivitiesActivityRecordsRecordIDCodeBillingError = Literal["billing_error",]
 
 
 class GetV2ActivitiesActivityRecordsRecordIDIDTypedDict(TypedDict):
