@@ -14,7 +14,7 @@ from typing import Optional
 class PutV2ActivitiesActivityRecordsConflictInvalidRequestErrorData(BaseModel):
     status_code: float
     type: models_put_v2_activities_activity_recordsop.PutV2ActivitiesActivityRecordsConflictType
-    code: models_put_v2_activities_activity_recordsop.PutV2ActivitiesActivityRecordsConflictCodeUnion
+    code: models_put_v2_activities_activity_recordsop.PutV2ActivitiesActivityRecordsCodeUnion
     message: str
 
 
@@ -63,22 +63,22 @@ class PutV2ActivitiesActivityRecordsNotFoundError(SDKError):
         object.__setattr__(self, "data", data)
 
 
-class PutV2ActivitiesActivityRecordsAuthErrorData(BaseModel):
+class PutV2ActivitiesActivityRecordsUnauthorizedErrorData(BaseModel):
     status_code: float
     type: models_put_v2_activities_activity_recordsop.PutV2ActivitiesActivityRecordsForbiddenType
-    code: models_put_v2_activities_activity_recordsop.PutV2ActivitiesActivityRecordsForbiddenCodeUnion
+    code: models_put_v2_activities_activity_recordsop.PutV2ActivitiesActivityRecordsCodeUnauthorized
     message: str
 
 
 @dataclass(unsafe_hash=True)
-class PutV2ActivitiesActivityRecordsAuthError(SDKError):
+class PutV2ActivitiesActivityRecordsUnauthorizedError(SDKError):
     r"""Forbidden"""
 
-    data: PutV2ActivitiesActivityRecordsAuthErrorData = field(hash=False)
+    data: PutV2ActivitiesActivityRecordsUnauthorizedErrorData = field(hash=False)
 
     def __init__(
         self,
-        data: PutV2ActivitiesActivityRecordsAuthErrorData,
+        data: PutV2ActivitiesActivityRecordsUnauthorizedErrorData,
         raw_response: httpx.Response,
         body: Optional[str] = None,
     ):

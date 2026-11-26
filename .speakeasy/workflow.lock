@@ -26,10 +26,10 @@ workflow:
     sources:
         attio:
             inputs:
-                - location: openapi/api-202611090900.json
+                - location: openapi/api-202611261849.json
             overlays:
                 - location: overlay.yaml
-            output: openapi/api-202611090900-overlay.json
+            output: openapi/api-202611261849-overlay.json
             registry:
                 location: registry.speakeasyapi.dev/elviskahoro/attio/attio
     targets:

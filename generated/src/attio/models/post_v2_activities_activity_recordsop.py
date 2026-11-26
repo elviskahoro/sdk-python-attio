@@ -66,8 +66,8 @@ PostV2ActivitiesActivityRecordsCodeConcurrentWriteConflict = Literal[
 ]
 
 
-PostV2ActivitiesActivityRecordsConflictCodeUnionTypedDict = TypeAliasType(
-    "PostV2ActivitiesActivityRecordsConflictCodeUnionTypedDict",
+PostV2ActivitiesActivityRecordsCodeUnionTypedDict = TypeAliasType(
+    "PostV2ActivitiesActivityRecordsCodeUnionTypedDict",
     Union[
         PostV2ActivitiesActivityRecordsCodeConcurrentWriteConflict,
         PostV2ActivitiesActivityRecordsCodeMultipleMatchResults,
@@ -76,8 +76,8 @@ PostV2ActivitiesActivityRecordsConflictCodeUnionTypedDict = TypeAliasType(
 )
 
 
-PostV2ActivitiesActivityRecordsConflictCodeUnion = TypeAliasType(
-    "PostV2ActivitiesActivityRecordsConflictCodeUnion",
+PostV2ActivitiesActivityRecordsCodeUnion = TypeAliasType(
+    "PostV2ActivitiesActivityRecordsCodeUnion",
     Union[
         PostV2ActivitiesActivityRecordsCodeConcurrentWriteConflict,
         PostV2ActivitiesActivityRecordsCodeMultipleMatchResults,
@@ -95,28 +95,7 @@ PostV2ActivitiesActivityRecordsNotFoundCode = Literal["not_found",]
 PostV2ActivitiesActivityRecordsForbiddenType = Literal["auth_error",]
 
 
-PostV2ActivitiesActivityRecordsCodeBillingError = Literal["billing_error",]
-
-
 PostV2ActivitiesActivityRecordsCodeUnauthorized = Literal["unauthorized",]
-
-
-PostV2ActivitiesActivityRecordsForbiddenCodeUnionTypedDict = TypeAliasType(
-    "PostV2ActivitiesActivityRecordsForbiddenCodeUnionTypedDict",
-    Union[
-        PostV2ActivitiesActivityRecordsCodeUnauthorized,
-        PostV2ActivitiesActivityRecordsCodeBillingError,
-    ],
-)
-
-
-PostV2ActivitiesActivityRecordsForbiddenCodeUnion = TypeAliasType(
-    "PostV2ActivitiesActivityRecordsForbiddenCodeUnion",
-    Union[
-        PostV2ActivitiesActivityRecordsCodeUnauthorized,
-        PostV2ActivitiesActivityRecordsCodeBillingError,
-    ],
-)
 
 
 PostV2ActivitiesActivityRecordsBadRequestType = Literal["invalid_request_error",]

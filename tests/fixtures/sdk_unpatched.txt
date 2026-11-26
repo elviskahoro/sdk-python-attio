@@ -34,6 +34,7 @@ if TYPE_CHECKING:
     from attio.tasks import Tasks
     from attio.threads import Threads
     from attio.transcripts import Transcripts
+    from attio.views import Views
     from attio.webhooks import Webhooks
     from attio.workspace_blocklist import WorkspaceBlocklist
     from attio.workspace_members import WorkspaceMembers
@@ -42,6 +43,8 @@ if TYPE_CHECKING:
 class SDK(BaseSDK):
     objects: "Objects"
     r"""Objects are the core data models inside of Attio. They contain standard objects, such as [people](/rest-api/endpoint-reference/standard-objects/people/list-person-records), [companies](/rest-api/endpoint-reference/standard-objects/companies/list-company-records) or [deals](/docs/standard-objects-deals), and custom objects that are specific to your use-case. See our [objects and lists guide](/docs/objects-and-lists) for more information."""
+    views: "Views"
+    r"""Views are saved table or board layouts for an object or a list."""
     activities: "Activities"
     r"""Activities model event-based data that can be logged against a record, for example a phone call. Each activity extends a schema, which supplies the attributes that every activity of that kind shares."""
     attributes: "Attributes"
@@ -86,6 +89,7 @@ class SDK(BaseSDK):
     r"""Meta endpoints are used to get information about the API token."""
     _sub_sdk_map = {
         "objects": ("attio.objects", "Objects"),
+        "views": ("attio.views", "Views"),
         "activities": ("attio.activities", "Activities"),
         "attributes": ("attio.attributes", "Attributes"),
         "records": ("attio.records", "Records"),

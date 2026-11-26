@@ -14,7 +14,7 @@ from typing import Optional
 class PostV2ActivitiesActivityRecordsConflictInvalidRequestErrorData(BaseModel):
     status_code: float
     type: models_post_v2_activities_activity_recordsop.PostV2ActivitiesActivityRecordsConflictType
-    code: models_post_v2_activities_activity_recordsop.PostV2ActivitiesActivityRecordsConflictCodeUnion
+    code: models_post_v2_activities_activity_recordsop.PostV2ActivitiesActivityRecordsCodeUnion
     message: str
 
 
@@ -63,22 +63,22 @@ class PostV2ActivitiesActivityRecordsNotFoundError(SDKError):
         object.__setattr__(self, "data", data)
 
 
-class PostV2ActivitiesActivityRecordsAuthErrorData(BaseModel):
+class PostV2ActivitiesActivityRecordsUnauthorizedErrorData(BaseModel):
     status_code: float
     type: models_post_v2_activities_activity_recordsop.PostV2ActivitiesActivityRecordsForbiddenType
-    code: models_post_v2_activities_activity_recordsop.PostV2ActivitiesActivityRecordsForbiddenCodeUnion
+    code: models_post_v2_activities_activity_recordsop.PostV2ActivitiesActivityRecordsCodeUnauthorized
     message: str
 
 
 @dataclass(unsafe_hash=True)
-class PostV2ActivitiesActivityRecordsAuthError(SDKError):
+class PostV2ActivitiesActivityRecordsUnauthorizedError(SDKError):
     r"""Forbidden"""
 
-    data: PostV2ActivitiesActivityRecordsAuthErrorData = field(hash=False)
+    data: PostV2ActivitiesActivityRecordsUnauthorizedErrorData = field(hash=False)
 
     def __init__(
         self,
-        data: PostV2ActivitiesActivityRecordsAuthErrorData,
+        data: PostV2ActivitiesActivityRecordsUnauthorizedErrorData,
         raw_response: httpx.Response,
         body: Optional[str] = None,
     ):

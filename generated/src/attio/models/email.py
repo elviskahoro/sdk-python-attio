@@ -27,7 +27,7 @@ class EmailID(BaseModel):
     r"""The ID of the Attio email."""
 
 
-Direction = Literal[
+EmailDirection = Literal[
     "inbound",
     "outbound",
 ]
@@ -107,7 +107,7 @@ class EmailTypedDict(TypedDict):
     id: EmailIDTypedDict
     sent_at: str
     r"""Timestamp representing when the email was sent, taken from the email's own headers rather than from when Attio imported it."""
-    direction: Direction
+    direction: EmailDirection
     r"""Whether the email was sent from your workspace or received by it."""
     subject_line: Nullable[str]
     r"""The subject line of the email. This is `null` when the email has no subject or is from a mailbox shared as metadata only."""
@@ -123,7 +123,7 @@ class Email(BaseModel):
     sent_at: str
     r"""Timestamp representing when the email was sent, taken from the email's own headers rather than from when Attio imported it."""
 
-    direction: Direction
+    direction: EmailDirection
     r"""Whether the email was sent from your workspace or received by it."""
 
     subject_line: Nullable[str]

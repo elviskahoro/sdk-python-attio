@@ -36,6 +36,31 @@ class PostV2ActivitiesActivityRecordsQueryNotFoundError(SDKError):
         object.__setattr__(self, "data", data)
 
 
+class PostV2ActivitiesActivityRecordsQueryBillingErrorData(BaseModel):
+    status_code: float
+    type: models_post_v2_activities_activity_records_queryop.PostV2ActivitiesActivityRecordsQueryForbiddenType
+    code: models_post_v2_activities_activity_records_queryop.PostV2ActivitiesActivityRecordsQueryCodeBillingError
+    message: str
+
+
+@dataclass(unsafe_hash=True)
+class PostV2ActivitiesActivityRecordsQueryBillingError(SDKError):
+    r"""Forbidden"""
+
+    data: PostV2ActivitiesActivityRecordsQueryBillingErrorData = field(hash=False)
+
+    def __init__(
+        self,
+        data: PostV2ActivitiesActivityRecordsQueryBillingErrorData,
+        raw_response: httpx.Response,
+        body: Optional[str] = None,
+    ):
+        fallback = body or raw_response.text
+        message = str(data.message) or fallback
+        super().__init__(message, raw_response, body)
+        object.__setattr__(self, "data", data)
+
+
 class PostV2ActivitiesActivityRecordsQueryFilterErrorData(BaseModel):
     status_code: float
     type: models_post_v2_activities_activity_records_queryop.PostV2ActivitiesActivityRecordsQueryBadRequestType

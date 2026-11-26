@@ -1,8 +1,8 @@
-"""Pin the activity-record 403 ``code`` union names (issue #88).
+"""Pin the activity-record 403 ``code`` model names (issue #88).
 
-Speakeasy can drop the response-class prefix on a ``code`` union that only
-has 403 members (``ForbiddenCodeUnion`` -> ``CodeUnion``). A regeneration that
-does so silently renames shipped public models, so fail loudly here.
+Attio's spec now lists a single ``unauthorized`` code for the 403 response
+(``billing_error`` was dropped), so there is no 403 union any more: the code is
+a plain literal. Fail loudly if a regeneration renames it.
 """
 
 import importlib
@@ -13,9 +13,8 @@ OPS = ("post", "put")
 
 
 @pytest.mark.parametrize("verb", OPS)
-@pytest.mark.parametrize("suffix", ("", "TypedDict"))
-def test_forbidden_code_union_name_is_stable(verb: str, suffix: str) -> None:
-    name = f"{verb.capitalize()}V2ActivitiesActivityRecordsForbiddenCodeUnion{suffix}"
+def test_forbidden_code_literal_name_is_stable(verb: str) -> None:
+    name = f"{verb.capitalize()}V2ActivitiesActivityRecordsCodeUnauthorized"
     module = importlib.import_module(
         f"attio.models.{verb}_v2_activities_activity_recordsop"
     )

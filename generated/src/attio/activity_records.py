@@ -133,6 +133,13 @@ class ActivityRecords(BaseSDK):
             raise errors.PostV2ActivitiesActivityRecordsQueryFilterError(
                 response_data, http_res
             )
+        if utils.match_response(http_res, "403", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PostV2ActivitiesActivityRecordsQueryBillingErrorData, http_res
+            )
+            raise errors.PostV2ActivitiesActivityRecordsQueryBillingError(
+                response_data, http_res
+            )
         if utils.match_response(http_res, "404", "application/json"):
             response_data = unmarshal_json_response(
                 errors.PostV2ActivitiesActivityRecordsQueryNotFoundErrorData, http_res
@@ -271,6 +278,13 @@ class ActivityRecords(BaseSDK):
             raise errors.PostV2ActivitiesActivityRecordsQueryFilterError(
                 response_data, http_res
             )
+        if utils.match_response(http_res, "403", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.PostV2ActivitiesActivityRecordsQueryBillingErrorData, http_res
+            )
+            raise errors.PostV2ActivitiesActivityRecordsQueryBillingError(
+                response_data, http_res
+            )
         if utils.match_response(http_res, "404", "application/json"):
             response_data = unmarshal_json_response(
                 errors.PostV2ActivitiesActivityRecordsQueryNotFoundErrorData, http_res
@@ -398,9 +412,9 @@ class ActivityRecords(BaseSDK):
             )
         if utils.match_response(http_res, "403", "application/json"):
             response_data = unmarshal_json_response(
-                errors.PostV2ActivitiesActivityRecordsAuthErrorData, http_res
+                errors.PostV2ActivitiesActivityRecordsUnauthorizedErrorData, http_res
             )
-            raise errors.PostV2ActivitiesActivityRecordsAuthError(
+            raise errors.PostV2ActivitiesActivityRecordsUnauthorizedError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "404", "application/json"):
@@ -538,9 +552,9 @@ class ActivityRecords(BaseSDK):
             )
         if utils.match_response(http_res, "403", "application/json"):
             response_data = unmarshal_json_response(
-                errors.PostV2ActivitiesActivityRecordsAuthErrorData, http_res
+                errors.PostV2ActivitiesActivityRecordsUnauthorizedErrorData, http_res
             )
-            raise errors.PostV2ActivitiesActivityRecordsAuthError(
+            raise errors.PostV2ActivitiesActivityRecordsUnauthorizedError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "404", "application/json"):
@@ -683,9 +697,9 @@ class ActivityRecords(BaseSDK):
             )
         if utils.match_response(http_res, "403", "application/json"):
             response_data = unmarshal_json_response(
-                errors.PutV2ActivitiesActivityRecordsAuthErrorData, http_res
+                errors.PutV2ActivitiesActivityRecordsUnauthorizedErrorData, http_res
             )
-            raise errors.PutV2ActivitiesActivityRecordsAuthError(
+            raise errors.PutV2ActivitiesActivityRecordsUnauthorizedError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "404", "application/json"):
@@ -828,9 +842,9 @@ class ActivityRecords(BaseSDK):
             )
         if utils.match_response(http_res, "403", "application/json"):
             response_data = unmarshal_json_response(
-                errors.PutV2ActivitiesActivityRecordsAuthErrorData, http_res
+                errors.PutV2ActivitiesActivityRecordsUnauthorizedErrorData, http_res
             )
-            raise errors.PutV2ActivitiesActivityRecordsAuthError(
+            raise errors.PutV2ActivitiesActivityRecordsUnauthorizedError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "404", "application/json"):
@@ -944,6 +958,13 @@ class ActivityRecords(BaseSDK):
             return unmarshal_json_response(
                 models.GetV2ActivitiesActivityRecordsRecordIDResponse, http_res
             )
+        if utils.match_response(http_res, "403", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.GetV2ActivitiesActivityRecordsRecordIDBillingErrorData, http_res
+            )
+            raise errors.GetV2ActivitiesActivityRecordsRecordIDBillingError(
+                response_data, http_res
+            )
         if utils.match_response(http_res, "404", "application/json"):
             response_data = unmarshal_json_response(
                 errors.GetV2ActivitiesActivityRecordsRecordIDNotFoundErrorData, http_res
@@ -1046,6 +1067,13 @@ class ActivityRecords(BaseSDK):
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(
                 models.GetV2ActivitiesActivityRecordsRecordIDResponse, http_res
+            )
+        if utils.match_response(http_res, "403", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.GetV2ActivitiesActivityRecordsRecordIDBillingErrorData, http_res
+            )
+            raise errors.GetV2ActivitiesActivityRecordsRecordIDBillingError(
+                response_data, http_res
             )
         if utils.match_response(http_res, "404", "application/json"):
             response_data = unmarshal_json_response(
