@@ -56,6 +56,7 @@ tasks:
       pi --version
       # Key is exported here, not in env:, so Semgrep's workflow-env-secret passes.
       export KILO_API_KEY="${{ vaults.roborev.secrets.KILO_API_KEY }}"
+      [ -n "$KILO_API_KEY" ] || { echo "error: KILO_API_KEY unavailable" >&2; exit 1; }
       # Register the Kilo gateway as a pi provider (pi has no built-in one).
       # The org header bills the Kilo organization. apiKey is read from the env.
       mkdir -p "$HOME/.pi/agent"
