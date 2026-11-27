@@ -5,8 +5,9 @@
 
 # Review with the pi agent via the Kilo gateway (needs KILO_API_KEY in the env).
 agent = "pi"
-# Default; .rwx/roborev.yml overrides it from the roborev vault var KILO_MODEL.
-model = "kilo/deepseek/deepseek-v4-flash"
+# Placeholder only: .rwx/roborev.yml rewrites this line from the roborev vault
+# var KILO_MODEL (set it to the GLM fast Kilo id there). Never rely on it.
+model = "kilo/vault-KILO_MODEL"
 
 review_guidelines = """
 - generated/src/attio/ is FULLY GENERATED code (Speakeasy). Do not raise findings against

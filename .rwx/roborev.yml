@@ -1,8 +1,9 @@
 # RoboRev review as a tool for the local agent. Dispatch-only (cli trigger): it
-# is not a PR check and posts no comment or status. Run it before pushing:
+# is not a PR check, posts no comment or status, and does not replace
+# pullfrog-approval. Run it before pushing:
 #   rwx run .rwx/roborev.yml --wait
 # It reviews local work (committed or not) against origin/main with the model in
-# .roborev.toml (pi + Kilo gateway) and fails unless roborev reports a pass.
+# .roborev.toml (pi + Kilo gateway) and fails when roborev reports findings.
 on:
   cli:
     init:
@@ -22,6 +23,7 @@ tasks:
       submodules: false
       preserve-git-dir: true
       fetch-full-depth: true
+      github-token: ${{ github['elviskahoro'].token }}
 
   - key: node
     call: nodejs/install 1.2.1
@@ -33,6 +35,7 @@ tasks:
     cache: false
     env:
       GITHUB_REPOSITORY: elviskahoro/sdk-python-attio
+      GH_TOKEN: ${{ github['elviskahoro'].token }}
       ROBOREV_VERSION: 0.63.0
       PI_VERSION: 1.4.0
       # Kilo settings come from vars in the roborev vault (no repo change to switch model).
@@ -56,8 +59,8 @@ tasks:
       pi --version
       # Key is exported here, not in env:, so Semgrep's workflow-env-secret passes.
       export KILO_API_KEY="${{ vaults.roborev.secrets.KILO_API_KEY }}"
+      [ -n "$KILO_API_KEY" ] || { echo "error: KILO_API_KEY unavailable" >&2; exit 1; }
       # Register the Kilo gateway as a pi provider (pi has no built-in one).
-      # The org header bills the Kilo organization. apiKey is read from the env.
       mkdir -p "$HOME/.pi/agent"
       node -e '
         const e = process.env;
@@ -68,7 +71,9 @@ tasks:
           models: [{id: e.KILO_MODEL, name: e.KILO_MODEL, contextWindow: +e.KILO_CONTEXT, maxTokens: +e.KILO_MAX_OUTPUT}]
         }}}, null, 2));
       '
-      git fetch --no-tags origin main:refs/remotes/origin/main
+      # The clone's credentials are not kept, so authenticate the fetch.
+      git -c "http.https://github.com/.extraheader=Authorization: Basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)" \
+        fetch --no-tags origin main:refs/remotes/origin/main
       # `rwx run` ships local work as a patch on top of the nearest pushed
       # commit, so commit it here or roborev (committed ranges only) sees an
       # empty diff. Merge-base, not origin/main, so a main that moved ahead
@@ -83,10 +88,12 @@ tasks:
       base="$(git merge-base origin/main HEAD)"
       echo "reviewing ${base}..HEAD"
       git diff --stat "${base}..HEAD" | tail -5
+      args=(--ref "${base}..HEAD")
       # `roborev ci review` exits 0 even with findings, so gate on the verdict
-      # header. Fails closed if no verdict is printed.
-      roborev ci review --ref "${base}..HEAD" 2>&1 | tee roborev-output.txt
-      if ! grep -q "roborev: Review Passed" roborev-output.txt; then
+      # header ("Review Passed" vs "Review Complete"/"Review Failed"). Fails
+      # closed if no verdict is printed.
+      roborev ci review "${args[@]}" 2>&1 | tee roborev-output.txt
+      if ! grep -q "^## roborev: Review Passed" roborev-output.txt; then
         echo "roborev did not pass: see findings above" >&2
         exit 1
       fi
